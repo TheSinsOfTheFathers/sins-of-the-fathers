@@ -13,8 +13,6 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="mobile-web-app-capable" content="yes">
-
-    <!-- Open Graph Protocol Tags -->
     <meta property="og:title" content="The Sins of the Fathers - A Dark Saga | Interactive Lore" />
     <meta property="og:description" content="Explore the intricate world of 'Sins of the Fathers'. Delve into the characters, timelines, and shadowy factions that define the Sins of the Fathers." />
     <meta property="og:type" content="website" />
@@ -25,8 +23,6 @@
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content="Heraldic crest for The Sins of the Fathers, featuring a calculating crimson raven perched over a black sailing ship silhouette, set against a dark, ornate Celtic knotwork background." />    <meta property="og:image:type" content="image/svg+xml" />
-
-    <!-- Twitter Card Tags -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:site" content="@sotfathersbook" /> <meta name="twitter:title" content="The Sins of the Fathers - A Dark Saga" />
     <meta name="twitter:description" content="Explore the intricate world of 'Sins of the Fathers'. Delve into the characters, timelines, and shadowy factions that define the Sins of the Fathers." />
@@ -44,75 +40,165 @@
     <link rel="apple-touch-icon" sizes="180x180" href="./assets/images/logo/apple-touch-icon.png" />
 
     <!-- Title -->
-    <title>The Sins of the Fathers - A Lore Bible</title>
+    <title>The Sins of the Fathers - Coming Soon</title>
 
-    <!-- External Stylesheets  -->
+    <!-- External Stylesheets -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-
-    <!-- Internal Stylesheets -->
-    <link rel="stylesheet" href="./assets/css/style.css">
-
-    <!-- External Scripts -->
-    <script src="https://www.google.com/recaptcha/enterprise.js?render=6LeoRfYrAAAAANpaxG70cHRmK5ciRKf7sVt9Crnz"></script>
-
-    <!-- Internal Scripts -->
-    <script src="./assets/js/main.js" type="module" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
     
     <!-- Manifest -->
     <link rel="manifest" href="./site.webmanifest" />
+
+    <!-- Stil ve Animasyon Kodları -->
+    <style>
+        :root {
+            --font-serif: 'Cormorant Garamond', serif;
+            --font-sans: 'Lato', sans-serif;
+            --color-primary: #ca8a04; /* yellow-600 */
+            --color-secondary: #a16207; /* yellow-700 */
+        }
+        body {
+            font-family: var(--font-sans);
+            color: #d1d5db; /* gray-300 */
+            overflow: hidden; /* Sayfanın kaymasını engelle */
+            
+            /* Arka Plan Fotoğrafı ve Efektleri */
+            background-image: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url('./assets/images/bg/raven-bg.jpg');
+            background-size: cover;
+            background-position: center center;
+            background-attachment: fixed;
+            animation: slowZoom 40s infinite alternate ease-in-out;
+        }
+        .font-serif { font-family: var(--font-serif); }
+
+        /* Yavaş Zoom Animasyonu */
+        @keyframes slowZoom {
+            from { background-size: 100% auto; }
+            to { background-size: 110% auto; }
+        }
+
+        /* Partikül Konteyneri (Arka planda kalacak) */
+        #particles-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1;
+        }
+        
+        /* Ana İçerik (Partiküllerin önünde olacak) */
+        main {
+            position: relative; z-index: 2;
+        }
+
+        /* Giriş Animasyonu */
+        .fade-in-up {
+            animation: fadeInUp 1.5s 0.5s ease-out forwards;
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        @keyframes fadeInUp {
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Başlık Parlama Animasyonu */
+        .title-glow {
+            color: var(--color-primary);
+            text-shadow: 0 0 5px var(--color-primary), 0 0 10px var(--color-primary), 0 0 20px var(--color-secondary);
+            animation: glow 3s infinite alternate ease-in-out;
+        }
+        @keyframes glow {
+            from { text-shadow: 0 0 5px var(--color-primary), 0 0 10px var(--color-secondary); }
+            to { text-shadow: 0 0 10px var(--color-primary), 0 0 25px var(--color-secondary); }
+        }
+
+        /* Geri Sayım Sayacı */
+        #countdown { display: flex; justify-content: center; gap: 1rem; margin: 3rem 0; }
+        .countdown-item { display: flex; flex-direction: column; align-items: center; background: rgba(0,0,0,0.3); padding: 1rem; border-radius: 0.5rem; border: 1px solid rgba(255,255,255,0.1); min-width: 80px; backdrop-filter: blur(2px); }
+        .countdown-item span { font-size: 2.5rem; font-weight: bold; color: #fff; }
+        .countdown-item p { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.1em; color: #9ca3af; }
+        
+        /* Ayırıcı Çizgi */
+        .divider { height: 1px; width: 80px; background: linear-gradient(to right, transparent, var(--color-primary), transparent); margin: 0 auto 2.5rem auto; opacity: 0.7; }
+        
+        /* Sosyal Medya İkonları */
+        .social-links a { font-size: 1.5rem; color: #9ca3af; transition: color 0.3s, transform 0.3s; }
+        .social-links a:hover { color: var(--color-primary); transform: scale(1.2); }
+    </style>
 </head>
-<body class="homepage-body">
-    <!-- Header -->
-    <header class="bg-neutral-950/80 backdrop-blur-sm sticky top-0 z-50 w-full border-b border-neutral-800">
-        <!-- Top Navigation Menu -->
-        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <!-- Home Link -->
-            <a href="./index.html" class="text-2xl font-serif text-yellow-500 hover:text-yellow-400 transition-colors">The Sins of the Fathers</a>
-            <!-- Desktop Navigation Links -->
-            <div class="hidden md:flex items-center space-x-8">
-                <a href="./pages/characters.html" class="text-gray-300 hover:text-yellow-500 transition-colors">Characters</a>
-                <a href="./pages/timeline.html" class="text-gray-300 hover:text-yellow-500 transition-colors">Timeline</a>
-                <a href="./pages/factions.html" class="text-gray-300 hover:text-yellow-500 transition-colors">Factions</a>
-                <a href="./pages/locations.html" class="text-gray-300 hover:text-yellow-500 transition-colors">Locations</a>
-                <a href="./pages/lore.html" class="text-gray-300 hover:text-yellow-500 transition-colors">Lore</a>
-                <span class="w-px h-6 bg-neutral-800"></span>
-                <div id="auth-controls" class="flex items-center">
-                    <a id="auth-signin-link" href="./pages/login.html" class="text-gray-300 hover:text-yellow-500 transition-colors">Sign in</a>
-                </div>
+<body class="antialiased">
+
+    <!-- Hareketli Partikül Konteyneri -->
+    <div id="particles-container"></div>
+
+    <!-- Ana İçerik Alanı -->
+    <main class="min-h-screen flex items-center justify-center p-6">
+        
+        <div class="text-center fade-in-up max-w-3xl">
+            
+            <h1 class="text-5xl md:text-7xl font-serif mb-4 title-glow">
+                The Sins of the Fathers
+            </h1>
+            
+            <p class="text-lg md:text-xl text-neutral-400 italic mb-8">
+                "Every Dynasty is a Debt."
+            </p>
+
+            <!-- Geri Sayım Sayacı -->
+            <div id="countdown">
+                <div class="countdown-item"> <span id="days">00</span> <p>Days</p> </div>
+                <div class="countdown-item"> <span id="hours">00</span> <p>Hours</p> </div>
+                <div class="countdown-item"> <span id="minutes">00</span> <p>Minutes</p> </div>
+                <div class="countdown-item"> <span id="seconds">00</span> <p>Seconds</p> </div>
             </div>
-            <!-- Mobile Menu Button -->
-            <div class="md:hidden">
-                <button id="hamburger-button" class="hamburger-button">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-            </div>
-        </nav>
-    </header>
+        </div>
+        
+    </main>
 
-    <!-- Mobile Menu -->
-    <div id="mobile-menu" class="hidden fixed inset-0 z-40 flex flex-col items-center justify-center">
-        <a href="./index.html" class="menu-item">Home</a>
-        <a href="./pages/characters.html" class="menu-item">Characters</a>
-        <a href="./pages/timeline.html" class="menu-item">Timeline</a>
-        <a href="./pages/factions.html" class="menu-item">Factions</a>
-        <a href="./pages/locations.html" class="menu-item">Locations</a>
-        <a href="./pages/lore.html" class="menu-item">Lore</a>
-    </div>
+    <!-- Gerekli Scriptler -->
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
+    <script>
+        // --- GERİ SAYIM SAYACI ---
+        // Hedef tarihi buraya girin: Yıl, Ay (0'dan başlar, Ocak=0), Gün
+        const countdownDate = new Date("2026-01-01T00:00:00").getTime(); /// 1 Ocak 2026, 00:00:00
 
-    <!-- Content Wrapper -->
-    <div class="content-wrapper">
-        <!-- Main Content -->
-        <main class="relative z-10 flex flex-col items-center justify-center min-h-screen text-center px-6 py-20">
-            <!-- Content will be added here by JavaScript -->
-        </main>
-    </div>
+        const countdownFunction = setInterval(function() {
+            const now = new Date().getTime();
+            const distance = countdownDate - now;
 
-    <!-- Footer -->
-    <footer class="relative z-10 w-full text-center p-6 bg-neutral-950/80 border-t border-neutral-800">
-        <!-- Legal Text -->
-        <p class="text-gray-500 text-sm">&copy; 2025 Sins of the Fathers. All rights reserved.</p>
-    </footer>
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            
+            document.getElementById("days").innerText = days.toString().padStart(2, '0');
+            document.getElementById("hours").innerText = hours.toString().padStart(2, '0');
+            document.getElementById("minutes").innerText = minutes.toString().padStart(2, '0');
+            document.getElementById("seconds").innerText = seconds.toString().padStart(2, '0');
+
+            if (distance < 0) {
+                clearInterval(countdownFunction);
+                document.getElementById("countdown").innerHTML = "<p class='text-2xl text-yellow-500 font-serif'>The story has begun.</p>";
+            }
+        }, 1000);
+
+        // --- HAREKETLİ PARTİKÜL ARKA PLANI ---
+        tsParticles.load("particles-container", {
+            // ÖNEMLİ: Bu ayar, partikül canvas'ını şeffaf yapar ve alttaki
+            // body'nin arkaplan fotoğrafının görünmesini sağlar.
+            // background: { color: { value: "#111111" } }, <- BU SATIR SİLİNDİ
+
+            fpsLimit: 60,
+            particles: {
+                number: { value: 60, density: { enable: true, value_area: 800 } },
+                color: { value: "#ffffff" },
+                shape: { type: "circle" },
+                opacity: { value: 0.3, random: true, anim: { enable: true, speed: 0.4, opacity_min: 0.05, sync: false } },
+                size: { value: 1.5, random: true },
+                move: { enable: true, speed: 0.5, direction: "none", random: true, straight: false, out_mode: "out" }
+            },
+            interactivity: { events: { onhover: { enable: true, mode: "bubble" }, resize: true }, modes: { bubble: { distance: 100, size: 2, duration: 2, opacity: 0.8 } } },
+            detectRetina: true
+        });
+    </script>
 </body>
 </html>
