@@ -1,0 +1,41 @@
+.family-tree-tooltip {
+    font-family: 'Lato', sans-serif;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    max-width: 300px;
+}
+
+#family-tree {
+    position: relative;
+    background: rgba(17, 17, 17, 0.6);
+    backdrop-filter: blur(8px);
+    border-radius: 0.5rem;
+    height: 600px !important;
+    min-height: 600px !important;
+    display: block;
+    overflow: hidden;
+}
+
+#family-tree svg {
+    cursor: grab;
+}
+
+#family-tree svg:active {
+    cursor: grabbing;
+}
+
+.node {
+    cursor: pointer;
+}
+
+.node:hover circle {
+    stroke-width: 3px;
+}
+
+.link {
+    stroke-opacity: 0.6;
+    transition: stroke-opacity 0.2s;
+}
+
+.link:hover {
+    stroke-opacity: 1;
+}

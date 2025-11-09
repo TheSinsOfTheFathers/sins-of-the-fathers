@@ -1,0 +1,349 @@
+/* ==========================================================================
+   Sins of the Fathers - Official Companion Website Stylesheet
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Google Fonts Import
+   -------------------------------------------------------------------------- */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;700&family=Lato:wght@400;700&display=swap');
+
+/* --------------------------------------------------------------------------
+   2. Root Variables & Base Styles
+   - Defines the core color palette and typography for the entire project.
+   -------------------------------------------------------------------------- */
+:root {
+    --font-serif: 'Cormorant Garamond', serif;
+    --font-sans: 'Lato', sans-serif;
+
+    --color-bg-primary: #171717;    /* Neutral 900 - Main dark background */
+    --color-bg-secondary: #262626;  /* Neutral 800 - Card/element background */
+    --color-border: #404040;       /* Neutral 700 - Borders and lines */
+
+    --color-text-primary: #e5e5e5;  /* Neutral 200 - Main body text */
+    --color-text-secondary: #a3a3a3;/* Neutral 400 - Subtitles, less important text */
+    
+    --color-accent-primary: #f59e0b; /* Amber 500 - Main highlight for titles, links */
+    --color-accent-secondary: #eab308;/* Yellow 500 - Hover effects, secondary highlights */
+}
+
+html {
+    background-color: var(--color-bg-primary);
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    scrollbar-color: #f59e0b var(--color-bg-secondary);
+}
+
+body {
+    font-family: var(--font-sans);
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.content-wrapper {
+    flex: 1 0 auto;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-serif);
+    color: var(--color-accent-primary);
+}
+
+p {
+    line-height: 1.65;
+}
+
+a {
+    color: var(--color-text-primary);
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: var(--color-accent-secondary);
+}
+
+/* --------------------------------------------------------------------------
+   3. Main Navigation Header
+   - Sticky header for consistent navigation across all pages.
+   -------------------------------------------------------------------------- */
+header {
+    background-color: rgba(23, 23, 23, 0.85); /* Neutral 900 with transparency */
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--color-border);
+}
+
+/* --------------------------------------------------------------------------
+   4. Reusable Card Components (Characters, Factions)
+   - Base style for character and faction cards.
+   -------------------------------------------------------------------------- */
+.character-card, .faction-card {
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.character-card:hover, .faction-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--color-accent-secondary);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.character-card img {
+    width: 100%;
+    height: 24rem;
+    object-fit: cover;
+    object-position: center;
+}
+
+.character-card-content {
+    padding: 1.5rem;
+}
+
+/* Faction Card Styles - Redesigned */
+.faction-card {
+    display: flex;
+    flex-direction: column;
+}
+
+.faction-card-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.faction-title {
+    font-size: 1.75rem; /* text-2xl */
+    color: var(--color-accent-primary);
+    margin: 0;
+}
+
+.faction-card-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.faction-meta {
+    margin-bottom: 1rem;
+    color: var(--color-text-primary);
+}
+
+.faction-meta strong {
+    display: block;
+    color: var(--color-text-secondary);
+    font-weight: 700;
+    font-size: 0.875rem;
+    margin-bottom: 0.25rem;
+}
+
+.faction-description {
+    color: var(--color-text-secondary);
+    margin-top: auto; /* Pushes description to the bottom */
+    font-style: italic;
+}
+
+/* --------------------------------------------------------------------------
+   5. Vertical Timeline
+   - Styles for the alternating, responsive timeline.
+   -------------------------------------------------------------------------- */
+.timeline {
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.timeline::after {
+    content: '';
+    position: absolute;
+    width: 4px;
+    background-color: var(--color-border);
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    margin-left: -2px;
+}
+
+.timeline-item {
+    padding: 10px 40px;
+    position: relative;
+    width: 50%;
+}
+
+.timeline-item.left { left: 0; }
+.timeline-item.right { left: 50%; }
+
+.timeline-item::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-color: var(--color-accent-primary);
+    border: 4px solid var(--color-accent-secondary);
+    top: 15px;
+    border-radius: 50%;
+    z-index: 1;
+}
+
+.timeline-item.left::after { right: -10px; }
+.timeline-item.right::after { left: -10px; }
+
+.timeline-content {
+    padding: 20px 30px;
+    background-color: var(--color-bg-secondary);
+    position: relative;
+    border-radius: 6px;
+    border: 1px solid var(--color-border);
+}
+
+/* Responsive adjustments for timeline on smaller screens */
+@media screen and (max-width: 768px) {
+    .timeline::after { left: 31px; }
+    .timeline-item { width: 100%; padding-left: 70px; padding-right: 25px; }
+    .timeline-item.left, .timeline-item.right { left: 0%; }
+    .timeline-item.left::after, .timeline-item.right::after { left: 12px; }
+}
+
+/* --------------------------------------------------------------------------
+   6. Animations & Effects
+   - Subtle fade-in animations for content.
+   -------------------------------------------------------------------------- */
+.animate-fade-in-down { animation: fadeInDown 1.5s ease-out forwards; }
+.animate-fade-in-up { animation: fadeInUp 1.5s ease-out 0.5s forwards; opacity: 0; }
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --------------------------------------------------------------------------
+   7. Auth form styles
+   - Minimal styles for the sign-in / register UI
+   -------------------------------------------------------------------------- */
+.auth-login-form, auth-register-form, input { background-color: #0f0f0f; }
+
+/* Override browser autofill styles for a dark theme */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    border: 1px solid var(--color-accent-primary); /* Add a border to see the element */
+    -webkit-text-fill-color: var(--color-text-primary) !important;
+    -webkit-box-shadow: 0 0 0 30px #0f0f0f inset !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+.auth-message { margin-top: 0.5rem; }
+.auth-message.info { color: var(--color-text-secondary); }
+.auth-message.success { color: #86efac; }
+.auth-message.error { color: #fb7185; }
+
+.auth-signed-in { color: var(--color-accent-primary); font-weight: 700; }
+
+/* --------------------------------------------------------------------------
+    User menu / profile styles
+    -------------------------------------------------------------------------- */
+.user-menu { display: inline-block; margin-left: 0.6rem; position: relative; }
+.user-menu-button { background: transparent; border: 1px solid var(--color-border); width: 2.4rem; height: 2.4rem; border-radius: 9999px; display: inline-flex; align-items: center; justify-content: center; color: var(--color-text-primary); font-weight:700 }
+.user-menu-button:hover { border-color: var(--color-accent-secondary); }
+.user-menu-button { display:inline-block; width:1.4rem; height:1.4rem; line-height:1.4rem; text-align:center; }
+.user-menu-dropdown { position: absolute; top: calc(100% + 0.4rem); right: 0; background: var(--color-bg-secondary); border: 1px solid var(--color-border); min-width: 180px; border-radius: 0.5rem; box-shadow: 0 8px 24px rgba(0,0,0,0.4); z-index: 60; overflow: hidden }
+.user-menu-dropdown a { display: block; color: var(--color-text-primary); padding: 0.5rem 0.75rem; }
+.user-menu-dropdown a:hover { background: rgba(255,255,255,0.02); color: var(--color-accent-secondary); }
+/* avatar image inside user menu */
+.user-avatar { width: 28px; height: 28px; border-radius: 9999px; object-fit: cover; display: inline-block; }
+
+/* avatar preview on profile page */
+#avatar-preview { width: 80px; height: 80px; border-radius: 9999px; object-fit: cover; border: 1px solid var(--color-border); }
+
+/* Profile form tweaks */
+.profile-form input { background-color: #0f0f0f; border: 1px solid var(--color-border); color: var(--color-text-primary); padding: 0.5rem; border-radius: 0.25rem }
+.profile-form label { color: var(--color-text-secondary); }
+.profile-message { color: var(--color-text-secondary); margin-top: 0.5rem }
+
+/* Lore Page - List Card Styles */
+.lore-card {
+    display: block;
+    background-color: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+}
+
+.lore-card:hover {
+    border-color: var(--color-accent-secondary);
+    transform: translateY(-3px);
+    background-color: #303030;
+}
+
+.lore-card-title {
+    font-size: 1.75rem;
+    color: var(--color-accent-primary);
+    margin-bottom: 0.5rem;
+}
+
+.lore-card-summary {
+    color: var(--color-text-secondary);
+}
+
+/* Lore Detail Page Styles */
+.lore-detail-article {
+    max-width: 48rem; /* max-w-3xl */
+    margin: 0 auto;
+}
+
+.lore-detail-title {
+    font-size: 3rem; /* text-5xl */
+    color: var(--color-accent-secondary);
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--color-border);
+}
+
+.lore-detail-article .prose p {
+    font-size: 1.125rem;
+    line-height: 1.75;
+}
+
+/* --------------------------------------------------------------------------
+   8. Custom Scrollbar
+   - A dark, modern scrollbar that matches the site's aesthetic.
+   -------------------------------------------------------------------------- */
+
+/* For Webkit-based browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--color-bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #4f4f4f; /* Neutral 600-ish */
+    border-radius: 10px;
+    border: 3px solid var(--color-bg-secondary);
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--color-accent-primary);
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
