@@ -64,12 +64,14 @@
             font-family: var(--font-sans);
             color: #d1d5db; /* gray-300 */
             overflow: hidden; /* Sayfanın kaymasını engelle */
-            
+    
             /* Arka Plan Fotoğrafı ve Efektleri */
             background-image: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url('./assets/images/bg/raven-bg.jpg');
+            background-repeat: no-repeat; /* <-- BU SATIRI EKLE */
             background-size: cover;
             background-position: center center;
             background-attachment: fixed;
+            background-color: #111111; /* <-- BU SATIRI DA EKLE (GARANTİ İÇİN) */
             animation: slowZoom 40s infinite alternate ease-in-out;
         }
         .font-serif { font-family: var(--font-serif); }
