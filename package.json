@@ -1,5 +1,8 @@
 {
   "devDependencies": {
     "eslint": "^8.57.1"
+  },
+  "dependencies": {
+    "@sanity/client": "^7.12.1"
   }
 }
