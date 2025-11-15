@@ -8,6 +8,8 @@ import { displayLoreList } from './modules/loaders/lore-loader.js';
 import { loadLoreDetails } from './modules/loaders/lore-detail-loader.js';
 import { initAuth } from './modules/auth/auth.js';
 import { loadProfilePage } from './modules/auth/profile.js';
+import { displayLocations } from './modules/loaders/location-loader.js';
+import { loadLocationDetails } from './modules/loaders/location-detail-loader.js';
 
 document.addEventListener('DOMContentLoaded', () => {    
     console.log("🧩 [App Init] DOM Content Loaded. Initializing core modules.");
@@ -59,6 +61,14 @@ document.addEventListener('DOMContentLoaded', () => {    
     if (document.getElementById('profile-content')) {
         console.log("👤 [Loader] Found 'profile-content'. Calling loadProfilePage().");
         loadProfilePage();
+    }
+
+    if (document.getElementById('locations-gallery')) {
+        displayLocations();
+    }
+
+    if (document.getElementById('location-detail-container')) {
+        loadLocationDetails();
     }
 
     console.log("✅ [App Init] All page loaders checked.");

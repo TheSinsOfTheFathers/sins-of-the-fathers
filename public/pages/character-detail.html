@@ -51,7 +51,6 @@
 
     <!-- Internal Stylesheets -->
     <link rel="stylesheet" href="../assets/css/style.css">
-    <link rel="stylesheet" href="../assets/css/family-tree.css">
 
     <!-- External Scripts -->
     <script src="https://www.google.com/recaptcha/enterprise.js?render=6LeoRfYrAAAAANpaxG70cHRmK5ciRKf7sVt9Crnz"></script>
@@ -63,6 +62,11 @@
     <link rel="manifest" href="../site.webmanifest" />
 </head>
 <body class="bg-neutral-900 text-white font-lato antialiased">
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PVH59MXZ"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+     
     <!-- Header -->
     <header class="bg-neutral-950/80 backdrop-blur-sm sticky top-0 z-50 w-full border-b border-neutral-800">
         <!-- Top Navigation Menu -->
@@ -102,21 +106,18 @@
         <a href="./lore.html" class="menu-item">Lore</a>
     </div>
 
-    <!-- Content Wrapper -->
-    <div class="content-wrapper">
-        <!-- Main Content -->
-        <main class="flex-grow container mx-auto px-6 py-12">
-            <!-- Character content will be loaded here dynamically with JavaScript -->
-            <div id="character-detail-content" class="max-w-4xl mx-auto">
-                <!-- Placeholder text while character details are loading -->
-                <p>Loading character...</p>
-            </div>
-        </main>
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto px-6 py-12">
+        <!-- Character content will be loaded here dynamically with JavaScript -->
+        <div id="character-detail-content" class="max-w-4xl mx-auto">
+            <!-- Placeholder text while character details are loading -->
+            <p>Loading character...</p>
+        </div>
+    </main>
 
-        <!-- Footer -->
-        <footer class="w-full text-center p-6 bg-neutral-950 border-t border-neutral-800">
-            <p class="text-gray-500 text-sm" data-i18n-key="footer-copyright">&copy; 2025 Sins of the Fathers. All rights reserved.</p>
-        </footer>
-    </div>
+    <!-- Footer -->
+    <footer class="w-full text-center p-6 bg-neutral-950 border-t border-neutral-800">
+        <p class="text-gray-500 text-sm" data-i18n-key="footer-copyright">&copy; 2025 Sins of the Fathers. All rights reserved.</p>
+    </footer>
 </body>
 </html>

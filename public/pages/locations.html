@@ -48,20 +48,32 @@
 
     <!-- External Stylesheets  -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
     <!-- Internal Stylesheets -->
     <link rel="stylesheet" href="../assets/css/style.css">
 
     <!-- External Scripts -->
     <script src="https://www.google.com/recaptcha/enterprise.js?render=6LeoRfYrAAAAANpaxG70cHRmK5ciRKf7sVt9Crnz"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <!-- Internal Scripts -->
+    <script src="../assets/js/modules/map-loader.js" type="module" defer></script>
     <script src="../assets/js/main.js" type="module" defer></script>
     
     <!-- Manifest -->
     <link rel="manifest" href="../site.webmanifest" />
 </head>
+<<<<<<< Updated upstream
 <body class="bg-neutral-900 text-white font-lato antialiased">
+=======
+<body class="bg-neutral-900 text-white font-lato antialiased flex flex-col min-h-screen">
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PVH59MXZ"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+>>>>>>> Stashed changes
     <!-- Header -->
     <header class="bg-neutral-950/80 backdrop-blur-sm sticky top-0 z-50 w-full border-b border-neutral-800">
         <!-- Top Navigation Menu -->
@@ -101,18 +113,15 @@
         <a href="./lore.html" class="menu-item">Lore</a>
     </div>
 
-    <!-- Content Wrapper -->
-    <div class="flex flex-col min-h-screen relative z-0">
-        <!-- Main Content -->
-        <main class="flex-grow container mx-auto px-6 py-12">
-            <h1 class="text-5xl font-serif text-yellow-500 mb-12 text-center animate-fade-in-down" data-i18n-key="locations-page-title">Locations</h1>
-            <p class="text-center" data-i18n-key="content-placeholder">Content will be dynamically loaded here.</p>
-        </main>
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto px-6 py-12">
+        <h1 class="text-5xl font-serif text-yellow-500 mb-12 text-center animate-fade-in-down" data-i18n-key="locations-page-title">Locations</h1>
+        <div id="map" class="mb-12"></div>
+    </main>
 
-        <!-- Footer -->
-        <footer class="w-full text-center p-6 bg-neutral-950 border-t border-neutral-800">
-            <p class="text-gray-500 text-sm" data-i18n-key="footer-copyright">&copy; 2025 Sins of the Fathers. All rights reserved.</p>
-        </footer>
-    </div>
+    <!-- Footer -->
+    <footer class="w-full text-center p-6 bg-neutral-950 border-t border-neutral-800">
+        <p class="text-gray-500 text-sm" data-i18n-key="footer-copyright">&copy; 2025 Sins of the Fathers. All rights reserved.</p>
+    </footer>
 </body>
 </html>

@@ -96,48 +96,46 @@ function firebaseErrorToMessage(err) {
   }
 }
 
-async function loadRecaptcha(siteKey) {
-  if (!siteKey) return false;
-  if (window.grecaptcha) return true;
-  return new Promise((resolve) => {
-    const scriptId = 'recaptcha-api-script';
-    if (document.getElementById(scriptId)) {
-      const check = () => (window.grecaptcha ? resolve(true) : setTimeout(check, 200));
-      check();
-      return;
-    }
-    const s = document.createElement('script');
-    s.id = scriptId;
-    s.src = `https://www.google.com/recaptcha/api.js?render=${encodeURIComponent(siteKey)}`;
-    s.async = true;
-    s.defer = true;
-    s.onload = () => {
-      const check = () => (window.grecaptcha ? resolve(true) : setTimeout(check, 200));
-      check();
-    };
-    s.onerror = () => resolve(false);
-    document.head.appendChild(s);
-  });
-}
+// --- reCAPTCHA Yükleme ve Token Alma ---
+
+// reCAPTCHA API'sinin hazır olduğunu belirten bir Promise oluştur
+let recaptchaReadyPromise = new Promise(resolve => {
+  window.onRecaptchaLoad = () => {
+    console.log("reCAPTCHA script loaded and ready.");
+    resolve();
+  };
+});
 
 async function getRecaptchaToken(action = 'auth') {
   if (!RECAPTCHA_SITE_KEY) {
+    console.warn("reCAPTCHA site key is not configured.");
     return null;
   }
 
   try {
-    await loadRecaptcha(RECAPTCHA_SITE_KEY); 
-        
+    // API'nin yüklenmesini bekle
+    await recaptchaReadyPromise;
+    
+    // grecaptcha.ready'nin bir fonksiyon olduğundan emin ol
+    if (typeof window.grecaptcha.ready !== 'function') {
+      throw new Error("window.grecaptcha.ready is not a function");
+    }
+
     const token = await new Promise((resolve) => {
       window.grecaptcha.ready(async () => {
-        const t = await window.grecaptcha.execute(RECAPTCHA_SITE_KEY, { action });
-        resolve(t);
+        try {
+          const t = await window.grecaptcha.execute(RECAPTCHA_SITE_KEY, { action });
+          resolve(t);
+        } catch (executeError) {
+          console.error('grecaptcha.execute error:', executeError);
+          resolve(null); // Hata durumunda null dön
+        }
       });
     });
         
     return token;
   } catch (e) {
-    console.warn('reCAPTCHA execution error:', e);
+    console.error('reCAPTCHA execution error:', e);
     return null;
   }
 }
@@ -347,7 +345,7 @@ export function initAuth() {
           <img class="user-avatar hidden" alt="avatar" />
         </button>
         <div class="user-menu-dropdown hidden" role="menu">
-          <a href="pages/profile.html" class="block px-4 py-2 hover:bg-neutral-800">Profile</a>
+          <a href="./profile.html" class="block px-4 py-2 hover:bg-neutral-800">Profile</a>
           <a href="#" class="block px-4 py-2 hover:bg-neutral-800 user-menu-signout">Sign out</a>
         </div>
       `;

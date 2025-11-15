@@ -254,10 +254,25 @@ input:-webkit-autofill:active {
 .user-menu-dropdown a { display: block; color: var(--color-text-primary); padding: 0.5rem 0.75rem; }
 .user-menu-dropdown a:hover { background: rgba(255,255,255,0.02); color: var(--color-accent-secondary); }
 /* avatar image inside user menu */
-.user-avatar { width: 28px; height: 28px; border-radius: 9999px; object-fit: cover; display: inline-block; }
+.user-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: inline-block;
+    border: 2px solid var(--color-accent-primary);
+    box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);
+}
 
 /* avatar preview on profile page */
-#avatar-preview { width: 80px; height: 80px; border-radius: 9999px; object-fit: cover; border: 1px solid var(--color-border); }
+#avatar-preview {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--color-accent-primary);
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
+}
 
 /* Profile form tweaks */
 .profile-form input { background-color: #0f0f0f; border: 1px solid var(--color-border); color: var(--color-text-primary); padding: 0.5rem; border-radius: 0.25rem }
@@ -331,6 +346,13 @@ input:-webkit-autofill:active {
 
 ::-webkit-scrollbar-thumb:hover {
     background-color: var(--color-accent-primary);
+}
+
+#map {
+    height: 500px;
+    width: 100%;
+    border-radius: 0.5rem;
+    border: 1px solid var(--color-border);
 }
 
 @keyframes fadeInUp {

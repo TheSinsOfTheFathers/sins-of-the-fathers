@@ -1,6 +1,12 @@
+<<<<<<< Updated upstream
 import { db } from '../firebase-config.js';
 import { doc, getDoc, collection, query, getDocs, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { FamilyTree } from '../ui/family-tree.js';
+=======
+// modules/loaders/character-detail-loader.js
+
+import { client } from '../../../../../lib/sanityClient.js';
+>>>>>>> Stashed changes
 
 let familyTree;
 
@@ -42,7 +48,7 @@ const renderCharacterDetails = (character, familyData) => {
             <!-- Top Section: Image and Core Info -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 items-start mb-12">
                 <div class="md:col-span-1">
-                    <img src="${character.image_url}" alt="${character.name}" class="w-full h-auto rounded-lg shadow-lg object-cover">
+                    <img src="${character.image_url || 'https://placehold.co/600x400/1c1c1c/e0e0e0?text=No+Image'}" alt="${character.name}" class="w-full h-auto rounded-lg shadow-lg object-cover">
                 </div>
                 <div class="md:col-span-2">
                     <h1 class="text-5xl lg:text-6xl font-serif text-yellow-500 mb-2">${character.name}</h1>
@@ -52,6 +58,7 @@ const renderCharacterDetails = (character, familyData) => {
                     </div>
                 </div>
             </div>
+<<<<<<< Updated upstream
 
             <!-- Family Tree Section -->
             <div class="mb-12">
@@ -62,6 +69,8 @@ const renderCharacterDetails = (character, familyData) => {
             </div>
 
             <!-- Bottom Section: Story and Relationships -->
+=======
+>>>>>>> Stashed changes
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
                 <div class="lg:col-span-2">
                     <h2 class="section-title" data-i18n-key="character-story-title">Story</h2>
@@ -78,6 +87,7 @@ const renderCharacterDetails = (character, familyData) => {
             </div>
         </div>
     `;
+<<<<<<< Updated upstream
 
     // Initialize family tree after content is rendered
     if (familyData) {
@@ -146,6 +156,10 @@ const fetchFamilyData = async (character, allCharacters) => {
     return familyData;
 };
 
+=======
+};
+
+>>>>>>> Stashed changes
 export const loadCharacterDetails = async () => {
     const contentDiv = document.getElementById('character-detail-content');
     if (!contentDiv) return;
@@ -179,10 +193,24 @@ export const loadCharacterDetails = async () => {
             } else {
                 contentDiv.innerHTML = `<p class="text-red-500 text-center">Character with ID '${characterId}' not found in the database.</p>`;
             }
+<<<<<<< Updated upstream
         } 
         
         else {
             contentDiv.innerHTML = '<p class="text-red-500 text-center">Could not find the main "characters" document in the "family" collection.</p>';
+=======
+        }`;
+        const params = { slug: characterSlug };
+
+        const character = await client.fetch(query, params);
+
+        console.log('Fetched character data:', character); // Gelen veriyi kontrol etmek için
+
+        if (character) {
+            renderCharacterDetails(character);
+        } else {
+            contentDiv.innerHTML = `<p class="text-red-500 text-center">Character not found.</p>`;
+>>>>>>> Stashed changes
         }
     } 
     

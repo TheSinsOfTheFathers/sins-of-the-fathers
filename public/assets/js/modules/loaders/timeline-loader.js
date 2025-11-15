@@ -1,11 +1,16 @@
-import { db } from '../firebase-config.js';
-import { collection, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+// assets/js/modules/displayTimeline.js
 
+import { client } from '../../../../../lib/sanityClient.js'; // Sanity istemcisini import ediyoruz
+
+/**
+ * Bu render fonksiyonu, Firebase'den gelen veriyle aynı yapıda veri beklediği için
+ * HİÇBİR DEĞİŞİKLİK GEREKTİRMEZ. Sadece veri kaynağı değişti.
+ */
 const renderTimeline = (sections) => {
     const timelineContainer = document.getElementById('timeline-container');
     if (!timelineContainer) return;
 
-    timelineContainer.innerHTML = ''; // Clear placeholder
+    timelineContainer.innerHTML = ''; // Placeholder'ı temizle
     const lang = localStorage.getItem('language') || 'tr';
 
     sections.forEach((section, index) => {
@@ -15,18 +20,25 @@ const renderTimeline = (sections) => {
         sectionDiv.setAttribute('data-aos', `fade-${side === 'left' ? 'right' : 'left'}`);
 
         let eventsHtml = '';
+        // Sanity'den gelen events dizisini işle
         if (section.events && Array.isArray(section.events)) {
             section.events.forEach(event => {
+                // Dil seçimine göre doğru başlığı ve metni al
+                const title = event[`title_${lang}`] || event.title_en;
+                const text = event[`text_${lang}`] || event.text_en;
                 eventsHtml += `
-                    <h3>${event[`title_${lang}`] || event.title_en}</h3>
-                    <p>${event[`text_${lang}`] || event.text_en}</p>
+                    <h3>${title}</h3>
+                    <p>${text}</p>
                 `;
             });
         }
+        
+        // Dil seçimine göre doğru dönem başlığını al
+        const sectionTitle = section[`title_${lang}`] || section.title_en;
 
         sectionDiv.innerHTML = `
             <div class="timeline-content">
-                <h2>${section[`title_${lang}`] || section.title_en}</h2>
+                <h2>${sectionTitle}</h2>
                 ${eventsHtml}
             </div>
         `;
@@ -34,17 +46,22 @@ const renderTimeline = (sections) => {
     });
 };
 
+/**
+ * Zaman çizelgesi verilerini Firebase yerine Sanity.io'dan çeker ve gösterir.
+ */
 export async function displayTimeline() {
+    const timelineContainer = document.getElementById('timeline-container');
+    if (!timelineContainer) return;
+
+    // Sanity'den veri çekmek için GROQ sorgusu
+    // Tüm 'timelineEra' belgelerini getir ve 'order' alanına göre artan şekilde sırala
+    const query = '*[_type == "timelineEra"] | order(order asc)';
+
     try {
-        const q = query(collection(db, "timeline"), orderBy("order"));
-        const querySnapshot = await getDocs(q);
-        const sections = querySnapshot.docs.map(doc => doc.data());
+        const sections = await client.fetch(query);
         renderTimeline(sections);
     } catch (error) {
-        console.error("Error fetching timeline data: ", error);
-        const timelineContainer = document.getElementById('timeline-container');
-        if (timelineContainer) {
-            timelineContainer.innerHTML = '<p class="text-red-500 text-center">Failed to load timeline. Check Firestore collection name is "timeline".</p>';
-        }
+        console.error("Error fetching timeline data from Sanity:", error);
+        timelineContainer.innerHTML = '<p class="text-red-500 text-center">Failed to load timeline from Sanity. Please check the schema name is "timelineEra".</p>';
     }
 }

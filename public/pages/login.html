@@ -54,7 +54,7 @@
     <link rel="stylesheet" href="../assets/css/style.css">
 
     <!-- External Scripts -->
-    <script src="https://www.google.com/recaptcha/enterprise.js?render=6LeoRfYrAAAAANpaxG70cHRmK5ciRKf7sVt9Crnz"></script>
+    <script src="https://www.google.com/recaptcha/api.js?render=6LeoRfYrAAAAANpaxG70cHRmK5ciRKf7sVt9Crnz&onload=onRecaptchaLoad" async defer></script>
 
     <!-- Internal Scripts -->
     <script src="../assets/js/main.js" type="module" defer></script>
@@ -62,7 +62,16 @@
     <!-- Manifest -->
     <link rel="manifest" href="../site.webmanifest" />
 </head>
+<<<<<<< Updated upstream
 <body class="bg-neutral-900 text-white font-lato antialiased">
+=======
+<body class="bg-neutral-900 text-white font-lato antialiased flex flex-col min-h-screen">
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PVH59MXZ"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+>>>>>>> Stashed changes
     <!-- Header -->
     <header class="bg-neutral-950/80 backdrop-blur-sm sticky top-0 z-50 w-full border-b border-neutral-800">
         <!-- Top Navigation Menu -->
@@ -103,102 +112,99 @@
         <a href="./lore.html" class="menu-item">Lore</a>
     </div>
 
-    <!-- Content Wrapper -->
-    <div class="content-wrapper auth-container">
-        <!-- Main Content -->
-        <main class="w-full max-w-sm mx-auto p-6">
-            <!---->
-            <h1 class="text-4xl font-serif text-yellow-500 mb-6 text-center" id="form-title">Sign In</h1>
-            <!-- Login Form -->
-            <div class="bg-neutral-800 border border-neutral-700 p-7 rounded-lg shadow-xl">
-                <form id="auth-login-form" class="space-y-4 form-switch-transition">
-                    <!-- Login Form Title -->
-                    <h2 class="text-xl font-serif text-yellow-400 mb-4">Account Login</h2>
-                    
-                    <!-- Email Input -->
-                    <div>
-                        <label for="login-email" class="block text-sm text-gray-300 mb-1">Email</label>
-                        <input id="login-email" type="email" name="email" required class="w-full p-2 rounded bg-neutral-900 border border-neutral-700 text-white focus:ring-yellow-500 focus:border-yellow-500" autocomplete="email"/>
-                    </div>
+    <!-- Main Content -->
+    <main class="w-full max-w-sm mx-auto p-6 flex-grow">
+        <!---->
+        <h1 class="text-4xl font-serif text-yellow-500 mb-6 text-center" id="form-title">Sign In</h1>
+        <!-- Login Form -->
+        <div class="bg-neutral-800 border border-neutral-700 p-7 rounded-lg shadow-xl">
+            <form id="auth-login-form" class="space-y-4 form-switch-transition">
+                <!-- Login Form Title -->
+                <h2 class="text-xl font-serif text-yellow-400 mb-4">Account Login</h2>
+                
+                <!-- Email Input -->
+                <div>
+                    <label for="login-email" class="block text-sm text-gray-300 mb-1">Email</label>
+                    <input id="login-email" type="email" name="email" required class="w-full p-2 rounded bg-neutral-900 border border-neutral-700 text-white focus:ring-yellow-500 focus:border-yellow-500" autocomplete="email"/>
+                </div>
 
-                    <!-- Password Input -->
-                    <div>
-                        <label for="login-password" class="block text-sm text-gray-300 mb-1">Password</label>
-                        <input id="login-password" type="password" name="password" required class="w-full p-2 rounded bg-neutral-900 border border-neutral-700 text-white focus:ring-yellow-500 focus:border-yellow-500" autocomplete="current-password" />
+                <!-- Password Input -->
+                <div>
+                    <label for="login-password" class="block text-sm text-gray-300 mb-1">Password</label>
+                    <input id="login-password" type="password" name="password" required class="w-full p-2 rounded bg-neutral-900 border border-neutral-700 text-white focus:ring-yellow-500 focus:border-yellow-500" autocomplete="current-password" />
+                </div>
+                
+                <!-- Form Buttons -->
+                <div class="space-y-3 pt-2">
+                    <!-- Submit Button -->
+                    <button type="submit" class="w-full py-2 bg-yellow-600 hover:bg-yellow-500 text-black font-bold rounded transition-colors duration-200">Login</button>
+                    
+                    <!-- Splitter -->
+                    <div class="relative flex items-center justify-center">
+                        <div class="w-full border-t border-neutral-700"></div>
                     </div>
                     
-                    <!-- Form Buttons -->
-                    <div class="space-y-3 pt-2">
-                        <!-- Submit Button -->
-                        <button type="submit" class="w-full py-2 bg-yellow-600 hover:bg-yellow-500 text-black font-bold rounded transition-colors duration-200">Login</button>
-                        
-                        <!-- Splitter -->
-                        <div class="relative flex items-center justify-center">
-                            <div class="w-full border-t border-neutral-700"></div>
-                        </div>
-                        
-                        <!-- Google Sign-In Button -->
-                        <button id="google-signin-btn" type="button" class="w-full py-2 bg-white hover:bg-gray-200 text-black font-bold rounded flex items-center justify-center space-x-2 transition-colors duration-200">
-                            <i class="fab fa-google text-lg"></i>
-                            <span>Sign in with Google</span>
-                        </button>
-                    </div>
-                    
-                    <!-- Register Link -->
-                    <div class="pt-4 text-center text-sm text-gray-400">
-                        Do you not have an account? 
-                        <a href="#" id="switch-to-register" class="text-yellow-500 hover:text-yellow-400 font-medium">Create one now</a>
-                    </div>
-                </form>
+                    <!-- Google Sign-In Button -->
+                    <button id="google-signin-btn" type="button" class="w-full py-2 bg-white hover:bg-gray-200 text-black font-bold rounded flex items-center justify-center space-x-2 transition-colors duration-200">
+                        <i class="fab fa-google text-lg"></i>
+                        <span>Sign in with Google</span>
+                    </button>
+                </div>
+                
+                <!-- Register Link -->
+                <div class="pt-4 text-center text-sm text-gray-400">
+                    Do you not have an account? 
+                    <a href="#" id="switch-to-register" class="text-yellow-500 hover:text-yellow-400 font-medium">Create one now</a>
+                </div>
+            </form>
 
-                <!-- Register Form -->
-                <form id="auth-register-form" class="space-y-4 form-switch-transition hidden">
-                    <!-- Register Form Title -->
-                    <h2 class="text-xl font-serif text-yellow-400 mb-4">Create Account</h2>
-                    
-                    <!-- Email Input -->
-                    <div>
-                        <label for="register-email" class="block text-sm text-gray-300 mb-1">Email</label>
-                        <input id="register-email" type="email" name="email" required class="w-full p-2 rounded bg-neutral-900 border border-neutral-700 text-white focus:ring-yellow-500 focus:border-yellow-500" autocomplete="email" />
-                    </div>
+            <!-- Register Form -->
+            <form id="auth-register-form" class="space-y-4 form-switch-transition hidden">
+                <!-- Register Form Title -->
+                <h2 class="text-xl font-serif text-yellow-400 mb-4">Create Account</h2>
+                
+                <!-- Email Input -->
+                <div>
+                    <label for="register-email" class="block text-sm text-gray-300 mb-1">Email</label>
+                    <input id="register-email" type="email" name="email" required class="w-full p-2 rounded bg-neutral-900 border border-neutral-700 text-white focus:ring-yellow-500 focus:border-yellow-500" autocomplete="email" />
+                </div>
 
-                    <!-- Password Input -->
-                    <div>
-                        <label for="register-password" class="block text-sm text-gray-300 mb-1">Password</label>
-                        <input id="register-password" type="password" name="password" required class="w-full p-2 rounded bg-neutral-900 border border-neutral-700 text-white focus:ring-yellow-500 focus:border-yellow-500" autocomplete="new-password" />
+                <!-- Password Input -->
+                <div>
+                    <label for="register-password" class="block text-sm text-gray-300 mb-1">Password</label>
+                    <input id="register-password" type="password" name="password" required class="w-full p-2 rounded bg-neutral-900 border border-neutral-700 text-white focus:ring-yellow-500 focus:border-yellow-500" autocomplete="new-password" />
+                </div>
+                
+                <!-- Form Buttons -->
+                <div class="space-y-3 pt-2">
+                    <!-- Submit Button -->
+                    <button type="submit" class="w-full py-2 bg-yellow-600 hover:bg-yellow-500 text-black font-bold rounded transition-colors duration-200">Create account</button>
+                    
+                    <!-- Splitter -->
+                    <div class="relative flex items-center justify-center">
+                        <div class="w-full border-t border-neutral-700"></div>
                     </div>
                     
-                    <!-- Form Buttons -->
-                    <div class="space-y-3 pt-2">
-                        <!-- Submit Button -->
-                        <button type="submit" class="w-full py-2 bg-yellow-600 hover:bg-yellow-500 text-black font-bold rounded transition-colors duration-200">Create account</button>
-                        
-                        <!-- Splitter -->
-                        <div class="relative flex items-center justify-center">
-                            <div class="w-full border-t border-neutral-700"></div>
-                        </div>
-                        
-                        <!-- Google Sign-In Button -->
-                        <button id="google-signin-btn-register" type="button" class="w-full py-2 bg-white hover:bg-gray-200 text-black font-bold rounded flex items-center justify-center space-x-2 transition-colors duration-200">
-                            <i class="fab fa-google text-lg"></i>
-                            <span>Continue with Google</span>
-                        </button>
-                    </div>
-                    
-                    <!-- Login Link -->
-                    <div class="pt-4 text-center text-sm text-gray-400">
-                        Already have an account? 
-                        <a href="#" id="switch-to-login" class="text-yellow-500 hover:text-yellow-400 font-medium">Login</a>
-                    </div>
-                </form>
-            </div>
+                    <!-- Google Sign-In Button -->
+                    <button id="google-signin-btn-register" type="button" class="w-full py-2 bg-white hover:bg-gray-200 text-black font-bold rounded flex items-center justify-center space-x-2 transition-colors duration-200">
+                        <i class="fab fa-google text-lg"></i>
+                        <span>Continue with Google</span>
+                    </button>
+                </div>
+                
+                <!-- Login Link -->
+                <div class="pt-4 text-center text-sm text-gray-400">
+                    Already have an account? 
+                    <a href="#" id="switch-to-login" class="text-yellow-500 hover:text-yellow-400 font-medium">Login</a>
+                </div>
+            </form>
+        </div>
 
-            <!-- Auth Message -->
-            <div class="max-w-2xl mx-auto mt-6 text-center">
-                <p id="auth-message" class="text-sm text-gray-300"></p>
-            </div>
-        </main>
-    </div>
+        <!-- Auth Message -->
+        <div class="max-w-2xl mx-auto mt-6 text-center">
+            <p id="auth-message" class="text-sm text-gray-300"></p>
+        </div>
+    </main>
 
     <!-- Footer -->
     <footer class="w-full text-center p-6 bg-neutral-950 border-t border-neutral-800 flex-shrink-0">
