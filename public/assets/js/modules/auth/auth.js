@@ -330,14 +330,14 @@ export function initAuth() {
     if (!menu) {
       menu = document.createElement('div');
       menu.id = 'user-menu';
-      menu.className = 'user-menu';
+      menu.className = 'user-menu'; 
       menu.style.position = 'relative';
       menu.innerHTML = `
         <button class="user-menu-button" aria-haspopup="true" aria-expanded="false">
           <img class="user-avatar hidden" alt="avatar" />
         </button>
         <div class="user-menu-dropdown hidden" role="menu">
-          <a href="./profile.html" class="block px-4 py-2 hover:bg-neutral-800">Profile</a>
+          <a href="./pages/profile.html" class="block px-4 py-2 hover:bg-neutral-800">Profile</a>
           <a href="#" class="block px-4 py-2 hover:bg-neutral-800 user-menu-signout">Sign out</a>
         </div>
       `;
