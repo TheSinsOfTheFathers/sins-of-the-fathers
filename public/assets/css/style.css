@@ -255,10 +255,12 @@ input:-webkit-autofill:active {
 .user-menu-dropdown a:hover { background: rgba(255,255,255,0.02); color: var(--color-accent-secondary); }
 /* avatar image inside user menu */
 .user-avatar {
-    width: 28px;
-    height: 28px;
+    width: 48px;
+    height: auto;
     border-radius: 50%;
     object-fit: cover;
+    top: -0.5vh;
+    position: relative;
     display: inline-block;
     border: 2px solid var(--color-accent-primary);
     box-shadow: 0 0 8px rgba(245, 158, 11, 0.4);

@@ -1,12 +1,4 @@
-<<<<<<< Updated upstream
-import { db } from '../firebase-config.js';
-import { doc, getDoc, collection, query, getDocs, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { FamilyTree } from '../ui/family-tree.js';
-=======
-// modules/loaders/character-detail-loader.js
-
 import { client } from '../../../../../lib/sanityClient.js';
->>>>>>> Stashed changes
 
 let familyTree;
 
@@ -58,19 +50,6 @@ const renderCharacterDetails = (character, familyData) => {
                     </div>
                 </div>
             </div>
-<<<<<<< Updated upstream
-
-            <!-- Family Tree Section -->
-            <div class="mb-12">
-                <h2 class="section-title" data-i18n-key="character-family-tree-title">Family Tree</h2>
-                <div id="family-tree" class="w-full h-[600px] bg-neutral-950/50 rounded-lg border border-neutral-800 overflow-hidden">
-                    <!-- Family tree will be rendered here -->
-                </div>
-            </div>
-
-            <!-- Bottom Section: Story and Relationships -->
-=======
->>>>>>> Stashed changes
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
                 <div class="lg:col-span-2">
                     <h2 class="section-title" data-i18n-key="character-story-title">Story</h2>
@@ -87,133 +66,39 @@ const renderCharacterDetails = (character, familyData) => {
             </div>
         </div>
     `;
-<<<<<<< Updated upstream
-
-    // Initialize family tree after content is rendered
-    if (familyData) {
-        const container = document.getElementById('family-tree');
-        if (container && !familyTree) {
-            familyTree = new FamilyTree(container);
-        }
-        if (familyTree) {
-            familyTree.update(familyData);
-        }
-    }
 };
 
-const fetchFamilyData = async (character, allCharacters) => {
-    console.log('Building family data for:', character.name);
-    
-    const familyData = {
-        nodes: [],
-        links: []
-    };
-    const processedIds = new Set();
-
-    // Özyineli (recursive) fonksiyon: Bir karakteri ve ailesini işler
-    const processCharacter = (charId) => {
-        if (!charId || processedIds.has(charId)) {
-            return;
-        }
-        processedIds.add(charId);
-
-        const charData = allCharacters[charId];
-        if (!charData) {
-            console.warn(`Data for character ID '${charId}' not found.`);
-            return;
-        }
-
-        // Karakteri düğüm listesine ekle
-        familyData.nodes.push({
-            id: charId,
-            name: charData.name || 'Unknown',
-            image: charData.image_url, // Placeholder mantığı tree.js içinde
-            description: charData.description
-        });
-
-        // Aile ilişkilerini işle ve bağlantıları oluştur
-        if (charData.family) {
-            for (const [relatedId, relation] of Object.entries(charData.family)) {
-                const relationType = typeof relation === 'object' ? relation.type : relation;
-                
-                // Bağlantıyı ekle
-                familyData.links.push({
-                    source: charId,
-                    target: relatedId,
-                    type: relationType
-                });
-                
-                // İlişkili karakteri de işle
-                processCharacter(relatedId);
-            }
-        }
-    };
-
-    // Ana karakterden başlayarak tüm ağacı işle
-    processCharacter(character.id);
-
-    console.log('Final family data for tree:', familyData);
-    return familyData;
-};
-
-=======
-};
-
->>>>>>> Stashed changes
 export const loadCharacterDetails = async () => {
     const contentDiv = document.getElementById('character-detail-content');
     if (!contentDiv) return;
 
     const params = new URLSearchParams(window.location.search);
-    // URL'den gelen ID'yi alırken alt çizgileri tireye çeviriyoruz, veritabanı ile tutarlı olması için
-    const characterId = params.get('id').replace(/_/g, '-');
+    // Sanity'deki slug'lar genellikle tire (-) ile ayrılır. 
+    // URL'den 'id' yerine 'slug' almamız daha doğru olur.
+    // Örnek: character-detail.html?slug=ruaraidh-ballantine
+    const characterSlug = params.get('slug'); 
 
-    if (!characterId) {
-        contentDiv.innerHTML = '<p class="text-red-500 text-center">No character ID provided.</p>';
+    if (!characterSlug) {
+        contentDiv.innerHTML = '<p class="text-red-500 text-center">No character slug provided.</p>';
         return;
     }
 
     try {
-        // Veri yapınıza göre, tüm karakterler 'family' koleksiyonundaki 'characters' belgesinde
-        const docRef = doc(db, "family", "characters");
-        const docSnap = await getDoc(docRef);
+        // Sanity.io'dan doğru karakteri slug'ına göre çeken GROQ sorgusu
+        const query = `*[_type == "character" && slug.current == $slug][0]`;
+        const sanityParams = { slug: characterSlug };
 
-        if (docSnap.exists()) {
-            const allCharacters = docSnap.data();
-            const characterData = allCharacters[characterId];
-
-            if (characterData) {
-                const character = { ...characterData, id: characterId };
-                
-                console.log("Character data from Firestore:", character);
-                
-                // Aile ağacı verilerini oluşturmak için tüm karakter verilerini gönderiyoruz
-                const familyData = await fetchFamilyData(character, allCharacters);
-                renderCharacterDetails(character, familyData);
-            } else {
-                contentDiv.innerHTML = `<p class="text-red-500 text-center">Character with ID '${characterId}' not found in the database.</p>`;
-            }
-<<<<<<< Updated upstream
-        } 
-        
-        else {
-            contentDiv.innerHTML = '<p class="text-red-500 text-center">Could not find the main "characters" document in the "family" collection.</p>';
-=======
-        }`;
-        const params = { slug: characterSlug };
-
-        const character = await client.fetch(query, params);
+        const character = await client.fetch(query, sanityParams);
 
         console.log('Fetched character data:', character); // Gelen veriyi kontrol etmek için
 
         if (character) {
-            renderCharacterDetails(character);
+            // Şimdilik familyData'yı devre dışı bırakıyoruz, render fonksiyonu sadece karakteri alsın.
+            renderCharacterDetails(character); 
         } else {
-            contentDiv.innerHTML = `<p class="text-red-500 text-center">Character not found.</p>`;
->>>>>>> Stashed changes
+            contentDiv.innerHTML = `<p class="text-red-500 text-center">Character with slug '${characterSlug}' not found.</p>`;
         }
     } 
-    
     catch (error) {
         console.error("Error fetching character details: ", error);
         contentDiv.innerHTML = '<p class="text-red-500 text-center">Failed to load character details.</p>';

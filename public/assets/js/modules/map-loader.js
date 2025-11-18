@@ -12,14 +12,14 @@ const addLocationMarkers = (map, locations) => {
             <div class="map-popup p-2">
                 <h3 class="font-bold text-base mb-1">${location.name}</h3>
                 <p class="text-sm mb-2">${location.summary || ''}</p>
-                <a href="./location-detail.html?slug=${location.slug}" class="text-yellow-500 hover:underline text-xs">Detayları gör...</a>
+                <a href="./location-detail.html?slug=${location.slug}" class="text-yellow-500 hover:underline text-xs">See the details...</a>
             </div>
         `);
     });
 };
 
 const addFactionTerritories = (map, factions) => {
-    console.log("Gelen Fraksiyon Verisi:", factions); // DEBUG: Gelen fraksiyon verisini kontrol et
+    console.log("Gelen Fraksiyon Verisi:", factions);
     factions.forEach(faction => {
         if (!faction.territoryPolygon) return;
 
@@ -36,8 +36,8 @@ const addFactionTerritories = (map, factions) => {
 
             geoJsonLayer.bindPopup(`
                 <div class="map-popup p-2">
-                    <h3 class="font-bold text-base">${faction.name} Bölgesi</h3>
-                    <a href="./faction-detail.html?slug=${faction.slug}" class="text-yellow-500 hover:underline text-xs">Fraksiyon detayları...</a>
+                    <h3 class="font-bold text-base">${faction.name} Faction</h3>
+                    <a href="./faction-detail.html?slug=${faction.slug}" class="text-yellow-500 hover:underline text-xs">See the details...</a>
                 </div>
             `);
         } catch (error) {
