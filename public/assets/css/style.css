@@ -33,6 +33,12 @@ html {
     scrollbar-color: #f59e0b var(--color-bg-secondary);
 }
 
+.homepage-body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
 body {
     font-family: var(--font-sans);
     background-color: var(--color-bg-primary);

@@ -1,5 +1,8 @@
 {
   "devDependencies": {
     "eslint": "^8.57.1"
+  },
+  "dependencies": {
+    "mermaid": "^11.12.1"
   }
 }
