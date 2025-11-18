@@ -48,6 +48,7 @@
 
     <!-- External Stylesheets  -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <!-- Internal Stylesheets -->
     <link rel="stylesheet" href="./assets/css/style.css">
@@ -107,7 +108,70 @@
     </div>
 
     <!-- Main Content -->
-    <main class="flex-grow container mx-auto px-6 py-12">
+    <main class="flex-grow flex items-center justify-center container mx-auto px-4 sm:px-6 py-12">
+        
+        <div class="w-full max-w-6xl animate-fade-in-up">
+            <!-- İki Sütunlu Ana Konteyner -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-0 items-stretch border border-neutral-800 rounded-lg shadow-2xl bg-neutral-950/50 backdrop-blur-sm overflow-hidden">
+
+                <!-- SOL PANEL: Doğrudan Satış & Tüm Formatlar -->
+                <div class="p-8 md:p-12 h-full flex flex-col justify-center border-b lg:border-b-0 lg:border-r border-neutral-800">
+                    <div class="text-center">
+                        <h2 class="text-3xl font-serif text-yellow-500 mb-4 flex items-center justify-center">
+                            <i class="fas fa-star mr-3"></i>Direct & All-Format Edition
+                        </h2>
+                        <p class="text-neutral-400 text-center mb-8 max-w-md mx-auto">
+                            Support the author directly and instantly receive the book in all digital formats (PDF, ePub, Mobi).
+                        </p>
+                    </div>
+                    <div class="flex flex-col space-y-4 mt-auto">
+                        <!-- Türkiye Satışı -->
+                        <a href="[SHOPIER_LINKIN]" target="_blank" class="store-button shopier-button">
+                            <img src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f1f9-1f1f7.svg" alt="Turkish Flag" class="flag-icon">
+                            <span>Shop on Shopier</span>
+                        </a>
+
+                        <!-- Uluslararası Satış -->
+                        <a href="[GUMROAD_LINKIN]" target="_blank" class="store-button gumroad-button">
+                            <div class="flex items-center">
+                                <!-- ABD Bayrağı -->
+                                <img src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f1fa-1f1f8.svg" alt="USA Flag" class="flag-icon">
+                            
+                                <!-- Birleşik Krallık Bayrağı -->
+                                <img src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f1ec-1f1e7.svg" alt="United Kingdom Flag" class="flag-icon ml-2"> 
+                            
+                                <!-- Avrupa Birliği Bayrağı -->
+                                <img src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/1f1ea-1f1fa.svg" alt="European Union Flag" class="flag-icon ml-2">
+                            </div>
+                            <span class="ml-3">Shop on Gumroad</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- SAĞ PANEL: Platforma Özel E-Kitap Versiyonları -->
+                <div class="p-8 md:p-12 h-full flex flex-col justify-center">
+                    <div class="text-center">
+                        <h2 class="text-3xl font-serif text-yellow-500 mb-4 flex items-center justify-center">
+                            <i class="fas fa-book-open mr-3"></i>Platform-Specific eBooks
+                        </h2>
+                        <p class="text-neutral-400 text-center mb-8 max-w-md mx-auto">
+                            Purchase from your favorite ecosystem. Ideal for Kindle users and dedicated platform readers.
+                        </p>
+                    </div>
+                    <div class="flex flex-col space-y-4 mt-auto">
+                        <a href="[AMAZON_UTM_LINKIN]" target="_blank" class="store-button amazon-button">
+                            <i class="fab fa-amazon mr-3"></i> Buy on Amazon Kindle
+                        </a>
+                        <a href="[APPLE_UTM_LINKIN]" target="_blank" class="store-button apple-button">
+                            <i class="fab fa-apple mr-3"></i> Buy on Apple Books
+                        </a>
+                        <a href="[GOOGLE_UTM_LINKIN]" target="_blank" class="store-button google-button">
+                            <i class="fab fa-google-play mr-3"></i> Buy on Google Play
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
 
     <!-- Footer -->

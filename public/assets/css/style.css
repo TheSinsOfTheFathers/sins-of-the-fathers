@@ -326,6 +326,132 @@ input:-webkit-autofill:active {
     border: 1px solid var(--color-border);
 }
 
+main.flex-grow {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+}
+
+.split-container {
+    display: flex;
+    flex-grow: 1;
+    width: 100%;
+    position: relative;
+}
+
+.split-divider {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--color-bg-primary);
+    padding: 0 1rem;
+    color: var(--color-text-secondary);
+    font-weight: 700;
+    font-family: var(--font-serif);
+}
+
+.split-panel {
+    width: 50%;
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.left-panel {
+    border-right: 1px solid var(--color-border);
+}
+
+.button-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem; 
+    width: 100%;
+    max-width: 320px; 
+}
+
+.store-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.875rem 1.75rem; 
+    border-radius: 0.5rem;     
+    font-size: 1rem;           
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s ease-out;
+    border: 1px solid transparent;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    line-height: 1.5;
+    text-transform: none; 
+}
+
+.store-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+.store-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.store-button i,
+.store-button .flag-icon {
+    height: 1.5rem; 
+    width: auto;
+    margin-right: 0.75rem;
+    flex-shrink: 0;
+    border-radius: 4px;
+}
+
+.shopier-button {
+    background-color: #6A00FF; 
+    border-color: transparent;
+    color: white;
+}
+.shopier-button:hover {
+    background-color: #5d00e0;
+}
+
+.gumroad-button {
+    background-color: #FF90E8;
+    border-color: transparent;
+    color: #000000; 
+}
+.gumroad-button:hover {
+    background-color: #ff78e0
+}
+
+.amazon-button {
+    background-color: #FF9900;
+    border-color: transparent;
+    color: #000000;
+}
+.amazon-button:hover {
+    background-color: #fca92b;
+}
+
+.apple-button {
+    background-color: #000000; 
+    border-color: #333; 
+    color: white;
+}
+.apple-button:hover {
+    background-color: #1a1a1a;
+    border-color: #555;
+}
+
+.google-button {
+    background-color: #4285F4;
+    border-color: transparent;
+    color: white;
+}
+.google-button:hover {
+    background-color: #3572E1;
+}
+
 @keyframes fadeInUp {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }
