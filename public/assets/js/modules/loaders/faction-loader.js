@@ -1,9 +1,8 @@
 import { client } from '../../../../../lib/sanityClient.js';
 
 const createFactionCard = (faction) => {
-    // URL'yi slug ile oluşturmak SEO için daha iyidir.
     const cardLink = document.createElement('a');
-    cardLink.href = `faction-detail.html?slug=${faction.slug}`; // ID yerine slug kullanıyoruz
+    cardLink.href = `faction-detail.html?slug=${faction.slug}`; 
     cardLink.className = 'faction-card group';
 
     cardLink.innerHTML = `
@@ -30,11 +29,10 @@ export async function displayFactions() {
     if (!factionsGrid) return;
 
     try {
-        // Firestore sorgusu yerine GROQ sorgusu
         const query = '*[_type == "faction"]{ name, "slug": slug.current, leader, philosophy, summary }';
         const factions = await client.fetch(query);
 
-        factionsGrid.innerHTML = ''; // Temizle
+        factionsGrid.innerHTML = '';
         factions.forEach((faction) => {
             const card = createFactionCard(faction);
             factionsGrid.appendChild(card);

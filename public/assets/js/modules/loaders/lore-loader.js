@@ -1,10 +1,7 @@
-// 1. Sanity istemcisini import et
 import { client } from '../../../../../lib/sanityClient.js';
 
-// Kart oluşturma fonksiyonu Sanity verisine göre güncellendi
 const createLoreListItem = (lore) => {
     const cardLink = document.createElement('a');
-    // 2. Link artık 'slug' kullanıyor
     cardLink.href = `lore-detail.html?slug=${lore.slug}`;
     cardLink.className = 'lore-card group';
 
@@ -20,7 +17,6 @@ export async function displayLoreList() {
     if (!loreContainer) return;
 
     try {
-        // 3. Sanity'den veri çekmek için GROQ sorgusu
         const query = `*[_type == "lore"] | order(order asc){
             title_en,
             summary_en,
@@ -30,7 +26,7 @@ export async function displayLoreList() {
         const loreArticles = await client.fetch(query);
         
         if (loreArticles && loreArticles.length > 0) {
-            loreContainer.innerHTML = ''; // Yükleniyor yazısını temizle
+            loreContainer.innerHTML = '';
             loreArticles.forEach((lore) => {
                 const listItem = createLoreListItem(lore);
                 loreContainer.appendChild(listItem);

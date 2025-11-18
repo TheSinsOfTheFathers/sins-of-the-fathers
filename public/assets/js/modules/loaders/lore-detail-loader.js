@@ -1,4 +1,3 @@
-// 1. Firebase yerine Sanity istemcisini ve Portable Text çeviricisini import et
 import { client } from '../../../../../lib/sanityClient.js';
 import { toHTML } from 'https://esm.sh/@portabletext/to-html@2.0.13';
 
@@ -11,7 +10,6 @@ const renderLoreDetails = (lore) => {
         metaDesc.setAttribute('content', lore.summary_en || `An article about ${lore.title_en}.`);
     }
 
-    // 2. Portable Text içeriğini HTML'e çevir
     const contentHtml = lore.content_en 
         ? toHTML(lore.content_en) 
         : '<p>Content for this article is not available yet.</p>';
@@ -31,7 +29,6 @@ export const loadLoreDetails = async () => {
     if (!contentDiv) return;
 
     const params = new URLSearchParams(window.location.search);
-    // 3. ID yerine 'slug' kullan
     const loreSlug = params.get('slug');
 
     if (!loreSlug) {
@@ -40,7 +37,6 @@ export const loadLoreDetails = async () => {
     }
 
     try {
-        // 4. 'slug'a göre veri çekmek için GROQ sorgusu
         const query = `*[_type == "lore" && slug.current == $slug][0]{
             title_en,
             summary_en,

@@ -96,9 +96,7 @@ function firebaseErrorToMessage(err) {
   }
 }
 
-// --- reCAPTCHA Yükleme ve Token Alma ---
 
-// reCAPTCHA API'sinin hazır olduğunu belirten bir Promise oluştur
 let recaptchaReadyPromise = new Promise(resolve => {
   window.onRecaptchaLoad = () => {
     console.log("reCAPTCHA script loaded and ready.");
@@ -113,10 +111,8 @@ async function getRecaptchaToken(action = 'auth') {
   }
 
   try {
-    // API'nin yüklenmesini bekle
     await recaptchaReadyPromise;
     
-    // grecaptcha.ready'nin bir fonksiyon olduğundan emin ol
     if (typeof window.grecaptcha.ready !== 'function') {
       throw new Error("window.grecaptcha.ready is not a function");
     }
@@ -128,7 +124,7 @@ async function getRecaptchaToken(action = 'auth') {
           resolve(t);
         } catch (executeError) {
           console.error('grecaptcha.execute error:', executeError);
-          resolve(null); // Hata durumunda null dön
+          resolve(null);
         }
       });
     });
@@ -141,7 +137,6 @@ async function getRecaptchaToken(action = 'auth') {
 }
 
 export function initAuth() {
-  // --- Element Lookups ---
   const registerForm = document.getElementById('auth-register-form');
   const loginForm = document.getElementById('auth-login-form');
   const googleBtn = document.getElementById('google-signin-btn');
@@ -150,7 +145,6 @@ export function initAuth() {
   const signinLink = document.getElementById('auth-signin-link');
   const authMessage = document.getElementById('auth-message');
 
-  // --- Form Switcher Logic (Login Page Specific) ---
   const title = document.getElementById('form-title');
   const switchLogin = document.getElementById('switch-to-login');
   const switchRegister = document.getElementById('switch-to-register');
@@ -182,7 +176,6 @@ export function initAuth() {
     }
   }
 
-  // --- Event Listeners for Forms ---
   if (registerForm) {
     registerForm.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -253,7 +246,6 @@ export function initAuth() {
     });
   }
 
-  // --- Unified Google Sign-In Handler ---
   const handleGoogleSignIn = async (e) => {
     e.preventDefault();
     showMessage(authMessage, 'Signing in with Google…', 'info');

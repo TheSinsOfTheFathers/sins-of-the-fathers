@@ -1,17 +1,10 @@
-// assets/js/modules/location-detail-loader.js
-
 import { client, urlFor } from '../../../../../lib/sanityClient.js';
 import { toHTML } from 'https://esm.sh/@portabletext/to-html@2.0.13';
 
-/**
- * Lokasyon verisini alıp detay sayfasının içeriğini oluşturur.
- * @param {object} location - Sanity'den gelen tek bir lokasyonun verisi.
- */
 const renderLocationDetails = (location) => {
     const container = document.getElementById('location-detail-container');
     if (!container) return;
 
-    // SEO için sayfa başlığını ve meta açıklamasını güncelle
     document.title = `${location.name} - The Sins of the Fathers`;
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
@@ -19,7 +12,6 @@ const renderLocationDetails = (location) => {
     }
 
     const imageUrl = urlFor(location.mainImage).width(1200).quality(85).url();
-    // Zengin metin (description) alanını HTML'e çevir
     const descriptionHtml = location.description ? toHTML(location.description) : '';
 
     container.innerHTML = `
@@ -35,9 +27,6 @@ const renderLocationDetails = (location) => {
     `;
 };
 
-/**
- * URL'den slug'ı alarak ilgili lokasyonun verilerini çeker ve sayfada gösterir.
- */
 export async function loadLocationDetails() {
     const container = document.getElementById('location-detail-container');
     if (!container) return;

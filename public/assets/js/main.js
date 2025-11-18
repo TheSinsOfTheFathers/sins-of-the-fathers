@@ -14,14 +14,11 @@ import { loadLocationDetails } from './modules/loaders/location-detail-loader.js
 document.addEventListener('DOMContentLoaded', () => {    
     console.log("🧩 [App Init] DOM Content Loaded. Initializing core modules.");
 
-    // Global Initializers
     initMobileMenu();
     console.log("📱 [App Init] Mobile menu handler initialized.");
     
     initAuth();
     console.log("🔐 [App Init] Authentication system initialized.");
-
-    // Page-specific Loaders (Conditional Logic)
     
     if (document.getElementById('main-characters-gallery')) {
         console.log("👤 [Loader] Found 'main-characters-gallery'. Calling displayCharacters().");

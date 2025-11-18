@@ -12,14 +12,12 @@ const renderCharacterDetails = (character, familyData) => {
         return;
     }
     
-    // Update page title and meta description
     document.title = `${character.name} - The Sins of the Fathers`;
     const metaDesc = document.querySelector('meta[name="description"]');
     if (metaDesc) {
         metaDesc.setAttribute('content', `Details about ${character.name}, ${character.title}. ${character.description || ''}`);
     }
 
-    // Build relationships HTML
     let relationshipsHtml = '';
     if (character.relationships && character.relationships.length > 0) {
         relationshipsHtml = character.relationships.map(rel => `
@@ -34,7 +32,6 @@ const renderCharacterDetails = (character, familyData) => {
         relationshipsHtml = '<p class="text-neutral-400">No known relationships.</p>';
     }
 
-    // Final HTML structure
     contentDiv.innerHTML = `
         <div class="animate-fade-in">
             <!-- Top Section: Image and Core Info -->
@@ -73,9 +70,6 @@ export const loadCharacterDetails = async () => {
     if (!contentDiv) return;
 
     const params = new URLSearchParams(window.location.search);
-    // Sanity'deki slug'lar genellikle tire (-) ile ayrılır. 
-    // URL'den 'id' yerine 'slug' almamız daha doğru olur.
-    // Örnek: character-detail.html?slug=ruaraidh-ballantine
     const characterSlug = params.get('slug'); 
 
     if (!characterSlug) {
@@ -84,16 +78,14 @@ export const loadCharacterDetails = async () => {
     }
 
     try {
-        // Sanity.io'dan doğru karakteri slug'ına göre çeken GROQ sorgusu
         const query = `*[_type == "character" && slug.current == $slug][0]`;
         const sanityParams = { slug: characterSlug };
 
         const character = await client.fetch(query, sanityParams);
 
-        console.log('Fetched character data:', character); // Gelen veriyi kontrol etmek için
+        console.log('Fetched character data:', character);
 
         if (character) {
-            // Şimdilik familyData'yı devre dışı bırakıyoruz, render fonksiyonu sadece karakteri alsın.
             renderCharacterDetails(character); 
         } else {
             contentDiv.innerHTML = `<p class="text-red-500 text-center">Character with slug '${characterSlug}' not found.</p>`;

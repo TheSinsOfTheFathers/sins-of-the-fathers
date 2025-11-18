@@ -1,15 +1,9 @@
 import { client, urlFor } from '../../../../../lib/sanityClient.js';
-import { toHTML } from 'https://esm.sh/@portabletext/to-html@2.0.13';
 
-/**
- * Tek bir lokasyon için HTML kartı oluşturur.
- * @param {object} location - Sanity'den gelen lokasyon verisi.
- * @returns {HTMLAnchorElement} - Tıklanabilir lokasyon kartı elementi.
- */
 const createLocationCard = (location) => {
     const imageUrl = location.mainImage
         ? urlFor(location.mainImage).width(500).height(350).quality(80).url()
-        : 'https://via.placeholder.com/500x350'; // Varsayılan resim
+        : 'https://via.placeholder.com/500x350';
 
     const cardLink = document.createElement('a');
     cardLink.href = `location-detail.html?slug=${location.slug}`;
@@ -28,9 +22,6 @@ const createLocationCard = (location) => {
     return cardLink;
 };
 
-/**
- * Lokasyonları Sanity'den çeker ve sayfada gösterir.
- */
 export async function displayLocations() {
     const mainContent = document.querySelector('main.container');
     if (!mainContent) return;

@@ -1,15 +1,10 @@
-import { client } from '../../../../../lib/sanityClient.js'; // Sanity bağlantı ayarlarımız
+import { client } from '../../../../../lib/sanityClient.js';
 
-// URL'de ID yerine daha okunaklı olan "slug" kullanacağız.
 const createCharacterCard = (character) => {
     const cardLink = document.createElement('a');
-    // Sanity'den gelen slug verisini kullanıyoruz. '.current' demeyi unutma!
     cardLink.href = `character-detail.html?slug=${character.slug.current}`; 
     cardLink.className = 'character-card animate-fade-in';
 
-    // Sanity'den gelen görsel URL'sini kullanmak için imageUrlBuilder gibi bir helper kullanabilirsin,
-    // ama şimdilik doğrudan URL'i varsayalım (veya Sanity'den gelen ham URL'i kullanalım).
-    // Cloudinary entegrasyonun burada parlayacak.
     cardLink.innerHTML = `
         <img src="${character.imageUrl || 'https://placehold.co/400x600/1c1c1c/e0e0e0?text=No+Image'}" alt="${character.name}">
         <div class="character-card-content">
@@ -29,7 +24,6 @@ export async function displayCharacters() {
     }
 
     try {
-        // Sanity.io'dan bütün karakterleri çeken GROQ sorgusu
         const query = '*[_type == "character"]{name, title, slug, "imageUrl": image.asset->url, is_main}';
         const characters = await client.fetch(query);
 

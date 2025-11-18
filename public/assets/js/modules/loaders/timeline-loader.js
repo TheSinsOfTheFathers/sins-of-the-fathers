@@ -1,16 +1,10 @@
-// assets/js/modules/displayTimeline.js
+import { client } from '../../../../../lib/sanityClient.js'; 
 
-import { client } from '../../../../../lib/sanityClient.js'; // Sanity istemcisini import ediyoruz
-
-/**
- * Bu render fonksiyonu, Firebase'den gelen veriyle aynı yapıda veri beklediği için
- * HİÇBİR DEĞİŞİKLİK GEREKTİRMEZ. Sadece veri kaynağı değişti.
- */
 const renderTimeline = (sections) => {
     const timelineContainer = document.getElementById('timeline-container');
     if (!timelineContainer) return;
 
-    timelineContainer.innerHTML = ''; // Placeholder'ı temizle
+    timelineContainer.innerHTML = ''; 
     const lang = localStorage.getItem('language') || 'tr';
 
     sections.forEach((section, index) => {
@@ -20,10 +14,8 @@ const renderTimeline = (sections) => {
         sectionDiv.setAttribute('data-aos', `fade-${side === 'left' ? 'right' : 'left'}`);
 
         let eventsHtml = '';
-        // Sanity'den gelen events dizisini işle
         if (section.events && Array.isArray(section.events)) {
             section.events.forEach(event => {
-                // Dil seçimine göre doğru başlığı ve metni al
                 const title = event[`title_${lang}`] || event.title_en;
                 const text = event[`text_${lang}`] || event.text_en;
                 eventsHtml += `
@@ -33,7 +25,6 @@ const renderTimeline = (sections) => {
             });
         }
         
-        // Dil seçimine göre doğru dönem başlığını al
         const sectionTitle = section[`title_${lang}`] || section.title_en;
 
         sectionDiv.innerHTML = `
@@ -46,15 +37,10 @@ const renderTimeline = (sections) => {
     });
 };
 
-/**
- * Zaman çizelgesi verilerini Firebase yerine Sanity.io'dan çeker ve gösterir.
- */
 export async function displayTimeline() {
     const timelineContainer = document.getElementById('timeline-container');
     if (!timelineContainer) return;
-
-    // Sanity'den veri çekmek için GROQ sorgusu
-    // Tüm 'timelineEra' belgelerini getir ve 'order' alanına göre artan şekilde sırala
+    
     const query = '*[_type == "timelineEra"] | order(order asc)';
 
     try {

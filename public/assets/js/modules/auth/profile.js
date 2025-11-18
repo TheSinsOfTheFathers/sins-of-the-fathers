@@ -7,15 +7,12 @@ export async function loadProfilePage() {
   const container = document.getElementById('profile-content');
   if (!container) return;
 
-  // Wait for auth state
   onAuthStateChanged(auth, async (user) => {
     if (!user) {
-      // redirect to login with return param
       window.location.assign('login.html?redirect=profile.html');
       return;
     }
 
-    // Fetch user profile from Firestore
     const userDocRef = doc(db, 'users', user.uid);
     let userData = {};
     try {
@@ -25,7 +22,6 @@ export async function loadProfilePage() {
       console.error('Failed to load user profile', err);
     }
 
-    // Render simple profile form with avatar upload
     container.innerHTML = `
       <h1 class="text-4xl font-serif text-yellow-500 mb-6">Profile</h1>
       <div class="bg-neutral-800 p-6 rounded">
@@ -75,24 +71,19 @@ export async function loadProfilePage() {
       try {
         let photoURL = user.photoURL || null;
         if (file) {
-          // upload to Firebase Storage
           const sRef = storageRef(storage, `avatars/${user.uid}/${file.name}`);
           await uploadBytes(sRef, file);
           photoURL = await getDownloadURL(sRef);
         }
 
-        // Update Auth profile
         await updateProfile(auth.currentUser, { displayName, photoURL });
-        // Update Firestore
         await setDoc(doc(db, 'users', user.uid), {
           displayName,
           photoURL,
           updatedAt: serverTimestamp(),
         }, { merge: true });
 
-        // Update UI and message
         msg.textContent = 'Profile updated.';
-        // update menu avatar if present
         const menuImg = document.querySelector('#user-menu img.user-avatar');
         if (menuImg && photoURL) menuImg.src = photoURL;
       } catch (err) {

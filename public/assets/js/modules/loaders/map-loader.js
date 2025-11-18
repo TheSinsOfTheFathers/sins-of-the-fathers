@@ -1,13 +1,10 @@
-import { client } from '../../../../lib/sanityClient.js';
+import { client } from '../../../../../lib/sanityClient.js';
 
 const addLocationMarkers = (map, locations) => {
-    console.log("Gelen Konum Verisi:", locations); // DEBUG: Gelen konum verisini kontrol et
     locations.forEach(location => {
-        // 'coordinates' alanını kullanıyoruz
         const { lat, lng } = location.coordinates;
         const marker = L.marker([lat, lng]).addTo(map);
 
-        // Tıklandığında açılacak pencere
         marker.bindPopup(`
             <div class="map-popup p-2">
                 <h3 class="font-bold text-base mb-1">${location.name}</h3>
@@ -50,7 +47,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const mapContainer = document.getElementById('map');
     if (!mapContainer) return;
 
-    // Haritayı Başlat - Birleşik Krallık merkezli
     const map = L.map('map').setView([55.3781, -3.4360], 5);
 
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
