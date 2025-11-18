@@ -1,10 +1,8 @@
-import { client } from '../../../../../lib/sanityClient.js';
+import { client, urlFor } from '/public/assets/js/lib/sanityClient.js';
 
 let familyTree;
 
 const renderCharacterDetails = (character, familyData) => {
-    console.log('Rendering character details:', character);
-    console.log('Family data:', familyData);
     
     const contentDiv = document.getElementById('character-detail-content');
     if (!contentDiv) {
@@ -83,7 +81,6 @@ export const loadCharacterDetails = async () => {
 
         const character = await client.fetch(query, sanityParams);
 
-        console.log('Fetched character data:', character);
 
         if (character) {
             renderCharacterDetails(character); 

@@ -1,4 +1,4 @@
-import { client } from '../../../../../lib/sanityClient.js';
+import { client } from '/public/assets/js/lib/sanityClient.js';
 import { toHTML } from 'https://esm.sh/@portabletext/to-html@2.0.13';
 
 const renderLoreDetails = (lore) => {

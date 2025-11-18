@@ -105,15 +105,6 @@ export default defineType({
       description: 'Ana operasyon üssü veya kontrol edilen bölge. Bu alan bir lokasyon belgesine bağlanır.',
       to: [{ type: 'location' }],
     }),
-
-    // --- İnteraktif Harita Verisi ---
-    defineField({
-      name: 'territoryPolygon',
-      title: 'Bölge Sınırları (Siyasi Harita için)',
-      type: 'text',
-      description: 'Fraksiyonun sınırlarını GeoJSON poligon formatında tanımlayın. Bu veriyi oluşturmak için geojson.io gibi bir araç kullanıp buraya yapıştırabilirsiniz.',
-      rows: 10,
-    }),
   ],
   
   preview: {

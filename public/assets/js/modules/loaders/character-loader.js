@@ -1,4 +1,4 @@
-import { client } from '../../../../../lib/sanityClient.js';
+import { client } from '../../lib/sanityClient.js';
 
 const createCharacterCard = (character) => {
     const cardLink = document.createElement('a');

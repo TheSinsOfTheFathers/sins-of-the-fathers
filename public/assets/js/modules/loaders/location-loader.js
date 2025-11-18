@@ -1,4 +1,4 @@
-import { client, urlFor } from '../../../../../lib/sanityClient.js';
+import { client, urlFor } from '/public/assets/js/lib/sanityClient.js';
 
 const createLocationCard = (location) => {
     const imageUrl = location.mainImage

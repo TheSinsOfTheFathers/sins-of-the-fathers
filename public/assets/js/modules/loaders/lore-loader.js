@@ -1,4 +1,4 @@
-import { client } from '../../../../../lib/sanityClient.js';
+import { client } from '/public/assets/js/lib/sanityClient.js';
 
 const createLoreListItem = (lore) => {
     const cardLink = document.createElement('a');

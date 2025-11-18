@@ -1,4 +1,4 @@
-import { client, urlFor } from '../../../../../lib/sanityClient.js';
+import { client, urlFor } from '/public/assets/js/lib/sanityClient.js';
 import { toHTML } from 'https://esm.sh/@portabletext/to-html@2.0.13';
 
 const renderLocationDetails = (location) => {

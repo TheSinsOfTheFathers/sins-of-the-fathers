@@ -3,6 +3,8 @@
     "eslint": "^8.57.1"
   },
   "dependencies": {
-    "mermaid": "^11.12.1"
+    "mermaid": "^11.12.1",
+    "sanity": "^4.16.0",
+    "@sanity/vision": "^4.16.0" 
   }
 }

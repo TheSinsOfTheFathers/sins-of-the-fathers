@@ -1,4 +1,4 @@
-import { client } from '../../../../../lib/sanityClient.js'; 
+import { client } from '../../lib/sanityClient.js'; 
 
 const renderTimeline = (sections) => {
     const timelineContainer = document.getElementById('timeline-container');
