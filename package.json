@@ -3,8 +3,10 @@
     "eslint": "^8.57.1"
   },
   "dependencies": {
+    "@sanity/vision": "^4.16.0",
+    "cytoscape": "^3.33.1",
+    "cytoscape-dagre": "^2.5.0",
     "mermaid": "^11.12.1",
-    "sanity": "^4.16.0",
-    "@sanity/vision": "^4.16.0" 
+    "sanity": "^4.16.0"
   }
 }

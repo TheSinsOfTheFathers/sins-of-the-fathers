@@ -452,6 +452,64 @@ main.flex-grow {
     background-color: #3572E1;
 }
 
+.mermaid-container {
+    background-color: rgba(23, 23, 23, 0.5); /* bg-neutral-900/50 */
+    border: 1px solid #404040; /* border-neutral-700 */
+    border-radius: 0.75rem; /* rounded-xl */
+    padding: 2rem;
+    backdrop-filter: blur(4px);
+    overflow: auto; /* Geniş ağaçların taşmasını engellemek için */
+}
+
+/* --- Karakter Kutuları (Düğümler) --- */
+.mermaid svg .node rect, 
+.mermaid svg .node circle,
+.mermaid svg .node polygon {
+    stroke-width: 2px !important;
+    stroke: #6b7280; /* Gri sınır - varsayılan */
+    fill: #1c1c1c !important; /* Koyu arka plan */
+}
+
+/* --- Karakter İsimleri --- */
+.mermaid svg .node .label {
+    font-family: 'Cormorant Garamond', serif !important;
+    font-size: 16px !important;
+    fill: #d1d5db !important; /* Gri metin - varsayılan */
+}
+
+/* --- İlişki Çizgileri --- */
+.mermaid svg .edgePath .path {
+    stroke: #525252 !important;
+    stroke-width: 1.5px !important;
+}
+
+/* --- İlişki Etiketleri (örn: "Father") --- */
+.mermaid svg .edgeLabel {
+    font-family: 'Lato', sans-serif !important;
+    font-size: 12px !important;
+    fill: #9ca3af !important;
+    background-color: transparent !important;
+}
+
+/* ### ŞİMDİ SİHİR BAŞLIYOR: ÖZEL SINIFLAR ### */
+
+/* Ballantine Kanı Sınıfı */
+.mermaid svg .node.ballantine rect { stroke: #993a3a !important; fill: #5a1d1d !important; }
+.mermaid svg .node.ballantine .label { fill: #fff !important; }
+
+/* Ana Karakter Sınıfı */
+.mermaid svg .node.mainCharacter rect { stroke: #ffbf2b !important; fill: #ca8a04 !important; }
+.mermaid svg .node.mainCharacter .label { fill: #111 !important; font-weight: bold; }
+
+/* Cagliari Kanı Sınıfı */
+.mermaid svg .node.cagliari rect { stroke: #60a5fa !important; fill: #2563eb !important; }
+.mermaid svg .node.cagliari .label { fill: #fff !important; }
+
+/* Katalizör Sınıfı */
+.mermaid svg .node.catalyst rect { stroke: #10b981 !important; fill: #065f46 !important; }
+.mermaid svg .node.catalyst .label { fill: #fff !important; }```
+
+
 @keyframes fadeInUp {
     from { opacity: 0; transform: translateY(20px); }
     to { opacity: 1; transform: translateY(0); }

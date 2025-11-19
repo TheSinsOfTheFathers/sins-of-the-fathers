@@ -88,6 +88,13 @@ export default defineType({
                 }
             ]
         }]
+    }),
+    defineField({
+      name: 'familyTree',
+      title: 'Aile Ağacı (Mermaid Kodu)',
+      type: 'text',
+      description: 'Karakterin aile ağacını Mermaid.js grafik sözdizimi kullanarak buraya girin. Örneğin: "graph TD; A-->B;". Detaylar için mermaid-js.github.io adresini ziyaret edebilirsiniz.',
+      rows: 10,
     })
   ],
 })

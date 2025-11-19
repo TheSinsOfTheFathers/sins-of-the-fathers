@@ -57,6 +57,11 @@
 
     <!-- Internal Scripts -->
     <script src="../assets/js/main.js" type="module" defer></script>
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: false });
+        window.mermaid = mermaid;
+    </script>
     
     <!-- Manifest -->
     <link rel="manifest" href="../site.webmanifest" />
@@ -112,6 +117,16 @@
         <div id="character-detail-content" class="max-w-4xl mx-auto">
             <!-- Placeholder text while character details are loading -->
             <p>Loading character...</p>
+        </div>
+        
+        <!-- Mermaid Family Tree Section -->
+        <div id="family-tree-container" class="mt-12">
+            <h2 class="section-title">Family Tree</h2>
+            <div class="mermaid-container">
+                <div class="mermaid">
+                    <!-- Burası, JavaScript tarafından, o sihirli mermaid koduyla doldurulacak -->
+                </div>
+            </div>
         </div>
     </main>
 
