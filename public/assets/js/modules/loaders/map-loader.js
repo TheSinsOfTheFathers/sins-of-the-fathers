@@ -43,11 +43,13 @@ const addFactionTerritories = async (map, factions) => {
         'ballantine-empire': [
             '/public/assets/maps/united-kingdom-border.geojson',
             '/public/assets/maps/california-border.geojson',
-            '/public/assets/maps/italy-border.geojson'
+            '/public/assets/maps/italy-border.geojson',
+            '/public/assets/maps/netherlands-border.geojson'
         ],
         'macpherson-clan': [
             '/public/assets/maps/scotland-highlands.geojson'
-        ]
+        ],
+        
     };
     
     const factionColors = {

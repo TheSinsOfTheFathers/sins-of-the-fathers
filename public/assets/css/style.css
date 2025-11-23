@@ -200,9 +200,26 @@ header {
 .animate-fade-in-down { animation: fadeInDown 1.5s ease-out forwards; }
 .animate-fade-in-up { animation: fadeInUp 1.5s ease-out 0.5s forwards; opacity: 0; }
 
+@keyframes fadeInDown {
+    from { 
+        opacity: 0; 
+        transform: translateY(-20px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
+}
+
 @keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from { 
+        opacity: 0; 
+        transform: translateY(20px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
 }
 
 
@@ -320,7 +337,7 @@ input:-webkit-autofill:active {
 }
 
 #map {
-    height: 500px;
+    height: 68vh;
     width: 100%;
     border-radius: 0.5rem;
     border: 1px solid var(--color-border);
@@ -509,18 +526,84 @@ main.flex-grow {
 .mermaid svg .node.catalyst rect { stroke: #10b981 !important; fill: #065f46 !important; }
 .mermaid svg .node.catalyst .label { fill: #fff !important; }```
 
-
-@keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+/* --- MERMAID EK STİLLER (HIZLI KAZANIM) --- */
+/* Genel SVG font ve kontrast ayarı */
+.mermaid svg {
+    font-family: 'Cormorant Garamond', serif !important;
+    color: var(--color-text-primary);
 }
 
-@keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+/* Düğümlere daha belirgin gölge ve padding benzeri görünüm */
+.mermaid svg .node rect, .mermaid svg .node circle, .mermaid svg .node polygon {
+    filter: drop-shadow(0 8px 18px rgba(2,6,23,0.65));
+    rx: 8px;
+    ry: 8px;
 }
 
-@keyframes fadeInUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+.mermaid svg .node text, .mermaid svg .node .label {
+    fill: #f8fafc !important;
+    font-size: 15px !important;
 }
+
+.mermaid svg .edgePath path, .mermaid svg .edgePath .path {
+    stroke: #6b7280 !important;
+    stroke-width: 1.6px !important;
+}
+
+/* Daha sıcak bir vurgu için ana karakter sınıfı. Loader bu sınıfı ekliyor. */
+.mermaid svg g.mainCharacter rect,
+.mermaid svg .node.mainCharacter rect {
+    fill: #f59e0b !important;
+    stroke: #b45309 !important;
+    stroke-width: 2px !important;
+}
+.mermaid svg g.mainCharacter text,
+.mermaid svg .node.mainCharacter .label {
+    fill: #071228 !important;
+    font-weight: 700 !important;
+}
+
+/* Küçük ekranlarda grafik içeriğini daha iyi sarmala */
+.mermaid-container { max-width: 100%; overflow-x: auto; }
+
+/* Kenar etiketleri daha ince ve okunaklı */
+.mermaid svg .edgeLabel, .mermaid svg .edgeLabel tspan { fill: #9ca3af !important; font-family: 'Lato', sans-serif !important; }
+
+/* Eğer mermaid sınıf adları farklıysa, fallback olarak mainCharacter yerine mainCharacter- node elemanlarına da uygula */
+.mermaid svg g[class*="main"] rect { box-shadow: 0 10px 20px rgba(0,0,0,0.55); }
+
+/* --- D3 Family Graph Styles --- */
+.d3-container { background-color: rgba(23,23,23,0.45); border: 1px solid var(--color-border); border-radius: 0.75rem; padding: 1rem; overflow: auto; }
+.d3-container svg { display: block; }
+.d3-container .node text { pointer-events: none; }
+.d3-container .node circle { transition: stroke-width 0.15s ease; }
+.d3-container .link-label { pointer-events: none; }
+
+/* Tooltip for D3 nodes */
+.d3-tooltip {
+    background: rgba(10, 10, 10, 0.92);
+    color: #e6e6e6;
+    padding: 8px 10px;
+    border-radius: 6px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+    font-size: 13px;
+    z-index: 60;
+}
+
+/* Tree link style */
+.tree-link { fill: none; stroke: #5b6870; stroke-width: 1.2px; }
+
+/* Loading spinner inside the D3 container */
+.d3-loading { background: linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.55)); border-radius: 0.5rem; z-index: 55; }
+.spinner {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 4px solid rgba(255,255,255,0.08);
+    border-top-color: var(--color-accent-primary);
+    animation: spinner-rotate 1s linear infinite;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+}
+@keyframes spinner-rotate { to { transform: rotate(360deg); } }
+
+.d3-empty { text-align: center; font-style: italic; }

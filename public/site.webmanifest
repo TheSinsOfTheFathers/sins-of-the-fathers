@@ -2,7 +2,7 @@
   "name": "The Sins of the Fathers",
   "short_name": "SotF",
   "description": "An interactive lore bible for the 'Sins of the Fathers' dark saga. Explore characters, timelines, and factions.",
-  "start_url": "/index.html",
+  "start_url": "/public/index.html",
   "icons": [
     {
       "src": "./assets/images/logo/web-app-manifest-192x192.png",

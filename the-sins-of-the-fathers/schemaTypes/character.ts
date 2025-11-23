@@ -6,7 +6,7 @@ export default defineType({
   type: 'document',
   fields: [
     defineField({
-      name: 'Ad',
+      name: 'name',
       title: 'Name',
       type: 'string',
       description: 'Karakterin tam adı.',
@@ -53,16 +53,22 @@ export default defineType({
       of: [{type: 'block'}],
     }),
     defineField({
-        name: 'relationships',
-        title: 'Relationships',
-        type: 'array',
-        of: [{
-            type: 'object',
-            fields: [
-                {name: 'name', type: 'string', title: 'Character Name'},
-                {name: 'status', type: 'string', title: 'Relationship Status'}
-            ]
-        }]
+      name: 'relationships',
+      title: 'Relationships',
+      type: 'array',
+      description: 'Use this to reference another character and indicate the relationship status.',
+      of: [{
+        type: 'object',
+        fields: [
+          {
+            name: 'character',
+            title: 'Character',
+            type: 'reference',
+            to: [{type: 'character'}]
+          },
+          {name: 'status', type: 'string', title: 'Relationship Status'}
+        ]
+      }]
     }),
     defineField({
         name: 'family',

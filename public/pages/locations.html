@@ -4,120 +4,256 @@
     <!-- Meta Tags -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Location page for 'Sins of the Fathers' - Explore detailed profiles of locations, their backgrounds, and roles in the dark saga.">
-    <meta name="keywords" content="Sins of the Fathers, locations, location profiles, dark saga, fiction, story, timelines, characters, factions, lore">
-    <meta name="author" content="Sins of the Fathers Team">
-    <meta name="robots" content="index, follow">
-    <meta name="application-name" content="The Sins of the Fathers">
-    <meta name="apple-mobile-web-app-title" content="The Sins of the Fathers">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="mobile-web-app-capable" content="yes">
+    <title>Territories | The Sins of the Fathers</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'blood': '#4a0404',
+                        'gold': '#c5a059',
+                        'obsidian': '#050505',
+                        'concrete': '#121212'
+                    },
+                    fontFamily: {
+                        serif: ['Cinzel', 'serif'],
+                        sans: ['Lato', 'sans-serif'],
+                        mono: ['Courier Prime', 'monospace']
+                    },
+                    animation: {
+                        'scan': 'scan 4s linear infinite',
+                    },
+                    keyframes: {
+                        scan: {
+                            '0%': { transform: 'translateY(-100%)' },
+                            '100%': { transform: 'translateY(100%)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
 
-    <!-- Open Graph Protocol Tags -->
-    <meta property="og:title" content="The Sins of the Fathers - Locations" />
-    <meta property="og:description" content="Explore the intricate world of locations, timelines, and characters in 'Sins of the Fathers'." />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://thesinsofthefathers.com/" />
-    <meta property="og:image" content="https://thesinsofthefathers.com/assets/images/og/social_share_logo.svg" />
-    <meta property="og:locale" content="en_US" />
-    <meta property="og:site_name" content="The Sins of the Fathers" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Heraldic crest for The Sins of the Fathers, featuring a calculating crimson raven perched over a black sailing ship silhouette, set against a dark, ornate Celtic knotwork background." />    <meta property="og:image:type" content="image/svg+xml" />
-
-    <!-- Twitter Card Tags -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@sotfathersbook" /> <meta name="twitter:title" content="The Sins of the Fathers - A Dark Saga" />
-    <meta name="twitter:description" content="Explore the intricate world of 'Sins of the Fathers'. Delve into the characters, timelines, and shadowy factions that define the Sins of the Fathers." />
-    <meta name="twitter:image" content="https://thesinsofthefathers.com/assets/images/twitter/social_share_logo.svg" />
-    <meta name="twitter:image:alt" content="Heraldic crest for The Sins of the Fathers, featuring a calculating crimson raven perched over a black sailing ship silhouette, set against a dark, ornate Celtic knotwork background." />
-    <meta name="twitter:image:width" content="1200" />
-    <meta name="twitter:image:height" content="630" />
-    <meta name="twitter:image:src" content="https://thesinsofthefathers.com/assets/images/twitter/social_share_logo.svg" />
-    <meta name="twitter:creator" content="@sotfathersbook" />
-
-    <!-- Favicons -->
-    <link rel="icon" type="image/x-icon" href="../assets/images/logo/favicon.ico" />
-    <link rel="icon" type="image/svg+xml" href="../assets/images/logo/favicon.svg" />
-    <link rel="icon" type="image/png" href="../assets/images/logo/favicon-96x96.png" sizes="96x96" />
-    <link rel="apple-touch-icon" sizes="180x180" href="../assets/images/logo/apple-touch-icon.png" />
-
-    <!-- Title -->
-    <title>Locations - The Sins of the Fathers</title>
-
-    <!-- External Stylesheets  -->
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
-    <!-- Internal Stylesheets -->
-    <link rel="stylesheet" href="../assets/css/style.css">
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Courier+Prime&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
 
-    <!-- External Scripts -->
-    <script src="https://www.google.com/recaptcha/enterprise.js?render=6LeoRfYrAAAAANpaxG70cHRmK5ciRKf7sVt9Crnz"></script>
+    <style>
+        body { background-color: #050505; color: #d4d4d4; }
+        .noise-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 50;
+            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MDAiIGhlaWdodD0iNTAwIj48ZmlsdGVyIGlkPSJub2lzZSI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuNjUiIG51bU9jdGF2ZXM9IjMiIHN0aXRjaFRpbGVzPSJzdGl0Y2giLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCgjbm9pc2UpIiBvcGFjaXR5PSIwLjA1Ii8+PC9zdmc+');
+            opacity: 0.05;
+        }
+
+        /* MAP STYLING OVERRIDES */
+        /* Bu filtre, Leaflet'in standart haritalarını karanlık/sönük hale getirir */
+        .leaflet-layer { filter: grayscale(100%) contrast(1.2) brightness(0.7); }
+        .leaflet-container { background: #050505; }
+        
+        /* Grid Overlay effect over map */
+        .map-grid-overlay {
+            background-image: 
+                linear-gradient(rgba(197, 160, 89, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(197, 160, 89, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        /* Scanline Animation */
+        .scan-line {
+            width: 100%; height: 2px; background: rgba(197, 160, 89, 0.3);
+            box-shadow: 0 0 4px rgba(197, 160, 89, 0.5);
+            animation: scan 3s linear infinite;
+        }
+
+        /* Custom Popup Styles */
+        .leaflet-popup-content-wrapper {
+            background: rgba(5, 5, 5, 0.9);
+            border: 1px solid #c5a059;
+            color: #fff;
+            border-radius: 0;
+            font-family: 'Courier Prime', monospace;
+        }
+        .leaflet-popup-tip { background: #c5a059; }
+
+    </style>
+
+    <!-- External JS Scripts -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
-    <!-- Internal Scripts -->
     <script src="../assets/js/modules/loaders/map-loader.js" type="module" defer></script>
     <script src="../assets/js/main.js" type="module" defer></script>
-    
-    <!-- Manifest -->
-    <link rel="manifest" href="../site.webmanifest" />
 </head>
-<body class="bg-neutral-900 text-white font-lato antialiased flex flex-col min-h-screen">
-    <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PVH59MXZ"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
-     
-    <!-- Header -->
-    <header class="bg-neutral-950/80 backdrop-blur-sm sticky top-0 z-50 w-full border-b border-neutral-800">
-        <!-- Top Navigation Menu -->
+
+<body class="flex flex-col min-h-screen selection:bg-gold selection:text-black overflow-hidden">
+    <div class="noise-overlay"></div>
+
+    <!-- Header (Navigation) -->
+    <header class="fixed top-0 w-full z-50 bg-obsidian/90 backdrop-blur-md border-b border-white/5 transition-all">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <!-- Home Link -->
-            <a href="../index.html" class="text-2xl font-serif text-yellow-500 hover:text-yellow-400 transition-colors">The Sins of the Fathers</a>
-            <!-- Desktop Navigation Links -->
-            <div class="hidden md:flex items-center space-x-8">
-                <a href="./characters.html" class="text-gray-300 hover:text-yellow-500 transition-colors">Characters</a>
-                <a href="./timeline.html" class="text-gray-300 hover:text-yellow-500 transition-colors">Timeline</a>
-                <a href="./factions.html" class="text-gray-300 hover:text-yellow-500 transition-colors">Factions</a>
-                <a href="./locations.html" class="text-gray-300 hover:text-yellow-500 transition-colors">Locations</a>
-                <a href="./lore.html" class="text-gray-300 hover:text-yellow-500 transition-colors">Lore</a>
-                <span class="w-px h-6 bg-neutral-800"></span>
-                <div id="auth-controls" class="flex items-center">
-                    <a id="auth-signin-link" href="./login.html" class="text-gray-300 hover:text-yellow-500 transition-colors">Sign in</a>
-                </div>
-            </div>
-            <!-- Mobile Menu Button -->
-            <div class="md:hidden">
-                <button id="hamburger-button" class="hamburger-button">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-            </div>
+            <a href="../index.html" class="text-xl md:text-2xl font-serif text-gold tracking-widest uppercase hover:text-white transition-colors">
+                TSOF <span class="hidden md:inline text-xs text-gray-600 ml-2">// GLOBAL VIEW</span>
+            </a>
+            <a href="../index.html" class="text-xs uppercase tracking-widest text-gray-500 hover:text-gold transition-colors flex items-center">
+                <i class="fas fa-arrow-left mr-2"></i> Close Link
+            </a>
         </nav>
     </header>
 
-    <!-- Mobile Menu -->
-    <div id="mobile-menu" class="hidden fixed inset-0 z-40 flex flex-col items-center justify-center">
-        <a href="../index.html" class="menu-item">Home</a>
-        <a href="./characters.html" class="menu-item">Characters</a>
-        <a href="./timeline.html" class="menu-item">Timeline</a>
-        <a href="./factions.html" class="menu-item">Factions</a>
-        <a href="./locations.html" class="menu-item">Locations</a>
-        <a href="./lore.html" class="menu-item">Lore</a>
-    </div>
+    <!-- Main Map Container -->
+    <main class="flex-grow pt-20 relative w-full h-screen">
+        
+        <!-- UI OVERLAYS (THE HUD) -->
+        <div class="absolute inset-0 pointer-events-none z-10 flex flex-col justify-between">
+            <!-- Top Shadow & Scanline -->
+            <div class="w-full h-20 bg-gradient-to-b from-black to-transparent relative">
+                <div class="scan-line"></div>
+            </div>
 
-    <!-- Main Content -->
-    <main class="flex-grow container mx-auto px-6 py-5">
-        <h1 class="text-5xl font-serif text-yellow-500 mb-3 text-center animate-fade-in-down" data-i18n-key="locations-page-title">Locations</h1>
-        <div id="map"></div>
+            <!-- Left HUD: Coordinates & Info -->
+            <div class="p-6 md:p-10 pointer-events-auto">
+                <div class="bg-black/80 backdrop-blur-sm border-l-2 border-gold p-4 max-w-xs transform transition-all hover:scale-105 shadow-[0_0_20px_rgba(0,0,0,0.8)]">
+                    <h2 class="text-gold font-serif uppercase tracking-widest text-lg mb-1">Target Designation</h2>
+                    <p id="location-name-display" class="font-mono text-sm text-white">Awaiting Selection...</p>
+                    <div class="h-px w-full bg-white/20 my-2"></div>
+                    <p id="coordinates-display" class="font-mono text-xs text-gray-500">LAT: --.-- // LNG: --.--</p>
+                </div>
+            </div>
+            
+            <!-- Bottom Shadow -->
+            <div class="w-full h-32 bg-gradient-to-t from-black via-black/80 to-transparent"></div>
+        </div>
+
+        <!-- RIGHT SIDE CONTROLS (QUICK JUMPS) -->
+        <div class="absolute top-32 right-6 z-20 flex flex-col space-y-4">
+            <h3 class="text-[10px] font-mono text-gray-500 uppercase tracking-widest text-right mb-2">
+                Rapid Deployment
+            </h3>
+            
+            <button onclick="zoomToLocation(56.4907, -4.2026, 7)" class="group flex items-center justify-end space-x-3 bg-black/60 hover:bg-black/90 p-2 transition-all border border-transparent hover:border-red-900 cursor-pointer backdrop-blur-sm">
+                <span class="text-xs font-serif text-gray-400 group-hover:text-red-500 tracking-wider uppercase">Scotland</span>
+                <div class="w-8 h-8 border border-white/20 flex items-center justify-center group-hover:border-red-500 group-hover:text-red-500 transition-colors">
+                    <i class="fas fa-shield-alt text-xs"></i>
+                </div>
+            </button>
+            
+            <button onclick="zoomToLocation(34.0522, -118.2437, 10)" class="group flex items-center justify-end space-x-3 bg-black/60 hover:bg-black/90 p-2 transition-all border border-transparent hover:border-gold cursor-pointer backdrop-blur-sm">
+                <span class="text-xs font-serif text-gray-400 group-hover:text-gold tracking-wider uppercase">Los Angeles</span>
+                <div class="w-8 h-8 border border-white/20 flex items-center justify-center group-hover:border-gold group-hover:text-gold transition-colors">
+                    <i class="fas fa-building text-xs"></i>
+                </div>
+            </button>
+            
+             <button onclick="resetMap()" class="group flex items-center justify-end space-x-3 bg-black/60 hover:bg-black/90 p-2 mt-8 transition-all border border-transparent hover:border-white cursor-pointer backdrop-blur-sm">
+                <span class="text-xs font-mono text-gray-500 group-hover:text-white tracking-wider">GLOBAL VIEW</span>
+                <div class="w-6 h-6 flex items-center justify-center text-gray-600 group-hover:text-white">
+                    <i class="fas fa-globe text-xs"></i>
+                </div>
+            </button>
+        </div>
+
+        <!-- LOADING OVERLAY -->
+        <div id="map-loader" class="absolute inset-0 z-50 bg-obsidian flex flex-col items-center justify-center">
+             <i class="fas fa-satellite-dish text-4xl text-gold mb-4 animate-pulse"></i>
+             <p class="font-mono text-xs text-gold uppercase tracking-[0.3em]">Uplinking Satellite Feed...</p>
+        </div>
+
+        <!-- THE MAP ITSELF -->
+        <div id="map" class="w-full h-full z-0 map-grid-overlay"></div>
+        
     </main>
 
-    <!-- Footer -->
-    <footer class="w-full text-center p-6 bg-neutral-950 border-t border-neutral-800">
-        <p class="text-gray-500 text-sm" data-i18n-key="footer-copyright">&copy; 2025 Sins of the Fathers. All rights reserved.</p>
-    </footer>
+    <!-- INLINE SCRIPT FOR MAP DEMO LOGIC -->
+    <script>
+        // Mimar Notu: map-loader.js içinde tanımlayacağın haritaya erişim için basit global fonksiyonlar.
+        // Bu fonksiyonlar haritayı kontrol etmeni sağlar.
+
+        var map; // Global Map variable to be accessible
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Simulate Loader
+            setTimeout(() => {
+                const loader = document.getElementById('map-loader');
+                loader.classList.add('opacity-0', 'pointer-events-none', 'transition-opacity', 'duration-1000');
+                
+                // Init Map if module didn't (Safety check)
+                if (!map) initDemoMap(); 
+            }, 1500);
+        });
+
+        function initDemoMap() {
+            // Leaflet initialization standard logic
+            // Center roughly between US and UK
+            map = L.map('map', {
+                zoomControl: false, // UI kontrolünü biz yapıyoruz
+                attributionControl: false
+            }).setView([45.0, -40.0], 3);
+
+            // Dark Matter Style Tiles (CartoDB)
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                subdomains: 'abcd',
+                maxZoom: 19
+            }).addTo(map);
+
+            // CUSTOM ICONS (Using DivIcon for pure CSS/HTML control)
+            const daggerIcon = L.divIcon({
+                className: 'custom-div-icon',
+                html: `<div class='flex items-center justify-center w-8 h-8 rounded-full border border-red-800 bg-red-900/50 text-red-500 animate-pulse'><i class="fas fa-map-pin"></i></div>`,
+                iconSize: [30, 42],
+                iconAnchor: [15, 42]
+            });
+            
+             const goldIcon = L.divIcon({
+                className: 'custom-div-icon',
+                html: `<div class='flex items-center justify-center w-8 h-8 rounded-full border border-gold bg-gold/20 text-gold shadow-[0_0_15px_#c5a059]'><i class="fas fa-crosshairs"></i></div>`,
+                iconSize: [30, 42],
+                iconAnchor: [15, 42]
+            });
+
+            // ADD MARKERS
+            // Scotland (Ruaraidh)
+            L.marker([56.4907, -4.2026], {icon: daggerIcon}).addTo(map)
+                .bindPopup("<b>SCOTLAND</b><br>Ancestral Lands.<br><span class='text-red-500'>STATUS: EXILED</span>");
+            
+            // LA (Havi)
+            L.marker([34.0522, -118.2437], {icon: goldIcon}).addTo(map)
+                 .bindPopup("<b>LOS ANGELES</b><br>Operations Center.<br><span class='text-gold'>STATUS: ACTIVE</span>");
+
+            // Event listener for click updates
+            map.on('move', function() {
+                const center = map.getCenter();
+                document.getElementById('coordinates-display').innerText = 
+                    `LAT: ${center.lat.toFixed(4)} // LNG: ${center.lng.toFixed(4)}`;
+            });
+        }
+
+        // Global functions called by HTML buttons
+        window.zoomToLocation = function(lat, lng, zoom) {
+            if(map) {
+                map.flyTo([lat, lng], zoom, {
+                    duration: 2.5 // Cinematic slow flight
+                });
+                
+                // Update HUD Text (Simulated)
+                const name = (lat > 50) ? "SECTOR: HIGHLANDS (SCOTLAND)" : "SECTOR: LOS ANGELES (USA)";
+                document.getElementById('location-name-display').innerText = name;
+                document.getElementById('location-name-display').classList.add('text-gold');
+            }
+        };
+
+        window.resetMap = function() {
+            if(map) {
+                 map.flyTo([45.0, -40.0], 3, { duration: 2 });
+                 document.getElementById('location-name-display').innerText = "GLOBAL SURVEILLANCE";
+                 document.getElementById('location-name-display').classList.remove('text-gold');
+            }
+        };
+    </script>
 </body>
 </html>

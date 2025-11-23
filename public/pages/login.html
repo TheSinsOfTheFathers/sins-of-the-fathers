@@ -4,207 +4,198 @@
     <!-- Meta Tags -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Login page for 'Sins of the Fathers' - Sign into your account to access exclusive content and features related to 'Sins of the Fathers', including locations, profiles, timelines, characters, and factions.">
-    <meta name="keywords" content="Sins of the Fathers, login, account, authentication, dark saga, fiction, story, timelines, characters, factions, lore">
-    <meta name="author" content="Sins of the Fathers Team">
-    <meta name="robots" content="index, follow">
-    <meta name="application-name" content="The Sins of the Fathers">
-    <meta name="apple-mobile-web-app-title" content="The Sins of the Fathers">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="mobile-web-app-capable" content="yes">
+    <title>System Access | The Sins of the Fathers</title>
 
-    <!-- Open Graph Protocol Tags -->
-    <meta property="og:title" content="The Sins of the Fathers - Locations" />
-    <meta property="og:description" content="Explore the intricate world of locations, timelines, and characters in 'Sins of the Fathers'." />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://thesinsofthefathers.com/" />
-    <meta property="og:image" content="https://thesinsofthefathers.com/assets/images/og/social_share_logo.svg" />
-    <meta property="og:locale" content="en_US" />
-    <meta property="og:site_name" content="The Sins of the Fathers" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Heraldic crest for The Sins of the Fathers, featuring a calculating crimson raven perched over a black sailing ship silhouette, set against a dark, ornate Celtic knotwork background." />    <meta property="og:image:type" content="image/svg+xml" />
-
-    <!-- Twitter Card Tags -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@sotfathersbook" /> <meta name="twitter:title" content="The Sins of the Fathers - A Dark Saga" />
-    <meta name="twitter:description" content="Explore the intricate world of 'Sins of the Fathers'. Delve into the characters, timelines, and shadowy factions that define the Sins of the Fathers." />
-    <meta name="twitter:image" content="https://thesinsofthefathers.com/assets/images/twitter/social_share_logo.svg" />
-    <meta name="twitter:image:alt" content="Heraldic crest for The Sins of the Fathers, featuring a calculating crimson raven perched over a black sailing ship silhouette, set against a dark, ornate Celtic knotwork background." />
-    <meta name="twitter:image:width" content="1200" />
-    <meta name="twitter:image:height" content="630" />
-    <meta name="twitter:image:src" content="https://thesinsofthefathers.com/assets/images/twitter/social_share_logo.svg" />
-    <meta name="twitter:creator" content="@sotfathersbook" />
-
-    <!-- Favicons -->
-    <link rel="icon" type="image/x-icon" href="../assets/images/logo/favicon.ico" />
-    <link rel="icon" type="image/svg+xml" href="../assets/images/logo/favicon.svg" />
-    <link rel="icon" type="image/png" href="../assets/images/logo/favicon-96x96.png" sizes="96x96" />
-    <link rel="apple-touch-icon" sizes="180x180" href="../assets/images/logo/apple-touch-icon.png" />
-
-    <!-- Title -->
-    <title>Login - The Sins of the Fathers</title>
-
-    <!-- External Stylesheets  -->
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-    <!-- Internal Stylesheets -->
-    <link rel="stylesheet" href="../assets/css/style.css">
-
-    <!-- External Scripts -->
-    <script src="https://www.google.com/recaptcha/api.js?render=6LeoRfYrAAAAANpaxG70cHRmK5ciRKf7sVt9Crnz&onload=onRecaptchaLoad" async defer></script>
-
-    <!-- Internal Scripts -->
-    <script src="../assets/js/main.js" type="module" defer></script>
+    <!-- Tailwind CSS (Custom Config) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'blood': '#4a0404',
+                        'gold': '#c5a059',
+                        'obsidian': '#050505',
+                        'charcoal': '#121212',
+                        'terminal': '#33ff00'
+                    },
+                    fontFamily: {
+                        serif: ['Cinzel', 'serif'],
+                        sans: ['Lato', 'sans-serif'],
+                        mono: ['Courier Prime', 'monospace']
+                    },
+                    animation: {
+                        'spin-slow': 'spin 12s linear infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite'
+                    }
+                }
+            }
+        }
+    </script>
     
-    <!-- Manifest -->
-    <link rel="manifest" href="../site.webmanifest" />
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Courier+Prime&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+    <style>
+        body { background-color: #050505; color: #d4d4d4; }
+        .noise-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 50;
+            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MDAiIGhlaWdodD0iNTAwIj48ZmlsdGVyIGlkPSJub2lzZSI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuNjUiIG51bU9jdGF2ZXM9IjMiIHN0aXRjaFRpbGVzPSJzdGl0Y2giLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCgjbm9pc2UpIiBvcGFjaXR5PSIwLjA1Ii8+PC9zdmc+');
+            opacity: 0.05;
+        }
+
+        /* Form Inputs: Underline Style */
+        .terminal-input {
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid #333;
+            color: #fff;
+            border-radius: 0;
+            padding: 10px 0;
+            transition: all 0.3s ease;
+        }
+        .terminal-input:focus {
+            outline: none;
+            border-bottom: 1px solid #c5a059; /* Gold */
+            box-shadow: 0 4px 6px -6px #c5a059;
+        }
+        /* Remove Browser Auto-fill Background */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus, 
+        input:-webkit-autofill:active{
+            -webkit-box-shadow: 0 0 0 30px #050505 inset !important;
+            -webkit-text-fill-color: white !important;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+    </style>
+
+    <!-- Recaptcha & Scripts -->
+    <script src="https://www.google.com/recaptcha/api.js?render=6LeoRfYrAAAAANpaxG70cHRmK5ciRKf7sVt9Crnz&onload=onRecaptchaLoad" async defer></script>
+    <script src="../assets/js/main.js" type="module" defer></script>
 </head>
-<body class="bg-neutral-900 text-white font-lato antialiased flex flex-col min-h-screen">
-    <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PVH59MXZ"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
+
+<body class="flex flex-col min-h-screen selection:bg-gold selection:text-black overflow-hidden relative">
+    <div class="noise-overlay"></div>
+
+    <!-- BACKGROUND ATMOSPHERE -->
+    <!-- Large Spinning Seal/Logo behind everything -->
+    <div class="absolute inset-0 flex items-center justify-center z-0 pointer-events-none overflow-hidden">
+        <img src="../assets/images/logo/logo.svg" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/d/dd/Celtic_Knot_2.svg'" 
+             class="w-[80vh] h-[80vh] opacity-[0.03] animate-spin-slow invert filter sepia" alt="Background Seal">
+    </div>
 
     <!-- Header -->
-    <header class="bg-neutral-950/80 backdrop-blur-sm sticky top-0 z-50 w-full border-b border-neutral-800">
-        <!-- Top Navigation Menu -->
+    <header class="fixed top-0 w-full z-50 bg-obsidian/90 backdrop-blur-md border-b border-white/5">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <!-- Home Link -->
-            <a href="../index.html" class="text-2xl font-serif text-yellow-500 hover:text-yellow-400 transition-colors">The Sins of the Fathers</a>
-            <!-- Desktop Navigation Links -->
-            <div class="hidden md:flex items-center space-x-8">
-                <a href="./characters.html" class="text-gray-300 hover:text-yellow-500 transition-colors">Characters</a>
-                <a href="./timeline.html" class="text-gray-300 hover:text-yellow-500 transition-colors">Timeline</a>
-                <a href="./factions.html" class="text-gray-300 hover:text-yellow-500 transition-colors">Factions</a>
-                <a href="./locations.html" class="text-gray-300 hover:text-yellow-500 transition-colors">Locations</a>
-                <a href="./lore.html" class="text-gray-300 hover:text-yellow-500 transition-colors">Lore</a>
-                <span class="w-px h-6 bg-neutral-800"></span>
-                <div id="auth-controls" class="flex items-center">
-                    <a id="auth-signin-link" href="./login.html" class="text-gray-300 hover:text-yellow-500 transition-colors">Sign in</a>
-                </div>
-            </div>
-
-            <!-- Mobile Menu Button -->
-            <div class="md:hidden">
-                <button id="hamburger-button" class="hamburger-button">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-            </div>
+             <a href="../index.html" class="text-xl md:text-2xl font-serif text-gold tracking-widest uppercase hover:text-white transition-colors">
+                TSOF <span class="hidden md:inline text-xs text-gray-600 ml-2">// AUTHENTICATION</span>
+            </a>
+            <a href="../index.html" class="text-xs uppercase tracking-widest text-gray-500 hover:text-gold transition-colors flex items-center">
+                <i class="fas fa-times mr-2"></i> Abort
+            </a>
         </nav>
     </header>
 
-    <!-- Mobile Menu -->
-    <div id="mobile-menu" class="hidden fixed inset-0 z-40 flex flex-col items-center justify-center">
-        <a href="../index.html" class="menu-item">Home</a>
-        <a href="./characters.html" class="menu-item">Characters</a>
-        <a href="./timeline.html" class="menu-item">Timeline</a>
-        <a href="./factions.html" class="menu-item">Factions</a>
-        <a href="./locations.html" class="menu-item">Locations</a>
-        <a href="./lore.html" class="menu-item">Lore</a>
-    </div>
-
     <!-- Main Content -->
-    <main class="w-full max-w-sm mx-auto p-6 flex-grow">
-        <!---->
-        <h1 class="text-4xl font-serif text-yellow-500 mb-6 text-center" id="form-title">Sign In</h1>
-        <!-- Login Form -->
-        <div class="bg-neutral-800 border border-neutral-700 p-7 rounded-lg shadow-xl">
-            <form id="auth-login-form" class="space-y-4 form-switch-transition">
-                <!-- Login Form Title -->
-                <h2 class="text-xl font-serif text-yellow-400 mb-4">Account Login</h2>
-                
-                <!-- Email Input -->
-                <div>
-                    <label for="login-email" class="block text-sm text-gray-300 mb-1">Email</label>
-                    <input id="login-email" type="email" name="email" required class="w-full p-2 rounded bg-neutral-900 border border-neutral-700 text-white focus:ring-yellow-500 focus:border-yellow-500" autocomplete="email"/>
+    <main class="w-full max-w-md mx-auto flex-grow flex flex-col justify-center items-center relative z-10 px-6">
+        
+        <div class="w-full backdrop-blur-sm p-2 rounded-sm border-t border-b border-white/5 py-10">
+            
+            <h1 class="text-3xl font-serif text-center text-gold mb-1 tracking-widest uppercase">System Access</h1>
+            <p class="text-[10px] font-mono text-center text-gray-600 uppercase mb-8 tracking-widest">Verify Identity to proceed</p>
+
+            <!-- LOGIN FORM -->
+            <form id="auth-login-form" class="space-y-6 form-switch-transition">
+                <!-- Inputs -->
+                <div class="group">
+                    <label for="login-email" class="block text-[10px] text-gray-500 uppercase font-mono mb-1 group-focus-within:text-gold">Operative ID / Email</label>
+                    <input id="login-email" type="email" name="email" required class="w-full terminal-input font-mono text-sm" placeholder="agent@sins.com" autocomplete="email"/>
                 </div>
 
-                <!-- Password Input -->
-                <div>
-                    <label for="login-password" class="block text-sm text-gray-300 mb-1">Password</label>
-                    <input id="login-password" type="password" name="password" required class="w-full p-2 rounded bg-neutral-900 border border-neutral-700 text-white focus:ring-yellow-500 focus:border-yellow-500" autocomplete="current-password" />
+                <div class="group">
+                    <label for="login-password" class="block text-[10px] text-gray-500 uppercase font-mono mb-1 group-focus-within:text-gold">Encrypted Key / Password</label>
+                    <input id="login-password" type="password" name="password" required class="w-full terminal-input font-mono text-sm" placeholder="••••••••" autocomplete="current-password" />
                 </div>
                 
-                <!-- Form Buttons -->
-                <div class="space-y-3 pt-2">
-                    <!-- Submit Button -->
-                    <button type="submit" class="w-full py-2 bg-yellow-600 hover:bg-yellow-500 text-black font-bold rounded transition-colors duration-200">Login</button>
+                <!-- Actions -->
+                <div class="pt-6 space-y-4">
+                    <button type="submit" class="w-full py-3 border border-gold text-gold hover:bg-gold hover:text-black font-serif uppercase tracking-widest text-sm transition-all duration-300">
+                        Initiate Session
+                    </button>
                     
-                    <!-- Splitter -->
-                    <div class="relative flex items-center justify-center">
-                        <div class="w-full border-t border-neutral-700"></div>
+                    <div class="flex items-center justify-between gap-4">
+                        <div class="h-px bg-white/10 flex-grow"></div>
+                        <span class="text-[10px] text-gray-600 font-mono uppercase">Or authenticate via</span>
+                        <div class="h-px bg-white/10 flex-grow"></div>
                     </div>
                     
-                    <!-- Google Sign-In Button -->
-                    <button id="google-signin-btn" type="button" class="w-full py-2 bg-white hover:bg-gray-200 text-black font-bold rounded flex items-center justify-center space-x-2 transition-colors duration-200">
-                        <i class="fab fa-google text-lg"></i>
-                        <span>Sign in with Google</span>
+                    <!-- Dark Google Button -->
+                    <button id="google-signin-btn" type="button" class="w-full py-3 bg-black border border-white/20 text-gray-400 hover:text-white hover:border-white transition-all duration-300 flex items-center justify-center space-x-3 group">
+                        <i class="fab fa-google text-sm group-hover:text-gold transition-colors"></i>
+                        <span class="text-xs uppercase tracking-wide">Google Biometrics</span>
                     </button>
                 </div>
                 
-                <!-- Register Link -->
-                <div class="pt-4 text-center text-sm text-gray-400">
-                    Do you not have an account? 
-                    <a href="#" id="switch-to-register" class="text-yellow-500 hover:text-yellow-400 font-medium">Create one now</a>
+                <!-- Footer Link -->
+                <div class="text-center pt-6">
+                    <p class="text-xs text-gray-600 font-mono">
+                        Not in the database? 
+                        <a href="#" id="switch-to-register" class="text-gold hover:text-white border-b border-gold/50 pb-0.5 ml-1 transition-colors">Request Clearance</a>
+                    </p>
                 </div>
             </form>
 
-            <!-- Register Form -->
-            <form id="auth-register-form" class="space-y-4 form-switch-transition hidden">
-                <!-- Register Form Title -->
-                <h2 class="text-xl font-serif text-yellow-400 mb-4">Create Account</h2>
-                
-                <!-- Email Input -->
-                <div>
-                    <label for="register-email" class="block text-sm text-gray-300 mb-1">Email</label>
-                    <input id="register-email" type="email" name="email" required class="w-full p-2 rounded bg-neutral-900 border border-neutral-700 text-white focus:ring-yellow-500 focus:border-yellow-500" autocomplete="email" />
+            <!-- REGISTER FORM (Hidden initially) -->
+            <form id="auth-register-form" class="space-y-6 form-switch-transition hidden">
+                <div class="group">
+                    <label for="register-email" class="block text-[10px] text-gray-500 uppercase font-mono mb-1 group-focus-within:text-gold">New Operative Email</label>
+                    <input id="register-email" type="email" name="email" required class="w-full terminal-input font-mono text-sm" placeholder="recruit@sins.com" autocomplete="email" />
                 </div>
 
-                <!-- Password Input -->
-                <div>
-                    <label for="register-password" class="block text-sm text-gray-300 mb-1">Password</label>
-                    <input id="register-password" type="password" name="password" required class="w-full p-2 rounded bg-neutral-900 border border-neutral-700 text-white focus:ring-yellow-500 focus:border-yellow-500" autocomplete="new-password" />
+                <div class="group">
+                    <label for="register-password" class="block text-[10px] text-gray-500 uppercase font-mono mb-1 group-focus-within:text-gold">Set Security Key</label>
+                    <input id="register-password" type="password" name="password" required class="w-full terminal-input font-mono text-sm" placeholder="••••••••" autocomplete="new-password" />
                 </div>
                 
-                <!-- Form Buttons -->
-                <div class="space-y-3 pt-2">
-                    <!-- Submit Button -->
-                    <button type="submit" class="w-full py-2 bg-yellow-600 hover:bg-yellow-500 text-black font-bold rounded transition-colors duration-200">Create account</button>
+                <div class="pt-6 space-y-4">
+                    <button type="submit" class="w-full py-3 border border-red-800 text-red-500 hover:bg-red-900/20 hover:text-red-400 font-serif uppercase tracking-widest text-sm transition-all duration-300">
+                        Submit Recruitment
+                    </button>
                     
-                    <!-- Splitter -->
-                    <div class="relative flex items-center justify-center">
-                        <div class="w-full border-t border-neutral-700"></div>
+                    <div class="flex items-center justify-between gap-4">
+                        <div class="h-px bg-white/10 flex-grow"></div>
+                        <span class="text-[10px] text-gray-600 font-mono uppercase">External Protocol</span>
+                        <div class="h-px bg-white/10 flex-grow"></div>
                     </div>
                     
-                    <!-- Google Sign-In Button -->
-                    <button id="google-signin-btn-register" type="button" class="w-full py-2 bg-white hover:bg-gray-200 text-black font-bold rounded flex items-center justify-center space-x-2 transition-colors duration-200">
-                        <i class="fab fa-google text-lg"></i>
-                        <span>Continue with Google</span>
+                    <button id="google-signin-btn-register" type="button" class="w-full py-3 bg-black border border-white/20 text-gray-400 hover:text-white hover:border-white transition-all duration-300 flex items-center justify-center space-x-3 group">
+                        <i class="fab fa-google text-sm group-hover:text-gold transition-colors"></i>
+                        <span class="text-xs uppercase tracking-wide">Join via Google</span>
                     </button>
                 </div>
                 
-                <!-- Login Link -->
-                <div class="pt-4 text-center text-sm text-gray-400">
-                    Already have an account? 
-                    <a href="#" id="switch-to-login" class="text-yellow-500 hover:text-yellow-400 font-medium">Login</a>
+                <div class="text-center pt-6">
+                    <p class="text-xs text-gray-600 font-mono">
+                        Identity confirmed? 
+                        <a href="#" id="switch-to-login" class="text-gold hover:text-white border-b border-gold/50 pb-0.5 ml-1 transition-colors">Access Terminal</a>
+                    </p>
                 </div>
             </form>
-        </div>
 
-        <!-- Auth Message -->
-        <div class="max-w-2xl mx-auto mt-6 text-center">
-            <p id="auth-message" class="text-sm text-gray-300"></p>
+            <!-- Status Messages -->
+            <div id="auth-message" class="text-center mt-6 min-h-[20px] font-mono text-xs text-gold animate-pulse"></div>
+
         </div>
     </main>
 
     <!-- Footer -->
-    <footer class="w-full text-center p-6 bg-neutral-950 border-t border-neutral-800 flex-shrink-0">
-        <p class="text-gray-500 text-sm">&copy; 2025 Sins of the Fathers. All rights reserved.</p>
+    <footer class="w-full text-center p-6 bg-obsidian border-t border-white/5 relative z-10">
+        <p class="font-mono text-[10px] text-gray-700 uppercase tracking-widest">
+            SECURE CONNECTION // SSL ENCRYPTED // IP LOGGED
+        </p>
     </footer>
 </body>
 </html>

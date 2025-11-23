@@ -4,120 +4,252 @@
     <!-- Meta Tags -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Lore details for 'Sins of the Fathers', exploring the intricate world of locations, timelines, and characters.">
-    <meta name="keywords" content="Sins of the Fathers, lore, locations, timeline, characters, dark fantasy, novel, fiction">
-    <meta name="author" content="Sins of the Fathers Team">
-    <meta name="robots" content="index, follow">
-    <meta name="application-name" content="The Sins of the Fathers">
-    <meta name="apple-mobile-web-app-title" content="The Sins of the Fathers">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="mobile-web-app-capable" content="yes">
+    <title>Evidence Record | The Sins of the Fathers</title>
 
-    <!-- Open Graph Protocol Tags -->
-    <meta property="og:title" content="The Sins of the Fathers - Locations" />
-    <meta property="og:description" content="Explore the intricate world of locations, timelines, and characters in 'Sins of the Fathers'." />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://thesinsofthefathers.com/" />
-    <meta property="og:image" content="https://thesinsofthefathers.com/assets/images/og/social_share_logo.svg" />
-    <meta property="og:locale" content="en_US" />
-    <meta property="og:site_name" content="The Sins of the Fathers" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Heraldic crest for The Sins of the Fathers, featuring a calculating crimson raven perched over a black sailing ship silhouette, set against a dark, ornate Celtic knotwork background." />    <meta property="og:image:type" content="image/svg+xml" />
-
-    <!-- Twitter Card Tags -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@sotfathersbook" /> <meta name="twitter:title" content="The Sins of the Fathers - A Dark Saga" />
-    <meta name="twitter:description" content="Explore the intricate world of 'Sins of the Fathers'. Delve into the characters, timelines, and shadowy factions that define the Sins of the Fathers." />
-    <meta name="twitter:image" content="https://thesinsofthefathers.com/assets/images/twitter/social_share_logo.svg" />
-    <meta name="twitter:image:alt" content="Heraldic crest for The Sins of the Fathers, featuring a calculating crimson raven perched over a black sailing ship silhouette, set against a dark, ornate Celtic knotwork background." />
-    <meta name="twitter:image:width" content="1200" />
-    <meta name="twitter:image:height" content="630" />
-    <meta name="twitter:image:src" content="https://thesinsofthefathers.com/assets/images/twitter/social_share_logo.svg" />
-    <meta name="twitter:creator" content="@sotfathersbook" />
-
-    <!-- Favicons -->
-    <link rel="icon" type="image/x-icon" href="../assets/images/logo/favicon.ico" />
-    <link rel="icon" type="image/svg+xml" href="../assets/images/logo/favicon.svg" />
-    <link rel="icon" type="image/png" href="../assets/images/logo/favicon-96x96.png" sizes="96x96" />
-    <link rel="apple-touch-icon" sizes="180x180" href="../assets/images/logo/apple-touch-icon.png" />
-
-    <!-- Title -->
-    <title>Lore Details - The Sins of the Fathers</title>
-
-    <!-- External Stylesheets  -->
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
-    <!-- Internal Stylesheets -->
-    <link rel="stylesheet" href="../assets/css/style.css">
-
-    <!-- External Scripts -->
-    <script src="https://www.google.com/recaptcha/enterprise.js?render=6LeoRfYrAAAAANpaxG70cHRmK5ciRKf7sVt9Crnz"></script>
-
-    <!-- Internal Scripts -->
-    <script src="../assets/js/main.js" type="module" defer></script>
+    <!-- Tailwind CSS & Config -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'blood': '#4a0404',
+                        'gold': '#c5a059',
+                        'paper': '#e3e3e3',
+                        'ink': '#1a1a1a',
+                        'obsidian': '#050505',
+                        'charcoal': '#121212'
+                    },
+                    fontFamily: {
+                        serif: ['Cinzel', 'serif'],
+                        sans: ['Lato', 'sans-serif'],
+                        mono: ['Courier Prime', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
     
-    <!-- Manifest -->
-    <link rel="manifest" href="../site.webmanifest" />
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Courier+Prime&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+    <style>
+        body { background-color: #050505; color: #ccc; }
+        .noise-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 50;
+            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MDAiIGhlaWdodD0iNTAwIj48ZmlsdGVyIGlkPSJub2lzZSI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuNjUiIG51bU9jdGF2ZXM9IjMiIHN0aXRjaFRpbGVzPSJzdGl0Y2giLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCgjbm9pc2UpIiBvcGFjaXR5PSIwLjA1Ii8+PC9zdmc+');
+            opacity: 0.05;
+        }
+
+        /* Paper Texture for Documents */
+        .paper-bg {
+            background-color: #181818;
+            background-image: 
+                linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 20px 20px;
+            border-left: 4px solid #c5a059;
+        }
+
+        /* Typography */
+        .document-text p { margin-bottom: 1.5em; line-height: 1.8; }
+        .document-text h3 { font-family: 'Cinzel', serif; color: #c5a059; margin-top: 2em; margin-bottom: 0.5em; }
+
+        /* Redacted Text Effect */
+        .redacted {
+            background: #000;
+            color: #000;
+            padding: 0 5px;
+            cursor: help;
+            transition: all 0.5s ease;
+            user-select: none;
+        }
+        .redacted:hover {
+            color: #333; /* Slight peek on hover */
+        }
+
+        /* Loader Animation */
+        .typewriter::after {
+            content: '|';
+            animation: cursor 1s infinite;
+        }
+        @keyframes cursor { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+    </style>
+
+    <!-- Scripts -->
+    <script src="../assets/js/main.js" type="module" defer></script>
 </head>
-<body class="bg-neutral-900 text-white font-lato antialiased flex flex-col min-h-screen">
-    <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PVH59MXZ"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
+
+<body class="flex flex-col min-h-screen selection:bg-gold selection:text-black">
+    <div class="noise-overlay"></div>
 
     <!-- Header -->
-    <header class="bg-neutral-950/80 backdrop-blur-sm sticky top-0 z-50 w-full border-b border-neutral-800">
-        <!-- Top Navigation Menu -->
+    <header class="fixed top-0 w-full z-50 bg-obsidian/90 backdrop-blur-md border-b border-white/5 transition-all">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <!-- Home Link -->
-            <a href="../index.html" class="text-2xl font-serif text-yellow-500 hover:text-yellow-400 transition-colors">The Sins of the Fathers</a>
-            <!-- Desktop Navigation Links -->
-            <div class="hidden md:flex items-center space-x-8">
-                <a href="./characters.html" class="text-gray-300 hover:text-yellow-500 transition-colors">Characters</a>
-                <a href="./timeline.html" class="text-gray-300 hover:text-yellow-500 transition-colors">Timeline</a>
-                <a href="./factions.html" class="text-gray-300 hover:text-yellow-500 transition-colors">Factions</a>
-                <a href="./locations.html" class="text-gray-300 hover:text-yellow-500 transition-colors">Locations</a>
-                <a href="./lore.html" class="text-gray-300 hover:text-yellow-500 transition-colors">Lore</a>
-                <span class="w-px h-6 bg-neutral-800"></span>
-                <div id="auth-controls" class="flex items-center">
-                    <a id="auth-signin-link" href="./login.html" class="text-gray-300 hover:text-yellow-500 transition-colors">Sign in</a>
-                </div>
-            </div>
-
-            <!-- Mobile Menu Button -->
-            <div class="md:hidden">
-                <button id="hamburger-button" class="hamburger-button">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-            </div>
+            <a href="../index.html" class="text-xl md:text-2xl font-serif text-gold tracking-widest uppercase hover:text-white transition-colors">
+                TSOF <span class="hidden md:inline text-xs text-gray-600 ml-2">// READER</span>
+            </a>
+            <a href="lore.html" class="text-xs uppercase tracking-widest text-gray-500 hover:text-gold transition-colors flex items-center">
+                <i class="fas fa-arrow-left mr-2"></i> Back to Archives
+            </a>
         </nav>
     </header>
 
-    <!-- Mobile Menu -->
-    <div id="mobile-menu" class="hidden fixed inset-0 z-40 flex flex-col items-center justify-center">
-        <a href="../index.html" class="menu-item">Home</a>
-        <a href="./characters.html" class="menu-item">Characters</a>
-        <a href="./timeline.html" class="menu-item">Timeline</a>
-        <a href="./factions.html" class="menu-item">Factions</a>
-        <a href="./locations.html" class="menu-item">Locations</a>
-        <a href="./lore.html" class="menu-item">Lore</a>
-    </div>
+    <!-- MAIN CONTENT WRAPPER -->
+    <main class="flex-grow pt-28 pb-20 px-6">
+        
+        <div id="evidence-container" class="container mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
 
-    <main class="flex-grow container mx-auto px-6 py-12">
-        <div id="lore-detail-content" class="max-w-4xl mx-auto">
-            <!-- Placeholder text while lores is loading by JavaScript -->
-            <p>Loading lore...</p>
+            <!-- LEFT COLUMN: METADATA & CONTEXT (Sticks on scroll) -->
+            <aside class="lg:col-span-3 lg:sticky lg:top-28 space-y-8 order-2 lg:order-1">
+                
+                <!-- Evidence Card -->
+                <div class="bg-obsidian border border-white/10 p-5">
+                    <h4 class="text-[10px] font-mono text-gray-500 uppercase tracking-widest mb-4">File Metadata</h4>
+                    
+                    <div class="space-y-4 font-mono text-xs">
+                        <div>
+                            <span class="block text-gray-600 mb-1">ORIGIN</span>
+                            <span id="lore-source" class="text-gold uppercase">Glasgow Police Dept.</span>
+                        </div>
+                        <div>
+                            <span class="block text-gray-600 mb-1">DATE</span>
+                            <span id="lore-date" class="text-white">Nov 14, 1999</span>
+                        </div>
+                        <div>
+                            <span class="block text-gray-600 mb-1">AUTHOR / SPEAKER</span>
+                            <span id="lore-author" class="text-white">Detective K. Miller</span>
+                        </div>
+                        <div>
+                            <span class="block text-gray-600 mb-1">CLEARANCE</span>
+                            <span class="px-2 py-0.5 bg-red-900/20 text-red-500 border border-red-900 text-[10px] inline-block">CONFIDENTIAL</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Associated Entities -->
+                <div class="bg-white/5 border border-white/5 p-5">
+                    <h4 class="text-[10px] font-mono text-gray-500 uppercase tracking-widest mb-4">Tagged Entities</h4>
+                    <div id="lore-tags" class="flex flex-wrap gap-2">
+                         <a href="character-detail.html" class="text-xs border border-gray-700 px-2 py-1 hover:border-gold hover:text-gold transition text-gray-400">#Ruaraidh</a>
+                         <a href="factions.html" class="text-xs border border-gray-700 px-2 py-1 hover:border-gold hover:text-gold transition text-gray-400">#Macpherson</a>
+                    </div>
+                </div>
+
+            </aside>
+
+
+            <!-- CENTER COLUMN: THE ARTIFACT / DOCUMENT -->
+            <article class="lg:col-span-9 order-1 lg:order-2">
+                
+                <!-- Loader (Hidden via JS) -->
+                <div id="doc-loader" class="text-center py-20 font-mono text-gold text-xs uppercase tracking-widest typewriter">
+                    Reconstructing Fragmented Data...
+                </div>
+
+                <!-- Content Wrapper (Fade In) -->
+                <div id="doc-content" class="opacity-0 transition-opacity duration-1000">
+                    
+                    <!-- Optional Media Header (Image or Audio) -->
+                    <div id="lore-media-container" class="mb-8 hidden">
+                         <!-- Example: Image -->
+                         <div class="relative w-full h-64 md:h-96 bg-black overflow-hidden border border-white/10 group">
+                             <img src="" id="lore-image" class="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition duration-700">
+                             <div class="absolute bottom-2 right-2 bg-black px-2 py-1 text-[10px] font-mono text-white">FIG. A // EVIDENCE</div>
+                         </div>
+                         <!-- TODO: Audio Player can be injected here -->
+                    </div>
+
+                    <!-- Document Header -->
+                    <div class="mb-8 border-b border-white/10 pb-6">
+                        <h1 id="lore-title" class="text-3xl md:text-5xl font-serif text-white uppercase tracking-wide leading-tight mb-2">
+                            [TITLE PLACEHOLDER]
+                        </h1>
+                        <p class="text-gray-500 font-mono text-sm italic">
+                            Archived Record ID: <span id="lore-id">#XXXX</span>
+                        </p>
+                    </div>
+
+                    <!-- The Text Body -->
+                    <div class="paper-bg p-8 md:p-12 shadow-2xl">
+                        
+                        <div class="font-serif text-gray-300 text-lg leading-relaxed document-text text-justify" id="lore-body">
+                             <!-- Text will be injected here -->
+                        </div>
+
+                        <!-- Stamps / Watermark -->
+                        <div class="mt-12 pt-8 border-t border-dashed border-white/20 flex justify-between items-end opacity-50 hover:opacity-100 transition-opacity">
+                             <div class="text-[10px] font-mono text-gray-600 w-1/2">
+                                 WARNING: Unauthorized distribution of this material is punishable by excommunication or termination.
+                             </div>
+                             <div class="border-4 border-red-800 text-red-800 font-bold font-mono text-xl px-4 py-2 rotate-[-5deg] opacity-70 select-none">
+                                 VERIFIED
+                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Navigation Footer -->
+                    <div class="flex justify-between items-center mt-12 pt-6 border-t border-white/5">
+                         <button class="text-xs font-mono text-gray-500 hover:text-gold transition uppercase">
+                             <i class="fas fa-chevron-left mr-2"></i> Previous Record
+                         </button>
+                         <button class="text-xs font-mono text-gray-500 hover:text-gold transition uppercase">
+                             Next Record <i class="fas fa-chevron-right ml-2"></i>
+                         </button>
+                    </div>
+
+                </div>
+            </article>
+
         </div>
+
     </main>
 
     <!-- Footer -->
-    <footer class="w-full text-center p-6 bg-neutral-950 border-t border-neutral-800">
-        <p class="text-gray-500 text-sm">&copy; 2025 Sins of the Fathers. All rights reserved.</p>
+    <footer class="w-full text-center p-6 bg-obsidian border-t border-white/5 font-mono text-[10px] text-gray-600 uppercase">
+        ACCESS LOGGED // READ ONLY MODE
     </footer>
+
+    <!-- DEMO INJECTION SCRIPT -->
+    <script>
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('doc-loader').style.display = 'none';
+                const content = document.getElementById('doc-content');
+                content.classList.remove('opacity-0');
+
+                // Mock Data (Demo)
+                document.getElementById('lore-title').textContent = "Transcript: The Warehouse Fire";
+                document.getElementById('lore-id').textContent = "#992-B";
+                
+                // Inserting Content with Redaction
+                const bodyContent = `
+                    <p>The following is a transcription of the interview with Subject A, a watchman at the Leith docks.</p>
+                    <p><strong>DETECTIVE MILLER:</strong> Tell me what you saw that night.</p>
+                    <p><strong>SUBJECT A:</strong> It was quiet. Then I saw smoke coming from Warehouse 4. The one owned by <span class="redacted" title="This name is protected">Ballantine</span>. I ran towards the alarm, but two men stopped me.</p>
+                    <p><strong>DETECTIVE MILLER:</strong> Did you recognize them?</p>
+                    <p><strong>SUBJECT A:</strong> Aye. One was big, silent. The other one... he had eyes like <span class="redacted">cold steel</span>. He told me to walk away if I wanted to see my kids again.</p>
+                    <p>Note: Investigation was halted two days later by orders from the <span class="redacted">Chief Superintendent</span>.</p>
+                `;
+                
+                document.getElementById('lore-body').innerHTML = bodyContent;
+
+                // Reveal logic (Simple toggle for demo)
+                const redactions = document.querySelectorAll('.redacted');
+                redactions.forEach(el => {
+                    el.addEventListener('click', () => {
+                        // In real app, check auth here
+                        el.style.backgroundColor = 'transparent';
+                        el.style.color = '#c5a059'; // Gold reveal
+                        el.style.textDecoration = 'underline';
+                    });
+                });
+
+            }, 1200);
+        });
+    </script>
 </body>
 </html>

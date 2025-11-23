@@ -4,120 +4,230 @@
     <!-- Meta Tags -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Faction page for 'Sins of the Fathers' - Explore detailed profiles of factions, their backgrounds, and roles in the dark saga.">
-    <meta name="keywords" content="Sins of the Fathers, factions, faction profiles, dark saga, fiction, story, timelines, characters, locations, lore">
-    <meta name="author" content="Sins of the Fathers Team">
-    <meta name="robots" content="index, follow">
-    <meta name="application-name" content="The Sins of the Fathers">
-    <meta name="apple-mobile-web-app-title" content="The Sins of the Fathers">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="mobile-web-app-capable" content="yes">
-
-    <!-- Open Graph Protocol Tags -->
-    <meta property="og:title" content="The Sins of the Fathers - Factions" />
-    <meta property="og:description" content="Explore the intricate world of factions, timelines, and characters in 'Sins of the Fathers'." />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://thesinsofthefathers.com/" />
-    <meta property="og:image" content="https://thesinsofthefathers.com/assets/images/og/social_share_logo.svg" />
-    <meta property="og:locale" content="en_US" />
-    <meta property="og:site_name" content="The Sins of the Fathers" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Heraldic crest for The Sins of the Fathers, featuring a calculating crimson raven perched over a black sailing ship silhouette, set against a dark, ornate Celtic knotwork background." />    <meta property="og:image:type" content="image/svg+xml" />
-
-    <!-- Twitter Card Tags -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@sotfathersbook" /> <meta name="twitter:title" content="The Sins of the Fathers - A Dark Saga" />
-    <meta name="twitter:description" content="Explore the intricate world of 'Sins of the Fathers'. Delve into the characters, timelines, and shadowy factions that define the Sins of the Fathers." />
-    <meta name="twitter:image" content="https://thesinsofthefathers.com/assets/images/twitter/social_share_logo.svg" />
-    <meta name="twitter:image:alt" content="Heraldic crest for The Sins of the Fathers, featuring a calculating crimson raven perched over a black sailing ship silhouette, set against a dark, ornate Celtic knotwork background." />
-    <meta name="twitter:image:width" content="1200" />
-    <meta name="twitter:image:height" content="630" />
-    <meta name="twitter:image:src" content="https://thesinsofthefathers.com/assets/images/twitter/social_share_logo.svg" />
-    <meta name="twitter:creator" content="@sotfathersbook" />
-
-    <!-- Favicons -->
-    <link rel="icon" type="image/x-icon" href="../assets/images/logo/favicon.ico" />
-    <link rel="icon" type="image/svg+xml" href="../assets/images/logo/favicon.svg" />
-    <link rel="icon" type="image/png" href="../assets/images/logo/favicon-96x96.png" sizes="96x96" />
-    <link rel="apple-touch-icon" sizes="180x180" href="../assets/images/logo/apple-touch-icon.png" />
-
-    <!-- Title -->
-    <title>Factions - The Sins of the Fathers</title>
-
-    <!-- External Stylesheets  -->
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-
-    <!-- Internal Stylesheets -->
-    <link rel="stylesheet" href="../assets/css/style.css">
-
-    <!-- External Scripts -->
-    <script src="https://www.google.com/recaptcha/enterprise.js?render=6LeoRfYrAAAAANpaxG70cHRmK5ciRKf7sVt9Crnz"></script>
-
-    <!-- Internal Scripts -->
-    <script src="../assets/js/main.js" type="module" defer></script>
+    <title>Power Dynamics | The Sins of the Fathers</title>
     
-    <!-- Manifest -->
-    <link rel="manifest" href="../site.webmanifest" />
+    <!-- Tailwind CSS (Custom Config) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'blood': '#4a0404',
+                        'blood-light': '#7f1d1d',
+                        'gold': '#c5a059',
+                        'obsidian': '#050505',
+                        'concrete': '#1a1a1a'
+                    },
+                    fontFamily: {
+                        serif: ['Cinzel', 'serif'],
+                        sans: ['Lato', 'sans-serif'],
+                        mono: ['Courier Prime', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Courier+Prime&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+    <style>
+        body { background-color: #050505; color: #d4d4d4; }
+        .noise-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 50;
+            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MDAiIGhlaWdodD0iNTAwIj48ZmlsdGVyIGlkPSJub2lzZSI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuNjUiIG51bU9jdGF2ZXM9IjMiIHN0aXRjaFRpbGVzPSJzdGl0Y2giLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCgjbm9pc2UpIiBvcGFjaXR5PSIwLjA1Ii8+PC9zdmc+');
+            opacity: 0.05;
+        }
+        
+        /* Loading Radar Animation */
+        .radar-sweep {
+            width: 100%; height: 100%;
+            background: conic-gradient(from 0deg, transparent 0deg, rgba(197, 160, 89, 0.4) 360deg);
+            border-radius: 50%;
+            animation: radar 2s linear infinite;
+        }
+        @keyframes radar { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        /* FACTION CARD STYLES (To be used by JS) */
+        
+        /* 1. The Old World (Macpherson) - Organic, Bloody, Rough */
+        .faction-card.old-world {
+            border: 1px solid #4a0404;
+            background: linear-gradient(to bottom, #1a0505, #050505);
+            box-shadow: 0 4px 20px rgba(74, 4, 4, 0.2);
+        }
+        .faction-card.old-world h3 { color: #b91c1c; font-family: 'Cinzel', serif; }
+        .faction-card.old-world .stat-fill { background-color: #7f1d1d; }
+
+        /* 2. The New Order (Ballantine) - Cold, Metallic, Geometric */
+        .faction-card.new-world {
+            border: 1px solid #334155;
+            border-top: 1px solid #c5a059;
+            background: linear-gradient(135deg, #0f172a 0%, #000000 100%);
+            box-shadow: 0 4px 20px rgba(197, 160, 89, 0.1);
+        }
+        .faction-card.new-world h3 { color: #c5a059; font-family: 'Cinzel', serif; letter-spacing: 0.1em; }
+        .faction-card.new-world .stat-fill { background-color: #c5a059; }
+
+    </style>
 </head>
-<body class="bg-neutral-900 text-white font-lato antialiased flex flex-col min-h-screen">
-    <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PVH59MXZ"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
+
+<body class="flex flex-col min-h-screen selection:bg-gold selection:text-black">
+    <div class="noise-overlay"></div>
 
     <!-- Header -->
-    <header class="bg-neutral-950/80 backdrop-blur-sm sticky top-0 z-50 w-full border-b border-neutral-800">
-        <!-- Top Navigation Menu -->
+    <header class="fixed top-0 w-full z-50 bg-obsidian/90 backdrop-blur-md border-b border-white/5 transition-all">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <!-- Home Link -->
-            <a href="../index.html" class="text-2xl font-serif text-yellow-500 hover:text-yellow-400 transition-colors">The Sins of the Fathers</a>
-            <!-- Desktop Navigation Links -->
-            <div class="hidden md:flex items-center space-x-8">
-                <a href="characters.html" class="text-gray-300 hover:text-yellow-500 transition-colors">Characters</a>
-                <a href="timeline.html" class="text-gray-300 hover:text-yellow-500 transition-colors">Timeline</a>
-                <a href="factions.html" class="text-gray-300 hover:text-yellow-500 transition-colors">Factions</a>
-                <a href="locations.html" class="text-gray-300 hover:text-yellow-500 transition-colors">Locations</a>
-                <a href="lore.html" class="text-gray-300 hover:text-yellow-500 transition-colors">Lore</a>
-                <span class="w-px h-6 bg-neutral-800"></span>
-                <div id="auth-controls" class="flex items-center">
-                    <a id="auth-signin-link" href="login.html" class="text-gray-300 hover:text-yellow-500 transition-colors">Sign in</a>
-                </div>
-            </div>
-            <!-- Mobile Menu Button -->
-            <div class="md:hidden">
-                <button id="hamburger-button" class="hamburger-button">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
-            </div>
+            <a href="../index.html" class="text-xl md:text-2xl font-serif text-gold tracking-widest uppercase hover:text-white transition-colors">
+                TSOF <span class="hidden md:inline text-xs text-gray-600 ml-2">// INTEL</span>
+            </a>
+            
+            <a href="../index.html" class="text-xs uppercase tracking-widest text-gray-500 hover:text-gold transition-colors">
+                <i class="fas fa-arrow-left mr-2"></i> Return to Index
+            </a>
         </nav>
     </header>
 
-    <!-- Mobile Menu -->
-    <div id="mobile-menu" class="hidden fixed inset-0 z-40 flex flex-col items-center justify-center">
-        <a href="../index.html" class="menu-item">Home</a>
-        <a href="./characters.html" class="menu-item">Characters</a>
-        <a href="./timeline.html" class="menu-item">Timeline</a>
-        <a href="./factions.html" class="menu-item">Factions</a>
-        <a href="./locations.html" class="menu-item">Locations</a>
-        <a href="./lore.html" class="menu-item">Lore</a>
-    </div>
-
     <!-- Main Content -->
-    <main class="flex-grow container mx-auto px-6 py-12">
-        <h1 class="text-5xl font-serif text-yellow-500 mb-16 text-center animate-fade-in-down" data-i18n-key="factions-page-title">Factions</h1>
-        <div id="factions-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-            <!-- Factions will be dynamically loaded here by JavaScript -->
-            <p>Loading factions...</p>
+    <main class="flex-grow pt-32 pb-20 container mx-auto px-6">
+        
+        <!-- Intro Header -->
+        <div class="text-center max-w-4xl mx-auto mb-20">
+            <h1 class="text-4xl md:text-6xl font-serif text-white uppercase tracking-wider mb-6 animate-fade-in-down">
+                Warring <span class="text-gold">Houses</span>
+            </h1>
+            <p class="text-gray-400 font-serif italic border-l-2 border-gold pl-6 py-2 inline-block text-left md:text-center md:border-l-0 md:border-b-2 md:pb-6 md:pl-0">
+                "There is no peace. There is only the lull between taking what is yours and defending what you stole."
+            </p>
         </div>
+
+        <!-- LOADING STATE -->
+        <div id="factions-loader" class="flex flex-col items-center justify-center py-12">
+            <div class="w-16 h-16 rounded-full border border-gray-800 relative mb-4">
+                <div class="radar-sweep absolute inset-0"></div>
+                <div class="absolute inset-2 bg-obsidian rounded-full flex items-center justify-center">
+                     <i class="fas fa-crosshairs text-gold text-xs"></i>
+                </div>
+            </div>
+            <p class="font-mono text-gold text-sm uppercase tracking-widest animate-pulse">Analyzing Power Structures...</p>
+        </div>
+
+        <!-- FACTIONS GRID (Target for JS Injection) -->
+        <!-- 
+           MİMAR NOTU: JS KODU İÇİN ÖRNEK HTML YAPISI AŞAĞIDAKİ GİBİDİR. 
+           BU YAPININ main.js İÇİNDE DİNAMİK OLARAK OLUŞTURULMASI GEREKİR.
+           
+           <div class="faction-card new-world p-8 relative overflow-hidden group">
+               <div class="absolute top-0 right-0 p-4 opacity-20"><i class="fas fa-crown text-6xl"></i></div>
+               <h3 class="text-2xl mb-2">Ballantine Empire</h3>
+               <p class="text-xs font-mono text-gray-500 uppercase mb-6">Leader: Ruaraidh Ballantine</p>
+               <p class="text-gray-400 text-sm mb-8 leading-relaxed line-clamp-3">Description text...</p>
+               
+               <div class="space-y-4">
+                   <div>
+                       <div class="flex justify-between text-xs font-mono text-gray-500 mb-1"><span>RESOURCES</span> <span>95%</span></div>
+                       <div class="w-full h-1 bg-gray-800"><div class="h-1 stat-fill w-[95%]"></div></div>
+                   </div>
+                   ...
+               </div>
+               <a href="#" class="mt-8 block text-center border border-white/20 py-2 text-xs uppercase hover:bg-white/5 transition">View Roster</a>
+           </div>
+        -->
+        <div id="factions-grid" class="grid grid-cols-1 md:grid-cols-2 gap-12 opacity-0 transition-opacity duration-700">
+             <!-- JS will populate this -->
+        </div>
+
     </main>
     
     <!-- Footer -->
-    <footer class="w-full text-center p-6 bg-neutral-950 border-t border-neutral-800">
-        <p class="text-gray-500 text-sm" data-i18n-key="footer-copyright">&copy; 2025 Sins of the Fathers. All rights reserved.</p>
+    <footer class="w-full text-center py-8 bg-obsidian border-t border-white/5">
+        <p class="font-mono text-[10px] text-gray-600 uppercase tracking-widest">
+            Conflict Monitor v4.2 // Status: ESCALATING
+        </p>
     </footer>
+    
+    <!-- Scripts -->
+    <script src="../assets/js/main.js" type="module"></script>
+
+    <!-- Geçici Script: JS çalışmazsa tasarım boş görünmesin diye "Hard-Coded" demo enjeksiyonu.
+         Gerçek projede burayı silip main.js'e bağlayın. -->
+    <script>
+        setTimeout(() => {
+            document.getElementById('factions-loader').style.display = 'none';
+            document.getElementById('factions-grid').classList.remove('opacity-0');
+            
+            // DEMO PURPOSE: Gerçek veri Sanity'den gelecek.
+            // Bu kısım tasarımcı görebilsin diye var.
+            const grid = document.getElementById('factions-grid');
+            if(grid.children.length === 0) { // Sadece boşsa ekle
+                grid.innerHTML = `
+                    <!-- DEMO CARD 1: MACPHERSON (OLD WORLD) -->
+                    <div class="faction-card old-world p-8 relative group min-h-[400px] flex flex-col justify-between rounded-sm">
+                        <div class="absolute -right-6 -top-6 text-[10rem] opacity-5 text-red-900 pointer-events-none select-none">
+                            <i class="fas fa-skull"></i>
+                        </div>
+                        <div>
+                             <h3 class="text-3xl mb-1 uppercase tracking-wide">The Macpherson Clan</h3>
+                             <p class="text-xs font-mono text-red-700 uppercase mb-6 tracking-widest">Type: Syndicate (Legacy)</p>
+                             <div class="h-px w-12 bg-red-900 mb-6"></div>
+                             <p class="text-gray-400 text-sm leading-relaxed">
+                                 Born from the blood-soaked docks of Glasgow. They value honor only when it serves the blade. Chaos is their currency, and terror is their trade.
+                             </p>
+                        </div>
+                        
+                        <div class="space-y-6 mt-8">
+                             <div>
+                                 <div class="flex justify-between text-[10px] font-mono text-gray-500 mb-1"><span>BRUTALITY</span> <span>98%</span></div>
+                                 <div class="w-full h-1 bg-gray-900"><div class="h-1 bg-red-800 w-[98%] shadow-[0_0_10px_red]"></div></div>
+                             </div>
+                             <div>
+                                 <div class="flex justify-between text-[10px] font-mono text-gray-500 mb-1"><span>ORGANIZATION</span> <span>30%</span></div>
+                                 <div class="w-full h-1 bg-gray-900"><div class="h-1 bg-red-800 w-[30%]"></div></div>
+                             </div>
+                        </div>
+                        
+                        <div class="mt-8 border-t border-red-900/30 pt-4 flex items-center justify-between text-xs text-red-500 font-mono">
+                            <span><i class="fas fa-map-marker-alt mr-2"></i>Glasgow, Scotland</span>
+                            <span>HOSTILE</span>
+                        </div>
+                    </div>
+
+                    <!-- DEMO CARD 2: BALLANTINE (NEW ORDER) -->
+                    <div class="faction-card new-world p-8 relative group min-h-[400px] flex flex-col justify-between rounded-sm">
+                         <div class="absolute -right-6 -top-6 text-[10rem] opacity-5 text-gold pointer-events-none select-none">
+                            <i class="fas fa-chess-king"></i>
+                        </div>
+                        <div>
+                             <h3 class="text-3xl mb-1 uppercase tracking-wide">Ballantine Empire</h3>
+                             <p class="text-xs font-mono text-yellow-600 uppercase mb-6 tracking-widest">Type: Corporation (Sovereign)</p>
+                             <div class="h-px w-12 bg-gold mb-6"></div>
+                             <p class="text-gray-400 text-sm leading-relaxed">
+                                 An organization built not on loyalty, but on absolute efficiency. They don't break laws; they rewrite them through sheer economic force.
+                             </p>
+                        </div>
+                        
+                        <div class="space-y-6 mt-8">
+                             <div>
+                                 <div class="flex justify-between text-[10px] font-mono text-gray-500 mb-1"><span>CONTROL</span> <span>100%</span></div>
+                                 <div class="w-full h-1 bg-gray-800"><div class="h-1 bg-gold w-[100%] shadow-[0_0_10px_gold]"></div></div>
+                             </div>
+                             <div>
+                                 <div class="flex justify-between text-[10px] font-mono text-gray-500 mb-1"><span>REACH</span> <span>92%</span></div>
+                                 <div class="w-full h-1 bg-gray-800"><div class="h-1 bg-gold w-[92%]"></div></div>
+                             </div>
+                        </div>
+                        
+                        <div class="mt-8 border-t border-yellow-900/30 pt-4 flex items-center justify-between text-xs text-gold font-mono">
+                            <span><i class="fas fa-map-marker-alt mr-2"></i>Los Angeles, USA</span>
+                            <span>DOMINANT</span>
+                        </div>
+                    </div>
+                `;
+            }
+        }, 1500);
+    </script>
 </body>
 </html>

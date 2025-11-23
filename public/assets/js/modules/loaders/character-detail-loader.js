@@ -2,7 +2,7 @@ import { client } from '../../lib/sanityClient.js';
 
 // Bu dosyada, başka bir kütüphaneye (Cytoscape gibi) ihtiyacımız yok.
 
-const renderCharacterDetails = (character) => {
+const renderCharacterDetails = async (character) => {
     const contentDiv = document.getElementById('character-detail-content');
     if (!contentDiv) {
         console.error('Content div not found!');
@@ -62,87 +62,175 @@ const renderCharacterDetails = (character) => {
                         </div>
                     </div>
                 </div>
-
-                <div>
-                    <h2 class="section-title">Family Tree</h2>
-                    <div class="mermaid-container">
-                        <div class="mermaid">
-                            <!-- Bu div, aşağıdaki kod tarafından, soy ağacı metniyle doldurulacak -->
-                        </div>
-                    </div>
-                </div>
             </div>
 
         </div>
     `;
 
-    // --- AİLE AĞACINI OLUŞTURMA VE ÇİZDİRME ---
-    const familyTreeContainer = document.querySelector('.mermaid');
-    if (familyTreeContainer) {
-        // O en son, en güçlü, sözdizimi düzeltilmiş Mermaid kodumuz.
-        const mermaidCode = `
-            graph TD;
+    // --- AİLE AĞACINI OLUŞTURMA VE D3 İLE ÇİZDİRME ---
+    const familyContainer = document.getElementById('family-graph') || document.getElementById('family-tree-container') || document.querySelector('.mermaid') || document.querySelector('.family-tree');
+    if (familyContainer) {
+        // Build nodes & links from available structured data (relationships[] and family[])
+        const loadingEl = familyContainer.querySelector && familyContainer.querySelector('.d3-loading');
+        const emptyEl = familyContainer.querySelector && familyContainer.querySelector('.d3-empty');
+        if (loadingEl) loadingEl.style.display = 'flex';
+        const nodesMap = new Map();
 
-            %% Stil Tanımlamaları
-            classDef theFounder fill:#5a1d1d,stroke:#993a3a,stroke-width:3px,color:#fff;
-            classDef theHeir fill:#ca8a04,stroke:#ffdc73,stroke-width:2px,color:#000;
-            classDef theBetrayed fill:#2d3748,stroke:#4a5568,stroke-width:1px,color:#a0aec0;
-            classDef theShadows fill:#1a202c,stroke:#4a5568,stroke-width:1px,color:#a0aec0;
-            classDef theCatalyst fill:#276749,stroke:#48bb78,stroke-width:1px,color:#fff;
-            classDef theLie fill:#4c51bf,stroke:#7f9cf5,stroke-width:1px,color:#fff;
+        // Helper to add node. Accepts multiple legacy shapes:
+        // - populated object: { name, slug, image_url }
+        // - reference object: { _ref: '<id>' } or { character: { _ref: '<id>' } }
+        // - legacy object: { name: 'Name' }
+        const addNode = (obj, isMain = false) => {
+            if (!obj) return;
+            // normalize when given a simple ref wrapper
+            if (typeof obj === 'string') {
+                // simple string name
+                const id = obj.toLowerCase().replace(/\s+/g, '-');
+                if (!nodesMap.has(id)) {
+                    nodesMap.set(id, { id, label: obj, slug: null, image: null, isMain: !!isMain, group: '' });
+                }
+                return;
+            }
 
-            %% Oyuncular
-            Gregor(":::theFounder\n**Gregor 'The Crow' Ballantine**\n*Kurucu*");
-            Ewan(":::theBetrayed\nEwan Ballantine\n*Reddedilen Onur*");
-            Ruaraidh(":::theHeir\nRuaraidh Ballantine\n*Kırık Kral*");
-            Havi(":::theHeir\nHavi\n*Gölgedeki Varis*");
-            Alessandro(":::theLie\nAlessandro\n*Yalanın Oğlu*");
-            Elizabeth(":::theCatalyst\nElizabeth\n*İlk Çatlak*");
-            Aurelia(":::theCatalyst\nAurelia\n*Son Çatlak*");
-            Vito(":::theLie\nVito Cagliari\n*Sahte Baba*");
-            Donan(":::theShadows\nDonan Ballantine\n*Gölgedeki Kardeş*");
-            Eamon(":::theShadows\nEamon\n*İhanetin Fısıltısı*");
-        
-            %% İlişkiler
-            Gregor ==> Ewan;
-            Gregor ==> Donan;
-            Ewan ==> Ruaraidh;
-            
-            linkStyle 0,1,2 stroke:#8b0000,stroke-width:2px;
+            // If it's a wrapper { character: { _ref/... } }
+            if (obj.character && obj.character._ref) {
+                const refId = obj.character._ref;
+                if (!nodesMap.has(refId)) {
+                    nodesMap.set(refId, { id: refId, label: obj.character.name || refId, slug: obj.character.slug || null, image: obj.character.image_url || null, isMain: !!isMain, group: '' });
+                }
+                return;
+            }
 
-            subgraph S1 [ ]
-                Elizabeth -- "REDDEDİLDİ" --x Ruaraidh;
-                Elizabeth -- "SONUÇ" --> Havi;
-                Ruaraidh -. "BİLİNMEYEN OĞUL" .-> Havi;
-            end
+            // If it's a reference object { _ref: 'id' }
+            if (obj._ref) {
+                const refId = obj._ref;
+                if (!nodesMap.has(refId)) {
+                    nodesMap.set(refId, { id: refId, label: obj.name || refId, slug: null, image: null, isMain: !!isMain, group: '' });
+                }
+                return;
+            }
 
-            subgraph S2 [ ]
-                Aurelia -- "TUTKU" --- Ruaraidh;
-                Aurelia -- "SONUÇ" --> Alessandro;
-                Vito -- "YALAN" --x Alessandro;
-            end
-            
-            subgraph S3 [İmparatorluk Bağları]
-                Gregor -- "Acımasız Miras" --> Ruaraidh;
-                Ewan -- "İhanet" --> Eamon;
-            end
+            // Otherwise assume populated object
+            const id = obj.slug || obj._id || obj.name || obj.Ad || null;
+            if (!id) return;
+            if (!nodesMap.has(id)) {
+                nodesMap.set(id, {
+                    id,
+                    label: obj.name || obj.Ad || obj.title || id,
+                    slug: obj.slug || null,
+                    image: obj.image_url || (obj.image && obj.image.asset && obj.image.asset.url) || null,
+                    isMain: !!isMain,
+                    group: obj.group || ''
+                });
+            } else if (isMain) {
+                nodesMap.get(id).isMain = true;
+            }
+        };
 
-            style S1 fill:none,stroke:none;
-            style S2 fill:none,stroke:none;
-            style S3 fill:none,stroke:#4a5568,stroke-width:1px,stroke-dasharray: 5 5;
+        // Main character node
+        addNode(character, true);
 
-            linkStyle 5 stroke:#718096,stroke-width:1px,stroke-dasharray: 5 5; 
-            linkStyle 8 stroke-width:1px,stroke-dasharray: 3 3;
-        `;
-    
-        familyTreeContainer.textContent = mermaidCode;
-        
-        // Bu kod bloğu, sayfanın o anki "mermaid" diyagramını bulup,
-        // onu, bir SVG görseline dönüştürmesini sağlar.
+        // Add family refs if present
+        if (character.family && Array.isArray(character.family)) {
+            character.family.forEach(ref => {
+                // family item may be { character: {...}, relation } or populated character or simple ref
+                if (!ref) return;
+                if (ref.character) {
+                    addNode(ref.character, false);
+                } else if (ref._ref || ref._id) {
+                    addNode(ref, false);
+                } else if (ref.name) {
+                    addNode(ref.name, false);
+                } else {
+                    addNode(ref, false);
+                }
+            });
+        }
+
+        // Add relationships (these already include character.{name,slug} in the query)
+        if (character.relationships && Array.isArray(character.relationships)) {
+            character.relationships.forEach(rel => {
+                // New shape: { character: {..}, status }
+                if (!rel) return;
+                if (rel.character) addNode(rel.character, false);
+                else if (rel.name) addNode(rel.name, false); // legacy shape
+            });
+        }
+
+        // Build links: from main to relationships and family
+        const links = [];
+        const mainId = character.slug || character._id || character.name || character.Ad || null;
+
+        if (character.relationships && Array.isArray(character.relationships)) {
+            character.relationships.forEach(rel => {
+                if (!rel) return;
+                if (rel.character) {
+                    const tgt = rel.character.slug || rel.character._id || rel.character.name || (rel.character._ref || null);
+                    if (tgt) links.push({ source: mainId, target: tgt, label: rel.status || '', width: 1.6 });
+                } else if (rel.name) {
+                    const tgt = rel.name.toLowerCase().replace(/\s+/g, '-');
+                    links.push({ source: mainId, target: tgt, label: rel.status || '', width: 1.6 });
+                }
+            });
+        }
+
+        if (character.family && Array.isArray(character.family)) {
+            character.family.forEach(ref => {
+                if (!ref) return;
+                let id = null;
+                if (ref.character) {
+                    id = ref.character.slug || ref.character._id || ref.character.name || (ref.character._ref || null);
+                } else if (ref._ref || ref._id) {
+                    id = ref._ref || ref._id;
+                } else if (ref.name) {
+                    id = ref.slug || ref._id || ref.name.toLowerCase().replace(/\s+/g, '-');
+                }
+                if (id) links.push({ source: mainId, target: id, label: ref.relation || ref.label || 'family', width: 1.2 });
+            });
+        }
+
+        const nodes = Array.from(nodesMap.values());
+
+        // determine layout from URL param (layout=tree|force) and optional debug
+        const params = new URLSearchParams(window.location.search);
+        const layout = params.get('layout') || 'tree';
+        const debug = params.get('debug') === '1' || params.get('debug') === 'true';
+
+        // Debug: log nodes and links before rendering when requested
+        if (debug) {
+            console.groupCollapsed('D3 Family Graph - debug payload');
+            console.log('layout:', layout);
+            console.log('nodes:', JSON.parse(JSON.stringify(nodes)));
+            console.log('links:', JSON.parse(JSON.stringify(links)));
+            console.groupEnd();
+        }
+
+        // If there are no nodes (only main missing or no relationships), show empty state
+        if (!nodes || nodes.length === 0) {
+            if (loadingEl) loadingEl.style.display = 'none';
+            if (emptyEl) {
+                emptyEl.style.display = 'block';
+            } else {
+                familyContainer.innerHTML = '<p class="text-neutral-400">No family data available.</p>';
+            }
+            return;
+        }
+
+        // Dynamic import our d3 renderer and render
         try {
-            mermaid.run();
-        } catch (error) {
-            console.error("Mermaid.js render error:", error);
+            const module = await import('./d3-family-tree.js');
+            await module.renderFamilyGraph(familyContainer, { nodes, links }, { width: Math.max(600, familyContainer.clientWidth || 800), height: 700, layout });
+            if (loadingEl) loadingEl.style.display = 'none';
+        } catch (err) {
+            console.error('D3 family renderer failed:', err);
+            // Fallback: render a minimal text
+            if (loadingEl) loadingEl.style.display = 'none';
+            if (emptyEl) {
+                emptyEl.style.display = 'block';
+                emptyEl.innerText = 'Family graph could not be rendered.';
+            } else {
+                familyContainer.innerHTML = '<p class="text-neutral-400">Family graph could not be rendered.</p>';
+            }
         }
     }
 };
@@ -161,13 +249,13 @@ export const loadCharacterDetails = async () => {
 
     try {
         // Sanity'den görsel URL'ini de alacak şekilde sorguyu güncelledim.
-        const query = `*[_type == "character" && slug.current == $slug][0]{..., "image_url": image.asset->url, relationships[]{..., character->{name, "slug": slug.current}}}`;
+        const query = `*[_type == "character" && slug.current == $slug][0]{..., "image_url": image.asset->url, family[]->{name, "slug": slug.current, "image_url": image.asset->url}, relationships[]{..., character->{name, "slug": slug.current, "image_url": image.asset->url}}}`;
         const sanityParams = { slug: characterSlug };
 
         const character = await client.fetch(query, sanityParams);
 
         if (character) {
-            renderCharacterDetails(character); 
+            await renderCharacterDetails(character); 
         } else {
             contentDiv.innerHTML = `<p class="text-red-500 text-center">Character with slug '${characterSlug}' not found.</p>`;
         }
