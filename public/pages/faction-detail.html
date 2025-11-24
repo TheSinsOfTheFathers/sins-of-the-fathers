@@ -57,6 +57,12 @@
         .roster-card { transition: all 0.3s ease; }
         .roster-card:hover { border-color: var(--theme-color); transform: translateY(-2px); }
 
+        /* Hamburger Animation */
+        #hamburger-button span { transition: 0.3s; }
+        #hamburger-button.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 6px); }
+        #hamburger-button.active span:nth-child(2) { opacity: 0; }
+        #hamburger-button.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -6px); }
+
     </style>
 
     <!-- Scripts -->
@@ -66,17 +72,51 @@
 <body class="flex flex-col min-h-screen">
     <div class="noise-overlay"></div>
 
-    <!-- Header -->
+    <!-- Header (System Integrated) -->
     <header class="fixed top-0 w-full z-50 bg-obsidian/90 backdrop-blur-md border-b border-white/5 transition-all">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <!-- Sol: Marka & Bağlam -->
             <a href="../index.html" class="text-xl md:text-2xl font-serif text-gold tracking-widest uppercase hover:text-white transition-colors">
                 TSOF <span class="hidden md:inline text-xs text-gray-600 ml-2">// HQ ACCESS</span>
             </a>
-            <a href="factions.html" class="text-xs uppercase tracking-widest text-gray-500 hover:text-gold transition-colors flex items-center">
-                <i class="fas fa-arrow-left mr-2"></i> Exit Territory
-            </a>
+            
+            <!-- Sağ: Masaüstü Navigasyon & Auth -->
+            <div class="hidden md:flex items-center space-x-6 text-xs uppercase tracking-widest font-semibold">
+                <!-- Geri Dön -->
+                <a href="factions.html" class="text-gray-500 hover:text-gold transition-colors flex items-center border-r border-white/10 pr-6">
+                    <i class="fas fa-arrow-left mr-2"></i> Exit Territory
+                </a>
+
+                <!-- Auth Kontrolleri (Giriş Yap/User Menu Buraya Gelecek) -->
+                <div class="flex items-center gap-4" id="auth-controls">
+                    <a href="login.html" class="text-gold/80 hover:text-white transition-colors guest-only" id="auth-signin-link">Identify</a>
+                </div>
+            </div>
+
+            <!-- Mobil Hamburger (Animasyonlu) -->
+            <div class="md:hidden relative z-50">
+                <button id="hamburger-button" class="text-gold focus:outline-none flex flex-col justify-center items-center w-8 h-8 space-y-1.5 group">
+                    <span class="block w-6 h-0.5 bg-gold transition-transform duration-300"></span>
+                    <span class="block w-6 h-0.5 bg-gold transition-opacity duration-300"></span>
+                    <span class="block w-6 h-0.5 bg-gold transition-transform duration-300"></span>
+                </button>
+            </div>
         </nav>
     </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="hidden fixed inset-0 z-40 bg-black/95 flex-col items-center justify-center space-y-8 transition-opacity duration-300 backdrop-blur-xl">
+        <!-- Özel Geri Dön Butonu -->
+        <a href="factions.html" class="text-lg text-red-500 font-serif hover:text-white border border-red-900 px-6 py-2 uppercase tracking-widest mb-4">
+            <i class="fas fa-arrow-left mr-2"></i> Exit Territory
+        </a>
+
+        <a href="../index.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest">Home</a>
+        <a href="timeline.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest">History</a>
+        <a href="characters.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest">Bloodline</a>
+        <a href="locations.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest">Map</a>
+        <a href="login.html" class="text-sm text-gray-400 hover:text-white mt-8 font-mono uppercase">Access Terminal</a>
+    </div>
 
     <!-- FACTION HERO HEADER -->
     <!-- The ID 'faction-banner' allows JS to change the background image based on faction type -->

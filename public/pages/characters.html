@@ -58,6 +58,11 @@
             linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
             background-size: 30px 30px;
         }
+        /* Hamburger Animation */
+        #hamburger-button span { transition: 0.3s; }
+        #hamburger-button.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 6px); }
+        #hamburger-button.active span:nth-child(2) { opacity: 0; }
+        #hamburger-button.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -6px); }
     </style>
 </head>
 
@@ -67,28 +72,50 @@
     <div class="noise-overlay"></div>
     <div class="vignette"></div>
 
-    <!-- Header (Navigation) -->
+    <!-- Header (System Integrated) -->
     <header class="fixed top-0 w-full z-50 bg-obsidian/90 backdrop-blur-md border-b border-white/5 transition-all">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <!-- Sol: Marka -->
             <a href="../index.html" class="text-xl md:text-2xl font-serif text-gold tracking-widest uppercase hover:text-white transition-colors">
-                TSOF
+                TSOF <span class="hidden md:inline text-xs text-gray-600 ml-2">// PERSONNEL DB</span>
             </a>
             
+            <!-- Sağ: Desktop Menu -->
             <div class="hidden md:flex items-center space-x-8 text-xs uppercase tracking-widest font-semibold">
                 <a href="characters.html" class="text-white border-b border-gold pb-1">The Bloodline</a>
-                <a href="timeline.html" class="hover:text-gold transition-colors">History</a>
-                <a href="factions.html" class="hover:text-gold transition-colors">Factions</a>
-                <a href="locations.html" class="hover:text-gold transition-colors">Territories</a>
-                <span class="w-px h-4 bg-gray-700"></span>
-                <a href="login.html" class="hover:text-gold transition-colors">Sign In</a>
+                <a href="timeline.html" class="text-gray-400 hover:text-gold transition-colors">History</a>
+                <a href="factions.html" class="text-gray-400 hover:text-gold transition-colors">Factions</a>
+                <a href="locations.html" class="text-gray-400 hover:text-gold transition-colors">Territories</a>
+                
+                <!-- Auth Logic İçin Gerekli ID'li Kapsayıcı -->
+                <div class="border-l border-white/20 pl-6 ml-2 flex items-center gap-4" id="auth-controls">
+                    <a href="lore.html" class="text-gold hover:text-white transition-colors flex items-center gap-1 guest-only">
+                        <i class="fas fa-lock text-[9px]"></i> Data
+                    </a>
+                    <a href="login.html" class="hover:text-gold transition-colors guest-only" id="auth-signin-link">Sign In</a>
+                </div>
             </div>
 
-            <!-- Mobile Hamburger -->
-            <div class="md:hidden">
-                 <button id="hamburger-button" class="text-gold focus:outline-none"><i class="fas fa-bars"></i></button>
+            <!-- Mobil Hamburger (Animasyonlu Span Yapısı) -->
+            <div class="md:hidden relative z-50">
+                <button id="hamburger-button" class="text-gold focus:outline-none flex flex-col justify-center items-center w-8 h-8 space-y-1.5 group">
+                    <span class="block w-6 h-0.5 bg-gold transition-transform duration-300"></span>
+                    <span class="block w-6 h-0.5 bg-gold transition-opacity duration-300"></span>
+                    <span class="block w-6 h-0.5 bg-gold transition-transform duration-300"></span>
+                </button>
             </div>
         </nav>
     </header>
+
+    <!-- Mobile Menu Overlay (Zorunlu) -->
+    <div id="mobile-menu" class="hidden fixed inset-0 z-40 bg-black/95 flex-col items-center justify-center space-y-8 transition-opacity duration-300 backdrop-blur-xl">
+        <a href="characters.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest border-b border-gold pb-2">The Bloodline</a>
+        <a href="timeline.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest">History</a>
+        <a href="factions.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest">Factions</a>
+        <a href="locations.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest">Territories</a>
+        <a href="lore.html" class="text-xl text-gold font-serif hover:text-white uppercase tracking-widest">Archives</a>
+        <a href="login.html" class="text-sm text-gray-400 hover:text-white mt-8 font-mono uppercase">Access Terminal</a>
+    </div>
 
     <!-- Main Content -->
     <main class="flex-grow pt-28 pb-20 relative z-10">

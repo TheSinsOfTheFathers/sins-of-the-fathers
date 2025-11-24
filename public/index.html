@@ -8,7 +8,7 @@
     <meta name="keywords" content="Sins of the Fathers, Ballantine, Ruaraidh, Havi, Crime Saga, Noir, Dark Fiction">
     <meta name="author" content="The Sins of the Fathers">
     
-    <!-- Open Graph & Twitter Cards (Existing Meta) -->
+    <!-- Open Graph & Twitter Cards -->
     <meta property="og:title" content="The Sins of the Fathers - The Dynasty" />
     <meta property="og:image" content="https://thesinsofthefathers.com/assets/images/og/social_share_logo.svg" />
     <meta name="twitter:card" content="summary_large_image" />
@@ -28,7 +28,7 @@
                         'charcoal': '#121212'
                     },
                     fontFamily: {
-                        serif: ['Playfair Display', 'serif'], // Eğer Google Fonts yüklüyse
+                        serif: ['Cinzel', 'serif'],
                         sans: ['Lato', 'sans-serif'],
                         mono: ['Courier Prime', 'monospace']
                     }
@@ -36,8 +36,9 @@
             }
         }
     </script>
-    <!-- Google Fonts (Cinzel & Lato Eklemesi) -->
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Courier+Prime&display=swap" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
 
@@ -50,21 +51,24 @@
         .noise-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 50;
+            pointer-events: none; z-index: 50;
             background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MDAiIGhlaWdodD0iNTAwIj48ZmlsdGVyIGlkPSJub2lzZSI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuNjUiIG51bU9jdGF2ZXM9IjMiIHN0aXRjaFRpbGVzPSJzdGl0Y2giLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCgjbm9pc2UpIiBvcGFjaXR5PSIwLjA1Ii8+PC9zdmc+');
             opacity: 0.05;
         }
         .vignette {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 40;
+            pointer-events: none; z-index: 40;
             background: radial-gradient(circle, rgba(0,0,0,0) 50%, rgba(0,0,0,1) 100%);
         }
-        h1, h2, h3, .nav-brand { font-family: 'Cinzel', serif; }
         
-        /* Özel Kaydırma Çubuğu (Stealth Scrollbar) */
+        /* Hamburger Animation */
+        #hamburger-button span { transition: 0.3s; }
+        #hamburger-button.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 6px); }
+        #hamburger-button.active span:nth-child(2) { opacity: 0; }
+        #hamburger-button.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -6px); }
+
+        /* Özel Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #050505; }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
@@ -78,11 +82,11 @@
     <div class="noise-overlay"></div>
     <div class="vignette"></div>
 
-    <!-- Header (Daha ince ve keskin) -->
-    <header class="fixed top-0 w-full z-50 transition-all duration-300 bg-obsidian/80 backdrop-blur-md border-b border-white/5">
+    <!-- Header -->
+    <header class="fixed top-0 w-full z-50 transition-all duration-300 bg-obsidian/90 backdrop-blur-md border-b border-white/5">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
             <!-- Marka / Logo -->
-            <a href="index.html" class="nav-brand text-2xl md:text-3xl text-gold tracking-widest hover:text-white transition-colors uppercase">
+            <a href="index.html" class="nav-brand text-2xl md:text-3xl text-gold tracking-widest hover:text-white transition-colors uppercase font-serif">
                 TSOF
             </a>
 
@@ -93,25 +97,41 @@
                 <a href="./pages/factions.html" class="hover:text-gold transition-colors">Factions</a>
                 <a href="./pages/locations.html" class="hover:text-gold transition-colors">Territories</a>
                 
-                <!-- Login Bölümü - Ayıraçlı -->
-                <div class="border-l border-white/20 pl-8 ml-4 flex space-x-6">
-                    <a href="./pages/lore.html" class="text-gold hover:text-white transition-colors flex items-center gap-2">
+                <!-- Login Bölümü - (ID EKLENDİ: auth-controls) -->
+                <div class="border-l border-white/20 pl-8 ml-4 flex items-center gap-4" id="auth-controls">
+                    <!-- Guest Only Link -->
+                    <a href="./pages/lore.html" class="text-gold hover:text-white transition-colors flex items-center gap-2 guest-only">
                         <i class="fas fa-lock text-xs"></i> Classified
                     </a>
-                    <a href="./pages/login.html" class="hover:text-gold transition-colors">Sign In</a>
+                    <!-- ID EKLENDİ: auth-signin-link ve class guest-only -->
+                    <a href="./pages/login.html" class="hover:text-gold transition-colors guest-only" id="auth-signin-link">Sign In</a>
                 </div>
             </div>
 
-            <!-- Hamburger (Aynı kalabilir) -->
-            <div class="md:hidden">
-                <button class="text-gold focus:outline-none"><i class="fas fa-bars text-2xl"></i></button>
+            <!-- Hamburger (ID EKLENDİ: hamburger-button) -->
+            <div class="md:hidden relative z-50">
+                <button id="hamburger-button" class="text-gold focus:outline-none flex flex-col justify-between w-6 h-5">
+                    <span class="block w-full h-0.5 bg-gold"></span>
+                    <span class="block w-full h-0.5 bg-gold"></span>
+                    <span class="block w-full h-0.5 bg-gold"></span>
+                </button>
             </div>
         </nav>
     </header>
 
-    <!-- SECTION 1: THE HOOK (ATMOSPHERE) -->
+    <!-- Mobile Menu Overlay (EKSİKTİ - EKLENDİ) -->
+    <div id="mobile-menu" class="hidden fixed inset-0 z-40 bg-black/95 flex-col items-center justify-center space-y-8 transition-opacity duration-300 backdrop-blur-xl">
+        <a href="./pages/characters.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest">The Bloodline</a>
+        <a href="./pages/timeline.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest">History</a>
+        <a href="./pages/factions.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest">Factions</a>
+        <a href="./pages/locations.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest">Territories</a>
+        <a href="./pages/lore.html" class="text-xl text-gold font-serif hover:text-white border border-gold px-6 py-2 uppercase tracking-widest">Archives</a>
+        <a href="./pages/login.html" class="text-sm text-gray-400 hover:text-white mt-8 font-mono uppercase">Access Terminal</a>
+    </div>
+
+    <!-- SECTION 1: THE HOOK -->
     <section class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
-        <!-- Arkaplan Görseli Yer Tutucu (İleride Ruaraidh/LA harmanı bir resim konacak) -->
+        <!-- Background -->
         <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?q=80&w=2874&auto=format&fit=crop')] bg-cover bg-center opacity-20 grayscale"></div>
         
         <div class="relative z-10 container mx-auto px-4 text-center">
@@ -126,44 +146,37 @@
             </p>
 
             <div class="flex flex-col md:flex-row gap-6 justify-center">
-                <!-- Hikayeyi Keşfet Butonu -->
-                <a href="./pages/characters.html" class="group relative px-8 py-4 border border-gold/30 bg-transparent overflow-hidden">
+                <a href="./pages/characters.html" class="group relative px-8 py-4 border border-gold/30 bg-transparent overflow-hidden inline-block">
                     <span class="absolute inset-0 w-full h-full bg-gold/10 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out"></span>
                     <span class="relative text-gold uppercase tracking-widest font-semibold group-hover:text-white transition-colors">
                         Enter The Archive
                     </span>
                 </a>
 
-                <!-- Satın Alma Kısmına İndiren Buton -->
-                <a href="#acquisition" class="px-8 py-4 border border-white/10 text-gray-400 uppercase tracking-widest text-sm hover:border-white hover:text-white transition-all">
+                <a href="#acquisition" class="px-8 py-4 border border-white/10 text-gray-400 uppercase tracking-widest text-sm hover:border-white hover:text-white transition-all inline-block">
                     Secure The Asset
                 </a>
             </div>
         </div>
 
-        <!-- Scroll İkonu -->
         <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
             <i class="fas fa-chevron-down text-gray-600"></i>
         </div>
     </section>
 
-    <!-- SECTION 2: ACQUISITION (THE SALES BLOCK - REDESIGNED) -->
+    <!-- SECTION 2: ACQUISITION -->
     <section id="acquisition" class="py-24 bg-charcoal border-t border-white/5">
         <div class="container mx-auto px-4 max-w-5xl">
-            
             <div class="text-center mb-16">
                 <h2 class="text-3xl font-serif text-white mb-4">Secure The Chronicles</h2>
                 <div class="h-1 w-24 bg-red-900 mx-auto"></div>
                 <p class="mt-4 text-gray-500">Choose your allegiance. Select your format.</p>
             </div>
 
-            <!-- Tek Satırda Kutular -->
             <div class="grid md:grid-cols-2 gap-8 md:gap-0 border border-white/10 bg-obsidian/50 relative">
-                
-                <!-- Dikey Çizgi (Masaüstü için) -->
                 <div class="hidden md:block absolute left-1/2 top-10 bottom-10 w-px bg-gradient-to-b from-transparent via-white/10 to-transparent"></div>
 
-                <!-- LEFT: DIRECT ACCESS (Shopier/Gumroad) -->
+                <!-- DIRECT -->
                 <div class="p-10 flex flex-col justify-between group hover:bg-white/5 transition-colors duration-500">
                     <div>
                         <div class="flex items-center gap-3 mb-4 text-gold">
@@ -171,23 +184,20 @@
                             <h3 class="text-xl font-serif uppercase tracking-widest">Author Direct</h3>
                         </div>
                         <p class="text-sm text-gray-500 mb-8 leading-relaxed">
-                            Support the architect directly. Receive pure, DRM-free files (PDF, ePub, Mobi). Recommended for operatives.
+                            Support the architect directly. Receive pure, DRM-free files (PDF, ePub, Mobi).
                         </p>
                     </div>
-
                     <div class="space-y-4">
-                        <a href="#" target="_blank" class="block w-full py-3 px-4 border border-gray-700 text-gray-300 hover:border-gold hover:text-gold hover:bg-gold/5 transition-all text-sm uppercase tracking-wider flex justify-between items-center group-hover:pl-6 duration-300">
+                        <a href="#" target="_blank" class="block w-full py-3 px-4 border border-gray-700 text-gray-300 hover:border-gold hover:text-gold transition-all text-sm uppercase tracking-wider flex justify-between items-center">
                             <span><i class="fas fa-shopping-bag mr-2"></i> Shopier (TR)</span>
-                            <i class="fas fa-arrow-right opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all"></i>
                         </a>
-                        <a href="#" target="_blank" class="block w-full py-3 px-4 border border-gray-700 text-gray-300 hover:border-pink-500/50 hover:text-pink-400 hover:bg-pink-500/5 transition-all text-sm uppercase tracking-wider flex justify-between items-center group-hover:pl-6 duration-300">
+                        <a href="#" target="_blank" class="block w-full py-3 px-4 border border-gray-700 text-gray-300 hover:border-pink-500/50 hover:text-pink-400 transition-all text-sm uppercase tracking-wider flex justify-between items-center">
                             <span><i class="fas fa-globe mr-2"></i> Gumroad (Global)</span>
-                            <i class="fas fa-arrow-right opacity-0 group-hover:opacity-100 transform -translate-x-2 group-hover:translate-x-0 transition-all"></i>
                         </a>
                     </div>
                 </div>
 
-                <!-- RIGHT: PLATFORM ACCESS -->
+                <!-- PLATFORM -->
                 <div class="p-10 flex flex-col justify-between group hover:bg-white/5 transition-colors duration-500">
                     <div>
                         <div class="flex items-center gap-3 mb-4 text-gray-400">
@@ -195,38 +205,27 @@
                             <h3 class="text-xl font-serif uppercase tracking-widest text-white">Platform</h3>
                         </div>
                         <p class="text-sm text-gray-500 mb-8 leading-relaxed">
-                            Encrypted files for your preferred reading ecosystem. Sync across all your devices.
+                            Encrypted files for your preferred ecosystem.
                         </p>
                     </div>
-
                     <div class="space-y-4">
-                        <a href="#" target="_blank" class="block w-full py-3 px-4 border border-gray-800 text-gray-400 hover:border-yellow-600 hover:text-white transition-all text-sm uppercase tracking-wider flex items-center">
-                            <i class="fab fa-amazon w-6 text-center mr-3"></i> Kindle Edition
+                        <a href="#" target="_blank" class="block w-full py-3 px-4 border border-gray-800 text-gray-400 hover:border-white hover:text-white transition-all text-sm uppercase tracking-wider">
+                            <i class="fab fa-amazon mr-2"></i> Kindle
                         </a>
-                        <a href="#" target="_blank" class="block w-full py-3 px-4 border border-gray-800 text-gray-400 hover:border-gray-200 hover:text-white transition-all text-sm uppercase tracking-wider flex items-center">
-                            <i class="fab fa-apple w-6 text-center mr-3"></i> Apple Books
-                        </a>
-                        <a href="#" target="_blank" class="block w-full py-3 px-4 border border-gray-800 text-gray-400 hover:border-blue-500 hover:text-white transition-all text-sm uppercase tracking-wider flex items-center">
-                            <i class="fab fa-google-play w-6 text-center mr-3"></i> Google Play
+                        <a href="#" target="_blank" class="block w-full py-3 px-4 border border-gray-800 text-gray-400 hover:border-white hover:text-white transition-all text-sm uppercase tracking-wider">
+                            <i class="fab fa-apple mr-2"></i> Apple Books
                         </a>
                     </div>
                 </div>
             </div>
-            
-            <div class="text-center mt-8">
-                <p class="text-xs text-gray-600 uppercase tracking-widest">
-                    * Transmissions are secured via SSL encryption.
-                </p>
-            </div>
         </div>
     </section>
 
-    <!-- FOOTER (Simplistic) -->
+    <!-- FOOTER -->
     <footer class="py-12 bg-obsidian border-t border-white/5 text-center">
         <p class="font-serif text-gold text-2xl mb-4">TSOF</p>
         <p class="text-gray-600 text-xs uppercase tracking-widest">
-            &copy; 2025 The Sins of the Fathers. <br>
-            Ruaraidh Ballantine & Havi are watching.
+            &copy; 2025 The Sins of the Fathers.
         </p>
     </footer>
 

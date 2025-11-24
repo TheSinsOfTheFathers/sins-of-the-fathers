@@ -607,3 +607,19 @@ main.flex-grow {
 @keyframes spinner-rotate { to { transform: rotate(360deg); } }
 
 .d3-empty { text-align: center; font-style: italic; }
+
+.hamburger-button span {
+    transition: all 0.3s ease-in-out;
+    transform-origin: center;
+}
+
+/* When Active (Open State) */
+.hamburger-button.active span:nth-child(1) {
+    transform: translateY(8px) rotate(45deg); /* Üst çizgi çapraz */
+}
+.hamburger-button.active span:nth-child(2) {
+    opacity: 0; /* Orta çizgi kaybolur */
+}
+.hamburger-button.active span:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg); /* Alt çizgi ters çapraz */
+}

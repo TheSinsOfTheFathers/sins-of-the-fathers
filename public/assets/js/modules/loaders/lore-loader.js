@@ -1,41 +1,240 @@
-import { client } from '/public/assets/js/lib/sanityClient.js';
+import { client } from '../../lib/sanityClient.js';
 
-const createLoreListItem = (lore) => {
-    const cardLink = document.createElement('a');
-    cardLink.href = `lore-detail.html?slug=${lore.slug}`;
-    cardLink.className = 'lore-card group';
+// Küresel değişkenler (Filtreleme için veriyi hafızada tutmak gerek)
+let allLoreData = [];
 
-    cardLink.innerHTML = `
-        <h2 class="lore-card-title">${lore.title_en}</h2>
-        <p class="lore-card-summary">${lore.summary_en || ''}</p>
+/* --------------------------------------------------------------------------
+   CARD TEMPLATES (GÖRSEL AYRIŞTIRMA)
+   -------------------------------------------------------------------------- */
+
+// 1. DOCUMENT STYLE (Kağıt Dokusu)
+const createDocumentCard = (lore) => `
+    <div class="archive-card bg-[#e6e2d3] text-black p-6 rounded-sm shadow-lg relative overflow-hidden group h-fit break-inside-avoid">
+        <div class="absolute top-2 right-2 border border-red-900 text-red-900 text-[10px] font-bold px-2 py-0.5 transform rotate-12 opacity-70">DOC_${lore._createdAt.slice(0,4)}</div>
+        <h3 class="font-mono font-bold text-lg mb-2 uppercase underline decoration-red-800 decoration-2 tracking-tighter">
+            <a href="lore-detail.html?slug=${lore.slug}" class="hover:text-red-900">${lore.title}</a>
+        </h3>
+        <p class="font-serif text-xs italic mb-4 opacity-80 border-b border-black/10 pb-2">
+            Source: ${lore.source || 'Unknown'}
+        </p>
+        <div class="font-mono text-xs leading-relaxed opacity-90 mb-4 line-clamp-4">
+            ${lore.summary || 'Content parsing pending...'}
+        </div>
+        <a href="lore-detail.html?slug=${lore.slug}" class="block text-right text-[10px] font-bold uppercase tracking-widest hover:text-red-700 transition-colors">
+            Access File &rarr;
+        </a>
+    </div>
+`;
+
+// 2. AUDIO STYLE (Dark Tech)
+const createAudioCard = (lore) => `
+    <div class="archive-card bg-gray-900 border-l-4 border-gold p-5 shadow-lg h-fit break-inside-avoid group">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-gold font-mono text-sm uppercase truncate w-2/3">
+                <i class="fas fa-microphone-alt mr-2"></i> ${lore.title}
+            </h3>
+            <span class="text-[9px] text-gray-600 font-mono border border-gray-700 px-1">REC</span>
+        </div>
+        <!-- Fake Waveform -->
+        <div class="flex items-center space-x-1 h-6 mb-4 opacity-60 group-hover:opacity-100 transition-opacity">
+            <div class="w-1 bg-gold h-3"></div><div class="w-1 bg-gold h-5"></div><div class="w-1 bg-gold h-full animate-pulse"></div>
+            <div class="w-1 bg-gold h-4"></div><div class="w-1 bg-gold h-2"></div><div class="w-1 bg-gold h-5"></div>
+            <div class="w-1 bg-gray-700 h-px flex-grow"></div>
+        </div>
+        <p class="text-xs text-gray-400 font-mono mb-4 line-clamp-2">${lore.summary}</p>
+        <a href="lore-detail.html?slug=${lore.slug}" class="block w-full border border-gray-700 py-2 text-[10px] text-center text-white hover:bg-gold hover:text-black hover:border-gold transition-all uppercase font-mono tracking-wider">
+            Play Transmission
+        </a>
+    </div>
+`;
+
+// 3. RESTRICTED / CLASSIFIED STYLE (Blurred)
+const createRestrictedCard = (lore) => `
+    <div class="archive-card bg-black border border-red-900/40 relative overflow-hidden group h-fit break-inside-avoid cursor-not-allowed">
+        <!-- Background Blur Content -->
+        <div class="p-6 filter blur-sm opacity-30 select-none pointer-events-none">
+            <h3 class="text-white font-serif text-xl mb-2">${lore.title}</h3>
+            <p class="text-gray-400 text-sm font-mono">${lore.summary}</p>
+            <div class="mt-4 h-20 bg-gray-800 w-full"></div>
+        </div>
+
+        <!-- Lock Overlay -->
+        <div class="absolute inset-0 flex flex-col items-center justify-center bg-black/50 backdrop-blur-[1px] group-hover:bg-black/30 transition-colors z-10">
+            <div class="border-2 border-red-600 rounded-full p-3 mb-2 shadow-[0_0_15px_rgba(220,38,38,0.5)] bg-black">
+                <i class="fas fa-lock text-xl text-red-500"></i>
+            </div>
+            <span class="text-red-500 font-mono text-xs uppercase font-bold tracking-widest mb-1">Classified</span>
+            <a href="login.html?redirect=lore" class="mt-3 px-4 py-1 bg-red-900/20 text-white text-[9px] border border-red-800 hover:bg-red-900 hover:border-red-500 transition uppercase font-mono">
+                Clearance Required
+            </a>
+        </div>
+    </div>
+`;
+
+// 4. IMAGE STYLE (Polaroid)
+const createImageCard = (lore) => {
+    const imgUrl = lore.imageUrl || 'https://via.placeholder.com/400';
+    return `
+        <div class="archive-card bg-white p-3 shadow-lg h-fit break-inside-avoid hover:rotate-1 transition-transform duration-300">
+            <a href="lore-detail.html?slug=${lore.slug}" class="block">
+                <div class="w-full aspect-video bg-gray-200 overflow-hidden grayscale contrast-125 relative border border-gray-300">
+                    <img src="${imgUrl}" class="w-full h-full object-cover" loading="lazy" alt="Evidence">
+                    <!-- Date Stamp -->
+                    <div class="absolute bottom-2 right-2 text-black font-bold text-[8px] px-1 rotate-[-5deg] opacity-60 font-mono">
+                        ${lore.date || 'NO_DATE'}
+                    </div>
+                </div>
+                <div class="pt-3 pb-1 px-1">
+                    <h3 class="font-mono text-xs text-black uppercase truncate font-bold">${lore.title}</h3>
+                    <p class="text-[9px] text-gray-600 mt-1 line-clamp-2 font-sans leading-tight">${lore.summary}</p>
+                </div>
+            </a>
+        </div>
     `;
-    return cardLink;
 };
 
+/**
+ * KART DAĞITICI (Dispatcher)
+ */
+const generateCard = (lore) => {
+    // Öncelik: Gizliyse kilitli göster
+    if (lore.restricted) return createRestrictedCard(lore);
+    
+    // Tip kontrolü
+    const type = lore.loreType || 'document'; // Default
+    
+    switch(type) {
+        case 'audio': return createAudioCard(lore);
+        case 'image': return createImageCard(lore);
+        default: return createDocumentCard(lore);
+    }
+};
+
+/* --------------------------------------------------------------------------
+   FILTER LOGIC
+   -------------------------------------------------------------------------- */
+const renderGrid = (data) => {
+    const container = document.getElementById('archive-grid');
+    if (!container) return;
+
+    container.innerHTML = ''; // Temizle
+    
+    if (data.length === 0) {
+        container.innerHTML = '<div class="col-span-full text-center text-gray-500 font-mono py-12">> NO RECORDS MATCH YOUR QUERY.</div>';
+        return;
+    }
+
+    // HTML Birleştir
+    const html = data.map(item => generateCard(item)).join('');
+    container.innerHTML = html;
+};
+
+// İstemci taraflı filtreleme
+const applyFilters = (searchTerm = '', filterType = 'all') => {
+    const lowerTerm = searchTerm.toLowerCase();
+    
+    const filtered = allLoreData.filter(item => {
+        const matchesSearch = 
+            (item.title || '').toLowerCase().includes(lowerTerm) || 
+            (item.summary || '').toLowerCase().includes(lowerTerm);
+            
+        let matchesType = true;
+        if (filterType === 'documents') matchesType = item.loreType === 'document' || !item.loreType;
+        if (filterType === 'audio') matchesType = item.loreType === 'audio';
+        if (filterType === 'classified') matchesType = item.restricted === true;
+
+        return matchesSearch && matchesType;
+    });
+
+    renderGrid(filtered);
+};
+
+/* --------------------------------------------------------------------------
+   MAIN EXECUTION
+   -------------------------------------------------------------------------- */
 export async function displayLoreList() {
-    const loreContainer = document.getElementById('lore-list-container');
-    if (!loreContainer) return;
+    const container = document.getElementById('archive-grid');
+    const loader = document.getElementById('archive-loader');
+    
+    // Yanlış sayfadaysak çık
+    if (!container) return;
 
     try {
-        const query = `*[_type == "lore"] | order(order asc){
-            title_en,
-            summary_en,
-            "slug": slug.current
+        // GROQ: Type, Restricted (Boolean) ve Resim Url'i ekledik.
+        // 'loreType' alanını Sanity'de oluşturduğunuzu varsayıyorum (String Options: document, audio, image)
+        // Eğer yoksa manuel logic kurmalısınız.
+        const query = `*[_type == "lore"] | order(date desc) {
+            _id,
+            _createdAt,
+            "title": title_en,
+            "summary": summary_en,
+            "slug": slug.current,
+            "loreType": loreType,
+            "restricted": restricted,
+            "imageUrl": mainImage.asset->url,
+            "date": date,
+            source
         }`;
         
-        const loreArticles = await client.fetch(query);
-        
-        if (loreArticles && loreArticles.length > 0) {
-            loreContainer.innerHTML = '';
-            loreArticles.forEach((lore) => {
-                const listItem = createLoreListItem(lore);
-                loreContainer.appendChild(listItem);
-            });
-        } else {
-            loreContainer.innerHTML = '<p>No lore articles found.</p>';
-        }
+        allLoreData = await client.fetch(query);
+
+        // 1. Loader Kaldır
+        if (loader) loader.style.display = 'none';
+        container.classList.remove('opacity-0');
+
+        // 2. İlk Render (Tüm Veriler)
+        renderGrid(allLoreData);
+
+        // 3. UI Event Listenerları Kur
+        setupSearchInterface();
+
     } catch (error) {
-        console.error("Error fetching lore list from Sanity: ", error);
-        loreContainer.innerHTML = '<p class="text-red-500">Could not load lore articles.</p>';
+        console.error("Archive Corrupted:", error);
+        if(loader) loader.innerHTML = '<span class="text-red-500 font-mono">SYSTEM ERROR</span>';
+        container.innerHTML = '<p class="text-red-500 text-center col-span-full">Database connection failed. Try reloading terminal.</p>';
     }
+}
+
+function setupSearchInterface() {
+    // Search Input
+    const searchInput = document.querySelector('input[placeholder*="Search"]'); // Selector'a dikkat
+    const filterButtons = document.querySelectorAll('button.uppercase'); // Filtre butonları
+
+    // Search Listener
+    if (searchInput) {
+        searchInput.addEventListener('input', (e) => {
+            const activeBtn = document.querySelector('button.bg-gold\\/10'); // Aktif buton
+            const type = activeBtn ? mapBtnTextToType(activeBtn.textContent) : 'all';
+            applyFilters(e.target.value, type);
+        });
+    }
+
+    // Filter Button Listeners
+    if (filterButtons) {
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Görsel Güncelleme (Tailwind)
+                filterButtons.forEach(b => {
+                    b.classList.remove('bg-gold/10', 'text-gold', 'font-bold', 'border-gold');
+                    b.classList.add('text-gray-500', 'border-gray-700');
+                });
+                btn.classList.remove('text-gray-500', 'border-gray-700');
+                btn.classList.add('bg-gold/10', 'text-gold', 'font-bold', 'border-gold');
+
+                // Filtreleme
+                const type = mapBtnTextToType(btn.textContent);
+                const term = searchInput ? searchInput.value : '';
+                applyFilters(term, type);
+            });
+        });
+    }
+}
+
+// Yardımcı: Buton metnini veri tipine çevir
+function mapBtnTextToType(text) {
+    const t = text.toLowerCase();
+    if (t.includes('audio')) return 'audio';
+    if (t.includes('doc')) return 'documents';
+    if (t.includes('class')) return 'classified';
+    return 'all';
 }

@@ -1,284 +1,276 @@
-// Basit bir D3 force-graph renderer. Tarayıcıda d3@7 ESM modülünü CDN'den yükler ve
-// verilen node/link verisiyle interaktif bir network çizer.
-
-// Use global window.d3 (must be loaded via <script src="/assets/js/vendor/d3.v7.min.js"></script> in HTML)
+// Use global window.d3 (must be loaded via <script> in HTML)
 export function renderFamilyGraph(containerEl, { nodes = [], links = [] } = {}, options = {}) {
     const d3 = window.d3;
     if (!d3) {
-        containerEl.innerHTML = '<p class="text-red-500">D3 kütüphanesi yüklenemedi. Lütfen d3.v7.min.js dosyasını yükleyin.</p>';
+        containerEl.innerHTML = '<p class="text-red-500 font-mono text-xs text-center mt-10">ERROR: VISUALIZATION MODULE NOT LOADED.</p>';
         return;
     }
 
-    // Clean previous content
-    containerEl.innerHTML = '';
-    containerEl.classList.add('d3-container');
+    // 1. Clean & Prepare Container
+    containerEl.innerHTML = ''; // Reset canvas
+    containerEl.classList.add('d3-container', 'cursor-move'); // Add interactivity cursors
 
-    // Tooltip element for node hover
-    let tooltip = containerEl.querySelector('.d3-tooltip');
-    if (!tooltip) {
-        tooltip = document.createElement('div');
-        tooltip.className = 'd3-tooltip';
-        tooltip.style.position = 'absolute';
-        tooltip.style.pointerEvents = 'none';
-        tooltip.style.display = 'none';
-        containerEl.appendChild(tooltip);
-    }
+    // 2. Custom Noir Tooltip (Cyberpunk/Terminal Style)
+    let tooltip = document.createElement('div');
+    tooltip.className = 'd3-tooltip';
+    Object.assign(tooltip.style, {
+        position: 'absolute',
+        display: 'none',
+        pointerEvents: 'none',
+        background: 'rgba(5, 5, 5, 0.95)',
+        border: '1px solid #c5a059', // Gold Border
+        color: '#c5a059', // Gold Text
+        padding: '8px 12px',
+        fontFamily: "'Courier Prime', monospace",
+        fontSize: '10px',
+        textTransform: 'uppercase',
+        letterSpacing: '1px',
+        zIndex: '50',
+        boxShadow: '0 0 15px rgba(197, 160, 89, 0.2)'
+    });
+    containerEl.appendChild(tooltip);
 
+    // 3. Dimensions
     const width = options.width || Math.max(600, containerEl.clientWidth || 800);
     const height = options.height || 600;
 
     const svg = d3.select(containerEl)
         .append('svg')
         .attr('width', '100%')
+        .attr('height', '100%')
         .attr('viewBox', `0 0 ${width} ${height}`)
-        .attr('preserveAspectRatio', 'xMidYMid meet');
+        .attr('preserveAspectRatio', 'xMidYMid meet')
+        .style('background-color', 'transparent'); // Let CSS noise show through
 
-        const defs = svg.append('defs'); // Keep this line as is
+    const defs = svg.append('defs');
 
-        // numeric safety helper: avoid translate(undefined,undefined)
-        function safeNum(v, fallback = 0) {
-            return (v === 0 || Number.isFinite(v)) ? v : fallback;
-        }
+    // 4. Visual Filters & Markers
+    
+    // GLOW EFFECT (Altın Parlama)
+    const filter = defs.append("filter").attr("id", "glow");
+    filter.append("feGaussianBlur").attr("stdDeviation", "2.5").attr("result", "coloredBlur");
+    const feMerge = filter.append("feMerge");
+    feMerge.append("feMergeNode").attr("in", "coloredBlur");
+    feMerge.append("feMergeNode").attr("in", "SourceGraphic");
 
-    // Arrow marker for directed links
+    // Arrow Markers
+    // Gold Arrow (Family/Strong)
     defs.append('marker')
-        .attr('id', 'arrow')
-        .attr('viewBox', '0 -5 10 10')
-        .attr('refX', 18)
-        .attr('refY', 0)
-        .attr('markerWidth', 8)
-        .attr('markerHeight', 8)
-        .attr('orient', 'auto')
-        .append('path')
-        .attr('d', 'M0,-5L10,0L0,5')
-        .attr('fill', options.arrowColor || '#6b7280');
+        .attr('id', 'arrow-gold')
+        .attr('viewBox', '0 -5 10 10').attr('refX', 22).attr('refY', 0)
+        .attr('markerWidth', 6).attr('markerHeight', 6).attr('orient', 'auto')
+        .append('path').attr('d', 'M0,-5L10,0L0,5').attr('fill', '#c5a059');
+
+    // Grey Arrow (Weak)
+    defs.append('marker')
+        .attr('id', 'arrow-gray')
+        .attr('viewBox', '0 -5 10 10').attr('refX', 22).attr('refY', 0)
+        .attr('markerWidth', 6).attr('markerHeight', 6).attr('orient', 'auto')
+        .append('path').attr('d', 'M0,-5L10,0L0,5').attr('fill', '#444');
 
     const linkGroup = svg.append('g').attr('class', 'links');
     const nodeGroup = svg.append('g').attr('class', 'nodes');
 
-    // --- Sanitization: ensure nodes have ids and links reference ids ---
+    // --- Sanitization: Data Clean-up ---
     const sanitizedNodes = nodes.map((n, i) => {
-        if (!n) return { id: `node_missing_${i}`, label: '(missing)' };
-        if (!n.id) n.id = n.slug || n._id || n.name || `node_${i}`;
+        if (!n) return { id: `node_missing_${i}`, label: '(unknown)' };
+        // Use specific ID hierarchy or fallback
+        n.id = n.id || n.slug || n._id || n.name || `node_${i}`;
         return n;
     });
 
     const nodeIdSet = new Set(sanitizedNodes.map(n => n.id));
 
     const sanitizedLinks = links.map(l => {
-        // allow l.source/l.target to be objects or ids
-        const src = (typeof l.source === 'object' && l.source !== null) ? (l.source.id || l.source.slug || l.source._id) : l.source;
-        const tgt = (typeof l.target === 'object' && l.target !== null) ? (l.target.id || l.target.slug || l.target._id) : l.target;
-        return Object.assign({}, l, { source: src, target: tgt });
+        const src = (typeof l.source === 'object' && l.source !== null) ? (l.source.id || l.source.slug || l.source.name) : l.source;
+        const tgt = (typeof l.target === 'object' && l.target !== null) ? (l.target.id || l.target.slug || l.target.name) : l.target;
+        return { ...l, source: src, target: tgt };
     }).filter(l => l.source && l.target && nodeIdSet.has(l.source) && nodeIdSet.has(l.target));
 
-    // Replace local references for downstream code
-    nodes = sanitizedNodes;
-    links = sanitizedLinks;
+    const renderNodes = sanitizedNodes;
+    const renderLinks = sanitizedLinks;
 
-    const link = linkGroup.selectAll('line').data(links).enter().append('line')
-        .attr('stroke', options.linkColor || '#6b7280')
-        .attr('stroke-width', d => d.width || 1.6)
-        .attr('marker-end', 'url(#arrow)');
+    // --- VISUALIZATIONS ---
 
-    const node = nodeGroup.selectAll('g.node').data(nodes, d => d.id).enter().append('g')
-        .attr('class', d => `node ${d.group || ''}`)
-        .call(d3.drag()
+    // LINK RENDER
+    // Aile bağları (strength > 1) altın, diğerleri gri
+    const link = linkGroup.selectAll('line')
+        .data(renderLinks).enter().append('line')
+        .attr('stroke', d => (d.strength && d.strength > 1.2) ? '#c5a059' : '#333') 
+        .attr('stroke-width', d => (d.strength && d.strength > 1.2) ? 1.5 : 1)
+        .attr('stroke-opacity', 0.6)
+        .attr('marker-end', d => (d.strength && d.strength > 1.2) ? 'url(#arrow-gold)' : 'url(#arrow-gray)');
+
+    // Link Label Background (Daha okunur olması için siyah zemin)
+    const linkLabelBg = linkGroup.selectAll('.link-label-bg')
+        .data(renderLinks).enter().append('rect')
+        .attr('rx', 2).attr('ry', 2)
+        .attr('fill', '#050505').attr('fill-opacity', 0.8);
+
+    const linkLabel = linkGroup.selectAll('.link-label')
+        .data(renderLinks).enter().append('text')
+        .attr('class', 'link-label')
+        .attr('font-family', "'Courier Prime', monospace")
+        .attr('font-size', 8)
+        .attr('fill', '#777')
+        .attr('text-anchor', 'middle')
+        .text(d => d.label ? d.label.toUpperCase() : '');
+
+
+    // NODE RENDER
+    // Define Node Groups
+    const node = nodeGroup.selectAll('g.node')
+        .data(renderNodes, d => d.id).enter().append('g')
+        .attr('class', 'node')
+        .call(d3.drag() // Drag Interactions
             .on('start', (event, d) => {
-                if (!event.active && typeof simulation !== 'undefined') simulation.alphaTarget(0.3).restart();
-                d.fx = d.x;
-                d.fy = d.y;
+                if (!event.active && simulation) simulation.alphaTarget(0.3).restart();
+                d.fx = d.x; d.fy = d.y;
+                // Drag yaparken glow efekti ver
+                d3.select(event.sourceEvent.target).style("filter", "url(#glow)");
             })
-            .on('drag', (event, d) => {
-                d.fx = event.x;
-                d.fy = event.y;
-            })
+            .on('drag', (event, d) => { d.fx = event.x; d.fy = event.y; })
             .on('end', (event, d) => {
-                if (!event.active && typeof simulation !== 'undefined') simulation.alphaTarget(0);
-                d.fx = null;
-                d.fy = null;
+                if (!event.active && simulation) simulation.alphaTarget(0);
+                d.fx = null; d.fy = null;
+                d3.select(event.sourceEvent.target).style("filter", null);
             })
         );
 
-    // Node visuals: circle + optional image + label
+    // 1. Outer Ring (Stroke)
     node.append('circle')
-        .attr('r', d => d.isMain ? 28 : 20)
-        .attr('fill', d => d.color || (d.isMain ? '#f59e0b' : '#1c1c1c'))
-        .attr('stroke', d => d.stroke || '#334155')
-        .attr('stroke-width', 2);
+        .attr('r', d => d.isMain ? 26 : 18)
+        .attr('fill', '#050505') // Black fill for text readability
+        .attr('stroke', d => d.isMain ? '#c5a059' : '#333')
+        .attr('stroke-width', d => d.isMain ? 2 : 1);
 
-    // Optional small portrait + label (we'll render image before text)
-    const imageSize = 30;
-    // Use unique clipPath id per render to avoid collisions
-    const clipId = `nodeImgClip-${Date.now()}`;
-    defs.append('clipPath').attr('id', clipId).append('circle').attr('r', imageSize/2).attr('cx', 0).attr('cy', 0);
+    // 2. Clip Path for Images
+    const imageSize = 36;
+    const clipIdBase = `clip-${Math.random().toString(36).substr(2, 9)}`;
+    
+    defs.selectAll('.node-clip')
+        .data(renderNodes).enter()
+        .append('clipPath')
+        .attr('id', (d, i) => `${clipIdBase}-${i}`)
+        .append('circle')
+        .attr('r', d => d.isMain ? 18 : 12);
 
-    node.filter(d => d.image).append('image')
-        .attr('xlink:href', d => d.image)
-        .attr('x', -(imageSize/2))
-        .attr('y', -(imageSize/2))
-        .attr('width', imageSize)
-        .attr('height', imageSize)
-        .attr('clip-path', `url(#${clipId})`);
-
-    node.append('text')
-        .attr('dy', 4)
-        .attr('x', d => d.isMain ? 36 : 28)
-        .each(function(d) {
-            const el = d3.select(this);
-            const lines = (d.label || '').split('\n');
-            lines.forEach((ln, i) => {
-                el.append('tspan').attr('x', d.isMain ? 36 : 28).attr('dy', i === 0 ? 0 : '1.1em').text(ln);
-            });
-        })
-        .attr('font-family', options.fontFamily || "'Cormorant Garamond', Georgia, serif")
-        .attr('fill', d => d.isMain ? '#071228' : '#d1d5db')
-        .attr('font-weight', d => d.isMain ? 700 : 400)
-        .attr('font-size', d => d.isMain ? '14px' : '13px');
-
-    // Labels for links
-    const linkLabel = linkGroup.selectAll('text').data(links).enter().append('text')
-        .attr('class', 'link-label')
-        .attr('font-size', 11)
-        .attr('fill', '#9ca3af')
-        .text(d => d.label || '');
-
-    // Utility: create/enter node visuals for a selection
-    function createNodeSelection(selection) {
-        const enter = selection.enter();
-        const n = enter.append('g').attr('class', d => `node ${d.group || ''}`);
-
-        n.append('circle')
-            .attr('r', d => d.isMain ? 28 : 20)
-            .attr('fill', d => d.color || (d.isMain ? '#f59e0b' : '#1c1c1c'))
-            .attr('stroke', d => d.stroke || '#334155')
-            .attr('stroke-width', 2);
-
-        // small portrait if available
-        n.filter(d => d.image).append('image')
-            .attr('xlink:href', d => d.image)
-            .attr('x', -(imageSize/2))
-            .attr('y', -(imageSize/2))
-            .attr('width', imageSize)
-            .attr('height', imageSize)
-            .attr('clip-path', `url(#${clipId})`);
-
-        n.append('text')
-            .attr('dy', d => d.isMain ? 6 : 5)
-            .attr('x', d => d.isMain ? 36 : 28)
-            .attr('font-family', options.fontFamily || "'Cormorant Garamond', Georgia, serif")
-            .attr('fill', d => d.isMain ? '#071228' : '#d1d5db')
-            .attr('font-weight', d => d.isMain ? 700 : 400)
-            .attr('font-size', d => d.isMain ? '14px' : '13px')
-            .each(function(d) {
-                const el = d3.select(this);
-                const lines = (d.label || '').split('\n');
-                lines.forEach((ln, i) => el.append('tspan').attr('x', d.isMain ? 36 : 28).attr('dy', i === 0 ? 0 : '1.1em').text(ln));
-            });
-
-        n.on('mouseover', function(event, d) {
-            d3.select(this).select('circle').attr('stroke-width', 3);
-            if (typeof tooltip !== 'undefined' && tooltip) {
-                tooltip.style.display = 'block';
-                tooltip.innerHTML = `<strong>${(d.label||'').split('\n')[0]}</strong><br/>${d.meta || ''}`;
-            }
-        }).on('mousemove', function(event) {
-            if (typeof tooltip !== 'undefined' && tooltip) {
-                tooltip.style.left = (event.offsetX + 12) + 'px';
-                tooltip.style.top = (event.offsetY + 12) + 'px';
-            }
-        }).on('mouseout', function() {
-            d3.select(this).select('circle').attr('stroke-width', 2);
-            if (typeof tooltip !== 'undefined' && tooltip) tooltip.style.display = 'none';
-        }).on('click', (event, d) => {
-            if (d.slug) window.location.href = `/pages/character-detail.html?slug=${d.slug}`;
-        });
-
-        return n;
-    }
-
-    // If options.layout === 'tree' build hierarchical layout
-    if ((options.layout || 'force') === 'tree') {
-        try {
-            // build map and children relationships
-            const nodeById = new Map(nodes.map(n => [n.id, Object.assign({}, n)]));
-            nodes.forEach(n => { if (!nodeById.get(n.id).children) nodeById.get(n.id).children = []; });
-            links.forEach(l => {
-                const src = nodeById.get(l.source);
-                const tgt = nodeById.get(l.target);
-                if (src && tgt) src.children.push(tgt);
-            });
-
-            // find root (main or node with no incoming links)
-            let rootNode = nodes.find(n => n.isMain) || nodes[0];
-            if (!rootNode) throw new Error('No root node available for tree layout');
-
-            const rootData = nodeById.get(rootNode.id);
-            if (!rootData) throw new Error(`D3 tree: rootData missing for id ${rootNode.id}`);
-
-            const root = d3.hierarchy(rootData, d => d.children);
-            const treeLayout = d3.tree().nodeSize([140, 160]);
-            treeLayout(root);
-
-            const descendants = root.descendants() || [];
-            const hasCoords = descendants.length > 0 && descendants.some(nd => Number.isFinite(nd.x) && Number.isFinite(nd.y));
-            if (!hasCoords) throw new Error('Tree layout did not produce valid numeric coordinates');
-
-            // draw links (use safe numeric accessors)
-            linkGroup.selectAll('path').data(root.links()).enter().append('path')
-                .attr('fill', 'none')
-                .attr('stroke', options.linkColor || '#6b7280')
-                .attr('stroke-width', 1.4)
-                .attr('d', d3.linkHorizontal().x(d => safeNum(d.y)).y(d => safeNum(d.x)));
-
-            // draw nodes
-            const nodesSel = nodeGroup.selectAll('g.node').data(root.descendants(), (d, i) => {
-                try {
-                    return (d && d.data && (d.data.id || d.data.slug || d.data.name)) ? (d.data.id || d.data.slug || d.data.name) : `__node_${i}`;
-                } catch (e) {
-                    console.warn('D3: descendant key function error', e, d, i);
-                    return `__node_${i}`;
-                }
-            });
-            createNodeSelection(nodesSel);
-            nodeGroup.selectAll('g.node').attr('transform', d => `translate(${safeNum(d.y)},${safeNum(d.x)})`);
-
-            svg.call(d3.zoom().on('zoom', (event) => {
-                nodeGroup.attr('transform', event.transform);
-                linkGroup.attr('transform', event.transform);
-            }));
-
-            return { svg };
-        } catch (err) {
-            console.warn('D3 tree layout failed, falling back to force layout: ', err);
-            // fall through to the force layout implementation below
+    // 3. Node Images (Or fallback Initials)
+    node.each(function(d, i) {
+        const group = d3.select(this);
+        if (d.image) {
+            group.append('image')
+                .attr('xlink:href', d.image)
+                .attr('x', d => d.isMain ? -18 : -12)
+                .attr('y', d => d.isMain ? -18 : -12)
+                .attr('width', d => d.isMain ? 36 : 24)
+                .attr('height', d => d.isMain ? 36 : 24)
+                .attr('clip-path', `url(#${clipIdBase}-${i})`)
+                .attr('preserveAspectRatio', 'xMidYMid slice');
+        } else {
+            // Fallback Circle filler if no image
+            group.append('circle')
+                .attr('r', d => d.isMain ? 18 : 12)
+                .attr('fill', '#111');
         }
-    }
-
-    // FORCE layout fallback
-    const simulation = d3.forceSimulation(nodes)
-        .force('link', d3.forceLink(links).id(d => d.id).distance(d => d.distance || 120).strength(0.8))
-        .force('charge', d3.forceManyBody().strength(-400))
-        .force('center', d3.forceCenter(width / 2, height / 2))
-        .force('collision', d3.forceCollide().radius(d => (d.isMain ? 44 : 34)).strength(0.9));
-
-    simulation.on('tick', () => {
-        link
-            .attr('x1', d => safeNum(d.source && d.source.x))
-            .attr('y1', d => safeNum(d.source && d.source.y))
-            .attr('x2', d => safeNum(d.target && d.target.x))
-            .attr('y2', d => safeNum(d.target && d.target.y));
-
-        nodeGroup.selectAll('g.node').attr('transform', d => `translate(${safeNum(d.x)},${safeNum(d.y)})`);
     });
 
-    // Interactivity: hover highlights + click already added via createNodeSelection
+    // 4. Text Label
+    node.append('text')
+        .attr('dy', d => d.isMain ? 38 : 30)
+        .attr('text-anchor', 'middle')
+        .text(d => {
+            // Kısaltma: Çok uzun isimleri kırp
+            let name = d.label || '';
+            return name.length > 12 ? name.substring(0, 10) + '.' : name;
+        })
+        .attr('font-family', "'Courier Prime', monospace")
+        .attr('fill', d => d.isMain ? '#c5a059' : '#888') // Gold for main, grey for others
+        .attr('font-size', d => d.isMain ? 10 : 8)
+        .attr('font-weight', 'bold')
+        .attr('letter-spacing', '1px');
 
-    // Zoom/pan
-    svg.call(d3.zoom().on('zoom', (event) => {
-        nodeGroup.attr('transform', event.transform);
-        linkGroup.attr('transform', event.transform);
-    }));
 
+    // --- SIMULATION (Force Directed Physics) ---
+    // Gravity, Repulsion, and Link Forces tailored for network view
+    const simulation = d3.forceSimulation(renderNodes)
+        .force('link', d3.forceLink(renderLinks).id(d => d.id).distance(100)) // Sabit mesafe
+        .force('charge', d3.forceManyBody().strength(-300)) // İtme kuvveti (Dağılması için)
+        .force('center', d3.forceCenter(width / 2, height / 2))
+        .force('collide', d3.forceCollide(d => (d.isMain ? 35 : 25)).strength(0.7)); // Çakışma önleyici
+
+    // Tick Function: Update positions on every frame
+    simulation.on('tick', () => {
+        
+        // Node Constrains to keep inside box
+        renderNodes.forEach(d => {
+            d.x = Math.max(20, Math.min(width - 20, d.x));
+            d.y = Math.max(20, Math.min(height - 20, d.y));
+        });
+
+        link
+            .attr('x1', d => d.source.x).attr('y1', d => d.source.y)
+            .attr('x2', d => d.target.x).attr('y2', d => d.target.y);
+
+        linkLabel
+            .attr('x', d => (d.source.x + d.target.x) / 2)
+            .attr('y', d => (d.source.y + d.target.y) / 2);
+            
+        linkLabelBg
+            .attr('x', d => ((d.source.x + d.target.x) / 2) - (d.label ? d.label.length * 2.5 : 0))
+            .attr('y', d => ((d.source.y + d.target.y) / 2) - 5)
+            .attr('width', d => d.label ? d.label.length * 5 + 4 : 0)
+            .attr('height', 10);
+
+        node.attr('transform', d => `translate(${d.x},${d.y})`);
+    });
+
+    // --- INTERACTIONS ---
+
+    // Hover
+    node.on('mouseover', function(event, d) {
+        // Highlight
+        d3.select(this).select('circle').attr('stroke', '#fff').attr('stroke-width', 2);
+        // Tooltip
+        tooltip.style.display = 'block';
+        tooltip.innerHTML = `
+            <strong style="color:#fff">${d.label}</strong><br>
+            <span style="color:#666">${d.isMain ? 'PRIMARY SUBJECT' : 'ASSOCIATE'}</span>
+        `;
+    })
+    .on('mousemove', function(event) {
+        tooltip.style.left = (event.offsetX + 15) + 'px';
+        tooltip.style.top = (event.offsetY + 15) + 'px';
+    })
+    .on('mouseout', function() {
+        d3.select(this).select('circle')
+            .attr('stroke', d => d.isMain ? '#c5a059' : '#333')
+            .attr('stroke-width', d => d.isMain ? 2 : 1);
+        tooltip.style.display = 'none';
+    });
+
+    // Click -> Navigate
+    node.on('click', (event, d) => {
+        // D3 sürükleme bittiğinde click tetiklenmemesi için kontrol
+        if (event.defaultPrevented) return; 
+        
+        if (d.slug) {
+            window.location.href = `character-detail.html?slug=${d.slug}`;
+        } else {
+            // Eğer slug yoksa ama id varsa (belki eski veridir), log atalım
+            console.warn("Node clicked but no slug found:", d);
+        }
+    });
+
+    // Zoom Behavior
+    const zoom = d3.zoom()
+        .scaleExtent([0.5, 3]) // Zoom limitleri
+        .on('zoom', (event) => {
+            nodeGroup.attr('transform', event.transform);
+            linkGroup.attr('transform', event.transform);
+        });
+
+    svg.call(zoom);
+    
     return { svg, simulation };
 }

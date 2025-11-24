@@ -1,267 +1,268 @@
 import { client } from '../../lib/sanityClient.js';
 
-// Bu dosyada, başka bir kütüphaneye (Cytoscape gibi) ihtiyacımız yok.
-
+/**
+ * KARAKTER DETAYLARINI GÖRSELLEŞTİRİR
+ * HTML Sayfasındaki ID'lere Sanity verilerini enjekte eder.
+ */
 const renderCharacterDetails = async (character) => {
-    const contentDiv = document.getElementById('character-detail-content');
-    if (!contentDiv) {
-        console.error('Content div not found!');
-        return;
-    }
     
-    // Sayfa başlığını ve meta etiketlerini dinamik olarak güncelle.
-    document.title = `${character.name} - The Sins of the Fathers`;
-    const metaDesc = document.querySelector('meta[name="description"]');
-    if (metaDesc) {
-        metaDesc.setAttribute('content', `Details about ${character.name}, ${character.title}. ${character.description || ''}`);
+    // HTML element referanslarını yakala
+    const els = {
+        loader: document.getElementById('file-loader'),
+        dossier: document.getElementById('character-dossier'),
+        image: document.getElementById('char-image'),
+        statusBadge: document.getElementById('char-status'),
+        name: document.getElementById('char-name'),
+        alias: document.getElementById('char-alias'),
+        faction: document.getElementById('char-faction'),
+        location: document.getElementById('char-location'),
+        role: document.getElementById('char-role'),
+        bio: document.getElementById('char-bio'),
+        quote: document.getElementById('char-quote'),
+        title: document.title
+    };
+
+    // Veri olmadığı durumda hata yönetimi
+    if (!els.name) { console.error("ERROR: Dossier layout corrupted. Missing DOM elements."); return; }
+
+    /* ------------------------------------------------------
+       1. META DATA ENJEKSİYONU
+       ------------------------------------------------------ */
+    
+    // Resim
+    const imgUrl = character.image_url || 'https://placehold.co/600x800/000000/333333?text=NO+IMAGE';
+    if (els.image) els.image.src = imgUrl;
+
+    // Durum (Status)
+    if (els.statusBadge) {
+        const status = character.status || 'Active';
+        els.statusBadge.textContent = status;
+        // Duruma göre renk kodu
+        els.statusBadge.className = 'font-mono text-xs uppercase font-bold tracking-widest animate-pulse ' + 
+            (status.toLowerCase() === 'deceased' || status.toLowerCase() === 'kia' ? 'text-red-600' : 'text-green-500');
     }
 
-    // İlişkiler (Relationships) HTML'ini oluştur.
-    let relationshipsHtml = '';
-    if (character.relationships && character.relationships.length > 0) {
-        relationshipsHtml = character.relationships.map(rel => `
-            <div class="relationship-card">
-                <strong class="relationship-name">${rel.name}</strong>
-                <span class="relationship-status">${rel.status}</span>
-            </div>
-        `).join('');
-    } else {
-        relationshipsHtml = '<p class="text-neutral-400">No known relationships.</p>';
+    // İsim ve Lakap
+    els.name.textContent = character.name;
+    if(character.alias) els.alias.textContent = `"${character.alias}"`;
+    document.title = `${character.name} // DOSSIER - The Sins of the Fathers`;
+
+    // Kısa Bilgiler (Grid)
+    if(els.faction) els.faction.textContent = character.faction?.title || 'Unknown / Freelancer';
+    // Location bilgisini "faction" verisinden veya ayrı bir field'dan alabiliriz
+    // Şimdilik 'origin' veya faction'dan tahmin ediyoruz
+    if(els.location) els.location.textContent = character.origin || (character.faction ? 'Affiliated Territory' : 'Unknown'); 
+    if(els.role) els.role.textContent = character.role || character.title || 'Operative';
+
+    // Biyografi (Sanity Block Content to HTML gerekebilir ama şimdilik düz text veya basit HTML kabul ediyoruz)
+    // NOT: Eğer PortableText kullanıyorsanız burada bir parser kullanmalısınız.
+    // Basit string ise direkt basıyoruz.
+    if (els.bio) {
+        if (character.description) {
+             // Satır başlarını paragraf yap
+             els.bio.innerHTML = character.description.split('\n').map(p => `<p>${p}</p>`).join('');
+        } else {
+             els.bio.innerHTML = "<p class='text-red-500'>[DATA CORRUPTED] - Biography inaccessible.</p>";
+        }
     }
 
-    // Bütün sayfanın ana HTML yapısını oluştur.
-    contentDiv.innerHTML = `
-        <div class="animate-fade-in">
-            <!-- Üst Kısım: Resim ve Temel Bilgiler -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 items-start mb-12">
-                <div class="md:col-span-1">
-                    <img src="${character.image_url || 'https://placehold.co/600x400/1c1c1c/e0e0e0?text=No+Image'}" alt="${character.name}" class="w-full h-auto rounded-lg shadow-lg object-cover">
-                </div>
-                <div class="md:col-span-2">
-                    <h1 class="text-5xl lg:text-6xl font-serif text-yellow-500 mb-2">${character.name}</h1>
-                    <p class="text-xl text-neutral-400 italic mb-6">"${character.title}"</p>
-                    <div class="prose prose-invert max-w-none text-neutral-300">
-                        <p>${character.description || 'No description available.'}</p>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Alt Kısım: Hikaye, İlişkiler ve Soy Ağacı -->
-            <div classs="space-y-12">
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
-                    <div class="lg:col-span-2">
-                        <h2 class="section-title">Story</h2>
-                        <div class="prose prose-invert max-w-none text-neutral-300">
-                            <p>${character.story || 'This character\'s story has not yet been written.'}</p>
-                        </div>
-                    </div>
-                    <div class="lg:col-span-1">
-                        <h2 class="section-title">Relationships</h2>
-                        <div class="space-y-4">
-                            ${relationshipsHtml}
-                        </div>
-                    </div>
-                </div>
-            </div>
+    // Alıntı
+    if(els.quote) els.quote.textContent = character.quote ? character.quote : "...";
 
-        </div>
-    `;
 
-    // --- AİLE AĞACINI OLUŞTURMA VE D3 İLE ÇİZDİRME ---
-    const familyContainer = document.getElementById('family-graph') || document.getElementById('family-tree-container') || document.querySelector('.mermaid') || document.querySelector('.family-tree');
+    /* ------------------------------------------------------
+       2. YÜKLEME EKRANINI KALDIR
+       ------------------------------------------------------ */
+    // "Decryption" efekti için suni gecikme
+    setTimeout(() => {
+        if (els.loader) els.loader.classList.add('opacity-0', 'pointer-events-none');
+        if (els.dossier) els.dossier.classList.remove('opacity-0');
+    }, 800);
+
+    
+    /* ------------------------------------------------------
+       3. NETWORK (AİLE AĞACI) - D3 LOGIC
+       ------------------------------------------------------ */
+    const familyContainer = document.getElementById('family-graph');
+    
     if (familyContainer) {
-        // Build nodes & links from available structured data (relationships[] and family[])
-        const loadingEl = familyContainer.querySelector && familyContainer.querySelector('.d3-loading');
-        const emptyEl = familyContainer.querySelector && familyContainer.querySelector('.d3-empty');
+        const loadingEl = familyContainer.querySelector('.d3-loading');
+        const emptyEl = familyContainer.querySelector('.d3-empty');
         if (loadingEl) loadingEl.style.display = 'flex';
+        
         const nodesMap = new Map();
-
-        // Helper to add node. Accepts multiple legacy shapes:
-        // - populated object: { name, slug, image_url }
-        // - reference object: { _ref: '<id>' } or { character: { _ref: '<id>' } }
-        // - legacy object: { name: 'Name' }
+        
+        // 3a. NODE BUILDER HELPER
         const addNode = (obj, isMain = false) => {
             if (!obj) return;
-            // normalize when given a simple ref wrapper
-            if (typeof obj === 'string') {
-                // simple string name
-                const id = obj.toLowerCase().replace(/\s+/g, '-');
-                if (!nodesMap.has(id)) {
-                    nodesMap.set(id, { id, label: obj, slug: null, image: null, isMain: !!isMain, group: '' });
-                }
-                return;
-            }
+            
+            // Veri Şekillendirme
+            let id = obj.slug || obj._id || obj._ref || null;
+            let label = obj.name || obj.label || id;
+            let img = obj.image_url || (obj.image && obj.image.asset && obj.image.asset.url) || null;
 
-            // If it's a wrapper { character: { _ref/... } }
-            if (obj.character && obj.character._ref) {
-                const refId = obj.character._ref;
-                if (!nodesMap.has(refId)) {
-                    nodesMap.set(refId, { id: refId, label: obj.character.name || refId, slug: obj.character.slug || null, image: obj.character.image_url || null, isMain: !!isMain, group: '' });
-                }
-                return;
-            }
+            if(typeof obj === 'string') { id = obj.toLowerCase(); label = obj; }
 
-            // If it's a reference object { _ref: 'id' }
-            if (obj._ref) {
-                const refId = obj._ref;
-                if (!nodesMap.has(refId)) {
-                    nodesMap.set(refId, { id: refId, label: obj.name || refId, slug: null, image: null, isMain: !!isMain, group: '' });
-                }
-                return;
+            // Ref wrapper temizliği
+            if (obj.character) { 
+                // Eğer relation nesnesinin içinde character varsa onu aç
+                const inner = obj.character;
+                id = inner.slug || inner._ref || inner._id;
+                label = inner.name || label;
+                img = inner.image_url || img;
             }
+            
+            if (!id) return; // Geçersiz node
+            
+            // ID Unique olsun
+            id = String(id).replace(/\s+/g, '-').toLowerCase();
 
-            // Otherwise assume populated object
-            const id = obj.slug || obj._id || obj.name || obj.Ad || null;
-            if (!id) return;
             if (!nodesMap.has(id)) {
                 nodesMap.set(id, {
                     id,
-                    label: obj.name || obj.Ad || obj.title || id,
-                    slug: obj.slug || null,
-                    image: obj.image_url || (obj.image && obj.image.asset && obj.image.asset.url) || null,
-                    isMain: !!isMain,
-                    group: obj.group || ''
+                    label,
+                    image: img,
+                    isMain,
+                    group: isMain ? 'protagonist' : 'associate'
                 });
             } else if (isMain) {
                 nodesMap.get(id).isMain = true;
             }
+            return id; // Link kurarken lazım olacak
         };
 
-        // Main character node
-        addNode(character, true);
+        // Ana Karakteri Ekle
+        const mainId = addNode(character, true);
 
-        // Add family refs if present
-        if (character.family && Array.isArray(character.family)) {
-            character.family.forEach(ref => {
-                // family item may be { character: {...}, relation } or populated character or simple ref
-                if (!ref) return;
-                if (ref.character) {
-                    addNode(ref.character, false);
-                } else if (ref._ref || ref._id) {
-                    addNode(ref, false);
-                } else if (ref.name) {
-                    addNode(ref.name, false);
-                } else {
-                    addNode(ref, false);
-                }
-            });
-        }
-
-        // Add relationships (these already include character.{name,slug} in the query)
-        if (character.relationships && Array.isArray(character.relationships)) {
-            character.relationships.forEach(rel => {
-                // New shape: { character: {..}, status }
-                if (!rel) return;
-                if (rel.character) addNode(rel.character, false);
-                else if (rel.name) addNode(rel.name, false); // legacy shape
-            });
-        }
-
-        // Build links: from main to relationships and family
         const links = [];
-        const mainId = character.slug || character._id || character.name || character.Ad || null;
 
+        // 3b. RELATIONSHIPS (İlişkiler)
         if (character.relationships && Array.isArray(character.relationships)) {
             character.relationships.forEach(rel => {
-                if (!rel) return;
-                if (rel.character) {
-                    const tgt = rel.character.slug || rel.character._id || rel.character.name || (rel.character._ref || null);
-                    if (tgt) links.push({ source: mainId, target: tgt, label: rel.status || '', width: 1.6 });
-                } else if (rel.name) {
-                    const tgt = rel.name.toLowerCase().replace(/\s+/g, '-');
-                    links.push({ source: mainId, target: tgt, label: rel.status || '', width: 1.6 });
+                // Target Node oluştur
+                const targetId = addNode(rel.character || rel);
+                // Link oluştur
+                if (mainId && targetId && mainId !== targetId) {
+                    links.push({ 
+                        source: mainId, 
+                        target: targetId, 
+                        label: rel.status || rel.type || '', 
+                        strength: 1
+                    });
                 }
             });
         }
 
+        // 3c. FAMILY (Soy Ağacı)
         if (character.family && Array.isArray(character.family)) {
-            character.family.forEach(ref => {
-                if (!ref) return;
-                let id = null;
-                if (ref.character) {
-                    id = ref.character.slug || ref.character._id || ref.character.name || (ref.character._ref || null);
-                } else if (ref._ref || ref._id) {
-                    id = ref._ref || ref._id;
-                } else if (ref.name) {
-                    id = ref.slug || ref._id || ref.name.toLowerCase().replace(/\s+/g, '-');
-                }
-                if (id) links.push({ source: mainId, target: id, label: ref.relation || ref.label || 'family', width: 1.2 });
+            character.family.forEach(fam => {
+                 const targetId = addNode(fam.character || fam);
+                 if (mainId && targetId && mainId !== targetId) {
+                    links.push({ 
+                        source: mainId, 
+                        target: targetId, 
+                        label: fam.relation || 'Family', 
+                        strength: 1.5 // Aile bağları daha güçlü/yakın
+                    });
+                 }
             });
         }
 
         const nodes = Array.from(nodesMap.values());
 
-        // determine layout from URL param (layout=tree|force) and optional debug
-        const params = new URLSearchParams(window.location.search);
-        const layout = params.get('layout') || 'tree';
-        const debug = params.get('debug') === '1' || params.get('debug') === 'true';
+        // Debug Mode
+        // console.log("Graph Data:", { nodes, links });
 
-        // Debug: log nodes and links before rendering when requested
-        if (debug) {
-            console.groupCollapsed('D3 Family Graph - debug payload');
-            console.log('layout:', layout);
-            console.log('nodes:', JSON.parse(JSON.stringify(nodes)));
-            console.log('links:', JSON.parse(JSON.stringify(links)));
-            console.groupEnd();
-        }
-
-        // If there are no nodes (only main missing or no relationships), show empty state
-        if (!nodes || nodes.length === 0) {
-            if (loadingEl) loadingEl.style.display = 'none';
-            if (emptyEl) {
-                emptyEl.style.display = 'block';
-            } else {
-                familyContainer.innerHTML = '<p class="text-neutral-400">No family data available.</p>';
+        // 3d. RENDER D3 (Dynamic Import)
+        if (nodes.length > 0) {
+            try {
+                const module = await import('./d3-family-tree.js');
+                // Container boyutunu dinamik al
+                const width = familyContainer.clientWidth || 300;
+                const height = familyContainer.clientHeight || 400;
+                
+                await module.renderFamilyGraph(familyContainer, { nodes, links }, { width, height, layout: 'force' });
+                
+                if (loadingEl) loadingEl.style.display = 'none';
+            } catch (err) {
+                console.error('D3 Render Failed:', err);
+                if (emptyEl) {
+                     emptyEl.style.display = 'flex'; 
+                     emptyEl.innerHTML = 'Error rendering network.<br>System failure.';
+                }
             }
-            return;
-        }
-
-        // Dynamic import our d3 renderer and render
-        try {
-            const module = await import('./d3-family-tree.js');
-            await module.renderFamilyGraph(familyContainer, { nodes, links }, { width: Math.max(600, familyContainer.clientWidth || 800), height: 700, layout });
-            if (loadingEl) loadingEl.style.display = 'none';
-        } catch (err) {
-            console.error('D3 family renderer failed:', err);
-            // Fallback: render a minimal text
-            if (loadingEl) loadingEl.style.display = 'none';
-            if (emptyEl) {
-                emptyEl.style.display = 'block';
-                emptyEl.innerText = 'Family graph could not be rendered.';
-            } else {
-                familyContainer.innerHTML = '<p class="text-neutral-400">Family graph could not be rendered.</p>';
-            }
+        } else {
+             if (loadingEl) loadingEl.style.display = 'none';
+             if (emptyEl) emptyEl.style.display = 'flex'; // Veri yok mesajı
+             if (emptyEl) emptyEl.classList.remove('hidden');
         }
     }
 };
 
-export const loadCharacterDetails = async () => {
-    const contentDiv = document.getElementById('character-detail-content');
-    if (!contentDiv) return;
 
+/**
+ * SAYFA YÜKLENDİĞİNDE ÇALIŞAN ANA FONKSİYON
+ */
+export const loadCharacterDetails = async () => {
+    // URL'den slug al
     const params = new URLSearchParams(window.location.search);
     const characterSlug = params.get('slug'); 
 
+    // Eğer URL'de slug yoksa placeholder kullan veya hata ver
     if (!characterSlug) {
-        contentDiv.innerHTML = '<p class="text-red-500 text-center">No character slug provided.</p>';
+        console.error("Access Denied: Missing slug parameter.");
+        // İsteğe bağlı: 404 sayfasına yönlendir
         return;
     }
 
     try {
-        // Sanity'den görsel URL'ini de alacak şekilde sorguyu güncelledim.
-        const query = `*[_type == "character" && slug.current == $slug][0]{..., "image_url": image.asset->url, family[]->{name, "slug": slug.current, "image_url": image.asset->url}, relationships[]{..., character->{name, "slug": slug.current, "image_url": image.asset->url}}}`;
+        console.log(`> Querying database for Subject: ${characterSlug}`);
+
+        // GROQ Query Update: faction detayını ve resimleri de çekiyoruz
+        const query = `*[_type == "character" && slug.current == $slug][0]{
+            ...,
+            "image_url": image.asset->url,
+            faction->{title, color}, 
+            family[] {
+               relation,
+               character->{
+                  name, 
+                  "slug": slug.current,
+                  "image_url": image.asset->url
+               }
+            },
+            relationships[] {
+               status,
+               character->{
+                  name,
+                  "slug": slug.current,
+                  "image_url": image.asset->url
+               }
+            }
+        }`;
+        
         const sanityParams = { slug: characterSlug };
 
         const character = await client.fetch(query, sanityParams);
 
         if (character) {
+            console.log("> Access Granted. Rendering file.");
             await renderCharacterDetails(character); 
         } else {
-            contentDiv.innerHTML = `<p class="text-red-500 text-center">Character with slug '${characterSlug}' not found.</p>`;
+             // Sanity'de kayıt yok
+             document.body.innerHTML = `
+                <div class="flex h-screen items-center justify-center bg-black text-red-600 font-mono">
+                   ERROR 404: Subject not found in archives.
+                </div>`;
         }
     } 
     catch (error) {
-        console.error("Error fetching character details: ", error);
-        contentDiv.innerHTML = '<p class="text-red-500 text-center">Failed to load character details.</p>';
+        console.error("System Failure:", error);
+        // Loader hatası göstermek için manuel DOM manipülasyonu
+        const loaderText = document.querySelector('#file-loader p');
+        if(loaderText) {
+            loaderText.textContent = "CONNECTION FAILED";
+            loaderText.classList.add('text-red-500');
+        }
     }
 };

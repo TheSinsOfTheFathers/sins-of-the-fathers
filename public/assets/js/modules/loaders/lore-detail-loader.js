@@ -1,59 +1,144 @@
-import { client } from '/public/assets/js/lib/sanityClient.js';
+import { client, urlFor } from '../../lib/sanityClient.js';
 import { toHTML } from 'https://esm.sh/@portabletext/to-html@2.0.13';
 
-const renderLoreDetails = (lore) => {
-    const contentDiv = document.getElementById('lore-detail-content');
+/**
+ * HTML'e Veri Enjeksiyonu
+ */
+const renderLoreIntel = (doc) => {
     
-    document.title = `${lore.title_en} - The Sins of the Fathers`;
-    const metaDesc = document.querySelector('meta[name="description"]');
-    if (metaDesc) {
-        metaDesc.setAttribute('content', lore.summary_en || `An article about ${lore.title_en}.`);
+    // 1. Metadata (Yan Panel)
+    const setText = (id, val) => {
+        const el = document.getElementById(id);
+        if(el) el.textContent = val || 'Unknown';
+    };
+
+    setText('lore-title', doc.title);
+    // ID'yi kısaltıp gösteriyoruz (Estetik amaçlı)
+    setText('lore-id', `#${doc._id.slice(-6).toUpperCase()}`); 
+    setText('lore-source', doc.source || 'Anonymous Source');
+    
+    // Tarih Formatlama
+    if (document.getElementById('lore-date')) {
+        const dateStr = doc.date 
+            ? new Date(doc.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+            : 'Undated Record';
+        document.getElementById('lore-date').textContent = dateStr;
     }
 
-    const contentHtml = lore.content_en 
-        ? toHTML(lore.content_en) 
-        : '<p>Content for this article is not available yet.</p>';
+    setText('lore-author', doc.author || 'REDACTED');
 
-    contentDiv.innerHTML = `
-        <article class="lore-detail-article animate-fade-in">
-            <h1 class="lore-detail-title">${lore.title_en}</h1>
-            <div class="prose prose-invert max-w-none">
-                ${contentHtml}
-            </div>
-        </article>
-    `;
+    // 2. Etiketler (Tags / Relations)
+    // doc.relatedEntities dizisini döner ve link oluşturur
+    const tagsContainer = document.getElementById('lore-tags');
+    if (tagsContainer && doc.relatedEntities) {
+        tagsContainer.innerHTML = doc.relatedEntities.map(ref => {
+            const typeSlug = ref._type === 'character' ? 'character-detail' : 'faction-detail'; // Basit yönlendirme
+            return `
+                <a href="${typeSlug}.html?slug=${ref.slug}" class="text-[10px] font-mono uppercase border border-gray-700 bg-white/5 px-2 py-1 hover:border-gold hover:text-gold transition text-gray-400">
+                    #${ref.title || ref.name}
+                </a>
+            `;
+        }).join('');
+    } else if(tagsContainer) {
+        tagsContainer.innerHTML = '<span class="text-[10px] text-gray-600 font-mono">// No associated links</span>';
+    }
+
+    // 3. Medya (Resim)
+    const mediaContainer = document.getElementById('lore-media-container');
+    const mediaImg = document.getElementById('lore-image');
+    
+    if (doc.mainImage) {
+        if (mediaContainer) mediaContainer.classList.remove('hidden');
+        if (mediaImg) {
+            mediaImg.src = urlFor(doc.mainImage).width(800).quality(80).url();
+        }
+    }
+
+    // 4. Ana İçerik (The Document Body)
+    const bodyContainer = document.getElementById('lore-body');
+    if (bodyContainer) {
+        if (doc.body) {
+            bodyContainer.innerHTML = toHTML(doc.body, {
+                components: {
+                    block: {
+                        normal: ({children}) => `<p class="mb-6 leading-relaxed opacity-90">${children}</p>`,
+                        blockquote: ({children}) => `<blockquote class="border-l-2 border-gold pl-4 italic my-4 text-gold/80">${children}</blockquote>`,
+                        h3: ({children}) => `<h3 class="text-gold font-mono uppercase tracking-widest text-sm mt-8 mb-2 border-b border-gold/30 pb-1">${children}</h3>`
+                    },
+                    marks: {
+                        // Custom Redaction Mark (Sanity'de eklendiyse)
+                        redact: ({children}) => `<span class="bg-black text-black px-1 select-none hover:text-gray-300 transition-colors cursor-help" title="Classified Info">${children}</span>`,
+                        em: ({children}) => `<em class="text-gray-400">${children}</em>`
+                    }
+                }
+            });
+        } else {
+            bodyContainer.innerHTML = `
+                <p class="text-center text-sm font-mono mt-10">
+                    <span class="text-red-500">[ERROR]</span><br>
+                    File content corrupted or heavily encrypted.<br>
+                    Decrypting segments... failed.
+                </p>
+            `;
+        }
+    }
+
+    // 5. Sayfayı Göster (Loader Kaldır)
+    setTimeout(() => {
+        const loader = document.getElementById('doc-loader');
+        const content = document.getElementById('doc-content');
+        if(loader) loader.classList.add('hidden');
+        if(content) content.classList.remove('opacity-0');
+    }, 800); // Animasyon süresi
 };
 
-export const loadLoreDetails = async () => {
-    const contentDiv = document.getElementById('lore-detail-content');
-    if (!contentDiv) return;
 
+export const loadLoreDetails = async () => {
+    // DOM Check
+    const container = document.getElementById('evidence-container'); // Ana kapsayıcı
+    if (!container) return; // Yanlış sayfadayız
+
+    // URL Check
     const params = new URLSearchParams(window.location.search);
     const loreSlug = params.get('slug');
 
     if (!loreSlug) {
-        contentDiv.innerHTML = '<p class="text-red-500 text-center">No lore article specified.</p>';
+        console.warn("Missing Slug");
+        const loader = document.getElementById('doc-loader');
+        if(loader) loader.innerHTML = "<span class='text-red-500'>ARCHIVE QUERY FAILED: NO ID</span>";
         return;
     }
 
     try {
+        console.log(`> Retrieving File: ${loreSlug}`);
+
+        // GROQ QUERY
+        // Faksiyonları ve Karakterleri 'relatedEntities' adı altında birleştiriyoruz
         const query = `*[_type == "lore" && slug.current == $slug][0]{
-            title_en,
-            summary_en,
-            content_en
+            "title": title_en,
+            "body": content_en,
+            _id,
+            "date": date,
+            source,
+            author,
+            mainImage,
+            "relatedEntities": coalesce(relatedCharacters[]->{name, "title": name, "slug": slug.current, _type}, []) 
+                             + coalesce(relatedFactions[]->{"title": title, "slug": slug.current, _type}, [])
         }`;
-        const queryParams = { slug: loreSlug };
+        
+        const loreDoc = await client.fetch(query, { slug: loreSlug });
 
-        const lore = await client.fetch(query, queryParams);
-
-        if (lore) {
-            renderLoreDetails(lore);
+        if (loreDoc) {
+            renderLoreIntel(loreDoc);
         } else {
-            contentDiv.innerHTML = '<p class="text-red-500 text-center">Lore article not found.</p>';
-            document.title = 'Article Not Found - The Sins of the Fathers';
+            document.title = '404 - File Lost';
+            const loader = document.getElementById('doc-loader');
+            if(loader) loader.innerHTML = "<span class='text-red-500'>ERROR 404: FILE NOT FOUND IN ARCHIVE</span>";
         }
+
     } catch (error) {
-        console.error("Error fetching lore details from Sanity: ", error);
-        contentDiv.innerHTML = '<p class="text-red-500 text-center">Failed to load lore details.</p>';
+        console.error("Archive Connection Error:", error);
+        const loader = document.getElementById('doc-loader');
+        if(loader) loader.innerHTML = "<span class='text-red-500'>SYSTEM ERROR: CANNOT READ DATA STREAM</span>";
     }
 };
