@@ -9,11 +9,12 @@ export default defineType({
     {name: 'visuals', title: 'Visual Identity'},
     {name: 'manifesto', title: 'Manifesto & Lore'},
     {name: 'network', title: 'Leadership & Assets'},
+    {name: 'diplomacy', title: 'Diplomatic Relations'}, // YENİ GRUP
   ],
   fields: [
     // --- 1. TEMEL BİLGİLER & TİPOLOJİ ---
     defineField({
-      name: 'title', // 'name' yerine 'title' standarttır
+      name: 'title',
       title: 'Faction Name',
       type: 'string',
       group: 'core',
@@ -70,7 +71,7 @@ export default defineType({
     defineField({
       name: 'color',
       title: 'Theme Color (Hex Code)',
-      type: 'color', // "sanity-plugin-color-input" kurulu ise "color", değilse "string" kullanın
+      type: 'color', // 'sanity-plugin-color-input' kurulu ise
       description: 'Fraksiyonun baskın rengi (Örn: Kan için #7f1d1d, Altın için #c5a059).',
       group: 'visuals',
     }),
@@ -83,7 +84,7 @@ export default defineType({
       group: 'visuals',
     }),
     defineField({
-      name: 'icon', // Harita ve UI için küçük ikon
+      name: 'icon',
       title: 'Tactical Icon',
       type: 'image',
       group: 'visuals',
@@ -106,7 +107,7 @@ export default defineType({
       validation: (Rule) => Rule.max(300),
     }),
     defineField({
-      name: 'description', // "history" yerine genel açıklama
+      name: 'description',
       title: 'Full Dossier / History',
       type: 'array',
       of: [{ type: 'block' }],
@@ -127,7 +128,54 @@ export default defineType({
         description: 'Örn: Arms Trafficking, High-Frequency Trading, extortion.',
     }),
 
-    // --- 4. HİYERARŞİ ---
+    // --- 4. DİPLOMASİ (YENİ EKLENEN) ---
+    defineField({
+      name: 'relations',
+      title: 'Diplomatic Relations',
+      type: 'array',
+      group: 'diplomacy',
+      description: 'Diğer fraksiyonlarla olan durumunu tanımlayın.',
+      of: [{
+        type: 'object',
+        fields: [
+          {
+            name: 'target',
+            title: 'Target Faction',
+            type: 'reference',
+            to: [{type: 'faction'}]
+          },
+          {
+            name: 'status',
+            title: 'Relation Status',
+            type: 'string',
+            options: {
+              list: [
+                {title: 'Hostile (Düşman)', value: 'hostile'},
+                {title: 'Ally (Müttefik)', value: 'ally'},
+                {title: 'Neutral (Nötr)', value: 'neutral'},
+                {title: 'Vassal (Himaye Altında)', value: 'vassal'},
+                {title: 'Suzerain (Efendi/Koruyucu)', value: 'suzerain'},
+                {title: 'Rival (Ticari Rakip)', value: 'rival'}
+              ]
+            }
+          },
+          {
+            name: 'description',
+            title: 'Note / Intel',
+            type: 'string',
+            description: 'İlişkinin nedenini açıklayan kısa not. (Örn: "Trade embargo since 1999")'
+          }
+        ],
+        preview: {
+          select: {
+            title: 'target.title',
+            subtitle: 'status'
+          }
+        }
+      }]
+    }),
+
+    // --- 5. HİYERARŞİ ---
     defineField({
       name: 'leader',
       title: 'Faction Leader',
@@ -135,9 +183,6 @@ export default defineType({
       group: 'network',
       to: [{ type: 'character' }],
     }),
-    // Not: Üyeler "Character" şemasındaki "faction" alanından "Reverse Reference" ile çekileceği için
-    // burada manuel bir 'members' array'ine teknik olarak gerek yok, ama editörde görmek isterseniz tutabilirsiniz.
-    // Şimdilik kaldırıyorum çünkü GROQ ile çekiyoruz.
     
     defineField({
       name: 'territory',

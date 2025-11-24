@@ -11,7 +11,7 @@ export default defineType({
   ],
   fields: [
     defineField({
-      name: 'title_en', // Frontend sorgusunda bu ismi kullandık
+      name: 'title_en',
       title: 'Document Title',
       type: 'string',
       group: 'meta',
@@ -26,7 +26,7 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-        name: 'loreType', // KART TASARIMI İÇİN KRİTİK (Document vs Audio vs Image)
+        name: 'loreType',
         title: 'Record Type',
         type: 'string',
         options: {
@@ -41,17 +41,17 @@ export default defineType({
         group: 'meta',
     }),
     defineField({
-        name: 'restricted', // KİLİT MEKANİZMASI İÇİN KRİTİK
+        name: 'restricted',
         title: 'Classified / Member Only?',
         type: 'boolean',
-        description: 'Eğer aktif edilirse, bu belge web sitesinde "Bulanık/Kilitli" görünür.',
+        description: 'Aktifse belge bulanık (locked) görünür.',
         initialValue: false,
         group: 'meta',
     }),
     defineField({
         name: 'date',
         title: 'Record Date',
-        type: 'date', // Tarih sırlaması için
+        type: 'date',
         group: 'meta',
     }),
     defineField({
@@ -64,7 +64,7 @@ export default defineType({
         name: 'source',
         title: 'Source Origin',
         type: 'string',
-        description: 'Örn: "Recovered Hard Drive", "Police Intercept", "Personal Diary".',
+        description: 'Örn: "Recovered Hard Drive", "Police Intercept".',
         group: 'meta',
     }),
     defineField({
@@ -72,23 +72,22 @@ export default defineType({
       title: 'Abstract / Summary',
       type: 'text',
       rows: 3,
-      description: 'Kart önizlemesi.',
       group: 'content',
     }),
     defineField({
-      name: 'content_en', // Frontend bu alanı çekiyor
+      name: 'content_en',
       title: 'Full Document Content',
       type: 'array',
       group: 'content',
       of: [
         {
             type: 'block',
-            // Custom Mark ekle (Frontend'de redact class'ı için)
             marks: {
                 decorators: [
                     { title: 'Strong', value: 'strong' },
                     { title: 'Emphasis', value: 'em' },
-                    { title: 'Redacted (Sansürlü)', value: 'redact', icon: () => '⬛' } // İsteğe bağlı özel stil
+                    // Sansürlü metin özelliği
+                    { title: 'Redacted (Sansürlü)', value: 'redact', icon: () => '⬛' } 
                 ]
             }
         }
@@ -100,10 +99,7 @@ export default defineType({
       type: 'image',
       options: { hotspot: true },
       group: 'content',
-      hidden: ({parent}) => parent?.loreType === 'audio' // Audio ise gizle (Opsiyonel)
     }),
-    
-    // İlişkili Veriler (Daha güçlü bir arama deneyimi için)
     defineField({
         name: 'relatedCharacters',
         title: 'Tagged Characters',
@@ -118,7 +114,6 @@ export default defineType({
         of: [{type: 'reference', to: [{type: 'faction'}]}],
         group: 'connections'
     }),
-    // Timeline sırasını elle belirlemek için
     defineField({
         name: 'order',
         title: 'Sort Order',

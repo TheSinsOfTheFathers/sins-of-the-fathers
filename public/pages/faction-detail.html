@@ -23,10 +23,6 @@
                         serif: ['Cinzel', 'serif'],
                         sans: ['Lato', 'sans-serif'],
                         mono: ['Courier Prime', 'monospace']
-                    },
-                    backgroundImage: {
-                        'scotland': "url('https://images.unsplash.com/photo-1516216628859-9bccecaa1306?q=80&w=2942&auto=format&fit=crop')", /* Placeholder */
-                        'la-concrete': "url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2940&auto=format&fit=crop')" /* Placeholder */
                     }
                 }
             }
@@ -37,6 +33,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Courier+Prime&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
 
+    <!-- Leaflet (Mini Map Engine) EKLENDİ -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
     <style>
         body { background-color: #050505; color: #d4d4d4; }
         .noise-overlay {
@@ -46,14 +46,14 @@
             opacity: 0.05;
         }
 
-        /* Banner Gradient Override - JS will modify '--theme-color' */
+        /* Banner Gradient Override */
         :root { --theme-color: #c5a059; } 
 
         .hq-border-top { border-top: 2px solid var(--theme-color); }
         .hq-text { color: var(--theme-color); }
         .hq-bg-glow { background: radial-gradient(circle, var(--theme-color) 0%, transparent 70%); opacity: 0.1; }
         
-        /* Personnel Card Hover Effect */
+        /* Card Hovers */
         .roster-card { transition: all 0.3s ease; }
         .roster-card:hover { border-color: var(--theme-color); transform: translateY(-2px); }
 
@@ -63,37 +63,39 @@
         #hamburger-button.active span:nth-child(2) { opacity: 0; }
         #hamburger-button.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -6px); }
 
+        /* Mini Map Hacks */
+        .leaflet-container { background: #050505 !important; filter: grayscale(100%) contrast(1.3) brightness(0.7); }
+        /* Leaflet linkini gizle */
+        .leaflet-control-attribution { display: none !important; }
+
     </style>
 
-    <!-- Scripts -->
+    <!-- Main Script -->
     <script src="../assets/js/main.js" type="module" defer></script>
 </head>
 
 <body class="flex flex-col min-h-screen">
     <div class="noise-overlay"></div>
 
-    <!-- Header (System Integrated) -->
+    <!-- Header -->
     <header class="fixed top-0 w-full z-50 bg-obsidian/90 backdrop-blur-md border-b border-white/5 transition-all">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <!-- Sol: Marka & Bağlam -->
+            <!-- Marka -->
             <a href="../index.html" class="text-xl md:text-2xl font-serif text-gold tracking-widest uppercase hover:text-white transition-colors">
                 TSOF <span class="hidden md:inline text-xs text-gray-600 ml-2">// HQ ACCESS</span>
             </a>
             
-            <!-- Sağ: Masaüstü Navigasyon & Auth -->
+            <!-- Sağ Navigasyon -->
             <div class="hidden md:flex items-center space-x-6 text-xs uppercase tracking-widest font-semibold">
-                <!-- Geri Dön -->
                 <a href="factions.html" class="text-gray-500 hover:text-gold transition-colors flex items-center border-r border-white/10 pr-6">
                     <i class="fas fa-arrow-left mr-2"></i> Exit Territory
                 </a>
-
-                <!-- Auth Kontrolleri (Giriş Yap/User Menu Buraya Gelecek) -->
                 <div class="flex items-center gap-4" id="auth-controls">
                     <a href="login.html" class="text-gold/80 hover:text-white transition-colors guest-only" id="auth-signin-link">Identify</a>
                 </div>
             </div>
 
-            <!-- Mobil Hamburger (Animasyonlu) -->
+            <!-- Mobil Buton -->
             <div class="md:hidden relative z-50">
                 <button id="hamburger-button" class="text-gold focus:outline-none flex flex-col justify-center items-center w-8 h-8 space-y-1.5 group">
                     <span class="block w-6 h-0.5 bg-gold transition-transform duration-300"></span>
@@ -104,13 +106,11 @@
         </nav>
     </header>
 
-    <!-- Mobile Menu Overlay -->
+    <!-- Mobile Menu -->
     <div id="mobile-menu" class="hidden fixed inset-0 z-40 bg-black/95 flex-col items-center justify-center space-y-8 transition-opacity duration-300 backdrop-blur-xl">
-        <!-- Özel Geri Dön Butonu -->
         <a href="factions.html" class="text-lg text-red-500 font-serif hover:text-white border border-red-900 px-6 py-2 uppercase tracking-widest mb-4">
             <i class="fas fa-arrow-left mr-2"></i> Exit Territory
         </a>
-
         <a href="../index.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest">Home</a>
         <a href="timeline.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest">History</a>
         <a href="characters.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest">Bloodline</a>
@@ -118,133 +118,95 @@
         <a href="login.html" class="text-sm text-gray-400 hover:text-white mt-8 font-mono uppercase">Access Terminal</a>
     </div>
 
-    <!-- FACTION HERO HEADER -->
-    <!-- The ID 'faction-banner' allows JS to change the background image based on faction type -->
-    <div id="faction-banner" class="relative h-[60vh] w-full bg-cover bg-center bg-scotland mt-16 grayscale">
-        <div class="absolute inset-0 bg-black/70 backdrop-blur-[2px]"></div> <!-- Darkening Overlay -->
-        <div class="absolute inset-0 hq-bg-glow"></div> <!-- Color tint from CSS Var -->
+    <!-- HERO SECTION (JS ile Background değişir) -->
+    <div id="faction-banner" class="relative h-[60vh] w-full bg-cover bg-center bg-neutral-900 mt-16 grayscale">
+        <div class="absolute inset-0 bg-black/70 backdrop-blur-[2px]"></div> 
+        <div class="absolute inset-0 hq-bg-glow"></div>
         
         <div class="absolute inset-0 flex flex-col justify-end container mx-auto px-6 pb-12">
-            <!-- Icon / Emblem -->
-            <div id="faction-icon-container" class="mb-4 text-6xl hq-text opacity-80">
-                <!-- JS Inject: <i class="fas fa-crown"></i> -->
-            </div>
+            <!-- Faksiyon İkonu (Sanity'den) -->
+            <div id="faction-icon-container" class="mb-4 text-6xl hq-text opacity-80"></div>
             
             <h1 id="faction-title" class="text-5xl md:text-7xl font-serif text-white uppercase tracking-wider mb-2 drop-shadow-lg">
-                Loading...
+                Retrieving...
             </h1>
-            
             <p id="faction-subtitle" class="font-mono text-gray-400 text-sm md:text-base max-w-2xl border-l-2 hq-text pl-4">
-                fetching intel...
+                [Encrypting Connection...]
             </p>
         </div>
     </div>
 
-    <!-- MAIN DASHBOARD -->
-    <main class="flex-grow container mx-auto px-6 py-12 -mt-8 relative z-10">
+    <!-- CONTENT -->
+    <main class="flex-grow container mx-auto px-6 py-12 -mt-8 relative z-10 opacity-0 transition-opacity duration-1000">
         
-        <!-- TOP STATS ROW -->
+        <!-- STATS GRID -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-            
             <div class="bg-obsidian border border-white/10 p-6 shadow-lg hq-border-top">
                 <h3 class="text-xs font-mono text-gray-500 uppercase tracking-widest mb-1">Commander</h3>
-                <div id="faction-leader" class="text-xl font-serif text-white hover:text-gold transition-colors cursor-pointer flex items-center justify-between">
-                     <span>[Unknown]</span>
-                     <i class="fas fa-external-link-alt text-xs text-gray-600"></i>
+                <div id="faction-leader" class="text-xl font-serif text-white flex items-center justify-between">
+                     <span>-</span>
                 </div>
             </div>
-
             <div class="bg-obsidian border border-white/10 p-6 shadow-lg hq-border-top">
                 <h3 class="text-xs font-mono text-gray-500 uppercase tracking-widest mb-1">Base of Operations</h3>
                 <div id="faction-hq" class="text-xl font-mono text-white">
-                    [Encrypted]
+                    [Hidden]
                 </div>
             </div>
-
             <div class="bg-obsidian border border-white/10 p-6 shadow-lg hq-border-top">
                 <h3 class="text-xs font-mono text-gray-500 uppercase tracking-widest mb-1">Threat Level</h3>
                 <div class="flex items-center space-x-1 mt-1">
-                    <span class="w-2 h-6 bg-red-900"></span>
-                    <span class="w-2 h-6 bg-red-900"></span>
-                    <span class="w-2 h-6 bg-red-900"></span>
-                    <span class="w-2 h-6 bg-gray-800"></span>
-                    <span class="w-2 h-6 bg-gray-800"></span>
-                    <span id="threat-text" class="ml-2 text-red-500 font-bold font-mono text-xs">SEVERE</span>
+                    <span class="w-2 h-6 bg-gray-800"></span><span class="w-2 h-6 bg-gray-800"></span><span class="w-2 h-6 bg-gray-800"></span>
+                    <span id="threat-text" class="ml-2 font-bold font-mono text-xs text-gray-500">ANALYZING...</span>
                 </div>
             </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
             
-            <!-- LEFT COLUMN: LORE & PHILOSOPHY -->
+            <!-- LEFT COLUMN (Lore & Members) -->
             <div class="lg:col-span-2 space-y-12">
                 <section>
                     <h2 class="text-2xl font-serif text-white mb-6 border-b border-white/10 pb-2">Manifesto</h2>
-                    <div id="faction-description" class="prose prose-invert prose-p:text-gray-400 font-sans leading-relaxed text-justify max-w-none">
-                         <!-- Description -->
-                         <p>Retrieving decrypted archives...</p>
-                    </div>
+                    <div id="faction-description" class="prose prose-invert font-sans leading-relaxed max-w-none text-gray-400"></div>
                 </section>
                 
-                <!-- MEMBERS ROSTER -->
                 <section>
                     <div class="flex justify-between items-end mb-6 border-b border-white/10 pb-2">
                         <h2 class="text-2xl font-serif text-white">Known Associates</h2>
-                        <span class="text-xs font-mono text-gray-600">DB_QUERY_LIMIT: 4</span>
+                        <span class="text-xs font-mono text-gray-600">DB_QUERY_LIMIT: 6</span>
                     </div>
-
-                    <!-- ROSTER GRID (JS TARGET) -->
-                    <div id="faction-roster" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <!-- EXAMPLE CARD FOR VISUAL (Removed by JS) -->
-                         <!-- 
-                        <a href="character-detail.html" class="roster-card bg-white/5 p-4 border border-white/5 flex items-center space-x-4">
-                            <div class="w-12 h-12 bg-black overflow-hidden rounded-full">
-                                <img src="..." class="object-cover">
-                            </div>
-                            <div>
-                                <h4 class="font-serif text-white">The Wolf</h4>
-                                <p class="text-xs text-gray-500 font-mono">Enforcer</p>
-                            </div>
-                        </a>
-                        -->
-                        <div class="animate-pulse flex space-x-4">
-                            <div class="rounded-full bg-gray-700 h-10 w-10"></div>
-                            <div class="flex-1 space-y-6 py-1">
-                                <div class="h-2 bg-gray-700 rounded"></div>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- Member Cards Injection Point -->
+                    <div id="faction-roster" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
                 </section>
             </div>
 
-            <!-- RIGHT COLUMN: CONTROLLED ZONES -->
+            <!-- RIGHT COLUMN: TACTICAL MINI MAP & DIPLOMACY -->
             <div class="lg:col-span-1">
                  <div class="bg-obsidian border border-white/10 p-6 sticky top-24">
-                     <h3 class="text-xs font-mono text-gray-500 uppercase tracking-widest mb-4">Territory Map</h3>
+                     <h3 class="text-xs font-mono text-gray-500 uppercase tracking-widest mb-4">Tactical Surveillance</h3>
                      
-                     <!-- Mini Map Placeholder -->
-                     <div class="w-full aspect-square bg-black border border-white/5 relative mb-4 group overflow-hidden">
-                         <div class="absolute inset-0 bg-[url('https://api.mapbox.com/styles/v1/mapbox/dark-v10/static/-118.2437,34.0522,10,0/400x400?access_token=YOUR_TOKEN')] bg-cover bg-center grayscale opacity-50 group-hover:scale-105 transition-transform duration-700"></div>
+                     <!-- LEAFLET MINI MAP CONTAINER (Güncellendi) -->
+                     <div class="w-full aspect-square bg-black border border-white/5 relative mb-4 group overflow-hidden rounded-sm">
+                         <!-- JS Buraya Leaflet Render Edecek (id=mini-map) -->
+                         <div id="mini-map" class="absolute inset-0 w-full h-full z-0 grayscale opacity-60 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"></div>
                          
-                         <!-- Faction Marker -->
-                         <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                              <i class="fas fa-map-marker-alt hq-text text-3xl drop-shadow-md"></i>
-                         </div>
+                         <!-- Scanline / Glitch Overlay -->
+                         <div class="absolute inset-0 z-10 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_4px,6px_100%]"></div>
+                         
+                         <!-- Tıklayınca Ana Haritaya At -->
+                         <a href="locations.html" class="absolute inset-0 z-20 cursor-crosshair" title="Enlarge Tactical Map"></a>
                      </div>
                      
-                     <div id="faction-locations-list" class="space-y-2">
-                         <div class="flex justify-between items-center text-xs border-b border-white/5 pb-2">
-                             <span class="text-gray-300">Port of LA</span>
-                             <span class="font-mono text-green-500">SECURE</span>
-                         </div>
-                         <div class="flex justify-between items-center text-xs border-b border-white/5 pb-2">
-                             <span class="text-gray-300">Downtown Vaults</span>
-                             <span class="font-mono text-yellow-500">CONTESTED</span>
-                         </div>
+                     <!-- DIPLOMATIC RELATIONS LIST (Güncellendi) -->
+                     <!-- faction-detail-loader.js buraya 'Foreign Relations' basacak -->
+                     <h3 class="text-xs font-mono text-gray-500 uppercase tracking-widest mb-3 mt-6 pt-4 border-t border-white/5">Diplomatic Status</h3>
+                     <div id="faction-locations-list" class="space-y-2 min-h-[50px]">
+                         <span class="text-[10px] font-mono text-gray-600 animate-pulse">> Connecting to secure network...</span>
                      </div>
                      
-                     <button class="w-full mt-6 py-3 border border-white/20 text-xs font-mono uppercase hover:bg-white/5 transition hq-text">
-                         View Full Strategic Map
+                     <button onclick="window.location.href='locations.html'" class="w-full mt-6 py-3 border border-white/20 text-xs font-mono uppercase hover:bg-white/5 transition hq-text">
+                         ACCESS GLOBAL GRID
                      </button>
                  </div>
             </div>
@@ -252,9 +214,24 @@
         </div>
     </main>
     
+    <!-- LOADER -->
+    <div id="factions-loader" class="fixed inset-0 z-30 bg-obsidian flex flex-col items-center justify-center pt-20">
+        <i class="fas fa-fingerprint text-gold text-4xl mb-4 animate-pulse"></i>
+        <p class="font-mono text-xs text-gold uppercase tracking-[0.3em]">Verifying Clearance Code...</p>
+    </div>
+
     <!-- Footer -->
-    <footer class="w-full text-center py-6 bg-obsidian border-t border-white/5 text-xs text-gray-700 font-mono">
-        SYSTEM ID: BALLANTINE_SEC_NET
+    <footer class="py-12 bg-obsidian border-t border-white/5 text-center relative z-10">
+        <p class="font-serif text-gold text-2xl mb-4">TSOF</p>
+        <div class="flex justify-center space-x-6 mb-6 text-[10px] font-mono uppercase text-gray-500">
+            <a href="./pages/privacy.html" class="hover:text-gold transition-colors">Privacy Protocol</a>
+            <span>|</span>
+            <a href="./pages/terms.html" class="hover:text-gold transition-colors">Terms of Operation</a>
+        </div>
+        <p class="text-gray-600 text-xs uppercase tracking-widest">
+            &copy; 2025 The Sins of the Fathers. <br>
+            Ruaraidh Ballantine & Havi are watching.
+        </p>
     </footer>
 </body>
 </html>

@@ -35,7 +35,7 @@ export default defineType({
         group: 'tactical',
     }),
     defineField({
-        name: 'location', // Frontend bu alana bakıyor (Leaflet)
+        name: 'location', // Leaflet bu alanı kullanıyor
         title: 'GeoCoordinates',
         type: 'geopoint',
         description: 'Harita üzerindeki kesin nokta (Enlem/Boylam).',
@@ -49,21 +49,21 @@ export default defineType({
         type: 'string',
         options: {
             list: [
-                {title: 'Active', value: 'active'},
-                {title: 'Compromised', value: 'compromised'},
-                {title: 'Abandoned', value: 'abandoned'},
-                {title: 'Lockdown', value: 'lockdown'}
+                {title: 'Active', value: 'Active'},
+                {title: 'Compromised', value: 'Compromised'},
+                {title: 'Abandoned', value: 'Abandoned'},
+                {title: 'Lockdown', value: 'Lockdown'}
             ],
             layout: 'radio'
         },
-        initialValue: 'active',
+        initialValue: 'Active',
         group: 'tactical',
     }),
     defineField({
-        name: 'securityLevel', // Frontend'de renk kodlaması için gerekli
+        name: 'securityLevel',
         title: 'Threat Level',
         type: 'string',
-        description: 'Bu bölgeye giriş ne kadar tehlikeli?',
+        description: 'Bu bölgeye giriş ne kadar tehlikeli? (Renk kodunu belirler)',
         options: {
             list: [
                 {title: 'Low (Safe)', value: 'Low'},
