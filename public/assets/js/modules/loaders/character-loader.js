@@ -118,7 +118,7 @@ export async function displayCharacters() {
 
             characters.forEach((character) => {
                 const slug = character.slug.current;
-                const lowerName = character.name.toLowerCase();
+                const lowerName = (character.name || '').toLowerCase();
                 const lowerAlias = character.alias ? character.alias.toLowerCase() : '';
 
                 // A. THE ARCHITECTS CHECK (Hardcoded Logic for Ruaraidh & Havi)

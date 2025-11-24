@@ -14,7 +14,7 @@ const createFactionCard = (faction) => {
     const iconClass = isOldWorld ? 'fa-skull-crossbones' : 'fa-chess-king';
     
     // Leader Check
-    const leaderName = faction.leader ? faction.leader.name : 'UNKNOWN';
+    const leaderName = (faction.leader && faction.leader.name) ? faction.leader.name : 'UNKNOWN';
 
     // 2. Stat Simülasyonu (Eğer Sanity'de sayısal veri yoksa tipe göre uyduruyoruz)
     // Bu sayede kartlar dolu gözüküyor.

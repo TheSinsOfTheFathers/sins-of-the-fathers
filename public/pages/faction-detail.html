@@ -256,56 +256,5 @@
     <footer class="w-full text-center py-6 bg-obsidian border-t border-white/5 text-xs text-gray-700 font-mono">
         SYSTEM ID: BALLANTINE_SEC_NET
     </footer>
-
-    <!-- INJECTION LOGIC FOR DEMO (TO BE REPLACED BY MAIN.JS) -->
-    <script>
-        // Yazılımcı İçin Not: JS ile Faction detaylarını doldururken:
-        // CSS Variable Update: document.documentElement.style.setProperty('--theme-color', faction.colorHex);
-        
-        // Simulating data injection for preview
-        setTimeout(() => {
-            const isMacpherson = Math.random() < 0.5; // Demo switcher
-            
-            const demoData = {
-                title: isMacpherson ? "The Macpherson Clan" : "Ballantine Empire",
-                color: isMacpherson ? "#7f1d1d" : "#c5a059", // Blood vs Gold
-                icon: isMacpherson ? '<i class="fas fa-skull-crossbones"></i>' : '<i class="fas fa-chess-king"></i>',
-                bgClass: isMacpherson ? "bg-scotland" : "bg-la-concrete",
-                leader: isMacpherson ? "Lachlan Macpherson" : "Ruaraidh Ballantine",
-                roster: [
-                    { name: "The Wolf", role: "Enforcer" },
-                    { name: "Siobhan", role: "Intelligence" }
-                ]
-            };
-
-            // Applying Theme
-            document.documentElement.style.setProperty('--theme-color', demoData.color);
-            
-            document.getElementById('faction-title').textContent = demoData.title;
-            document.getElementById('faction-title').classList.add('animate-fade-in-down');
-            
-            document.getElementById('faction-banner').classList.remove('bg-scotland', 'bg-la-concrete'); // Reset
-            document.getElementById('faction-banner').classList.add(demoData.bgClass); // Add Correct BG
-            
-            document.getElementById('faction-icon-container').innerHTML = demoData.icon;
-            document.getElementById('faction-leader').innerHTML = `<span>${demoData.leader}</span> <i class="fas fa-external-link-alt text-xs text-gray-600"></i>`;
-            document.getElementById('faction-subtitle').textContent = "Database records retrieved successfully.";
-            
-            // Populating Roster Demo
-            const rosterContainer = document.getElementById('faction-roster');
-            rosterContainer.innerHTML = demoData.roster.map(member => `
-                 <a href="character-detail.html" class="roster-card bg-white/5 p-4 border border-white/5 flex items-center space-x-4 cursor-pointer">
-                    <div class="w-10 h-10 bg-black overflow-hidden rounded-full border border-gray-700">
-                        <div class="w-full h-full bg-gray-800 flex items-center justify-center text-xs text-gray-500"><i class="fas fa-user"></i></div>
-                    </div>
-                    <div>
-                        <h4 class="font-serif text-white leading-tight">${member.name}</h4>
-                        <p class="text-[10px] text-gray-500 font-mono uppercase tracking-wider">${member.role}</p>
-                    </div>
-                </a>
-            `).join('');
-
-        }, 1000);
-    </script>
 </body>
 </html>

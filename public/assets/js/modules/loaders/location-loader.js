@@ -1,155 +1,182 @@
 import { client } from '../../lib/sanityClient.js';
 
-let mapInstance = null; // Global harita değişkeni
+// Global Instance
+let mapInstance = null;
+
+// Faksiyon Renkleri (Tema)
+const FACTION_THEMES = {
+    'ballantine-empire': { border: '#c5a059', fill: '#c5a059' }, // Gold
+    'macpherson-clan':   { border: '#7f1d1d', fill: '#991b1b' }, // Blood
+    'default':           { border: '#555555', fill: '#777777' }
+};
 
 /**
- * Özel Harita İkonu Üreticisi
+ * Harita Temizleyici (Anti-Initialized Error)
+ * Harita divini ve memory referansını sıfırlar.
  */
-const createTacticalIcon = (colorHex = '#c5a059', iconClass = 'fa-map-marker-alt') => {
-    // Leaflet L global olmalı (HTML head'den geliyor)
+const destroyMap = (id) => {
+    const container = document.getElementById(id);
+    // Leaflet instance varsa yok et
+    if (mapInstance) {
+        mapInstance.off();
+        mapInstance.remove();
+        mapInstance = null;
+    }
+    // DOM temizliği
+    if (container) {
+        container._leaflet_id = null; 
+    }
+};
+
+/**
+ * Taktiksel Marker İkonu Oluşturucu
+ */
+const createTacticalIcon = (slug) => {
     if (!window.L) return null;
-
+    const color = (FACTION_THEMES[slug] || FACTION_THEMES.default).border;
+    
     return L.divIcon({
-        className: 'custom-tactical-icon',
+        className: 'tactical-pin',
         html: `
-            <div class='relative flex items-center justify-center w-8 h-8'>
-                <!-- Dönen dış halka -->
-                <div class="absolute inset-0 rounded-full border border-current opacity-50 animate-spin-slow" style="color:${colorHex}"></div>
-                <!-- Merkez ikon -->
-                <div class='flex items-center justify-center w-6 h-6 rounded-full bg-opacity-20 backdrop-blur-sm border border-current shadow-[0_0_10px_currentColor]' 
-                     style="color:${colorHex}; background-color:${colorHex}20; border-color:${colorHex}">
-                    <i class="fas ${iconClass} text-[10px]"></i>
-                </div>
-            </div>
-        `,
-        iconSize: [32, 32],
-        iconAnchor: [16, 16], // Merkez noktası
-        popupAnchor: [0, -20]
+            <div style="position:relative; width:30px; height:30px; display:flex; justify-content:center; align-items:center;">
+               <div style="position:absolute; width:100%; height:100%; border:1px solid ${color}; border-radius:50%; opacity:0.5;" class="animate-spin-slow"></div>
+               <div style="width:10px; height:10px; background:${color}; border-radius:50%; box-shadow:0 0 8px ${color};"></div>
+            </div>`,
+        iconSize: [30, 30],
+        iconAnchor: [15, 15],
+        popupAnchor: [0, -15]
     });
 };
 
-/**
- * Haritayı Başlatma ve Ayarlar
- */
-const initLeafletMap = () => {
-    if (mapInstance) return mapInstance; // Zaten varsa döndür
+// GeoJSON Yükleyici
+async function loadLayer(map, path, theme) {
+    try {
+        const res = await fetch(path);
+        if (!res.ok) throw new Error(`404 Not Found: ${path}`);
+        const data = await res.json();
+        
+        L.geoJSON(data, {
+            style: {
+                color: theme.border,
+                weight: 1,
+                opacity: 0.6,
+                fillColor: theme.fill,
+                fillOpacity: 0.1,
+                dashArray: '4 4'
+            }
+        }).addTo(map);
+    } catch (e) {
+        // Dosya yoksa sistemi durdurma, log at ve devam et.
+        console.warn(`[Map Layer Missing] ${path}`);
+    }
+}
 
-    // Harita ayarları
-    const map = L.map('map', {
-        zoomControl: false,
-        attributionControl: false,
-        center: [40, -35], // Atlantik ortası (Default)
-        zoom: 3
-    });
-
-    // Karanlık Katman (Dark Matter)
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        subdomains: 'abcd',
-        maxZoom: 18
-    }).addTo(map);
-
-    return map;
-};
-
-/**
- * ANA FONKSİYON: Sanity'den Çek ve Haritaya İşle
- */
 export async function displayLocations() {
     const mapContainer = document.getElementById('map');
     const loader = document.getElementById('map-loader');
 
-    // Eğer map div'i yoksa (yanlış sayfa) veya Leaflet yüklenmediyse çık
-    if (!mapContainer || !window.L) return;
+    if (!mapContainer) return; 
+    if (!window.L) {
+        console.error("Leaflet Library Missing!");
+        return;
+    }
 
+    // 1. Haritayı Başlat (Clean Start)
     try {
-        // 1. Haritayı Başlat
-        mapInstance = initLeafletMap();
+        destroyMap('map');
 
-        // 2. Global Fonksiyonları Bağla (HTML butonları için)
-        // HTML'deki 'onclick="zoomToLocation(...)"' butonları buna erişir.
-        window.zoomToLocation = (lat, lng, zoom) => {
-            mapInstance.flyTo([lat, lng], zoom, { duration: 2.5 });
-            // HUD Güncelleme
-            const hudName = document.getElementById('location-name-display');
-            if(hudName) {
-                hudName.innerText = "SECTOR RELOCATION...";
-                hudName.classList.add('text-gold', 'animate-pulse');
-                setTimeout(() => {
-                    hudName.classList.remove('animate-pulse');
-                    hudName.innerText = `COORDS: ${lat.toFixed(2)} / ${lng.toFixed(2)}`;
-                }, 2500);
-            }
+        const map = L.map('map', {
+            center: [40, -30],
+            zoom: 3,
+            zoomControl: false,
+            attributionControl: false
+        });
+        mapInstance = map; 
+
+        L.control.zoom({ position: 'bottomright' }).addTo(map);
+
+        // Tile Layer (Dark)
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            maxZoom: 18
+        }).addTo(map);
+
+        // 2. Global Fonksiyonlar (HTML Butonları İçin)
+        window.zoomToLocation = (lat, lng, z) => {
+            map.flyTo([lat, lng], z, { duration: 2.0 });
+            const display = document.getElementById('location-name-display');
+            if (display) display.textContent = `SECTOR: ${lat}, ${lng}`;
         };
-        
         window.resetMap = () => {
-            mapInstance.flyTo([40, -35], 3, { duration: 2 });
+            map.flyTo([40, -30], 3, { duration: 1.5 });
+            const display = document.getElementById('location-name-display');
+            if (display) display.textContent = "GLOBAL ORBIT";
         };
 
-        console.log("> Scanning for geographic data...");
+        // 3. GeoJSON Katmanlarını Yükle (PATH DÜZELTİLDİ: /public EKLENDİ)
+        // Localhost ortamında /public ile başlamak zorundadır.
+        const factionsData = {
+            'ballantine-empire': [
+                'united-kingdom-border.geojson', 
+                'california-border.geojson', 
+                'italy-border.geojson',
+                'netherlands-border.geojson'
+            ],
+            'macpherson-clan': [
+                'scotland-highlands.geojson'
+            ]
+        };
 
-        // 3. Sanity'den Veri Çek
-        // "location" alanı Sanity'de 'geopoint' tipinde olmalı ({lat: 12, lng: 34})
-        const query = `*[_type == "location" && defined(location)] {
-            name,
-            "slug": slug.current,
-            location, 
-            "factionName": faction->title,
-            "factionColor": faction->color.hex,
-            securityLevel
+        // Loop ile dosyaları çek
+        for (const [slug, files] of Object.entries(factionsData)) {
+            const theme = FACTION_THEMES[slug] || FACTION_THEMES.default;
+            for (const file of files) {
+                // ---> BURADAKİ PATH DEĞİŞTİRİLDİ: /public eklendi <---
+                await loadLayer(map, `/public/assets/maps/${file}`, theme);
+            }
+        }
+
+        // 4. Markerları Yükle (Sanity Data)
+        const query = `*[_type == "location" && defined(location)] { 
+            name, "slug": slug.current, location, faction->{slug}, summary 
         }`;
         
         const locations = await client.fetch(query);
+        console.log(`> Found ${locations.length} locations.`);
 
-        // 4. Markerları Ekle
         if (locations.length > 0) {
             locations.forEach(loc => {
-                const lat = loc.location.lat;
-                const lng = loc.location.lng;
-                const color = loc.factionColor || '#ffffff';
-                const threat = loc.securityLevel || 'Unknown';
+                const { lat, lng } = loc.location; 
+                const fSlug = loc.faction?.slug?.current || 'default';
+                
+                const marker = L.marker([lat, lng], {
+                    icon: createTacticalIcon(fSlug)
+                }).addTo(map);
 
-                const customIcon = createTacticalIcon(color, 'fa-crosshairs');
-
-                const marker = L.marker([lat, lng], { icon: customIcon }).addTo(mapInstance);
-
-                // Pop-up HTML (Tailwind stilleri geçerli)
-                const popupContent = `
-                    <div class="text-left min-w-[180px]">
-                        <h3 class="text-gold font-serif text-lg border-b border-white/20 pb-1 mb-2 uppercase tracking-wide">${loc.name}</h3>
-                        <p class="text-xs text-gray-400 font-mono mb-1">CONTROL: <span style="color:${color}">${loc.factionName || 'None'}</span></p>
-                        <p class="text-xs text-gray-400 font-mono mb-3">THREAT: ${threat.toUpperCase()}</p>
-                        <a href="location-detail.html?slug=${loc.slug}" class="block text-center bg-white/10 hover:bg-white/20 border border-white/20 py-2 text-xs text-white font-mono uppercase tracking-widest transition-colors">
-                            > INSPECT SECTOR
+                marker.bindPopup(`
+                    <div class="text-left font-mono min-w-[150px]">
+                        <h4 class="text-gold text-sm font-bold mb-1 border-b border-white/20 pb-1">${loc.name.toUpperCase()}</h4>
+                        <p class="text-[10px] text-gray-400 mb-2 line-clamp-2">${loc.summary || 'No Intel'}</p>
+                        <a href="location-detail.html?slug=${loc.slug}" class="block text-center bg-white/10 py-1 text-[9px] hover:bg-gold hover:text-black uppercase transition">
+                            INSPECT
                         </a>
                     </div>
-                `;
-                
-                marker.bindPopup(popupContent, {
-                    className: 'custom-popup-theme' // CSS ile stil verilebilir (background opacity vb.)
-                });
+                `, { className: 'custom-popup-theme' });
             });
-        } else {
-            console.warn("System Warning: No geodata found in archives.");
         }
 
-        // 5. Yükleme Ekranını Kaldır
+        // 5. Loader Kaldır
         if (loader) {
-            // Yapay bir gecikme, "uydu bağlantısı" hissi için
-            setTimeout(() => {
-                loader.classList.add('opacity-0', 'pointer-events-none');
-            }, 1000);
+            loader.classList.add('opacity-0', 'pointer-events-none');
         }
 
-        // HUD Fare takibi (Koordinat Göstergesi)
-        mapInstance.on('mousemove', (e) => {
-            const coordDisplay = document.getElementById('coordinates-display');
-            if (coordDisplay) {
-                coordDisplay.innerText = `LAT: ${e.latlng.lat.toFixed(4)} // LNG: ${e.latlng.lng.toFixed(4)}`;
-            }
+        // 6. Koordinat Göstergesi
+        map.on('mousemove', (e) => {
+            const el = document.getElementById('coordinates-display');
+            if (el) el.textContent = `${e.latlng.lat.toFixed(4)} | ${e.latlng.lng.toFixed(4)}`;
         });
 
-    } catch (error) {
-        console.error("Map Initialization Failed:", error);
-        if(loader) loader.innerHTML = '<p class="text-red-500 font-mono">UPLINK FAILED</p>';
+    } catch (err) {
+        console.error("Map Critical Error:", err);
+        if (mapContainer) mapContainer.innerHTML = '<p class="text-center text-red-500 mt-10">MAP SYSTEM FAILURE</p>';
     }
 }

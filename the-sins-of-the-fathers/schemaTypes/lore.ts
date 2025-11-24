@@ -2,51 +2,135 @@ import {defineField, defineType} from 'sanity'
 
 export default defineType({
   name: 'lore',
-  title: 'Lore',
+  title: 'Lore Archive (Arşiv Belgesi)',
   type: 'document',
+  groups: [
+    {name: 'meta', title: 'File Metadata'},
+    {name: 'content', title: 'Document Content'},
+    {name: 'connections', title: 'Linked Entities'},
+  ],
   fields: [
     defineField({
-      name: 'title',
-      title: 'Başlık',
+      name: 'title_en', // Frontend sorgusunda bu ismi kullandık
+      title: 'Document Title',
       type: 'string',
+      group: 'meta',
       validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'slug',
-      title: 'Slug',
+      title: 'File ID (Slug)',
       type: 'slug',
-      options: {
-        source: 'title',
-        maxLength: 96,
-      },
+      options: { source: 'title_en', maxLength: 96 },
+      group: 'meta',
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: 'summary',
-      title: 'Özet',
+        name: 'loreType', // KART TASARIMI İÇİN KRİTİK (Document vs Audio vs Image)
+        title: 'Record Type',
+        type: 'string',
+        options: {
+            list: [
+                { title: 'Text Document', value: 'document' },
+                { title: 'Audio Log / Intercept', value: 'audio' },
+                { title: 'Visual Evidence', value: 'image' },
+            ],
+            layout: 'radio'
+        },
+        initialValue: 'document',
+        group: 'meta',
+    }),
+    defineField({
+        name: 'restricted', // KİLİT MEKANİZMASI İÇİN KRİTİK
+        title: 'Classified / Member Only?',
+        type: 'boolean',
+        description: 'Eğer aktif edilirse, bu belge web sitesinde "Bulanık/Kilitli" görünür.',
+        initialValue: false,
+        group: 'meta',
+    }),
+    defineField({
+        name: 'date',
+        title: 'Record Date',
+        type: 'date', // Tarih sırlaması için
+        group: 'meta',
+    }),
+    defineField({
+        name: 'author',
+        title: 'Author / Recorded By',
+        type: 'string',
+        group: 'meta',
+    }),
+    defineField({
+        name: 'source',
+        title: 'Source Origin',
+        type: 'string',
+        description: 'Örn: "Recovered Hard Drive", "Police Intercept", "Personal Diary".',
+        group: 'meta',
+    }),
+    defineField({
+      name: 'summary_en',
+      title: 'Abstract / Summary',
       type: 'text',
       rows: 3,
-      description: 'SEO ve önizlemeler için kısa bir lore makalesi özeti.',
+      description: 'Kart önizlemesi.',
+      group: 'content',
     }),
     defineField({
-      name: 'content',
-      title: 'İçerik',
+      name: 'content_en', // Frontend bu alanı çekiyor
+      title: 'Full Document Content',
       type: 'array',
-      of: [{type: 'block'}],
-      description: 'Lore makalesinin ana içeriği.',
+      group: 'content',
+      of: [
+        {
+            type: 'block',
+            // Custom Mark ekle (Frontend'de redact class'ı için)
+            marks: {
+                decorators: [
+                    { title: 'Strong', value: 'strong' },
+                    { title: 'Emphasis', value: 'em' },
+                    { title: 'Redacted (Sansürlü)', value: 'redact', icon: () => '⬛' } // İsteğe bağlı özel stil
+                ]
+            }
+        }
+      ],
     }),
     defineField({
-      name: 'order',
-      title: 'Sıralama Numarası',
-      type: 'number',
-      description: 'Lore makalelerinin sıralanması için bir numara. Daha düşük numaralar önce görünür.',
-      validation: (Rule) => Rule.integer(),
+      name: 'mainImage',
+      title: 'Evidence Photo',
+      type: 'image',
+      options: { hotspot: true },
+      group: 'content',
+      hidden: ({parent}) => parent?.loreType === 'audio' // Audio ise gizle (Opsiyonel)
     }),
+    
+    // İlişkili Veriler (Daha güçlü bir arama deneyimi için)
+    defineField({
+        name: 'relatedCharacters',
+        title: 'Tagged Characters',
+        type: 'array',
+        of: [{type: 'reference', to: [{type: 'character'}]}],
+        group: 'connections'
+    }),
+    defineField({
+        name: 'relatedFactions',
+        title: 'Tagged Factions',
+        type: 'array',
+        of: [{type: 'reference', to: [{type: 'faction'}]}],
+        group: 'connections'
+    }),
+    // Timeline sırasını elle belirlemek için
+    defineField({
+        name: 'order',
+        title: 'Sort Order',
+        type: 'number',
+        hidden: true
+    })
   ],
   preview: {
     select: {
-      title: 'title',
-      subtitle: 'summary',
+      title: 'title_en',
+      subtitle: 'loreType',
+      media: 'mainImage',
     },
   },
 })

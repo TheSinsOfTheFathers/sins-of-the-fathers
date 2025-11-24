@@ -1,59 +1,113 @@
-// schemas/location.ts
-
-import { defineField, defineType } from 'sanity';
+import {defineField, defineType} from 'sanity'
 
 export default defineType({
   name: 'location',
-  title: 'Lokasyon',
+  title: 'Location (Saha/Konum)',
   type: 'document',
+  groups: [
+    {name: 'tactical', title: 'Tactical Data'},
+    {name: 'intel', title: 'Intel & Description'},
+    {name: 'media', title: 'Surveillance Images'},
+  ],
   fields: [
+    // --- 1. TEMEL TANIMLAMA ---
     defineField({
       name: 'name',
-      title: 'Lokasyon Adı',
+      title: 'Location Name',
       type: 'string',
-      description: 'Mekanın tam adı (Örn: "Villa Alchemica").',
+      group: 'tactical',
       validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'slug',
-      title: 'URL Adresi (Slug)',
+      title: 'Slug (ID)',
       type: 'slug',
-      options: { source: 'name' },
+      options: { source: 'name', maxLength: 96 },
+      group: 'tactical',
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: 'mainImage',
-      title: 'Ana Görsel',
-      type: 'image',
-      description: 'Lokasyon listeleme sayfasında görünecek olan ana görsel.',
-      options: { hotspot: true },
-      validation: (Rule) => Rule.required(),
+        name: 'faction',
+        title: 'Controlling Faction',
+        type: 'reference',
+        description: 'Bu bölgeyi kim yönetiyor? Haritada marker rengini belirler.',
+        to: [{type: 'faction'}],
+        group: 'tactical',
     }),
+    defineField({
+        name: 'location', // Frontend bu alana bakıyor (Leaflet)
+        title: 'GeoCoordinates',
+        type: 'geopoint',
+        description: 'Harita üzerindeki kesin nokta (Enlem/Boylam).',
+        group: 'tactical',
+    }),
+    
+    // --- 2. DURUM VE TEHDİT SEVİYESİ ---
+    defineField({
+        name: 'status',
+        title: 'Operational Status',
+        type: 'string',
+        options: {
+            list: [
+                {title: 'Active', value: 'active'},
+                {title: 'Compromised', value: 'compromised'},
+                {title: 'Abandoned', value: 'abandoned'},
+                {title: 'Lockdown', value: 'lockdown'}
+            ],
+            layout: 'radio'
+        },
+        initialValue: 'active',
+        group: 'tactical',
+    }),
+    defineField({
+        name: 'securityLevel', // Frontend'de renk kodlaması için gerekli
+        title: 'Threat Level',
+        type: 'string',
+        description: 'Bu bölgeye giriş ne kadar tehlikeli?',
+        options: {
+            list: [
+                {title: 'Low (Safe)', value: 'Low'},
+                {title: 'Moderate (Caution)', value: 'Moderate'},
+                {title: 'Elevated (Armed)', value: 'Elevated'},
+                {title: 'High (Hostile)', value: 'High'},
+                {title: 'Critical (Kill on Sight)', value: 'Critical'},
+            ],
+        },
+        initialValue: 'Moderate',
+        group: 'tactical',
+    }),
+
+    // --- 3. İÇERİK ---
     defineField({
       name: 'summary',
-      title: 'Özet',
+      title: 'Brief Intelligence',
       type: 'text',
-      description: 'Lokasyon kartında görünecek olan kısa tanıtım metni.',
-      validation: (Rule) => Rule.max(250),
+      rows: 3,
+      description: 'Haritada marker üzerine gelince (popup) çıkan kısa özet.',
+      group: 'intel',
     }),
     defineField({
       name: 'description',
-      title: 'Detaylı Açıklama',
+      title: 'Full Surveillance Report',
       type: 'array',
-      description: 'Lokasyonun detay sayfasında yer alacak olan tam tarihçesi ve açıklaması.',
-      of: [{ type: 'block' }],
+      of: [{type: 'block'}],
+      group: 'intel',
     }),
+
+    // --- 4. MEDYA ---
     defineField({
-      name: 'coordinates',
-      title: 'Koordinatlar',
-      type: 'geopoint',
-      description: 'İnteraktif harita için bu lokasyonun yerini işaretleyin.',
+      name: 'mainImage',
+      title: 'Surveillance Feed Image',
+      type: 'image',
+      options: { hotspot: true },
+      group: 'media',
     }),
   ],
   preview: {
     select: {
       title: 'name',
+      subtitle: 'faction.title',
       media: 'mainImage',
     },
   },
-});
+})

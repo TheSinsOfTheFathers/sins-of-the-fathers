@@ -45,14 +45,10 @@
             opacity: 0.05;
         }
 
-        /* --- TIMELINE.JS OVERRIDES (The Dark Mode Hack) --- */
-        
-        /* Genel Arkaplan */
+        /* --- TIMELINE.JS OVERRIDES (Dark Mode Hack) --- */
         .tl-timeline, .tl-storyslider, .tl-slide-content, .tl-slide, .tl-slide-scrollable-container {
             background-color: #050505 !important;
         }
-
-        /* Metinler */
         .tl-headline-date, .tl-headline {
             font-family: 'Cinzel', serif !important;
             color: #c5a059 !important; /* GOLD */
@@ -62,8 +58,6 @@
             font-family: 'Lato', sans-serif !important;
             color: #b0b0b0 !important;
         }
-        
-        /* Alt Navigasyon Barı */
         .tl-timenav, .tl-timenav-slider {
             background-color: #111 !important;
             border-top: 1px solid #333 !important;
@@ -72,27 +66,17 @@
             color: #666 !important;
             text-shadow: none !important;
         }
-        
-        /* Marker (Noktalar) */
         .tl-timemarker .tl-timemarker-content {
             background-color: #000 !important;
             border: 1px solid #c5a059 !important;
-            border-radius: 0 !important; /* Keskin köşeler */
+            border-radius: 0 !important;
         }
         .tl-timemarker.tl-timemarker-active .tl-timemarker-content {
             background-color: #c5a059 !important;
             box-shadow: 0 0 15px rgba(197, 160, 89, 0.5);
         }
-
-        /* Medya Alanı */
-        .tl-media-content-container {
-            border: 1px solid #333;
-        }
-
-        /* Navigasyon Okları */
-        .tl-slidenav-icon {
-            color: #c5a059 !important; 
-        }
+        .tl-media-content-container { border: 1px solid #333; }
+        .tl-slidenav-icon { color: #c5a059 !important; }
 
         /* Custom Loading Spinner */
         .loading-ring {
@@ -102,7 +86,6 @@
             content: " "; display: block; width: 46px; height: 46px; margin: 8px; border-radius: 50%; border: 2px solid #c5a059; border-color: #c5a059 transparent #c5a059 transparent; animation: ring 1.2s linear infinite;
         }
         @keyframes ring { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
     </style>
 </head>
 
@@ -110,20 +93,53 @@
 
     <div class="noise-overlay"></div>
 
-    <!-- Header (Standardized) -->
+    <!-- Header (System Integrated) -->
     <header class="fixed top-0 w-full z-50 bg-obsidian/90 backdrop-blur-md border-b border-white/5 transition-all">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <!-- Sol: Marka -->
             <a href="../index.html" class="text-xl md:text-2xl font-serif text-gold tracking-widest uppercase hover:text-white transition-colors">
                 TSOF <span class="hidden md:inline text-xs text-gray-600 ml-2">// CHRONICLES</span>
             </a>
             
-            <a href="../index.html" class="text-xs uppercase tracking-widest text-gray-500 hover:text-gold transition-colors">
-                <i class="fas fa-arrow-left mr-2"></i> Return to Index
-            </a>
+            <!-- Sağ: Desktop Menu -->
+            <div class="hidden md:flex items-center space-x-8 text-xs uppercase tracking-widest font-semibold">
+                <a href="characters.html" class="text-gray-400 hover:text-gold transition-colors">Bloodline</a>
+                <a href="timeline.html" class="text-white border-b border-gold pb-1">History</a>
+                <a href="factions.html" class="text-gray-400 hover:text-gold transition-colors">Factions</a>
+                <a href="locations.html" class="text-gray-400 hover:text-gold transition-colors">Territories</a>
+                
+                <!-- Auth Logic İçin Gerekli ID'li Kapsayıcı -->
+                <div class="border-l border-white/20 pl-6 ml-2 flex items-center gap-4" id="auth-controls">
+                    <a href="lore.html" class="text-gold hover:text-white transition-colors flex items-center gap-1 guest-only">
+                        <i class="fas fa-lock text-[9px]"></i> Archives
+                    </a>
+                    <a href="login.html" class="hover:text-gold transition-colors guest-only" id="auth-signin-link">Sign In</a>
+                </div>
+            </div>
+
+            <!-- Mobil Hamburger (Animasyonlu) -->
+            <div class="md:hidden relative z-50">
+                <button id="hamburger-button" class="text-gold focus:outline-none flex flex-col justify-center items-center w-8 h-8 space-y-1.5 group">
+                    <span class="block w-6 h-0.5 bg-gold transition-transform duration-300"></span>
+                    <span class="block w-6 h-0.5 bg-gold transition-opacity duration-300"></span>
+                    <span class="block w-6 h-0.5 bg-gold transition-transform duration-300"></span>
+                </button>
+            </div>
         </nav>
     </header>
 
-    <!-- Intro / Manifesto Section -->
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="hidden fixed inset-0 z-40 bg-black/95 flex-col items-center justify-center space-y-8 transition-opacity duration-300 backdrop-blur-xl">
+        <a href="../index.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest">Home</a>
+        <a href="characters.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest">Bloodline</a>
+        <a href="timeline.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest border-b border-gold pb-2">History</a>
+        <a href="factions.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest">Factions</a>
+        <a href="locations.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest">Territories</a>
+        <a href="lore.html" class="text-xl text-gold font-serif hover:text-white uppercase tracking-widest">Archives</a>
+        <a href="login.html" class="text-sm text-gray-400 hover:text-white mt-8 font-mono uppercase">Access Terminal</a>
+    </div>
+
+    <!-- Intro Section -->
     <section class="pt-28 pb-10 container mx-auto px-6 text-center z-10 relative">
         <div class="inline-block border-b border-gold mb-6 pb-2">
             <h1 class="text-4xl md:text-6xl font-serif text-white uppercase tracking-wider">
@@ -143,7 +159,6 @@
     </section>
 
     <!-- THE TIMELINE CONTAINER -->
-    <!-- Important: height needs to be fixed for Timeline.js -->
     <section class="w-full h-[600px] md:h-[800px] relative z-10 bg-obsidian border-t border-b border-white/10">
         
         <!-- Loading State -->
@@ -152,107 +167,21 @@
             <p class="font-mono text-gold text-sm uppercase tracking-widest animate-pulse">Reconstructing Historical Events...</p>
         </div>
 
-        <!-- The Embed Div -->
+        <!-- The Embed Div (main.js -> timeline-loader.js burayı hedef alacak) -->
         <div id="timeline-embed" style="width: 100%; height: 100%;"></div>
     </section>
     
     <!-- Info Footer -->
     <section class="container mx-auto px-6 py-8 text-center">
         <p class="text-gray-600 text-xs font-mono">
-            * All dates before 1999 correspond to the "Old World" records. Records after 2000 classify as "New World" operations.
+            * Chronological records are sourced directly from the Sanity Database.
         </p>
     </section>
 
-
-    <!-- Timeline.js Script (Main Library) -->
+    <!-- Timeline.js Core Library -->
     <script src="https://cdn.knightlab.com/libs/timeline3/latest/js/timeline.js"></script>
 
-    <!-- Data Injection & Init Script -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            
-            // NOTE FOR ARCHITECT: 
-            // In the future, 'timelineData' will be fetched from your Sanity API (main.js).
-            // This is a STATIC structure to test the visuals.
-            
-            const timelineData = {
-                "title": {
-                    "media": {
-                        "url": "https://images.unsplash.com/photo-1506093483035-1547214f6e18?q=80&w=2560&auto=format&fit=crop",
-                        "caption": "The Scottish Highlands",
-                        "credit": "Ballantine Estate"
-                    },
-                    "text": {
-                        "headline": "The Roots of Sin",
-                        "text": "<p>Where the bloodline begins. Before Los Angeles, before the empire, there was only survival in the cold north.</p>"
-                    }
-                },
-                "events": [
-                    {
-                        "start_date": { "year": "1840" },
-                        "media": {
-                            "url": "https://images.unsplash.com/photo-1599946347371-68eb71b16afc?q=80&w=2070&auto=format&fit=crop",
-                            "caption": "Old Edinburgh",
-                            "credit": "Historical Archives"
-                        },
-                        "text": {
-                            "headline": "The First Betrayal",
-                            "text": "<p>The Ballantine name first appears in police records connected to the Docklands Riots. A legacy of profiting from chaos is established.</p>"
-                        },
-                        "group": "Scotland Era" // Visual Grouping
-                    },
-                    {
-                        "start_date": { "year": "1998" },
-                        "media": {
-                            "url": "", // Empty media acts as text-only card
-                            "caption": "" 
-                        },
-                        "text": {
-                            "headline": "The Exile of Ruaraidh",
-                            "text": "<p>A catastrophic failure of judgment forces Ruaraidh Ballantine to flee Glasgow. The Old World rejects him.</p>"
-                        },
-                        "group": "Transition"
-                    },
-                    {
-                        "start_date": { "year": "2005" },
-                        "end_date": { "year": "2005" },
-                        "media": {
-                            "url": "https://images.unsplash.com/photo-1496442226666-8d4a0e62e6e7?q=80&w=2070&auto=format&fit=crop",
-                            "caption": "Los Angeles Skyline",
-                            "credit": "Surveillance Drone"
-                        },
-                        "text": {
-                            "headline": "Havi's Ascension",
-                            "text": "<p>In the concrete jungle of LA, a bastard child discovers that 'systemic control' is more powerful than brute force. The orphan claims his first territory.</p>"
-                        },
-                        "group": "New Dynasty"
-                    }
-                ]
-            };
-
-            const options = {
-                font: null, // We handled fonts in CSS
-                menubar_height: 50,
-                timenav_height: 150,
-                marker_height_min: 30,
-                scale_factor: 2 // Zoom level
-            };
-
-            // Initialize Timeline
-            try {
-                window.timeline = new TL.Timeline('timeline-embed', timelineData, options);
-                
-                // Hide Loader once initialized
-                // (Timeline.js doesn't have a reliable 'ready' event, so we use a small timeout check)
-                setTimeout(() => {
-                   document.getElementById('timeline-loading').style.display = 'none';
-                }, 1000);
-                
-            } catch (e) {
-                console.error("Timeline construction failed:", e);
-                document.getElementById('timeline-loading').innerHTML = "<p class='text-red-500'>ERROR LOADING ARCHIVE</p>";
-            }
-        });
-    </script>
+    <!-- SYSTEM CORE SCRIPT -->
+    <script src="../assets/js/main.js" type="module" defer></script>
 </body>
 </html>
