@@ -93,36 +93,40 @@
 
     <div class="noise-overlay"></div>
 
-    <!-- Header (System Integrated) -->
-    <header class="fixed top-0 w-full z-50 bg-obsidian/90 backdrop-blur-md border-b border-white/5 transition-all">
+    <!-- Header -->
+    <header class="fixed top-0 w-full z-50 transition-all duration-300 bg-obsidian/90 backdrop-blur-md border-b border-white/5">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <!-- Sol: Marka -->
-            <a href="../index.html" class="text-xl md:text-2xl font-serif text-gold tracking-widest uppercase hover:text-white transition-colors">
-                TSOF <span class="hidden md:inline text-xs text-gray-600 ml-2">// CHRONICLES</span>
+            <!-- Marka / Logo -->
+            <a href="../index.html" class="nav-brand text-2xl md:text-3xl text-gold tracking-widest hover:text-white transition-colors uppercase font-serif">
+                TSOF
             </a>
-            
-            <!-- Sağ: Desktop Menu -->
-            <div class="hidden md:flex items-center space-x-8 text-xs uppercase tracking-widest font-semibold">
-                <a href="characters.html" class="text-gray-400 hover:text-gold transition-colors">Bloodline</a>
-                <a href="timeline.html" class="text-white border-b border-gold pb-1">History</a>
-                <a href="factions.html" class="text-gray-400 hover:text-gold transition-colors">Factions</a>
-                <a href="locations.html" class="text-gray-400 hover:text-gold transition-colors">Territories</a>
+
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex items-center space-x-8 text-sm uppercase tracking-widest font-semibold">
+                <a href="./characters.html" class="hover:text-gold transition-colors">The Bloodline</a>
+                <a href="./timeline.html" class="hover:text-gold transition-colors">History</a>
+                <a href="./factions.html" class="hover:text-gold transition-colors">Factions</a>
+                <a href="./locations.html" class="hover:text-gold transition-colors">Territories</a>
                 
-                <!-- Auth Logic İçin Gerekli ID'li Kapsayıcı -->
-                <div class="border-l border-white/20 pl-6 ml-2 flex items-center gap-4" id="auth-controls">
-                    <a href="lore.html" class="text-gold hover:text-white transition-colors flex items-center gap-1 guest-only">
-                        <i class="fas fa-lock text-[9px]"></i> Archives
+                <!-- Login Bölümü - (ID EKLENDİ: auth-controls) -->
+                <div class="border-l border-white/20 pl-8 ml-4 flex items-center gap-4" id="auth-controls">
+
+                    <!-- LORE LİNKİ: Artık her zaman görünür, ancak içindeki kilit sadece misafire gözükür. -->
+                    <a href="./lore.html" class="text-gold hover:text-white transition-colors flex items-center gap-2">
+                        <i class="fas fa-lock text-xs guest-lock"></i> Classified
                     </a>
-                    <a href="login.html" class="hover:text-gold transition-colors guest-only" id="auth-signin-link">Sign In</a>
+
+                    <!-- AUTH LİNKİ: SADECE MİSAFİR GÖRÜR -->
+                    <a href="./login.html" class="hover:text-gold transition-colors guest-only" id="auth-signin-link">Sign In</a>
                 </div>
             </div>
 
-            <!-- Mobil Hamburger (Animasyonlu) -->
+            <!-- Hamburger (ID EKLENDİ: hamburger-button) -->
             <div class="md:hidden relative z-50">
-                <button id="hamburger-button" class="text-gold focus:outline-none flex flex-col justify-center items-center w-8 h-8 space-y-1.5 group">
-                    <span class="block w-6 h-0.5 bg-gold transition-transform duration-300"></span>
-                    <span class="block w-6 h-0.5 bg-gold transition-opacity duration-300"></span>
-                    <span class="block w-6 h-0.5 bg-gold transition-transform duration-300"></span>
+                <button id="hamburger-button" class="text-gold focus:outline-none flex flex-col justify-between w-6 h-5">
+                    <span class="block w-full h-0.5 bg-gold"></span>
+                    <span class="block w-full h-0.5 bg-gold"></span>
+                    <span class="block w-full h-0.5 bg-gold"></span>
                 </button>
             </div>
         </nav>

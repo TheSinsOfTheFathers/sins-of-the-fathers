@@ -9,10 +9,9 @@ export default defineType({
     {name: 'visuals', title: 'Visual Identity'},
     {name: 'manifesto', title: 'Manifesto & Lore'},
     {name: 'network', title: 'Leadership & Assets'},
-    {name: 'diplomacy', title: 'Diplomatic Relations'}, // YENİ GRUP
+    {name: 'diplomacy', title: 'Diplomatic Relations'}, 
   ],
   fields: [
-    // --- 1. TEMEL BİLGİLER & TİPOLOJİ ---
     defineField({
       name: 'title',
       title: 'Faction Name',
@@ -67,11 +66,10 @@ export default defineType({
       initialValue: 'active',
     }),
 
-    // --- 2. GÖRSEL KİMLİK ---
     defineField({
       name: 'color',
       title: 'Theme Color (Hex Code)',
-      type: 'color', // 'sanity-plugin-color-input' kurulu ise
+      type: 'color', 
       description: 'Fraksiyonun baskın rengi (Örn: Kan için #7f1d1d, Altın için #c5a059).',
       group: 'visuals',
     }),
@@ -90,7 +88,6 @@ export default defineType({
       group: 'visuals',
     }),
 
-    // --- 3. İÇERİK ---
     defineField({
       name: 'motto',
       title: 'Motto',
@@ -128,7 +125,6 @@ export default defineType({
         description: 'Örn: Arms Trafficking, High-Frequency Trading, extortion.',
     }),
 
-    // --- 4. DİPLOMASİ (YENİ EKLENEN) ---
     defineField({
       name: 'relations',
       title: 'Diplomatic Relations',
@@ -175,7 +171,6 @@ export default defineType({
       }]
     }),
 
-    // --- 5. HİYERARŞİ ---
     defineField({
       name: 'leader',
       title: 'Faction Leader',

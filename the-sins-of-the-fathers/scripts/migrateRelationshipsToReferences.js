@@ -1,13 +1,8 @@
-// Simple Sanity migration helper to convert old relationships array (name/status)
-// into reference-based relationships: {character: {_ref: '<id>'}, status: '...'}
-// Usage: set SANITY_PROJECT_ID, SANITY_DATASET, SANITY_TOKEN env vars, then run:
-//   node ./scripts/migrateRelationshipsToReferences.js
-
 const sanityClient = require('@sanity/client');
 
 const projectId = process.env.SANITY_PROJECT_ID;
 const dataset = process.env.SANITY_DATASET || 'production';
-const token = process.env.SANITY_TOKEN; // required for write
+const token = process.env.SANITY_TOKEN; 
 
 if (!projectId || !token) {
     console.error('Please set SANITY_PROJECT_ID and SANITY_TOKEN environment variables.');
@@ -35,7 +30,6 @@ async function run() {
     const docs = await client.fetch(`*[_type == "character"]{_id, relationships}`);
     for (const doc of docs) {
         const rels = doc.relationships || [];
-        // filter entries that already have a 'character' ref
         const toConvert = rels.filter(r => r && !r.character && (r.name || r._ref || r._id));
         if (toConvert.length === 0) continue;
 
@@ -45,7 +39,6 @@ async function run() {
                 newRels.push(r);
                 continue;
             }
-            // try to resolve by name
             const name = r && r.name ? r.name : null;
             let refId = null;
             if (name) {
@@ -56,7 +49,6 @@ async function run() {
             if (refId) {
                 newRels.push({ character: { _ref: refId }, status: r.status || '' });
             } else {
-                // keep original as fallback but place in a 'legacy' field so we don't lose data
                 newRels.push({ legacyName: r.name || null, status: r.status || '', _note: 'unresolved' });
             }
         }

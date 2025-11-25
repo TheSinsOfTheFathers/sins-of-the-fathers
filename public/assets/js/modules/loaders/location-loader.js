@@ -1,12 +1,10 @@
 import { client } from '../../lib/sanityClient.js';
 
-// Global Instance
 let mapInstance = null;
 
-// Faksiyon Renkleri (Tema)
 const FACTION_THEMES = {
-    'ballantine-empire': { border: '#c5a059', fill: '#c5a059' }, // Gold
-    'macpherson-clan':   { border: '#7f1d1d', fill: '#991b1b' }, // Blood
+    'ballantine-empire': { border: '#c5a059', fill: '#c5a059' }, 
+    'macpherson-clan':   { border: '#7f1d1d', fill: '#991b1b' }, 
     'default':           { border: '#555555', fill: '#777777' }
 };
 
@@ -16,13 +14,11 @@ const FACTION_THEMES = {
  */
 const destroyMap = (id) => {
     const container = document.getElementById(id);
-    // Leaflet instance varsa yok et
     if (mapInstance) {
         mapInstance.off();
         mapInstance.remove();
         mapInstance = null;
     }
-    // DOM temizliği
     if (container) {
         container._leaflet_id = null; 
     }
@@ -48,7 +44,6 @@ const createTacticalIcon = (slug) => {
     });
 };
 
-// GeoJSON Yükleyici
 async function loadLayer(map, path, theme) {
     try {
         const res = await fetch(path);
@@ -66,7 +61,6 @@ async function loadLayer(map, path, theme) {
             }
         }).addTo(map);
     } catch (e) {
-        // Dosya yoksa sistemi durdurma, log at ve devam et.
         console.warn(`[Map Layer Missing] ${path}`);
     }
 }
@@ -81,7 +75,6 @@ export async function displayLocations() {
         return;
     }
 
-    // 1. Haritayı Başlat (Clean Start)
     try {
         destroyMap('map');
 
@@ -95,12 +88,10 @@ export async function displayLocations() {
 
         L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-        // Tile Layer (Dark)
         L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
             maxZoom: 18
         }).addTo(map);
 
-        // 2. Global Fonksiyonlar (HTML Butonları İçin)
         window.zoomToLocation = (lat, lng, z) => {
             map.flyTo([lat, lng], z, { duration: 2.0 });
             const display = document.getElementById('location-name-display');
@@ -112,8 +103,6 @@ export async function displayLocations() {
             if (display) display.textContent = "GLOBAL ORBIT";
         };
 
-        // 3. GeoJSON Katmanlarını Yükle (PATH DÜZELTİLDİ: /public EKLENDİ)
-        // Localhost ortamında /public ile başlamak zorundadır.
         const factionsData = {
             'ballantine-empire': [
                 'united-kingdom-border.geojson', 
@@ -126,16 +115,13 @@ export async function displayLocations() {
             ]
         };
 
-        // Loop ile dosyaları çek
         for (const [slug, files] of Object.entries(factionsData)) {
             const theme = FACTION_THEMES[slug] || FACTION_THEMES.default;
             for (const file of files) {
-                // ---> BURADAKİ PATH DEĞİŞTİRİLDİ: /public eklendi <---
                 await loadLayer(map, `/public/assets/maps/${file}`, theme);
             }
         }
 
-        // 4. Markerları Yükle (Sanity Data)
         const query = `*[_type == "location" && defined(location)] { 
             name, "slug": slug.current, location, faction->{slug}, summary 
         }`;
@@ -164,12 +150,10 @@ export async function displayLocations() {
             });
         }
 
-        // 5. Loader Kaldır
         if (loader) {
             loader.classList.add('opacity-0', 'pointer-events-none');
         }
 
-        // 6. Koordinat Göstergesi
         map.on('mousemove', (e) => {
             const el = document.getElementById('coordinates-display');
             if (el) el.textContent = `${e.latlng.lat.toFixed(4)} | ${e.latlng.lng.toFixed(4)}`;

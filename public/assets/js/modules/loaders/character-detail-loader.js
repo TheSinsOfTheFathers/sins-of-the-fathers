@@ -6,7 +6,6 @@ import { client } from '../../lib/sanityClient.js';
  */
 const renderCharacterDetails = async (character) => {
     
-    // HTML element referanslarını yakala
     const els = {
         loader: document.getElementById('file-loader'),
         dossier: document.getElementById('character-dossier'),
@@ -22,58 +21,44 @@ const renderCharacterDetails = async (character) => {
         title: document.title
     };
 
-    // Veri olmadığı durumda hata yönetimi
     if (!els.name) { console.error("ERROR: Dossier layout corrupted. Missing DOM elements."); return; }
 
     /* ------------------------------------------------------
        1. META DATA ENJEKSİYONU
        ------------------------------------------------------ */
     
-    // Resim
     const imgUrl = character.image_url || 'https://placehold.co/600x800/000000/333333?text=NO+IMAGE';
     if (els.image) els.image.src = imgUrl;
 
-    // Durum (Status)
     if (els.statusBadge) {
         const status = character.status || 'Active';
         els.statusBadge.textContent = status;
-        // Duruma göre renk kodu
         els.statusBadge.className = 'font-mono text-xs uppercase font-bold tracking-widest animate-pulse ' + 
             (status.toLowerCase() === 'deceased' || status.toLowerCase() === 'kia' ? 'text-red-600' : 'text-green-500');
     }
 
-    // İsim ve Lakap
     els.name.textContent = character.name;
     if(character.alias) els.alias.textContent = `"${character.alias}"`;
     document.title = `${character.name} // DOSSIER - The Sins of the Fathers`;
 
-    // Kısa Bilgiler (Grid)
     if(els.faction) els.faction.textContent = character.faction?.title || 'Unknown / Freelancer';
-    // Location bilgisini "faction" verisinden veya ayrı bir field'dan alabiliriz
-    // Şimdilik 'origin' veya faction'dan tahmin ediyoruz
     if(els.location) els.location.textContent = character.origin || (character.faction ? 'Affiliated Territory' : 'Unknown'); 
     if(els.role) els.role.textContent = character.role || character.title || 'Operative';
 
-    // Biyografi (Sanity Block Content to HTML gerekebilir ama şimdilik düz text veya basit HTML kabul ediyoruz)
-    // NOT: Eğer PortableText kullanıyorsanız burada bir parser kullanmalısınız.
-    // Basit string ise direkt basıyoruz.
     if (els.bio) {
         if (character.description) {
-             // Satır başlarını paragraf yap
              els.bio.innerHTML = character.description.split('\n').map(p => `<p>${p}</p>`).join('');
         } else {
              els.bio.innerHTML = "<p class='text-red-500'>[DATA CORRUPTED] - Biography inaccessible.</p>";
         }
     }
 
-    // Alıntı
     if(els.quote) els.quote.textContent = character.quote ? character.quote : "...";
 
 
     /* ------------------------------------------------------
        2. YÜKLEME EKRANINI KALDIR
        ------------------------------------------------------ */
-    // "Decryption" efekti için suni gecikme
     setTimeout(() => {
         if (els.loader) els.loader.classList.add('opacity-0', 'pointer-events-none');
         if (els.dossier) els.dossier.classList.remove('opacity-0');
@@ -92,29 +77,24 @@ const renderCharacterDetails = async (character) => {
         
         const nodesMap = new Map();
         
-        // 3a. NODE BUILDER HELPER
         const addNode = (obj, isMain = false) => {
             if (!obj) return;
             
-            // Veri Şekillendirme
             let id = obj.slug || obj._id || obj._ref || null;
             let label = obj.name || obj.label || id;
             let img = obj.image_url || (obj.image && obj.image.asset && obj.image.asset.url) || null;
 
             if(typeof obj === 'string') { id = obj.toLowerCase(); label = obj; }
 
-            // Ref wrapper temizliği
             if (obj.character) { 
-                // Eğer relation nesnesinin içinde character varsa onu aç
                 const inner = obj.character;
                 id = inner.slug || inner._ref || inner._id;
                 label = inner.name || label;
                 img = inner.image_url || img;
             }
             
-            if (!id) return; // Geçersiz node
+            if (!id) return;
             
-            // ID Unique olsun
             id = String(id).replace(/\s+/g, '-').toLowerCase();
 
             if (!nodesMap.has(id)) {
@@ -128,20 +108,16 @@ const renderCharacterDetails = async (character) => {
             } else if (isMain) {
                 nodesMap.get(id).isMain = true;
             }
-            return id; // Link kurarken lazım olacak
+            return id; 
         };
 
-        // Ana Karakteri Ekle
         const mainId = addNode(character, true);
 
         const links = [];
 
-        // 3b. RELATIONSHIPS (İlişkiler)
         if (character.relationships && Array.isArray(character.relationships)) {
             character.relationships.forEach(rel => {
-                // Target Node oluştur
                 const targetId = addNode(rel.character || rel);
-                // Link oluştur
                 if (mainId && targetId && mainId !== targetId) {
                     links.push({ 
                         source: mainId, 
@@ -153,7 +129,6 @@ const renderCharacterDetails = async (character) => {
             });
         }
 
-        // 3c. FAMILY (Soy Ağacı)
         if (character.family && Array.isArray(character.family)) {
             character.family.forEach(fam => {
                  const targetId = addNode(fam.character || fam);
@@ -162,7 +137,7 @@ const renderCharacterDetails = async (character) => {
                         source: mainId, 
                         target: targetId, 
                         label: fam.relation || 'Family', 
-                        strength: 1.5 // Aile bağları daha güçlü/yakın
+                        strength: 1.5
                     });
                  }
             });
@@ -170,14 +145,10 @@ const renderCharacterDetails = async (character) => {
 
         const nodes = Array.from(nodesMap.values());
 
-        // Debug Mode
-        // console.log("Graph Data:", { nodes, links });
 
-        // 3d. RENDER D3 (Dynamic Import)
         if (nodes.length > 0) {
             try {
                 const module = await import('./d3-family-tree.js');
-                // Container boyutunu dinamik al
                 const width = familyContainer.clientWidth || 300;
                 const height = familyContainer.clientHeight || 400;
                 
@@ -193,7 +164,7 @@ const renderCharacterDetails = async (character) => {
             }
         } else {
              if (loadingEl) loadingEl.style.display = 'none';
-             if (emptyEl) emptyEl.style.display = 'flex'; // Veri yok mesajı
+             if (emptyEl) emptyEl.style.display = 'flex'; 
              if (emptyEl) emptyEl.classList.remove('hidden');
         }
     }
@@ -204,21 +175,17 @@ const renderCharacterDetails = async (character) => {
  * SAYFA YÜKLENDİĞİNDE ÇALIŞAN ANA FONKSİYON
  */
 export const loadCharacterDetails = async () => {
-    // URL'den slug al
     const params = new URLSearchParams(window.location.search);
     const characterSlug = params.get('slug'); 
 
-    // Eğer URL'de slug yoksa placeholder kullan veya hata ver
     if (!characterSlug) {
         console.error("Access Denied: Missing slug parameter.");
-        // İsteğe bağlı: 404 sayfasına yönlendir
         return;
     }
 
     try {
         console.log(`> Querying database for Subject: ${characterSlug}`);
 
-        // GROQ Query Update: faction detayını ve resimleri de çekiyoruz
         const query = `*[_type == "character" && slug.current == $slug][0]{
             ...,
             "image_url": image.asset->url,
@@ -249,7 +216,6 @@ export const loadCharacterDetails = async () => {
             console.log("> Access Granted. Rendering file.");
             await renderCharacterDetails(character); 
         } else {
-             // Sanity'de kayıt yok
              document.body.innerHTML = `
                 <div class="flex h-screen items-center justify-center bg-black text-red-600 font-mono">
                    ERROR 404: Subject not found in archives.
@@ -258,7 +224,6 @@ export const loadCharacterDetails = async () => {
     } 
     catch (error) {
         console.error("System Failure:", error);
-        // Loader hatası göstermek için manuel DOM manipülasyonu
         const loaderText = document.querySelector('#file-loader p');
         if(loaderText) {
             loaderText.textContent = "CONNECTION FAILED";

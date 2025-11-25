@@ -1,4 +1,3 @@
-// Use global window.d3 (must be loaded via <script> in HTML)
 export function renderFamilyGraph(containerEl, { nodes = [], links = [] } = {}, options = {}) {
     const d3 = window.d3;
     if (!d3) {
@@ -6,11 +5,9 @@ export function renderFamilyGraph(containerEl, { nodes = [], links = [] } = {}, 
         return;
     }
 
-    // 1. Clean & Prepare Container
-    containerEl.innerHTML = ''; // Reset canvas
-    containerEl.classList.add('d3-container', 'cursor-move'); // Add interactivity cursors
+    containerEl.innerHTML = ''; 
+    containerEl.classList.add('d3-container', 'cursor-move'); 
 
-    // 2. Custom Noir Tooltip (Cyberpunk/Terminal Style)
     let tooltip = document.createElement('div');
     tooltip.className = 'd3-tooltip';
     Object.assign(tooltip.style, {
@@ -18,8 +15,8 @@ export function renderFamilyGraph(containerEl, { nodes = [], links = [] } = {}, 
         display: 'none',
         pointerEvents: 'none',
         background: 'rgba(5, 5, 5, 0.95)',
-        border: '1px solid #c5a059', // Gold Border
-        color: '#c5a059', // Gold Text
+        border: '1px solid #c5a059', 
+        color: '#c5a059', 
         padding: '8px 12px',
         fontFamily: "'Courier Prime', monospace",
         fontSize: '10px',
@@ -30,7 +27,6 @@ export function renderFamilyGraph(containerEl, { nodes = [], links = [] } = {}, 
     });
     containerEl.appendChild(tooltip);
 
-    // 3. Dimensions
     const width = options.width || Math.max(600, containerEl.clientWidth || 800);
     const height = options.height || 600;
 
@@ -40,28 +36,22 @@ export function renderFamilyGraph(containerEl, { nodes = [], links = [] } = {}, 
         .attr('height', '100%')
         .attr('viewBox', `0 0 ${width} ${height}`)
         .attr('preserveAspectRatio', 'xMidYMid meet')
-        .style('background-color', 'transparent'); // Let CSS noise show through
+        .style('background-color', 'transparent'); 
 
     const defs = svg.append('defs');
 
-    // 4. Visual Filters & Markers
-    
-    // GLOW EFFECT (Altın Parlama)
     const filter = defs.append("filter").attr("id", "glow");
     filter.append("feGaussianBlur").attr("stdDeviation", "2.5").attr("result", "coloredBlur");
     const feMerge = filter.append("feMerge");
     feMerge.append("feMergeNode").attr("in", "coloredBlur");
     feMerge.append("feMergeNode").attr("in", "SourceGraphic");
 
-    // Arrow Markers
-    // Gold Arrow (Family/Strong)
     defs.append('marker')
         .attr('id', 'arrow-gold')
         .attr('viewBox', '0 -5 10 10').attr('refX', 22).attr('refY', 0)
         .attr('markerWidth', 6).attr('markerHeight', 6).attr('orient', 'auto')
         .append('path').attr('d', 'M0,-5L10,0L0,5').attr('fill', '#c5a059');
 
-    // Grey Arrow (Weak)
     defs.append('marker')
         .attr('id', 'arrow-gray')
         .attr('viewBox', '0 -5 10 10').attr('refX', 22).attr('refY', 0)
@@ -71,10 +61,8 @@ export function renderFamilyGraph(containerEl, { nodes = [], links = [] } = {}, 
     const linkGroup = svg.append('g').attr('class', 'links');
     const nodeGroup = svg.append('g').attr('class', 'nodes');
 
-    // --- Sanitization: Data Clean-up ---
     const sanitizedNodes = nodes.map((n, i) => {
         if (!n) return { id: `node_missing_${i}`, label: '(unknown)' };
-        // Use specific ID hierarchy or fallback
         n.id = n.id || n.slug || n._id || n.name || `node_${i}`;
         return n;
     });
@@ -90,10 +78,6 @@ export function renderFamilyGraph(containerEl, { nodes = [], links = [] } = {}, 
     const renderNodes = sanitizedNodes;
     const renderLinks = sanitizedLinks;
 
-    // --- VISUALIZATIONS ---
-
-    // LINK RENDER
-    // Aile bağları (strength > 1) altın, diğerleri gri
     const link = linkGroup.selectAll('line')
         .data(renderLinks).enter().append('line')
         .attr('stroke', d => (d.strength && d.strength > 1.2) ? '#c5a059' : '#333') 
@@ -101,7 +85,6 @@ export function renderFamilyGraph(containerEl, { nodes = [], links = [] } = {}, 
         .attr('stroke-opacity', 0.6)
         .attr('marker-end', d => (d.strength && d.strength > 1.2) ? 'url(#arrow-gold)' : 'url(#arrow-gray)');
 
-    // Link Label Background (Daha okunur olması için siyah zemin)
     const linkLabelBg = linkGroup.selectAll('.link-label-bg')
         .data(renderLinks).enter().append('rect')
         .attr('rx', 2).attr('ry', 2)
@@ -116,17 +99,13 @@ export function renderFamilyGraph(containerEl, { nodes = [], links = [] } = {}, 
         .attr('text-anchor', 'middle')
         .text(d => d.label ? d.label.toUpperCase() : '');
 
-
-    // NODE RENDER
-    // Define Node Groups
     const node = nodeGroup.selectAll('g.node')
         .data(renderNodes, d => d.id).enter().append('g')
         .attr('class', 'node')
-        .call(d3.drag() // Drag Interactions
+        .call(d3.drag() 
             .on('start', (event, d) => {
                 if (!event.active && simulation) simulation.alphaTarget(0.3).restart();
                 d.fx = d.x; d.fy = d.y;
-                // Drag yaparken glow efekti ver
                 d3.select(event.sourceEvent.target).style("filter", "url(#glow)");
             })
             .on('drag', (event, d) => { d.fx = event.x; d.fy = event.y; })
@@ -137,14 +116,12 @@ export function renderFamilyGraph(containerEl, { nodes = [], links = [] } = {}, 
             })
         );
 
-    // 1. Outer Ring (Stroke)
     node.append('circle')
         .attr('r', d => d.isMain ? 26 : 18)
-        .attr('fill', '#050505') // Black fill for text readability
+        .attr('fill', '#050505') 
         .attr('stroke', d => d.isMain ? '#c5a059' : '#333')
         .attr('stroke-width', d => d.isMain ? 2 : 1);
 
-    // 2. Clip Path for Images
     const imageSize = 36;
     const clipIdBase = `clip-${Math.random().toString(36).substr(2, 9)}`;
     
@@ -155,7 +132,6 @@ export function renderFamilyGraph(containerEl, { nodes = [], links = [] } = {}, 
         .append('circle')
         .attr('r', d => d.isMain ? 18 : 12);
 
-    // 3. Node Images (Or fallback Initials)
     node.each(function(d, i) {
         const group = d3.select(this);
         if (d.image) {
@@ -168,41 +144,34 @@ export function renderFamilyGraph(containerEl, { nodes = [], links = [] } = {}, 
                 .attr('clip-path', `url(#${clipIdBase}-${i})`)
                 .attr('preserveAspectRatio', 'xMidYMid slice');
         } else {
-            // Fallback Circle filler if no image
             group.append('circle')
                 .attr('r', d => d.isMain ? 18 : 12)
                 .attr('fill', '#111');
         }
     });
 
-    // 4. Text Label
     node.append('text')
         .attr('dy', d => d.isMain ? 38 : 30)
         .attr('text-anchor', 'middle')
         .text(d => {
-            // Kısaltma: Çok uzun isimleri kırp
             let name = d.label || '';
             return name.length > 12 ? name.substring(0, 10) + '.' : name;
         })
         .attr('font-family', "'Courier Prime', monospace")
-        .attr('fill', d => d.isMain ? '#c5a059' : '#888') // Gold for main, grey for others
+        .attr('fill', d => d.isMain ? '#c5a059' : '#888') 
         .attr('font-size', d => d.isMain ? 10 : 8)
         .attr('font-weight', 'bold')
         .attr('letter-spacing', '1px');
 
 
-    // --- SIMULATION (Force Directed Physics) ---
-    // Gravity, Repulsion, and Link Forces tailored for network view
     const simulation = d3.forceSimulation(renderNodes)
-        .force('link', d3.forceLink(renderLinks).id(d => d.id).distance(100)) // Sabit mesafe
-        .force('charge', d3.forceManyBody().strength(-300)) // İtme kuvveti (Dağılması için)
+        .force('link', d3.forceLink(renderLinks).id(d => d.id).distance(100))
+        .force('charge', d3.forceManyBody().strength(-300)) 
         .force('center', d3.forceCenter(width / 2, height / 2))
-        .force('collide', d3.forceCollide(d => (d.isMain ? 35 : 25)).strength(0.7)); // Çakışma önleyici
+        .force('collide', d3.forceCollide(d => (d.isMain ? 35 : 25)).strength(0.7));
 
-    // Tick Function: Update positions on every frame
     simulation.on('tick', () => {
         
-        // Node Constrains to keep inside box
         renderNodes.forEach(d => {
             d.x = Math.max(20, Math.min(width - 20, d.x));
             d.y = Math.max(20, Math.min(height - 20, d.y));
@@ -225,13 +194,8 @@ export function renderFamilyGraph(containerEl, { nodes = [], links = [] } = {}, 
         node.attr('transform', d => `translate(${d.x},${d.y})`);
     });
 
-    // --- INTERACTIONS ---
-
-    // Hover
     node.on('mouseover', function(event, d) {
-        // Highlight
         d3.select(this).select('circle').attr('stroke', '#fff').attr('stroke-width', 2);
-        // Tooltip
         tooltip.style.display = 'block';
         tooltip.innerHTML = `
             <strong style="color:#fff">${d.label}</strong><br>
@@ -249,22 +213,18 @@ export function renderFamilyGraph(containerEl, { nodes = [], links = [] } = {}, 
         tooltip.style.display = 'none';
     });
 
-    // Click -> Navigate
     node.on('click', (event, d) => {
-        // D3 sürükleme bittiğinde click tetiklenmemesi için kontrol
         if (event.defaultPrevented) return; 
         
         if (d.slug) {
             window.location.href = `character-detail.html?slug=${d.slug}`;
         } else {
-            // Eğer slug yoksa ama id varsa (belki eski veridir), log atalım
             console.warn("Node clicked but no slug found:", d);
         }
     });
 
-    // Zoom Behavior
     const zoom = d3.zoom()
-        .scaleExtent([0.5, 3]) // Zoom limitleri
+        .scaleExtent([0.5, 3])
         .on('zoom', (event) => {
             nodeGroup.attr('transform', event.transform);
             linkGroup.attr('transform', event.transform);

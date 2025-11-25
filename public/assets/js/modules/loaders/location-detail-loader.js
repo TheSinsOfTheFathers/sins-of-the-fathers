@@ -1,8 +1,6 @@
 import { client, urlFor } from '../../lib/sanityClient.js';
 import { toHTML } from 'https://esm.sh/@portabletext/to-html@2.0.13';
 
-// --- Yardımcı Fonksiyonlar ---
-
 const updateThreatDisplay = (level = 'neutral') => {
     const threatEl = document.getElementById('loc-threat');
     if (!threatEl) return;
@@ -29,7 +27,6 @@ const updateThreatDisplay = (level = 'neutral') => {
 const renderLocationIntel = (location) => {
     document.title = `${location.name} // SURVEILLANCE FEED`;
 
-    // 1. Görsel
     const imgEl = document.getElementById('loc-image');
     if (imgEl && location.mainImage) {
         imgEl.src = urlFor(location.mainImage).width(1000).height(600).fit('crop').quality(75).url();
@@ -37,7 +34,6 @@ const renderLocationIntel = (location) => {
         if (loader) loader.style.display = 'none';
     }
 
-    // 2. Metadata
     const setText = (id, text) => { const el = document.getElementById(id); if (el) el.textContent = text || 'N/A'; };
 
     setText('loc-title', location.name);
@@ -52,7 +48,6 @@ const renderLocationIntel = (location) => {
 
     updateThreatDisplay(location.securityLevel || 'Moderate');
 
-    // 3. Rapor Metni
     const descEl = document.getElementById('loc-description');
     if (descEl) {
         descEl.innerHTML = location.description 
@@ -60,20 +55,16 @@ const renderLocationIntel = (location) => {
             : '<p class="text-red-500 font-mono">[DATA REDACTED]</p>';
     }
 
-    // 4. GEÇMİŞ OLAYLAR (Critical Fix: JS Filtering)
     const eventsList = document.getElementById('loc-events');
     if (eventsList) {
-        // Tüm dönemlerdeki olayları (nested arrays) tek bir listeye indiriyoruz (flatten)
         let foundEvents = [];
         
         if (location.allEras) {
             location.allEras.forEach(era => {
                 if (era.events) {
-                    // Olayın 'relatedLocation' alanı bu sayfanın ID'si ile eşleşiyor mu?
                     const matches = era.events.filter(evt => 
                         evt.relatedLocation && evt.relatedLocation._ref === location._id
                     );
-                    // Eşleşenleri ana listeye ekle
                     foundEvents = [...foundEvents, ...matches];
                 }
             });
@@ -102,8 +93,6 @@ export async function loadLocationDetails() {
     try {
         console.log(`> Connecting to drone feed: ${slug}`);
 
-        // QUERY UPDATE: "allEras" ismini verdiğimiz kısımla tüm eventleri çekip JS tarafında filtreliyoruz.
-        // Bu, "References in Arrays" sorunu için en garanti çözümdür.
         const query = `*[_type == "location" && slug.current == $slug][0]{
             _id,
             name,

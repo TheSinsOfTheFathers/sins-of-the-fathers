@@ -99,11 +99,13 @@
                 
                 <!-- Login Bölümü - (ID EKLENDİ: auth-controls) -->
                 <div class="border-l border-white/20 pl-8 ml-4 flex items-center gap-4" id="auth-controls">
-                    <!-- Guest Only Link -->
-                    <a href="./pages/lore.html" class="text-gold hover:text-white transition-colors flex items-center gap-2 guest-only">
-                        <i class="fas fa-lock text-xs"></i> Classified
+
+                    <!-- LORE LİNKİ: Artık her zaman görünür, ancak içindeki kilit sadece misafire gözükür. -->
+                    <a href="./pages/lore.html" class="text-gold hover:text-white transition-colors flex items-center gap-2">
+                        <i class="fas fa-lock text-xs guest-lock"></i> Classified
                     </a>
-                    <!-- ID EKLENDİ: auth-signin-link ve class guest-only -->
+
+                    <!-- AUTH LİNKİ: SADECE MİSAFİR GÖRÜR -->
                     <a href="./pages/login.html" class="hover:text-gold transition-colors guest-only" id="auth-signin-link">Sign In</a>
                 </div>
             </div>

@@ -1,11 +1,4 @@
-// Migrate legacy `Ad` field to `name` for character documents.
-// Usage:
-// 1) Install @sanity/client in this folder if not present: npm install @sanity/client
-// 2) Set environment variables (PowerShell example):
-//    $env:SANITY_PROJECT_ID = 'your_project_id'
-//    $env:SANITY_DATASET = 'production'  # optional
-//    $env:SANITY_TOKEN = 'YOUR_WRITE_TOKEN'
-// 3) Run: node ./scripts/migrateAdToName.js
+
 
 const sanityClient = require('@sanity/client');
 
@@ -46,7 +39,6 @@ async function run() {
     if (!newName) continue;
 
     const patch = { name: newName };
-    // If slug missing, create one from Ad
     if (!doc.slug || !doc.slug.current) {
       patch.slug = { current: slugify(newName) };
     }

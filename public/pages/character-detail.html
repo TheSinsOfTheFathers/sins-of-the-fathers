@@ -248,24 +248,20 @@
                         </div>
                     </div>
                 </div>
-
             </div>
-
         </div>
     </main>
 
     <!-- JS Handling for Smooth Fade In (Embedded just for visual effect demonstration, real logic goes in main.js) -->
     <script>
-        // Simulate data loading effect (Remove this when connecting to real Sanity backend)
         window.addEventListener('load', () => {
             const loader = document.getElementById('file-loader');
             const dossier = document.getElementById('character-dossier');
             
-            // Gerçek projede veriler main.js'ten yüklendiğinde bu classları değiştirin.
             setTimeout(() => {
                 loader.classList.add('opacity-0', 'pointer-events-none');
                 dossier.classList.remove('opacity-0');
-            }, 800); // 800ms "decryption" time
+            }, 800); 
         });
     </script>
 

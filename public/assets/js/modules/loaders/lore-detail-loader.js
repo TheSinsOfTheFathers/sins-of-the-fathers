@@ -6,18 +6,15 @@ import { toHTML } from 'https://esm.sh/@portabletext/to-html@2.0.13';
  */
 const renderLoreIntel = (doc) => {
     
-    // 1. Metadata (Yan Panel)
     const setText = (id, val) => {
         const el = document.getElementById(id);
         if(el) el.textContent = val || 'Unknown';
     };
 
     setText('lore-title', doc.title);
-    // ID'yi kısaltıp gösteriyoruz (Estetik amaçlı)
     setText('lore-id', `#${doc._id.slice(-6).toUpperCase()}`); 
     setText('lore-source', doc.source || 'Anonymous Source');
     
-    // Tarih Formatlama
     if (document.getElementById('lore-date')) {
         const dateStr = doc.date 
             ? new Date(doc.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
@@ -27,12 +24,10 @@ const renderLoreIntel = (doc) => {
 
     setText('lore-author', doc.author || 'REDACTED');
 
-    // 2. Etiketler (Tags / Relations)
-    // doc.relatedEntities dizisini döner ve link oluşturur
     const tagsContainer = document.getElementById('lore-tags');
     if (tagsContainer && doc.relatedEntities) {
         tagsContainer.innerHTML = doc.relatedEntities.map(ref => {
-            const typeSlug = ref._type === 'character' ? 'character-detail' : 'faction-detail'; // Basit yönlendirme
+            const typeSlug = ref._type === 'character' ? 'character-detail' : 'faction-detail'; 
             return `
                 <a href="${typeSlug}.html?slug=${ref.slug}" class="text-[10px] font-mono uppercase border border-gray-700 bg-white/5 px-2 py-1 hover:border-gold hover:text-gold transition text-gray-400">
                     #${ref.title || ref.name}
@@ -43,7 +38,6 @@ const renderLoreIntel = (doc) => {
         tagsContainer.innerHTML = '<span class="text-[10px] text-gray-600 font-mono">// No associated links</span>';
     }
 
-    // 3. Medya (Resim)
     const mediaContainer = document.getElementById('lore-media-container');
     const mediaImg = document.getElementById('lore-image');
     
@@ -54,7 +48,6 @@ const renderLoreIntel = (doc) => {
         }
     }
 
-    // 4. Ana İçerik (The Document Body)
     const bodyContainer = document.getElementById('lore-body');
     if (bodyContainer) {
         if (doc.body) {
@@ -66,7 +59,6 @@ const renderLoreIntel = (doc) => {
                         h3: ({children}) => `<h3 class="text-gold font-mono uppercase tracking-widest text-sm mt-8 mb-2 border-b border-gold/30 pb-1">${children}</h3>`
                     },
                     marks: {
-                        // Custom Redaction Mark (Sanity'de eklendiyse)
                         redact: ({children}) => `<span class="bg-black text-black px-1 select-none hover:text-gray-300 transition-colors cursor-help" title="Classified Info">${children}</span>`,
                         em: ({children}) => `<em class="text-gray-400">${children}</em>`
                     }
@@ -83,22 +75,20 @@ const renderLoreIntel = (doc) => {
         }
     }
 
-    // 5. Sayfayı Göster (Loader Kaldır)
     setTimeout(() => {
         const loader = document.getElementById('doc-loader');
         const content = document.getElementById('doc-content');
         if(loader) loader.classList.add('hidden');
         if(content) content.classList.remove('opacity-0');
-    }, 800); // Animasyon süresi
+    }, 800); 
 };
 
 
 export const loadLoreDetails = async () => {
-    // DOM Check
-    const container = document.getElementById('evidence-container'); // Ana kapsayıcı
-    if (!container) return; // Yanlış sayfadayız
+    const container = document.getElementById('evidence-container'); 
+    if (!container) return; 
 
-    // URL Check
+   
     const params = new URLSearchParams(window.location.search);
     const loreSlug = params.get('slug');
 
@@ -112,8 +102,6 @@ export const loadLoreDetails = async () => {
     try {
         console.log(`> Retrieving File: ${loreSlug}`);
 
-        // GROQ QUERY
-        // Faksiyonları ve Karakterleri 'relatedEntities' adı altında birleştiriyoruz
         const query = `*[_type == "lore" && slug.current == $slug][0]{
             "title": title_en,
             "body": content_en,

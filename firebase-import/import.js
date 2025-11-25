@@ -1,14 +1,10 @@
 const admin = require('firebase-admin');
 const fs = require('fs');
 
-// ---- KENDİ BİLGİLERİNİZLE GÜNCELLEYİN ----
-// İndirdiğiniz anahtar dosyasının adını buraya yazın
 const serviceAccount = require('./sins-of-the-fathers-9a2ad82d36a2.json'); 
-// -----------------------------------------
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
-  // databaseURL alanı Firestore için gerekli DEĞİLDİR.
 });
 
 const db = admin.firestore();
@@ -21,7 +17,6 @@ const importCollection = async (collectionName, fileName) => {
 
     for (const docId in data) {
       if (data.hasOwnProperty(docId)) {
-        // .set() metodu, belirttiğiniz ID ile dokümanı oluşturur veya üzerine yazar.
         await db.collection(collectionName).doc(docId).set(data[docId]);
       }
     }

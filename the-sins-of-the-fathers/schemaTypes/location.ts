@@ -10,7 +10,6 @@ export default defineType({
     {name: 'media', title: 'Surveillance Images'},
   ],
   fields: [
-    // --- 1. TEMEL TANIMLAMA ---
     defineField({
       name: 'name',
       title: 'Location Name',
@@ -35,14 +34,13 @@ export default defineType({
         group: 'tactical',
     }),
     defineField({
-        name: 'location', // Leaflet bu alanı kullanıyor
+        name: 'location', 
         title: 'GeoCoordinates',
         type: 'geopoint',
         description: 'Harita üzerindeki kesin nokta (Enlem/Boylam).',
         group: 'tactical',
     }),
     
-    // --- 2. DURUM VE TEHDİT SEVİYESİ ---
     defineField({
         name: 'status',
         title: 'Operational Status',
@@ -77,7 +75,6 @@ export default defineType({
         group: 'tactical',
     }),
 
-    // --- 3. İÇERİK ---
     defineField({
       name: 'summary',
       title: 'Brief Intelligence',
@@ -94,7 +91,6 @@ export default defineType({
       group: 'intel',
     }),
 
-    // --- 4. MEDYA ---
     defineField({
       name: 'mainImage',
       title: 'Surveillance Feed Image',

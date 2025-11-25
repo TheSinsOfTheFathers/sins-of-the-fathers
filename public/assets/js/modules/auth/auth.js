@@ -16,7 +16,6 @@ import { doc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs
 function showMessage(target, msg, type = 'info') {
   if (!target) return;
   target.textContent = `> ${msg}`;
-  // Renkleri tasarım sistemine uydurduk
   if (type === 'error') target.className = 'text-red-500 font-mono text-xs animate-pulse';
   else if (type === 'success') target.className = 'text-gold font-mono text-xs';
   else target.className = 'text-gray-500 font-mono text-xs';
@@ -28,7 +27,7 @@ function ensureToastContainer() {
     container = document.createElement('div');
     container.id = 'toast-container';
     Object.assign(container.style, {
-      position: 'fixed', right: '20px', bottom: '20px', zIndex: '9999', // Alta aldım, terminal çıktısı gibi
+      position: 'fixed', right: '20px', bottom: '20px', zIndex: '9999',
       display: 'flex', flexDirection: 'column', gap: '10px'
     });
     document.body.appendChild(container);
@@ -40,8 +39,6 @@ function showPopup(type, message, {timeout = 5000} = {}) {
   const container = ensureToastContainer();
   const toast = document.createElement('div');
   
-  // NOIR TASARIM SİSTEMİ ENTEGRASYONU
-  // Siyah zemin, Altın veya Kırmızı çerçeve, Monospace font
   const isError = type === 'error';
   const borderColor = isError ? '#4a0404' : '#c5a059';
   const textColor = isError ? '#ff5555' : '#c5a059';
@@ -49,7 +46,7 @@ function showPopup(type, message, {timeout = 5000} = {}) {
 
   Object.assign(toast.style, {
       minWidth: '280px', maxWidth: '400px', padding: '15px', 
-      background: '#050505', // Obsidian
+      background: '#050505',
       borderLeft: `3px solid ${borderColor}`,
       borderTop: '1px solid #222', borderRight: '1px solid #222', borderBottom: '1px solid #222',
       boxShadow: '0 10px 30px rgba(0,0,0,0.9)', 
@@ -63,7 +60,6 @@ function showPopup(type, message, {timeout = 5000} = {}) {
     <span style="line-height:1.4;">${message}</span>
   `;
   
-  // Animasyon Girişi
   requestAnimationFrame(() => {
       toast.style.opacity = '1';
       toast.style.transform = 'translateY(0)';
@@ -136,13 +132,9 @@ export function initAuth() {
   const switchLogin = document.getElementById('switch-to-login');
   const switchRegister = document.getElementById('switch-to-register');
 
-  // Path Fix: Absolute path is safer than ../../../
-  const ROOT_PATH = window.location.origin; 
-
-  // Switcher Logic
   if (loginForm && registerForm && switchLogin && switchRegister) {
     const switchTo = (isRegister) => {
-      const title = document.querySelector('h1') || document.getElementById('form-title'); // Başlığı güvenli seç
+      const title = document.querySelector('h1') || document.getElementById('form-title');
       if (isRegister) {
         loginForm.classList.add('hidden');
         registerForm.classList.remove('hidden');
@@ -152,7 +144,6 @@ export function initAuth() {
         loginForm.classList.remove('hidden');
         if(title) title.innerHTML = `<span class="text-white">System</span> <span class="text-gold">Access</span>`;
       }
-      // Inputları temizle (Fade efektini bozmamak için class toggle yapılırsa daha şık olur ama bu da okey)
     };
 
     switchRegister.addEventListener('click', (e) => { e.preventDefault(); switchTo(true); });
@@ -182,10 +173,10 @@ export function initAuth() {
             createdAt: serverTimestamp(),
             role: 'recruit',
             faction: 'undecided'
-        });
+        }, { merge: true });
 
         showMessage(authMessage, 'Identity Verified. Redirecting...', 'success');
-        setTimeout(() => window.location.href = '/pages/profile.html', 1000);
+        setTimeout(() => window.location.href = './pages/profile.html', 1000);
       } catch (err) {
         showPopup('error', firebaseErrorToMessage(err));
         showMessage(authMessage, 'Registration Failed.', 'error');
@@ -210,8 +201,7 @@ export function initAuth() {
         showMessage(authMessage, 'Access Granted.', 'success');
         await signInWithEmailAndPassword(auth, email, password);
         
-        // Index sayfasına yönlendirme
-        setTimeout(() => window.location.href = '/index.html', 800); 
+        setTimeout(() => window.location.href = '../index.html', 800); 
       } catch (err) {
         showPopup('error', firebaseErrorToMessage(err));
         showMessage(authMessage, 'Access Denied.', 'error');
@@ -241,7 +231,7 @@ export function initAuth() {
         }, { merge: true });
 
         showMessage(authMessage, 'Biometrics confirmed.', 'success');
-        setTimeout(() => window.location.href = '/index.html', 800);
+        setTimeout(() => window.location.href = '/public/index.html', 800);
     } catch (err) {
       showPopup('error', firebaseErrorToMessage(err));
       showMessage(authMessage, 'Signal Lost.', 'error');
@@ -252,18 +242,34 @@ export function initAuth() {
   if (googleBtnRegister) googleBtnRegister.addEventListener('click', handleGoogleSignIn);
 
 
-  /* --- HEADER MENU & AUTH STATE --- */
+/* --------------------------------------------------------------------------
+   HEADER MENU & AUTH STATE (GÜNCELLENMİŞ VERSİYON)
+   -------------------------------------------------------------------------- */
   onAuthStateChanged(auth, (user) => {
-    // Class'ı "guest-only" veya id'si "auth-signin-link" olan elemanları yönet
-    const guestElements = document.querySelectorAll('#auth-signin-link, .guest-only');
+    const signinLink = document.getElementById('auth-signin-link');
+    
+    const guestLocks = document.querySelectorAll('.guest-only, .guest-lock'); 
     
     if (user) {
-      guestElements.forEach(el => el.style.display = 'none');
+      if (signinLink) signinLink.style.display = 'none';
+
+      guestLocks.forEach(el => el.style.display = 'none'); 
+
       ensureUserMenu(user);
+      
+      document.querySelectorAll('.restricted-overlay').forEach(overlay => overlay.style.display = 'none');
+      document.querySelectorAll('.restricted-content').forEach(content => content.classList.remove('restricted-content-blur'));
+
     } else {
-      guestElements.forEach(el => el.style.display = 'flex'); 
+      if (signinLink) signinLink.style.display = 'flex'; 
+
+      guestLocks.forEach(el => el.style.display = 'flex'); 
+      
       const existing = document.getElementById('user-menu');
       if (existing) existing.remove();
+
+      document.querySelectorAll('.restricted-overlay').forEach(overlay => overlay.style.display = 'flex');
+      document.querySelectorAll('.restricted-content').forEach(content => content.classList.add('restricted-content-blur'));
     }
   });
 
@@ -280,7 +286,6 @@ export function initAuth() {
         ? user.photoURL 
         : `https://ui-avatars.com/api/?name=${encodeURIComponent(user.email)}&background=c5a059&color=000`;
 
-    // NOIR DROPDOWN MENU HTML
     menu.innerHTML = `
       <button id="user-menu-btn" class="flex items-center gap-2 group focus:outline-none">
          <span class="hidden md:block text-[10px] font-mono text-gray-400 group-hover:text-gold tracking-widest uppercase">
@@ -300,12 +305,8 @@ export function initAuth() {
           </div>
           
           <div class="py-1">
-            <a href="/pages/profile.html" class="block px-4 py-2 text-xs text-gray-300 hover:bg-white/5 hover:text-white font-serif uppercase tracking-wide transition-colors">
+            <a href="/public/pages/profile.html" class="block px-4 py-2 text-xs text-gray-300 hover:bg-white/5 hover:text-white font-serif uppercase tracking-wide transition-colors">
                 <i class="fas fa-id-card mr-2 text-gold/70"></i> Access File
-            </a>
-            <!-- Admin Link Opsiyonel -->
-            <a href="#" class="block px-4 py-2 text-xs text-gray-500 hover:bg-white/5 hover:text-white font-serif uppercase tracking-wide transition-colors line-through opacity-50" title="Insufficient Clearance">
-                <i class="fas fa-database mr-2"></i> Admin Terminal
             </a>
           </div>
 
@@ -319,7 +320,6 @@ export function initAuth() {
     
     controls.appendChild(menu);
 
-    // Event Listeners
     const btn = document.getElementById('user-menu-btn');
     const dropdown = document.getElementById('user-dropdown');
     const signoutBtn = document.getElementById('menu-signout-btn');
@@ -330,7 +330,7 @@ export function initAuth() {
     });
 
     signoutBtn.addEventListener('click', async () => {
-        try { await signOut(auth); window.location.href = '/index.html'; } 
+        try { await signOut(auth); window.location.href = '/public/index.html'; } 
         catch (err) { console.error(err); }
     });
 

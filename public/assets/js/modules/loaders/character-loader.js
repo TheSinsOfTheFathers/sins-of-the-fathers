@@ -4,11 +4,9 @@ import { client } from '../../lib/sanityClient.js';
    CARD TEMPLATES (NOIR STYLE)
    -------------------------------------------------------------------------- */
 
-// 1. THE ARCHITECTS (Hero Cards for Ruaraidh & Havi)
 const createProtagonistCard = (character) => {
     const cardLink = document.createElement('a');
     cardLink.href = `character-detail.html?slug=${character.slug.current}`;
-    // Hero Card: Yüksek, geniş, sinematik
     cardLink.className = 'group relative w-full h-[500px] overflow-hidden border border-white/10 bg-obsidian hover:border-gold transition-all duration-700 block shadow-2xl';
 
     const imageUrl = character.imageUrl || 'https://placehold.co/600x800/0a0a0a/333333?text=CLASSIFIED';
@@ -36,7 +34,6 @@ const createProtagonistCard = (character) => {
     return cardLink;
 };
 
-// 2. OPERATIVE CARDS (Standard Dossier for Main Characters)
 const createOperativeCard = (character) => {
     const cardLink = document.createElement('a');
     cardLink.href = `character-detail.html?slug=${character.slug.current}`;
@@ -57,13 +54,11 @@ const createOperativeCard = (character) => {
     return cardLink;
 };
 
-// 3. ASSET CARDS (Compact List for Side Characters)
 const createAssetCard = (character) => {
     const cardLink = document.createElement('a');
     cardLink.href = `character-detail.html?slug=${character.slug.current}`;
     cardLink.className = 'group flex items-center space-x-4 p-3 border border-white/5 bg-black/40 hover:bg-white/5 hover:border-red-900/50 transition-all duration-300';
 
-    // Smaller avatar style image
     const imageUrl = character.imageUrl || 'https://ui-avatars.com/api/?background=333&color=fff&name=' + character.name;
 
     cardLink.innerHTML = `
@@ -83,21 +78,17 @@ const createAssetCard = (character) => {
    MAIN LOGIC
    -------------------------------------------------------------------------- */
 export async function displayCharacters() {
-    // 1. HTML Hedeflerini Bul
     const containers = {
         protagonists: document.getElementById('protagonists-gallery'),
         main: document.getElementById('main-characters-gallery'),
         side: document.getElementById('side-characters-gallery')
     };
 
-    // Eğer ana gallery yoksa fonksiyondan çık (Yanlış sayfadayız)
     if (!containers.main && !containers.protagonists) return;
 
     try {
         console.log("> Accessing Personnel Database...");
 
-        // GROQ Sorgusu: Veri setini çek
-        // (Alias, resim url'si, slug, main flag, ve faction bilgisini çekiyoruz)
         const query = `*[_type == "character"] | order(name asc) {
             name, 
             title, 
@@ -111,7 +102,6 @@ export async function displayCharacters() {
 
         if (characters && characters.length > 0) {
             
-            // Grupları Temizle (Loading yazısını silmek için)
             if(containers.protagonists) containers.protagonists.innerHTML = '';
             if(containers.main) containers.main.innerHTML = '';
             if(containers.side) containers.side.innerHTML = '';
@@ -121,9 +111,6 @@ export async function displayCharacters() {
                 const lowerName = (character.name || '').toLowerCase();
                 const lowerAlias = character.alias ? character.alias.toLowerCase() : '';
 
-                // A. THE ARCHITECTS CHECK (Hardcoded Logic for Ruaraidh & Havi)
-                // Bu karakterler, veri tabanında 'is_main' olsun olmasın, başrol oldukları için tepeye alınır.
-                // İsimlerinde 'ruaraidh' veya 'havi' geçiyor mu diye bakıyoruz.
                 const isRuaraidh = lowerName.includes('ruaraidh') || lowerAlias.includes('exile');
                 const isHavi = lowerName.includes('havi') || lowerAlias.includes('bastard');
 
@@ -132,13 +119,11 @@ export async function displayCharacters() {
                         containers.protagonists.appendChild(createProtagonistCard(character));
                     }
                 } 
-                // B. MAIN CHARACTERS (Geri kalan is_main = true olanlar)
                 else if (character.is_main) {
                     if (containers.main) {
                         containers.main.appendChild(createOperativeCard(character));
                     }
                 } 
-                // C. SIDE CHARACTERS / ASSETS
                 else {
                     if (containers.side) {
                         containers.side.appendChild(createAssetCard(character));
@@ -146,17 +131,14 @@ export async function displayCharacters() {
                 }
             });
 
-            // Boş Kalan Alanları Gizle veya Mesaj Göster
             Object.keys(containers).forEach(key => {
                 const container = containers[key];
                 if (container && container.children.length === 0) {
-                    // İsteğe bağlı: container.parentElement.style.display = 'none'; (Bölümü tamamen gizle)
                     container.innerHTML = '<p class="text-xs font-mono text-gray-600 col-span-full text-center">// No records found in this clearance level.</p>';
                 }
             });
 
         } else {
-            // Veri yoksa
             if (containers.main) containers.main.innerHTML = '<p class="text-red-500 font-mono">DATABASE CONNECTION FAILED.</p>';
         }
     } 

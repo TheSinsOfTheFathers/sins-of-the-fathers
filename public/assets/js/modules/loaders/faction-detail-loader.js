@@ -70,7 +70,6 @@ const renderFactionDetails = (faction) => {
 
     document.title = `${faction.title} // INTEL - The Sins of the Fathers`;
 
-    // 1. Başlık
     const safeTitle = faction.title || 'Unknown Faction';
     if (els.title) {
         els.title.textContent = safeTitle;
@@ -80,37 +79,28 @@ const renderFactionDetails = (faction) => {
     }
     if (els.subtitle) els.subtitle.textContent = faction.motto ? `"${faction.motto}"` : "// MOTTO REDACTED";
     
-    // 2. Tema & İkon
     const type = faction.type || 'syndicate';
     const icon = type === 'syndicate' ? '<i class="fas fa-skull-crossbones"></i>' : '<i class="fas fa-chess-king"></i>';
     if (els.iconContainer) els.iconContainer.innerHTML = icon;
     
     const themeColor = applyFactionTheme(faction.color?.hex, faction.image?.asset?.url);
 
-    // --> MINI MAP INIT (GELİŞTİRİLMİŞ VERSİYON) <--
-    // Konum tespiti için HQ bilgisini veya başlığı (Title) kullanır.
     let searchStr = (faction.hqLocation || faction.title || "").toLowerCase();
     
-    // Varsayılan: Glasgow
     let lat = 55.8642, lng = -4.2518;
 
-    // Algılama Mantığı
     if (searchStr.includes('angeles') || searchStr.includes('usa') || searchStr.includes('ballantine')) {
-        // Los Angeles Koordinatları
         lat = 34.0522;
         lng = -118.2437;
     } 
     else if (searchStr.includes('scotland') || searchStr.includes('highlands') || searchStr.includes('macpherson') || searchStr.includes('aberdeen')) {
-        // Aberdeen / İskoçya Koordinatları
         lat = 57.1497; 
         lng = -2.0942;
     }
 
-    // Haritayı başlat (Eski if bloğu kaldırıldı, artık her durumda çalışır)
     setTimeout(() => initMiniMap(lat, lng, themeColor), 500);
 
 
-    // 3. Lider & HQ Metin
     if (els.leader) {
         const leaderName = faction.leader ? faction.leader.name : 'UNKNOWN';
         const leaderSlug = faction.leader ? faction.leader.slug : null;
@@ -118,7 +108,6 @@ const renderFactionDetails = (faction) => {
     }
     if (els.hq) els.hq.textContent = faction.hqLocation || '[Encrypted Coords]';
     
-    // 4. Threat Level
     if (els.threat) {
         const threatLevel = safeTitle.toLowerCase().includes('macpherson') ? 'EXTREME' : 'CRITICAL';
         els.threat.textContent = threatLevel;
@@ -126,7 +115,6 @@ const renderFactionDetails = (faction) => {
         els.threat.classList.add(threatLevel === 'EXTREME' ? 'text-red-500' : 'text-gold');
     }
 
-    // 5. Lore Description
     if (els.description) {
         if (faction.description) {
             els.description.innerHTML = toHTML(faction.description, {
@@ -142,7 +130,6 @@ const renderFactionDetails = (faction) => {
         }
     }
 
-    // 6. Personel
     if (els.roster) {
         if (faction.members && faction.members.length > 0) {
             els.roster.innerHTML = faction.members.map(member => {
@@ -163,7 +150,6 @@ const renderFactionDetails = (faction) => {
         }
     }
 
-    // 7. DİPLOMASİ (Foreign Relations)
     if (els.relations) {
         const headerEl = els.relations.previousElementSibling?.previousElementSibling;
         if(headerEl) headerEl.textContent = "FOREIGN RELATIONS";

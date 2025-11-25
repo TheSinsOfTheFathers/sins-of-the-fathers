@@ -190,17 +190,6 @@
                              </div>
                         </div>
                     </div>
-
-                    <!-- Navigation Footer -->
-                    <div class="flex justify-between items-center mt-12 pt-6 border-t border-white/5">
-                         <button class="text-xs font-mono text-gray-500 hover:text-gold transition uppercase">
-                             <i class="fas fa-chevron-left mr-2"></i> Previous Record
-                         </button>
-                         <button class="text-xs font-mono text-gray-500 hover:text-gold transition uppercase">
-                             Next Record <i class="fas fa-chevron-right ml-2"></i>
-                         </button>
-                    </div>
-
                 </div>
             </article>
 
@@ -223,44 +212,5 @@
             Ruaraidh Ballantine & Havi are watching.
         </p>
     </footer>
-
-    <!-- DEMO INJECTION SCRIPT -->
-    <script>
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                document.getElementById('doc-loader').style.display = 'none';
-                const content = document.getElementById('doc-content');
-                content.classList.remove('opacity-0');
-
-                // Mock Data (Demo)
-                document.getElementById('lore-title').textContent = "Transcript: The Warehouse Fire";
-                document.getElementById('lore-id').textContent = "#992-B";
-                
-                // Inserting Content with Redaction
-                const bodyContent = `
-                    <p>The following is a transcription of the interview with Subject A, a watchman at the Leith docks.</p>
-                    <p><strong>DETECTIVE MILLER:</strong> Tell me what you saw that night.</p>
-                    <p><strong>SUBJECT A:</strong> It was quiet. Then I saw smoke coming from Warehouse 4. The one owned by <span class="redacted" title="This name is protected">Ballantine</span>. I ran towards the alarm, but two men stopped me.</p>
-                    <p><strong>DETECTIVE MILLER:</strong> Did you recognize them?</p>
-                    <p><strong>SUBJECT A:</strong> Aye. One was big, silent. The other one... he had eyes like <span class="redacted">cold steel</span>. He told me to walk away if I wanted to see my kids again.</p>
-                    <p>Note: Investigation was halted two days later by orders from the <span class="redacted">Chief Superintendent</span>.</p>
-                `;
-                
-                document.getElementById('lore-body').innerHTML = bodyContent;
-
-                // Reveal logic (Simple toggle for demo)
-                const redactions = document.querySelectorAll('.redacted');
-                redactions.forEach(el => {
-                    el.addEventListener('click', () => {
-                        // In real app, check auth here
-                        el.style.backgroundColor = 'transparent';
-                        el.style.color = '#c5a059'; // Gold reveal
-                        el.style.textDecoration = 'underline';
-                    });
-                });
-
-            }, 1200);
-        });
-    </script>
 </body>
 </html>

@@ -4,20 +4,14 @@ import { client } from '../../lib/sanityClient.js';
    CARD BUILDER LOGIC
    -------------------------------------------------------------------------- */
 const createFactionCard = (faction) => {
-    // 1. Stil ve Tip Belirleme
-    // "syndicate" -> Old World (Kırmızı/Kaos)
-    // "corporation" -> New World (Altın/Düzen)
     const isOldWorld = faction.type === 'syndicate';
     
     const cardThemeClass = isOldWorld ? 'old-world' : 'new-world';
     const accentColor = faction.color?.hex || (isOldWorld ? '#b91c1c' : '#c5a059');
     const iconClass = isOldWorld ? 'fa-skull-crossbones' : 'fa-chess-king';
     
-    // Leader Check
     const leaderName = (faction.leader && faction.leader.name) ? faction.leader.name : 'UNKNOWN';
 
-    // 2. Stat Simülasyonu (Eğer Sanity'de sayısal veri yoksa tipe göre uyduruyoruz)
-    // Bu sayede kartlar dolu gözüküyor.
     const statsHTML = isOldWorld ? `
         <div>
             <div class="flex justify-between text-[10px] font-mono text-gray-500 mb-1"><span>BRUTALITY</span> <span>95%</span></div>
@@ -38,13 +32,10 @@ const createFactionCard = (faction) => {
         </div>
     `;
 
-    // 3. Element Oluşturma
     const cardLink = document.createElement('a');
     cardLink.href = `faction-detail.html?slug=${faction.slug}`;
-    // CSS'te tanımladığımız sınıfları ekliyoruz
     cardLink.className = `faction-card ${cardThemeClass} p-8 relative group min-h-[400px] flex flex-col justify-between rounded-sm transition-transform duration-300 hover:-translate-y-1`;
 
-    // 4. İçerik (HTML Injection)
     cardLink.innerHTML = `
         <!-- Background Icon Watermark -->
         <div class="absolute -right-6 -top-6 text-[10rem] opacity-5 pointer-events-none select-none" style="color: ${accentColor}">
@@ -87,12 +78,11 @@ const createFactionCard = (faction) => {
    -------------------------------------------------------------------------- */
 export async function displayFactions() {
     const factionsGrid = document.getElementById('factions-grid');
-    const loader = document.getElementById('factions-loader'); // Dönen radar
+    const loader = document.getElementById('factions-loader'); 
 
-    if (!factionsGrid) return; // Yanlış sayfadayız
+    if (!factionsGrid) return; 
 
     try {
-        // 1. Veri Çek (title, leader referansını aç, tip, renk ve lokasyon)
         const query = `*[_type == "faction"] | order(title asc) {
             title, 
             "slug": slug.current, 
@@ -106,10 +96,9 @@ export async function displayFactions() {
         
         const factions = await client.fetch(query);
 
-        // 2. Loader'ı gizle ve Grid'i temizle
         if(loader) loader.style.display = 'none';
         factionsGrid.innerHTML = '';
-        factionsGrid.classList.remove('opacity-0'); // CSS Fade-in
+        factionsGrid.classList.remove('opacity-0'); 
 
         if (factions && factions.length > 0) {
             factions.forEach((faction) => {

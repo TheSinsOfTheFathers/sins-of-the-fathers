@@ -7,19 +7,14 @@ import { client, urlFor } from '../../lib/sanityClient.js';
 const transformDataForTimeline = (eras) => {
     const allEvents = [];
 
-    // Title Slide (İsteğe bağlı, ana giriş kartı)
-    // İsterseniz buraya statik bir giriş ekleyebiliriz, şimdilik event'lere odaklanalım.
-
     eras.forEach(era => {
-        const groupName = era.title_en || 'Unknown Era'; // "Old World", "New Dynasty" vb.
+        const groupName = era.title_en || 'Unknown Era'; 
         
         if (era.events && Array.isArray(era.events)) {
             era.events.forEach(evt => {
-                // Tarih Çözümleme (YYYY-MM-DD veya sadece YYYY kabul eder)
-                let dateObj = { year: '0000' }; // Fallback
+                let dateObj = { year: '0000' }; 
                 
                 if (evt.date) {
-                    // Tarih string ise parse et (YYYY-MM-DD)
                     const parts = evt.date.split('-');
                     dateObj = {
                         year: parts[0],
@@ -28,7 +23,6 @@ const transformDataForTimeline = (eras) => {
                     };
                 }
 
-                // Medya Hazırlığı
                 let mediaObj = null;
                 if (evt.image) {
                     mediaObj = {
@@ -38,7 +32,6 @@ const transformDataForTimeline = (eras) => {
                     };
                 }
 
-                // HTML İçerik Formatlama (Noir Theme Uyumlu)
                 const formattedText = `
                     <div class="font-lato text-gray-400">
                         ${evt.text_en || ''}
@@ -51,16 +44,14 @@ const transformDataForTimeline = (eras) => {
                     </span>
                 `;
 
-                // Event Objesi
                 allEvents.push({
                     start_date: dateObj,
-                    // End date eklenebilir: end_date: ...
                     text: {
                         headline: formattedHeadline,
                         text: formattedText
                     },
                     media: mediaObj,
-                    group: groupName // Bu alan, olayları satır satır ayırır (Old World / New World)
+                    group: groupName
                 });
             });
         }
@@ -83,18 +74,15 @@ const transformDataForTimeline = (eras) => {
 };
 
 export async function displayTimeline() {
-    // HTML'de tanımlı kapsayıcı (Embed ID'si timeline.html içinde farklı olabilir, dikkat)
     const embedId = 'timeline-embed';
     const embedEl = document.getElementById(embedId);
     const loaderEl = document.getElementById('timeline-loading');
 
-    if (!embedEl) return; // Yanlış sayfadayız
+    if (!embedEl) return; 
 
     try {
         console.log("> Fetching Historical Data...");
 
-        // GROQ Query: Dönemleri (Eras) ve içindeki Olayları (Events) çek
-        // Sıralamayı 'order' alanına göre yapıyoruz.
         const query = `*[_type == "timelineEra"] | order(order asc) {
             title_en,
             "events": events[] {
@@ -111,12 +99,10 @@ export async function displayTimeline() {
 
         if (eras && eras.length > 0) {
             
-            // Veriyi Dönüştür
             const timelineData = transformDataForTimeline(eras);
 
-            // Konfigürasyon Seçenekleri (Opsiyonel)
             const options = {
-                font: null, // Fontları CSS (timeline.html) üzerinden yönetiyoruz
+                font: null, 
                 marker_height_min: 30,
                 scale_factor: 2,
                 initial_zoom: 2,
@@ -124,11 +110,9 @@ export async function displayTimeline() {
                 optimal_tick_width: 100
             };
 
-            // Timeline.js Başlatma (Global window.TL objesi kullanılır)
             if (window.TL) {
                 window.timelineInstance = new TL.Timeline(embedId, timelineData, options);
                 
-                // Loader Kaldır (Kütüphanenin render süresi için küçük bir bekleme)
                 if(loaderEl) {
                     setTimeout(() => loaderEl.style.display = 'none', 1500);
                 }
@@ -137,7 +121,6 @@ export async function displayTimeline() {
             }
 
         } else {
-            // Veri yoksa
             embedEl.innerHTML = `
                 <div class="flex h-full items-center justify-center text-red-500 font-mono border border-red-900/30">
                     ARCHIVES EMPTY. NO RECORDS FOUND.

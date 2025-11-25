@@ -263,7 +263,6 @@
 
     <!-- INLINE SCRIPT (JS Connection Helper) -->
     <script>
-        // Mimar Notu: Image input tıklamasını tetikleyen script
         document.getElementById('profile-image-preview').parentElement.addEventListener('click', () => {
             document.getElementById('profile-photo-input').click();
         });
@@ -278,7 +277,6 @@
             }
         });
 
-        // Demo Loader Removal (Main.js ile entegre edilince bu silinir)
         setTimeout(() => {
             document.getElementById('profile-loader').style.display = 'none';
             document.getElementById('profile-content').classList.remove('opacity-0');

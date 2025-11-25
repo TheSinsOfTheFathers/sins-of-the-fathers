@@ -29,17 +29,14 @@ let app, db, analytics, auth, functionsInstance, googleProvider, storage;
 try {
     app = initializeApp(firebaseConfig);
     
-    // Core Services
     db = getFirestore(app);
     auth = getAuth(app);
     storage = getStorage(app);
     analytics = getAnalytics(app);
     googleProvider = new GoogleAuthProvider();
     
-    // Functions Location (europe-west3 = Frankfurt, genelde Türkiye'ye yakındır, doğru tercih)
     functionsInstance = getFunctions(app, "europe-west3");
 
-    // NOIR SYSTEM LOG (Sadece console'a bakanlar için stilize mesaj)
     console.log(
         "%c[SYSTEM] TSOF Secure Link :: ESTABLISHED", 
         "color: #c5a059; background: #050505; padding: 4px; border-left: 2px solid #c5a059; font-family: monospace;"

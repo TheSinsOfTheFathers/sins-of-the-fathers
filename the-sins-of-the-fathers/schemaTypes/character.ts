@@ -4,7 +4,6 @@ export default defineType({
   name: 'character',
   title: 'Karakter',
   type: 'document',
-  // CMS Editörünü Düzenli Tutmak İçin Sekmeler
   groups: [
     {name: 'identity', title: 'Identity & Stats'},
     {name: 'media', title: 'Visuals'},
@@ -12,7 +11,6 @@ export default defineType({
     {name: 'network', title: 'Connections (Graph)'},
   ],
   fields: [
-    // --- 1. KİMLİK & DURUM ---
     defineField({
       name: 'name',
       title: 'Name',
@@ -84,7 +82,6 @@ export default defineType({
         group: 'identity',
     }),
 
-    // --- 2. GÖRSELLER ---
     defineField({
       name: 'image',
       title: 'Main Profile Image',
@@ -93,7 +90,6 @@ export default defineType({
       group: 'media',
     }),
 
-    // --- 3. HİKAYE VE LORE ---
     defineField({
       name: 'quote',
       title: 'Signature Quote',
@@ -111,14 +107,13 @@ export default defineType({
       group: 'biography',
     }),
     defineField({
-      name: 'story', // Frontend'de "description" veya "story" olarak işlenebilir
+      name: 'story', 
       title: 'Full Biography (Portable Text)',
       type: 'array',
       of: [{type: 'block'}],
       group: 'biography',
     }),
 
-    // --- 4. İLİŞKİLER (D3 GRAFİĞİ İÇİN) ---
     defineField({
       name: 'relationships',
       title: 'Network Connections',
@@ -182,13 +177,12 @@ export default defineType({
             }
         }]
     }),
-    // Legacy (Eski sistem, şimdilik tutabilir veya kaldırabilirsiniz)
     defineField({
       name: 'familyTree',
       title: 'Legacy Family Tree Data (Mermaid)',
       type: 'text',
       rows: 5,
-      hidden: true, // Gizledim çünkü artık D3 kullanıyoruz
+      hidden: true, 
       group: 'network',
     })
   ],

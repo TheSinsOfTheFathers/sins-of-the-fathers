@@ -1,12 +1,12 @@
 import {defineField, defineType} from 'sanity'
 
 export default defineType({
-  name: 'timelineEra', // DİKKAT: Loader'daki query bu isme bakıyor
+  name: 'timelineEra', 
   title: 'Timeline Era (Zaman Dilimi)',
   type: 'document',
   fields: [
     defineField({
-      name: 'title_en', // Örn: "The Old World" veya "Rise of Havi"
+      name: 'title_en',
       title: 'Era Title',
       type: 'string',
       validation: (Rule) => Rule.required(),
@@ -37,7 +37,6 @@ export default defineType({
                         {name: 'credit', type: 'string', title: 'Credit'}
                     ]
                 },
-                // Opsiyonel: Olayın ilişkili olduğu yer ve karakterler (Reverse Lookup için)
                 {name: 'relatedLocation', type: 'reference', to: [{type: 'location'}], title: 'Location Ref'},
             ]
         }]

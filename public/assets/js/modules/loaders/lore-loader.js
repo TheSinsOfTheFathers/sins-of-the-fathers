@@ -1,13 +1,11 @@
 import { client } from '../../lib/sanityClient.js';
 
-// Küresel değişkenler (Filtreleme için veriyi hafızada tutmak gerek)
 let allLoreData = [];
 
 /* --------------------------------------------------------------------------
    CARD TEMPLATES (GÖRSEL AYRIŞTIRMA)
    -------------------------------------------------------------------------- */
 
-// 1. DOCUMENT STYLE (Kağıt Dokusu)
 const createDocumentCard = (lore) => `
     <div class="archive-card bg-[#e6e2d3] text-black p-6 rounded-sm shadow-lg relative overflow-hidden group h-fit break-inside-avoid">
         <div class="absolute top-2 right-2 border border-red-900 text-red-900 text-[10px] font-bold px-2 py-0.5 transform rotate-12 opacity-70">DOC_${lore._createdAt.slice(0,4)}</div>
@@ -26,7 +24,6 @@ const createDocumentCard = (lore) => `
     </div>
 `;
 
-// 2. AUDIO STYLE (Dark Tech)
 const createAudioCard = (lore) => `
     <div class="archive-card bg-gray-900 border-l-4 border-gold p-5 shadow-lg h-fit break-inside-avoid group">
         <div class="flex items-center justify-between mb-4">
@@ -48,7 +45,6 @@ const createAudioCard = (lore) => `
     </div>
 `;
 
-// 3. RESTRICTED / CLASSIFIED STYLE (Blurred)
 const createRestrictedCard = (lore) => `
     <div class="archive-card bg-black border border-red-900/40 relative overflow-hidden group h-fit break-inside-avoid cursor-not-allowed">
         <!-- Background Blur Content -->
@@ -71,7 +67,6 @@ const createRestrictedCard = (lore) => `
     </div>
 `;
 
-// 4. IMAGE STYLE (Polaroid)
 const createImageCard = (lore) => {
     const imgUrl = lore.imageUrl || 'https://via.placeholder.com/400';
     return `
@@ -97,11 +92,9 @@ const createImageCard = (lore) => {
  * KART DAĞITICI (Dispatcher)
  */
 const generateCard = (lore) => {
-    // Öncelik: Gizliyse kilitli göster
     if (lore.restricted) return createRestrictedCard(lore);
     
-    // Tip kontrolü
-    const type = lore.loreType || 'document'; // Default
+    const type = lore.loreType || 'document';
     
     switch(type) {
         case 'audio': return createAudioCard(lore);
@@ -117,19 +110,17 @@ const renderGrid = (data) => {
     const container = document.getElementById('archive-grid');
     if (!container) return;
 
-    container.innerHTML = ''; // Temizle
+    container.innerHTML = ''; 
     
     if (data.length === 0) {
         container.innerHTML = '<div class="col-span-full text-center text-gray-500 font-mono py-12">> NO RECORDS MATCH YOUR QUERY.</div>';
         return;
     }
 
-    // HTML Birleştir
     const html = data.map(item => generateCard(item)).join('');
     container.innerHTML = html;
 };
 
-// İstemci taraflı filtreleme
 const applyFilters = (searchTerm = '', filterType = 'all') => {
     const lowerTerm = searchTerm.toLowerCase();
     
@@ -156,13 +147,9 @@ export async function displayLoreList() {
     const container = document.getElementById('archive-grid');
     const loader = document.getElementById('archive-loader');
     
-    // Yanlış sayfadaysak çık
     if (!container) return;
 
     try {
-        // GROQ: Type, Restricted (Boolean) ve Resim Url'i ekledik.
-        // 'loreType' alanını Sanity'de oluşturduğunuzu varsayıyorum (String Options: document, audio, image)
-        // Eğer yoksa manuel logic kurmalısınız.
         const query = `*[_type == "lore"] | order(date desc) {
             _id,
             _createdAt,
@@ -178,14 +165,11 @@ export async function displayLoreList() {
         
         allLoreData = await client.fetch(query);
 
-        // 1. Loader Kaldır
         if (loader) loader.style.display = 'none';
         container.classList.remove('opacity-0');
 
-        // 2. İlk Render (Tüm Veriler)
         renderGrid(allLoreData);
 
-        // 3. UI Event Listenerları Kur
         setupSearchInterface();
 
     } catch (error) {
@@ -196,24 +180,20 @@ export async function displayLoreList() {
 }
 
 function setupSearchInterface() {
-    // Search Input
-    const searchInput = document.querySelector('input[placeholder*="Search"]'); // Selector'a dikkat
-    const filterButtons = document.querySelectorAll('button.uppercase'); // Filtre butonları
+    const searchInput = document.querySelector('input[placeholder*="Search"]'); 
+    const filterButtons = document.querySelectorAll('button.uppercase'); 
 
-    // Search Listener
     if (searchInput) {
         searchInput.addEventListener('input', (e) => {
-            const activeBtn = document.querySelector('button.bg-gold\\/10'); // Aktif buton
+            const activeBtn = document.querySelector('button.bg-gold\\/10'); 
             const type = activeBtn ? mapBtnTextToType(activeBtn.textContent) : 'all';
             applyFilters(e.target.value, type);
         });
     }
 
-    // Filter Button Listeners
     if (filterButtons) {
         filterButtons.forEach(btn => {
             btn.addEventListener('click', () => {
-                // Görsel Güncelleme (Tailwind)
                 filterButtons.forEach(b => {
                     b.classList.remove('bg-gold/10', 'text-gold', 'font-bold', 'border-gold');
                     b.classList.add('text-gray-500', 'border-gray-700');
@@ -221,7 +201,6 @@ function setupSearchInterface() {
                 btn.classList.remove('text-gray-500', 'border-gray-700');
                 btn.classList.add('bg-gold/10', 'text-gold', 'font-bold', 'border-gold');
 
-                // Filtreleme
                 const type = mapBtnTextToType(btn.textContent);
                 const term = searchInput ? searchInput.value : '';
                 applyFilters(term, type);
@@ -230,7 +209,6 @@ function setupSearchInterface() {
     }
 }
 
-// Yardımcı: Buton metnini veri tipine çevir
 function mapBtnTextToType(text) {
     const t = text.toLowerCase();
     if (t.includes('audio')) return 'audio';

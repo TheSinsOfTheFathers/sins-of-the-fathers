@@ -86,7 +86,6 @@ export default defineType({
                 decorators: [
                     { title: 'Strong', value: 'strong' },
                     { title: 'Emphasis', value: 'em' },
-                    // Sansürlü metin özelliği
                     { title: 'Redacted (Sansürlü)', value: 'redact', icon: () => '⬛' } 
                 ]
             }
