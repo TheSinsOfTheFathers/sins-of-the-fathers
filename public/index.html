@@ -42,6 +42,9 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
 
+    <!-- Howler.js (Audio Library) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+
     <style>
         /* Atmosferik Gürültü ve Dokular */
         body {
@@ -73,6 +76,9 @@
         ::-webkit-scrollbar-track { background: #050505; }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #555; }
+
+        /* Smooth Scroll */
+        html { scroll-behavior: smooth; }
     </style>
 </head>
 
@@ -190,11 +196,16 @@
                         </p>
                     </div>
                     <div class="space-y-4">
-                        <a href="#" target="_blank" class="block w-full py-3 px-4 border border-gray-700 text-gray-300 hover:border-gold hover:text-gold transition-all text-sm uppercase tracking-wider flex justify-between items-center">
-                            <span><i class="fas fa-shopping-bag mr-2"></i> Shopier (TR)</span>
+                        <a href="https://www.shopier.com/your-store" target="_blank" class="block w-full py-3 px-4 border border-gray-700 text-gray-300 hover:border-gold hover:text-gold transition-all text-sm uppercase tracking-wider flex justify-between items-center">
+                            <span><i class="fas fa-shopping-bag mr-2"></i> Shopier</span>
+                            <span class="flex items-center opacity-50 gap-1">
+                                <i class="fas fa-moon text-base transform -rotate-[-15deg]"></i>
+                                <i class="fas fa-star text-[10px]"></i>
+                            </span>
                         </a>
-                        <a href="#" target="_blank" class="block w-full py-3 px-4 border border-gray-700 text-gray-300 hover:border-pink-500/50 hover:text-pink-400 transition-all text-sm uppercase tracking-wider flex justify-between items-center">
-                            <span><i class="fas fa-globe mr-2"></i> Gumroad (Global)</span>
+                        <a href="https://your-username.gumroad.com/" target="_blank" class="block w-full py-3 px-4 border border-gray-700 text-gray-300 hover:border-pink-500/50 hover:text-pink-400 transition-all text-sm uppercase tracking-wider flex justify-between items-center">
+                            <span><i class="fas fa-shopping-bag mr-2"></i> Gumroad</span>
+                            <i class="fas fa-globe-americas text-lg opacity-50"></i>
                         </a>
                     </div>
                 </div>
