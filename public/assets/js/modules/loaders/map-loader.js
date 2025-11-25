@@ -63,9 +63,29 @@ const addLocationMarkers = (map, locations) => {
         const icon = createTacticalIcon(factionSlug, 'fa-crosshairs');
         const marker = L.marker([lat, lng], { icon: icon }).addTo(map);
 
+        marker.on('popupopen', function (e) {
+            // Zamanlama sorununu çözmek için küçük bir gecikme ekle
+            setTimeout(() => {
+                if (this.getPopup()) {
+                    this.getPopup().update();
+                }
+            }, 1);
+
+            // Tıklama olayının haritaya sızmasını engelle
+            const popupElement = this.getPopup().getElement();
+            if (popupElement) {
+                const closeButton = popupElement.querySelector('.leaflet-popup-close-button');
+                if (closeButton) {
+                    L.DomEvent.on(closeButton, 'click', L.DomEvent.stopPropagation);
+                    L.DomEvent.on(closeButton, 'mousedown', L.DomEvent.stopPropagation);
+                    L.DomEvent.on(closeButton, 'dblclick', L.DomEvent.stopPropagation);
+                }
+            }
+        });
+
         marker.bindPopup(`
             <div class="text-left min-w-[200px] font-sans">
-                <h3 class="text-[${themeColor}] font-serif text-lg border-b border-gray-700 pb-1 mb-2 uppercase tracking-wide">
+                <h3 style="color:${themeColor}" class="font-serif text-lg border-b border-gray-700 pb-1 mb-2 uppercase tracking-wide">
                     ${location.name}
                 </h3>
                 <div class="text-xs font-mono text-gray-400 space-y-1 mb-3">
@@ -135,6 +155,9 @@ document.addEventListener('DOMContentLoaded', async () => {
             attributionControl: false
         });
         mapInstance = map;
+
+        // Popup katmanının diğer UI elemanlarının üzerinde olmasını garantile
+        map.getPane('popupPane').style.zIndex = 800;
 
         L.control.zoom({ position: 'topright' }).addTo(map);
 

@@ -8,6 +8,16 @@ const initMiniMap = (lat, lng, color, containerId = 'mini-map') => {
     if (!window.L || !document.getElementById(containerId)) return;
 
     const container = document.getElementById(containerId);
+    
+    // Haritanın tekrar tekrar oluşturulmasını engelleyen sorunu çözmek için
+    // Önceki harita örneğini temizle
+    if (container._leaflet_id) {
+        const mapInstance = container._leaflet_map;
+        if (mapInstance) {
+            mapInstance.remove();
+        }
+    }
+    
     if (container._leaflet_id) return; 
 
     const map = L.map(containerId, {
@@ -85,20 +95,9 @@ const renderFactionDetails = (faction) => {
     
     const themeColor = applyFactionTheme(faction.color?.hex, faction.image?.asset?.url);
 
-    let searchStr = (faction.hqLocation || faction.title || "").toLowerCase();
-    
-    let lat = 55.8642, lng = -4.2518;
-
-    if (searchStr.includes('angeles') || searchStr.includes('usa') || searchStr.includes('ballantine')) {
-        lat = 34.0522;
-        lng = -118.2437;
-    } 
-    else if (searchStr.includes('scotland') || searchStr.includes('highlands') || searchStr.includes('macpherson') || searchStr.includes('aberdeen')) {
-        lat = 57.1497; 
-        lng = -2.0942;
+    if (faction.hqLocation?.lat && faction.hqLocation?.lng) {
+        setTimeout(() => initMiniMap(faction.hqLocation.lat, faction.hqLocation.lng, themeColor), 500);
     }
-
-    setTimeout(() => initMiniMap(lat, lng, themeColor), 500);
 
 
     if (els.leader) {
@@ -106,13 +105,39 @@ const renderFactionDetails = (faction) => {
         const leaderSlug = faction.leader ? faction.leader.slug : null;
         els.leader.innerHTML = `<span>${leaderName}</span>${leaderSlug ? `<a href="character-detail.html?slug=${leaderSlug}" title="View Profile"><i class="fas fa-external-link-alt text-xs opacity-50 hover:opacity-100"></i></a>` : ''}`;
     }
-    if (els.hq) els.hq.textContent = faction.hqLocation || '[Encrypted Coords]';
+    if (els.hq) els.hq.textContent = faction.hqName || '[Encrypted Coords]';
     
     if (els.threat) {
-        const threatLevel = safeTitle.toLowerCase().includes('macpherson') ? 'EXTREME' : 'CRITICAL';
-        els.threat.textContent = threatLevel;
-        els.threat.className = 'ml-2 font-bold font-mono text-xs';
-        els.threat.classList.add(threatLevel === 'EXTREME' ? 'text-red-500' : 'text-gold');
+        const threatLevel = (faction.threatLevel || 'unknown').toLowerCase();
+        const threatContainer = els.threat.parentElement;
+        
+        const levels = {
+            minimal: { text: 'MINIMAL', bars: 1, color: 'text-cyan-400', barColor: 'bg-cyan-400' },
+            low: { text: 'LOW', bars: 2, color: 'text-green-400', barColor: 'bg-green-400' },
+            medium: { text: 'MEDIUM', bars: 3, color: 'text-yellow-400', barColor: 'bg-yellow-400' },
+            high: { text: 'HIGH', bars: 4, color: 'text-orange-500', barColor: 'bg-orange-500' },
+            critical: { text: 'CRITICAL', bars: 5, color: 'text-gold', barColor: 'bg-gold' },
+            extreme: { text: 'EXTREME', bars: 6, color: 'text-red-500', barColor: 'bg-red-500' },
+            unknown: { text: 'ANALYZING...', bars: 0, color: 'text-gray-500', barColor: 'bg-gray-800' }
+        };
+        
+        const config = levels[threatLevel] || levels.unknown;
+
+        // Update the text content and class
+        els.threat.textContent = config.text;
+        els.threat.className = `ml-2 font-bold font-mono text-xs ${config.color}`;
+
+        // Select all threat bars and update their classes
+        const bars = threatContainer.querySelectorAll('.threat-bar');
+        bars.forEach((bar, index) => {
+            // Reset classes first
+            bar.className = 'threat-bar w-2 h-6'; 
+            if (index < config.bars) {
+                bar.classList.add(config.barColor);
+            } else {
+                bar.classList.add('bg-gray-800');
+            }
+        });
     }
 
     if (els.description) {
@@ -151,7 +176,7 @@ const renderFactionDetails = (faction) => {
     }
 
     if (els.relations) {
-        const headerEl = els.relations.previousElementSibling?.previousElementSibling;
+        const headerEl = els.relations.previousElementSibling;
         if(headerEl) headerEl.textContent = "FOREIGN RELATIONS";
 
         if (faction.relations && faction.relations.length > 0) {
@@ -200,8 +225,10 @@ export const loadFactionDetails = async () => {
 
     try {
         const query = `*[_type == "faction" && slug.current == $slug][0]{
-            title, motto, description, type,
-            "hqLocation": hq, "color": color,
+            title, motto, description, type, threatLevel,
+            "hqName": hq, 
+            "hqLocation": hqLocation,
+            "color": color,
             image { asset->{url} },
             leader->{ name, "slug": slug.current },
             "members": *[_type == "character" && references(^._id)] | order(name asc) [0...6] {

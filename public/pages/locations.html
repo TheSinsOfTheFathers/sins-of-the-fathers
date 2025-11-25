@@ -49,6 +49,13 @@
             color: #ccc; border-radius: 0;
         }
         .leaflet-popup-tip { background: #c5a059; }
+        .leaflet-popup-content { min-width: 190px !important; }
+        .leaflet-popup-close-button { 
+            pointer-events: auto !important;
+            cursor: pointer !important;
+            z-index: 10 !important;
+        }
+        .leaflet-popup-close-button:hover { color: #fff !important; }
         .custom-tactical-icon .animate-spin-slow { animation: spin 10s linear infinite; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
     </style>
@@ -98,7 +105,7 @@
         <div class="absolute top-0 left-0 w-full scan-line opacity-50"></div>
 
         <!-- Left Panel Info -->
-        <div class="p-4 md:p-8 pointer-events-auto">
+        <div class="p-4 md:p-8 pointer-events-auto w-fit">
             <div class="bg-black/80 border-l-2 border-gold p-3 max-w-[200px] backdrop-blur">
                 <h2 class="text-[10px] text-gold font-mono uppercase mb-1">Sector Data</h2>
                 <div class="h-px bg-gray-800 w-full mb-2"></div>

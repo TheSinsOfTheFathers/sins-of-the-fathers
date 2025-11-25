@@ -45,10 +45,35 @@ export default defineType({
     }),
     defineField({
         name: 'hq',
-        title: 'Headquarters Location',
+        title: 'Headquarters Location Name',
         type: 'string',
         description: 'Örn: "The Docks, Glasgow" veya "Ballantine Tower, LA".',
         group: 'core'
+    }),
+    defineField({
+        name: 'hqLocation',
+        title: 'Headquarters GPS Coordinates',
+        type: 'geopoint',
+        description: 'Harita üzerinde gösterilecek olan merkez üssünün tam konumu.',
+        group: 'core'
+    }),
+    defineField({
+      name: 'threatLevel',
+      title: 'Threat Level',
+      type: 'string',
+      group: 'core',
+      options: {
+        list: [
+          { title: 'Minimal', value: 'minimal' },
+          { title: 'Low', value: 'low' },
+          { title: 'Medium', value: 'medium' },
+          { title: 'High', value: 'high' },
+          { title: 'Critical', value: 'critical' },
+          { title: 'Extreme', value: 'extreme' },
+        ],
+        layout: 'radio'
+      },
+      initialValue: 'medium'
     }),
     defineField({
       name: 'status',
