@@ -1,26 +1,22 @@
 version: 2
 updates:
   # 1. Ana Proje Bağımlılıkları (NPM)
-  # Tailwind, Firebase, ESLint gibi kütüphaneleri takip eder.
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
       interval: "weekly"
+      # DÜZELTME: time ve timezone artık schedule'ın altında girintili
+      time: "06:00"
+      timezone: "Europe/Istanbul"
     open-pull-requests-limit: 10
-    # Geliştirme yaparken gürültü yapmaması için PR'ları sabah oluşturur
-    time: "06:00"
-    timezone: "Europe/Istanbul"
 
   # 2. GitHub Actions (CI/CD)
-  # Vercel deployment ve Lighthouse testleri için kullanılan action'ları günceller.
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "monthly"
     
-  # 3. Firebase Functions (Eğer ayrı klasördeyse)
-  # Genelde functions klasörünün içinde ayrı bir package.json olur.
-  # Eğer sende de öyleyse bu bloğu aktif bırak. Değilse silebilirsin.
+  # 3. Firebase Functions
   - package-ecosystem: "npm"
     directory: "/functions"
     schedule:
