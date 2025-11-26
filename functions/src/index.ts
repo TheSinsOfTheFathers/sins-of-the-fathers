@@ -7,10 +7,9 @@ import * as admin from "firebase-admin";
 import axios, {AxiosResponse} from "axios";
 import {SecretManagerServiceClient} from "@google-cloud/secret-manager";
 
-const RECAPTCHA_SITE_KEY = "6LeoRfYrAAAAANpaxG70cHRmK5ciRKf7sVt9Crnz";
-
 admin.initializeApp();
 
+const RECAPTCHA_SITE_KEY = "6LeoRfYrAAAAANpaxG70cHRmK5ciRKf7sVt9Crnz";
 const secretManagerClient = new SecretManagerServiceClient();
 const REGION = "europe-west3";
 
@@ -30,7 +29,7 @@ interface AssessmentResponseV3 {
 
 /**
  * Fetches the reCAPTCHA Secret Key from Google Secret Manager.
- * @return {Promise<string>} The secret key as a string.
+ * @return {Promise<string>} Returns the secret key as a string.
 */
 async function getRecaptchaSecret(): Promise<string> {
   const SECRET_NAME = "projects/287213062167/secrets/RECAPTCHA_SECRET_KEY/versions/latest";

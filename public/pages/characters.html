@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html lang="en"> 
 <head>
-    <!-- Meta Tags (Aynı Kaldı) -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Players | The Sins of the Fathers</title>
     
-    <!-- Tailwind CSS (Custom Config) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -37,7 +35,6 @@
         }
     </script>
     
-    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Courier+Prime&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
 
@@ -58,7 +55,6 @@
             linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
             background-size: 30px 30px;
         }
-        /* Hamburger Animation */
         #hamburger-button span { transition: 0.3s; }
         #hamburger-button.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 6px); }
         #hamburger-button.active span:nth-child(2) { opacity: 0; }
@@ -142,11 +138,7 @@
                 <div class="h-px bg-white/10 flex-grow"></div>
             </div>
 
-            <!-- JavaScript bu ID'yi hedeflemeli: Ruaraidh ve Havi buraya gelecek -->
-            <!-- Beklenen JS Render Çıktısı için ÖRNEK TASARIM -->
             <div id="protagonists-gallery" class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-16">
-                <!-- Burası boş, JS ile dolacak. 
-                     Ancak CSS yapısı şimdiden "Hero Card" boyutunda ayarlı. -->
             </div>
         </section>
 
@@ -183,9 +175,9 @@
         <p class="font-serif text-gold text-2xl mb-4">TSOF</p>
         
         <div class="flex justify-center space-x-6 mb-6 text-[10px] font-mono uppercase text-gray-500">
-            <a href="./pages/privacy.html" class="hover:text-gold transition-colors">Privacy Protocol</a>
+            <a href="./privacy.html" class="hover:text-gold transition-colors">Privacy Protocol</a>
             <span>|</span>
-            <a href="./pages/terms.html" class="hover:text-gold transition-colors">Terms of Operation</a>
+            <a href="./terms.html" class="hover:text-gold transition-colors">Terms of Operation</a>
         </div>
 
         <p class="text-gray-600 text-xs uppercase tracking-widest">
@@ -194,11 +186,7 @@
         </p>
     </footer>
 
-    <!-- Scripts -->
-    <!-- Bu sayfadaki JS'e şunları eklemen gerekecek: 
-         - Ruaraidh ve Havi verilerini bulup "protagonists-gallery"ye basmalı.
-         - Geri kalan main char'ları "main-characters-gallery"ye basmalı. -->
+    <!-- Main Script -->
     <script src="../assets/js/main.js" type="module"></script>
-    
 </body>
 </html>

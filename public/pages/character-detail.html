@@ -4,9 +4,19 @@
     <!-- Meta Tags -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Detailed dossier and network analysis of subjects involved in 'The Sins of the Fathers' conspiracy. Access biographies, affiliations, and lineage data.">
+    <meta name="keywords" content="The Sins of the Fathers, TSOF, Character Dossier, Biography, Network Analysis, Lineage, Conspiracy, Surveillance">
+    <meta name="author" content="THEOF Team">
+    
+    <!-- Title-->
     <title>Subject Profile | The Sins of the Fathers</title>
 
-    <!-- Tailwind CSS & Config -->
+    <!--Favicons-->
+    <link rel="icon" type="image/png" sizes="96x96" href="../assets/images/logo/favicon-96x96.png" />
+    <link rel="icon" type="image/icon" href="../assets/images/logo/favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="../assets/images/logo/favicon.svg" />
+
+    <!-- Tailwind Configuration -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -39,12 +49,8 @@
             }
         }
     </script>
-    
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Courier+Prime&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
 
-    <!-- D3 Specific Styles (Tech-Noir Graph) -->
+    <!-- Helper Style Tag For The Tailwind -->
     <style>
         body { background-color: #050505; color: #d4d4d4; }
         
@@ -55,58 +61,59 @@
             opacity: 0.05;
         }
         
-        /* D3 Graph Styles */
         .node circle { fill: #000; stroke: #c5a059; stroke-width: 1.5px; }
         .node text { font-family: 'Courier Prime', monospace; font-size: 12px; fill: #a3a3a3; }
         .link { fill: none; stroke: #333; stroke-width: 1px; }
         
-        /* Loading Blur */
         .loading-blur { filter: blur(4px); transition: filter 0.5s ease; }
         .loaded { filter: blur(0); }
 
-        /* Hamburger Animation */
         #hamburger-button span { transition: 0.3s; }
         #hamburger-button.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 6px); }
         #hamburger-button.active span:nth-child(2) { opacity: 0; }
         #hamburger-button.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -6px); }
     </style>
+    
+    <!-- External Stylesheets -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Courier+Prime&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
 
-    <!-- D3 Library & Internal Scripts -->
+    <!-- External Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
-    <!-- Note: main.js URL corrected to relative for consistency based on previous files -->
+
+    <!-- Internal Scripts -->
     <script src="../assets/js/main.js" type="module" defer></script>
 </head>
-
 <body class="flex flex-col min-h-screen selection:bg-gold selection:text-black">
+    <!-- Noise Overlay -->
     <div class="noise-overlay"></div>
 
-    <!-- Header (System-Linked) -->
+    <!-- Top Navigation Menu -->
     <header class="fixed top-0 w-full z-50 bg-obsidian/90 backdrop-blur-md border-b border-white/5 transition-all">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            
-            <!-- Sol: Marka & Context -->
+            <!-- Main Page Link -->
             <a href="../index.html" class="text-xl md:text-2xl font-serif text-gold tracking-widest uppercase hover:text-white transition-colors">
                 TSOF <span class="hidden md:inline text-xs text-gray-600 ml-2">// DB ACCESS: LEVEL 4</span>
             </a>
             
-            <!-- Masaüstü Menü (Dossier Mode + Global Links) -->
+            <!-- Page Special Navigation Menu -->
             <div class="hidden md:flex items-center space-x-8 text-sm uppercase tracking-widest font-semibold">
-                <!-- Geri Dön Butonu -->
-                <a href="characters.html" class="text-xs text-gray-500 hover:text-gold transition-colors flex items-center mr-4 border-r border-white/10 pr-6">
+                <!-- Page Special Back Button -->
+                <a href="./characters.html" class="text-xs text-gray-500 hover:text-gold transition-colors flex items-center mr-4 border-r border-white/10 pr-6">
                     <i class="fas fa-arrow-left mr-2"></i> Close File
                 </a>
 
-                <!-- Global Nav -->
-                <a href="timeline.html" class="text-gray-400 hover:text-gold transition-colors text-[10px]">History</a>
-                <a href="factions.html" class="text-gray-400 hover:text-gold transition-colors text-[10px]">Factions</a>
+                <!-- Other Links -->
+                <a href="./timeline.html" class="text-gray-400 hover:text-gold transition-colors text-[10px]">History</a>
+                <a href="./factions.html" class="text-gray-400 hover:text-gold transition-colors text-[10px]">Factions</a>
 
-                <!-- Auth Controls (JS için Gerekli ID) -->
+                <!-- Auth Link -->
                 <div class="border-l border-white/20 pl-6 ml-2 flex items-center gap-4" id="auth-controls">
-                    <a href="login.html" class="text-[10px] text-gray-500 hover:text-gold transition-colors guest-only" id="auth-signin-link">Login</a>
+                    <a href="./login.html" class="text-[10px] text-gray-500 hover:text-gold transition-colors guest-only" id="auth-signin-link">Login</a>
                 </div>
             </div>
 
-            <!-- Hamburger (Mobile) - ID Eklendi -->
+            <!-- Mobile Menu Button -->
             <div class="md:hidden relative z-50">
                 <button id="hamburger-button" class="text-gold focus:outline-none flex flex-col justify-center items-center w-8 h-8 space-y-1.5 group">
                     <span class="block w-6 h-0.5 bg-gold transition-transform duration-300"></span>
@@ -117,25 +124,27 @@
         </nav>
     </header>
 
-    <!-- Mobile Menu Overlay (ID Eklendi - Zorunlu) -->
+    <!-- Mobile Menu Overlay -->
     <div id="mobile-menu" class="hidden fixed inset-0 z-40 bg-black/95 flex-col items-center justify-center space-y-8 transition-opacity duration-300 backdrop-blur-xl">
-        <!-- Özel "Dosyayı Kapat" Mobil Linki -->
-        <a href="characters.html" class="text-lg text-red-500 font-serif hover:text-white border border-red-900 px-6 py-2 uppercase tracking-widest mb-4">
+        <!-- Page Special Back Button -->
+        <a href="./characters.html" class="text-lg text-red-500 font-serif hover:text-white border border-red-900 px-6 py-2 uppercase tracking-widest mb-4">
             <i class="fas fa-times mr-2"></i> Close Dossier
         </a>
         
+        <!-- Main Page Link -->
         <a href="../index.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest">Home</a>
-        <a href="timeline.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest">History</a>
-        <a href="factions.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest">Factions</a>
-        <a href="locations.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest">Territories</a>
-        <a href="lore.html" class="text-xl text-gold font-serif hover:text-white uppercase tracking-widest">Archives</a>
-        <a href="login.html" class="text-sm text-gray-400 hover:text-white mt-8 font-mono uppercase">Access Terminal</a>
+        
+        <!-- Other Links -->
+        <a href="./timeline.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest">History</a>
+        <a href="./factions.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest">Factions</a>
+        <a href="./locations.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest">Territories</a>
+        <a href="./lore.html" class="text-xl text-gold font-serif hover:text-white uppercase tracking-widest">Archives</a>
+        <a href="./login.html" class="text-sm text-gray-400 hover:text-white mt-8 font-mono uppercase">Access Terminal</a>
     </div>
 
-    <!-- Main Content -->
+    <!-- Main Content Area -->
     <main class="flex-grow pt-24 pb-12 px-4 md:px-0">
-        
-        <!-- Loading State Overlay (Initially Visible, Hidden via JS) -->
+        <!-- Custom Loading Overlay -->
         <div id="file-loader" class="fixed inset-0 bg-obsidian z-40 flex flex-col items-center justify-center font-mono">
             <div class="w-64 h-1 bg-gray-800 rounded mb-4 overflow-hidden relative">
                 <div class="absolute inset-0 bg-gold animate-[scanline_1s_infinite] w-full"></div>
@@ -143,32 +152,27 @@
             <p class="text-gold text-sm animate-pulse">DECRYPTING PERSONNEL FILE...</p>
         </div>
 
+        <!-- Character Dossier Container -->
         <div id="character-dossier" class="container mx-auto max-w-5xl opacity-0 transition-opacity duration-1000 delay-500">
             
-            <!-- DOSSIER HEADER -->
             <div class="border border-white/10 bg-white/5 p-8 rounded-sm mb-8 relative overflow-hidden group">
-                <!-- Decorative Top Bar -->
                 <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-gold to-transparent opacity-50"></div>
 
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
-                    
-                    <!-- LEFT: MUGSHOT -->
+                    <!--Character Image and Status Container -->
                     <div class="md:col-span-4 lg:col-span-3 relative">
                         <div class="relative w-full aspect-[3/4] bg-black border border-white/10 overflow-hidden shadow-2xl">
-                            <!-- JS will inject image here. Using a placeholder for now. -->
                             <img id="char-image" src="" alt="Subject Unknown" class="w-full h-full object-cover filter grayscale hover:grayscale-0 transition-all duration-700">
                             
-                            <!-- Overlay UI -->
                             <div class="absolute inset-0 border-2 border-transparent border-t-gold/30 border-b-gold/30 pointer-events-none"></div>
                             
-                            <!-- STATUS BADGE -->
                             <div class="absolute bottom-4 left-4 right-4 bg-black/80 backdrop-blur-sm border border-white/10 p-2 text-center">
                                 <span id="char-status" class="font-mono text-xs uppercase font-bold tracking-widest text-green-500 animate-pulse">Active</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- RIGHT: INFO DATA -->
+                    <!-- Character Info Container -->
                     <div class="md:col-span-8 lg:col-span-9">
                         <div class="flex flex-col h-full justify-between">
                             <div>
@@ -178,6 +182,7 @@
                                 </h1>
                                 <p id="char-alias" class="text-xl text-gold italic font-serif mb-6">"Loading Alias..."</p>
                                 
+                                <!-- Key Information -->
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm font-mono border-t border-white/10 pt-6">
                                     <div class="p-3 border border-white/5 bg-black/20">
                                         <span class="text-gray-500 block text-xs uppercase mb-1">Affiliation</span>
@@ -198,12 +203,10 @@
                 </div>
             </div>
 
-            <!-- TWO COLUMN LAYOUT: BIOGRAPHY & GRAPH -->
+            <!-- Character Narrative and Network Analysis -->
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-                
-                <!-- MAIN TEXT -->
+                <!-- Narative Record Container -->
                 <div class="lg:col-span-2 space-y-8">
-                    <!-- Biography -->
                     <div class="border border-white/5 bg-transparent p-6 relative">
                         <h3 class="text-lg font-mono text-gold mb-4 border-b border-gold/20 pb-2 uppercase tracking-widest">
                             <i class="fas fa-align-left mr-2"></i> Narrative Record
@@ -213,34 +216,34 @@
                         </div>
                     </div>
 
-                    <!-- Quotes -->
+                    <!-- Character Quote Block -->
                     <blockquote class="border-l-4 border-gold pl-6 py-2 my-8 italic text-xl text-gray-300 font-serif relative">
                         <span class="absolute -top-4 -left-2 text-6xl text-gold/10 font-serif">"</span>
                         <p id="char-quote">Waiting for audio transcript...</p>
                     </blockquote>
                 </div>
 
-                <!-- SIDEBAR: CONNECTIONS (FAMILY TREE) -->
+                <!-- Network Analysis Container -->
                 <div class="lg:col-span-1">
                     <div class="border border-gray-800 bg-obsidian relative p-4 rounded-sm shadow-inner min-h-[500px]">
+                        <!-- Container Header -->
                         <div class="flex justify-between items-center mb-4 border-b border-white/10 pb-2">
                             <h3 class="text-xs font-mono text-gray-400 uppercase tracking-widest">Network Analysis</h3>
                             <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
                         </div>
 
-                        <!-- D3 CONTAINER -->
+                        <!-- D3.js Family Graph Container -->
                         <div id="family-graph" class="w-full h-[400px] overflow-hidden relative">
-                             <!-- Loading spinner for graph -->
                             <div class="d3-loading absolute inset-0 flex items-center justify-center text-gold/50">
                                 <i class="fas fa-dna fa-spin text-2xl"></i>
                             </div>
-                            <!-- Error / Empty State -->
                             <div class="d3-empty hidden absolute inset-0 flex flex-col items-center justify-center text-gray-600 text-xs font-mono text-center px-4">
                                 <i class="fas fa-unlink mb-2 text-xl"></i>
                                 No lineage data found.
                             </div>
                         </div>
                         
+                        <!-- Graph Metadata -->
                         <div class="mt-4 p-2 bg-white/5 text-[10px] font-mono text-gray-500 border-l border-gold/50">
                             > GRAPH_TYPE: FORCE_DIRECTED<br>
                             > DEPTH: LEVEL 2<br>
@@ -252,29 +255,19 @@
         </div>
     </main>
 
-    <!-- JS Handling for Smooth Fade In (Embedded just for visual effect demonstration, real logic goes in main.js) -->
-    <script>
-        window.addEventListener('load', () => {
-            const loader = document.getElementById('file-loader');
-            const dossier = document.getElementById('character-dossier');
-            
-            setTimeout(() => {
-                loader.classList.add('opacity-0', 'pointer-events-none');
-                dossier.classList.remove('opacity-0');
-            }, 800); 
-        });
-    </script>
-
-    <!-- Footer -->
+    <!-- Footer and Policies -->
     <footer class="py-12 bg-obsidian border-t border-white/5 text-center relative z-10">
+        <!-- Brand Text -->
         <p class="font-serif text-gold text-2xl mb-4">TSOF</p>
         
+        <!-- Policies Container -->
         <div class="flex justify-center space-x-6 mb-6 text-[10px] font-mono uppercase text-gray-500">
-            <a href="./pages/privacy.html" class="hover:text-gold transition-colors">Privacy Protocol</a>
+            <a href="./privacy.html" class="hover:text-gold transition-colors">Privacy Protocol</a>
             <span>|</span>
-            <a href="./pages/terms.html" class="hover:text-gold transition-colors">Terms of Operation</a>
+            <a href="./terms.html" class="hover:text-gold transition-colors">Terms of Operation</a>
         </div>
 
+        <!-- Copyright Text -->
         <p class="text-gray-600 text-xs uppercase tracking-widest">
             &copy; 2025 The Sins of the Fathers. <br>
             Ruaraidh Ballantine & Havi are watching.

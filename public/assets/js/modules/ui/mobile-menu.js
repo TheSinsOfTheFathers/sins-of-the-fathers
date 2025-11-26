@@ -1,7 +1,3 @@
-/**
- * Mobil Navigasyon Kontrolcüsü
- * "System Override" Arayüzü için açılır/kapanır mantık
- */
 export const initMobileMenu = () => {
     const menuButton = document.getElementById('hamburger-button');
     const mobileMenu = document.getElementById('mobile-menu');
