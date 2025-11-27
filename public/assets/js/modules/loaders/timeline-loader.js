@@ -91,7 +91,13 @@ export async function displayTimeline() {
                 date,
                 caption,
                 credit,
-                image
+                // Event görseli (Eğer image alanı bir asset reference ise)
+                image {
+                    asset->{
+                        url,
+                        "blurHash": metadata.blurHash
+                    }
+                }
             }
         }`;
 

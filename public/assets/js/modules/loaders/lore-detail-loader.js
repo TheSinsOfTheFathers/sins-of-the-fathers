@@ -109,7 +109,13 @@ export const loadLoreDetails = async () => {
             "date": date,
             source,
             author,
-            mainImage,
+            // Lore ana görseli
+            mainImage {
+                asset->{
+                    url,
+                    "blurHash": metadata.blurHash
+                }
+            },
             "relatedEntities": coalesce(relatedCharacters[]->{name, "title": name, "slug": slug.current, _type}, []) 
                              + coalesce(relatedFactions[]->{"title": title, "slug": slug.current, _type}, [])
         }`;

@@ -158,7 +158,11 @@ export async function displayLoreList() {
             "slug": slug.current,
             "loreType": loreType,
             "restricted": restricted,
-            "imageUrl": mainImage.asset->url,
+            // Liste görünümü için
+            "image": mainImage.asset->{
+                url,
+                "blurHash": metadata.blurHash
+            },
             "date": date,
             source
         }`;

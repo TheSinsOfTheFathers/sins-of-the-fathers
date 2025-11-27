@@ -229,10 +229,22 @@ export const loadFactionDetails = async () => {
             "hqName": hq, 
             "hqLocation": hqLocation,
             "color": color,
-            image { asset->{url} },
+            image { 
+                asset->{
+                    url,
+                    "blurHash": metadata.blurHash
+                } 
+            },
             leader->{ name, "slug": slug.current },
             "members": *[_type == "character" && references(^._id)] | order(name asc) [0...6] {
-                name, "slug": slug.current, title, "role": title, "imageUrl": image.asset->url
+                name, 
+                "slug": slug.current, 
+                title, 
+                "role": title, 
+                "image": image.asset->{
+                    url,
+                    "blurHash": metadata.blurHash
+                }
             },
             relations[] {
                 status,

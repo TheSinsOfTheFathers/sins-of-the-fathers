@@ -96,7 +96,13 @@ export async function loadLocationDetails() {
         const query = `*[_type == "location" && slug.current == $slug][0]{
             _id,
             name,
-            mainImage,
+            // Lokasyon görseli (Expanded)
+            mainImage {
+                asset->{
+                    url,
+                    "blurHash": metadata.blurHash
+                }
+            },
             description,
             securityLevel,
             status,

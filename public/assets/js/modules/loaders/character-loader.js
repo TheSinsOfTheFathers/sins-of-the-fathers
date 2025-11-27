@@ -94,7 +94,11 @@ export async function displayCharacters() {
             title, 
             alias,
             slug, 
-            "imageUrl": image.asset->url, 
+            // DEĞİŞİKLİK: imageUrl string'i yerine image objesi
+            "image": image.asset->{
+                url,
+                "blurHash": metadata.blurHash
+            }, 
             is_main
         }`;
         

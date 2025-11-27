@@ -188,23 +188,35 @@ export const loadCharacterDetails = async () => {
 
         const query = `*[_type == "character" && slug.current == $slug][0]{
             ...,
-            "image_url": image.asset->url,
+            "image": image.asset->{
+                url,
+                "blurHash": metadata.blurHash,
+                "lqip": metadata.lqip
+            },
             faction->{title, color}, 
             family[] {
-               relation,
-               character->{
-                  name, 
-                  "slug": slug.current,
-                  "image_url": image.asset->url
-               }
+                relation,
+                character->{
+                    name, 
+                    "slug": slug.current,
+                    // Aile üyeleri için de blurHash lazım
+                    "image": image.asset->{
+                        url,
+                        "blurHash": metadata.blurHash
+                    }
+                }
             },
             relationships[] {
-               status,
-               character->{
-                  name,
-                  "slug": slug.current,
-                  "image_url": image.asset->url
-               }
+                status,
+                character->{
+                    name,
+                    "slug": slug.current,
+                    // İlişkiler için blurHash
+                    "image": image.asset->{
+                        url,
+                        "blurHash": metadata.blurHash
+                    }
+                }
             }
         }`;
         
