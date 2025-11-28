@@ -1,15 +1,15 @@
 import { client } from '../../lib/sanityClient.js';
+import { applyBlurToStaticImage } from '../../lib/imageUtils.js';
 
 /**
  * KARAKTER DETAYLARINI GÖRSELLEŞTİRİR
  * HTML Sayfasındaki ID'lere Sanity verilerini enjekte eder.
  */
 const renderCharacterDetails = async (character) => {
-    
     const els = {
         loader: document.getElementById('file-loader'),
         dossier: document.getElementById('character-dossier'),
-        image: document.getElementById('char-image'),
+        image: document.getElementById('char-image'), // Bu ID'yi kullanacağız
         statusBadge: document.getElementById('char-status'),
         name: document.getElementById('char-name'),
         alias: document.getElementById('char-alias'),
@@ -25,10 +25,23 @@ const renderCharacterDetails = async (character) => {
 
     /* ------------------------------------------------------
        1. META DATA ENJEKSİYONU
-       ------------------------------------------------------ */
+    ------------------------------------------------------ */
     
-    const imgUrl = character.image_url || 'https://placehold.co/600x800/000000/333333?text=NO+IMAGE';
-    if (els.image) els.image.src = imgUrl;
+    // --- GÖRSEL GÜNCELLEMESİ BAŞLANGIÇ ---
+    const imgUrl = character.image?.url || 'https://placehold.co/600x800/000000/333333?text=NO+IMAGE';
+    const blurHash = character.image?.blurHash;
+
+    // applyBlurToStaticImage fonksiyonu, 'char-image' ID'li elementi bulur,
+    // arkasına canvas ekler ve blur efektini uygular.
+    if (els.image) {
+        // Eğer placeholder ise blurHash kullanma, direkt url ver
+        if (!character.image?.url) {
+            els.image.src = imgUrl;
+        } else {
+            applyBlurToStaticImage('char-image', imgUrl, blurHash);
+        }
+    }
+    // --- GÖRSEL GÜNCELLEMESİ BİTİŞ ---
 
     if (els.statusBadge) {
         const status = character.status || 'Active';
@@ -39,42 +52,42 @@ const renderCharacterDetails = async (character) => {
 
     els.name.textContent = character.name;
     if(character.alias) els.alias.textContent = `"${character.alias}"`;
+    
     document.title = `${character.name} // DOSSIER - The Sins of the Fathers`;
 
     if(els.faction) els.faction.textContent = character.faction?.title || 'Unknown / Freelancer';
-    if(els.location) els.location.textContent = character.origin || (character.faction ? 'Affiliated Territory' : 'Unknown'); 
+    if(els.location) els.location.textContent = character.origin || (character.faction ? 'Affiliated Territory' : 'Unknown');
     if(els.role) els.role.textContent = character.role || character.title || 'Operative';
 
     if (els.bio) {
         if (character.description) {
-             els.bio.innerHTML = character.description.split('\n').map(p => `<p>${p}</p>`).join('');
+            // Basit paragraf bölme (Sanity block content kullanılmıyorsa)
+            els.bio.innerHTML = character.description.split('\n').map(p => `<p>${p}</p>`).join('');
         } else {
-             els.bio.innerHTML = "<p class='text-red-500'>[DATA CORRUPTED] - Biography inaccessible.</p>";
+            els.bio.innerHTML = "<p class='text-red-500'>[DATA CORRUPTED] - Biography inaccessible.</p>";
         }
     }
 
-    if(els.quote) els.quote.textContent = character.quote ? character.quote : "...";
-
+    if(els.quote) els.quote.textContent = character.quote ? `"${character.quote}"` : "...";
 
     /* ------------------------------------------------------
        2. YÜKLEME EKRANINI KALDIR
-       ------------------------------------------------------ */
+    ------------------------------------------------------ */
     setTimeout(() => {
         if (els.loader) els.loader.classList.add('opacity-0', 'pointer-events-none');
         if (els.dossier) els.dossier.classList.remove('opacity-0');
     }, 800);
 
-    
     /* ------------------------------------------------------
        3. NETWORK (AİLE AĞACI) - D3 LOGIC
-       ------------------------------------------------------ */
+    ------------------------------------------------------ */
     const familyContainer = document.getElementById('family-graph');
-    
     if (familyContainer) {
         const loadingEl = familyContainer.querySelector('.d3-loading');
         const emptyEl = familyContainer.querySelector('.d3-empty');
-        if (loadingEl) loadingEl.style.display = 'flex';
         
+        if (loadingEl) loadingEl.style.display = 'flex';
+
         const nodesMap = new Map();
         
         const addNode = (obj, isMain = false) => {
@@ -82,7 +95,8 @@ const renderCharacterDetails = async (character) => {
             
             let id = obj.slug || obj._id || obj._ref || null;
             let label = obj.name || obj.label || id;
-            let img = obj.image_url || (obj.image && obj.image.asset && obj.image.asset.url) || null;
+            // D3 grafiğinde blurHash kullanmak çok karmaşık olduğu için burada sadece URL kullanıyoruz
+            let img = obj.image?.url || (obj.image && obj.image.asset && obj.image.asset.url) || null;
 
             if(typeof obj === 'string') { id = obj.toLowerCase(); label = obj; }
 
@@ -90,7 +104,7 @@ const renderCharacterDetails = async (character) => {
                 const inner = obj.character;
                 id = inner.slug || inner._ref || inner._id;
                 label = inner.name || label;
-                img = inner.image_url || img;
+                img = inner.image?.url || img;
             }
             
             if (!id) return;
@@ -112,7 +126,6 @@ const renderCharacterDetails = async (character) => {
         };
 
         const mainId = addNode(character, true);
-
         const links = [];
 
         if (character.relationships && Array.isArray(character.relationships)) {
@@ -145,9 +158,9 @@ const renderCharacterDetails = async (character) => {
 
         const nodes = Array.from(nodesMap.values());
 
-
         if (nodes.length > 0) {
             try {
+                // D3 modülü dinamik import edilir
                 const module = await import('./d3-family-tree.js');
                 const width = familyContainer.clientWidth || 300;
                 const height = familyContainer.clientHeight || 400;

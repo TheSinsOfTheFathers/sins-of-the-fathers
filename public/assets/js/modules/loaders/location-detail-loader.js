@@ -1,5 +1,6 @@
 import { client, urlFor } from '../../lib/sanityClient.js';
 import { toHTML } from 'https://esm.sh/@portabletext/to-html@2.0.13';
+import { applyBlurToStaticImage } from '../../lib/imageUtils.js';
 
 const updateThreatDisplay = (level = 'neutral') => {
     const threatEl = document.getElementById('loc-threat');
@@ -27,9 +28,13 @@ const updateThreatDisplay = (level = 'neutral') => {
 const renderLocationIntel = (location) => {
     document.title = `${location.name} // SURVEILLANCE FEED`;
 
-    const imgEl = document.getElementById('loc-image');
-    if (imgEl && location.mainImage) {
-        imgEl.src = urlFor(location.mainImage).width(1000).height(600).fit('crop').quality(75).url();
+    if (location.mainImage && location.mainImage.asset) {
+        const url = urlFor(location.mainImage).width(1000).height(600).fit('crop').quality(75).url();
+        const blurHash = location.mainImage.asset.blurHash; // Query'e eklediğin blurHash
+        
+        // Tek satırda hallediyoruz:
+        applyBlurToStaticImage('loc-image', url, blurHash);
+
         const loader = document.getElementById('feed-loader');
         if (loader) loader.style.display = 'none';
     }

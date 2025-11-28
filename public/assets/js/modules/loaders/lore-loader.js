@@ -68,24 +68,49 @@ const createRestrictedCard = (lore) => `
 `;
 
 const createImageCard = (lore) => {
-    const imgUrl = lore.imageUrl || 'https://via.placeholder.com/400';
-    return `
-        <div class="archive-card bg-white p-3 shadow-lg h-fit break-inside-avoid hover:rotate-1 transition-transform duration-300">
-            <a href="lore-detail.html?slug=${lore.slug}" class="block">
-                <div class="w-full aspect-video bg-gray-200 overflow-hidden grayscale contrast-125 relative border border-gray-300">
-                    <img src="${imgUrl}" class="w-full h-full object-cover" loading="lazy" alt="Evidence">
-                    <!-- Date Stamp -->
-                    <div class="absolute bottom-2 right-2 text-black font-bold text-[8px] px-1 rotate-[-5deg] opacity-60 font-mono">
-                        ${lore.date || 'NO_DATE'}
-                    </div>
+    const imgUrl = lore.image?.url || 'https://via.placeholder.com/400';
+    const blurHash = lore.image?.blurHash; // Query'de image objesini aldığından emin ol
+
+    // Kart container'ı
+    const cardDiv = document.createElement('div');
+    cardDiv.className = 'archive-card bg-white p-3 shadow-lg h-fit break-inside-avoid hover:rotate-1 transition-transform duration-300';
+    
+    cardDiv.innerHTML = `
+        <a href="lore-detail.html?slug=${lore.slug}" class="block group">
+            <div class="relative w-full aspect-video bg-gray-200 overflow-hidden border border-gray-300">
+                
+                <canvas class="blur-canvas absolute inset-0 w-full h-full object-cover z-0"></canvas>
+
+                <img src="${imgUrl}" 
+                     class="main-image relative w-full h-full object-cover grayscale contrast-125 opacity-0 transition-all duration-700 z-10" 
+                     loading="lazy" 
+                     alt="Evidence">
+                
+                <div class="absolute bottom-2 right-2 text-black font-bold text-[8px] px-1 rotate-[-5deg] opacity-60 font-mono z-20 bg-white/50">
+                    ${lore.date || 'NO_DATE'}
                 </div>
-                <div class="pt-3 pb-1 px-1">
-                    <h3 class="font-mono text-xs text-black uppercase truncate font-bold">${lore.title}</h3>
-                    <p class="text-[9px] text-gray-600 mt-1 line-clamp-2 font-sans leading-tight">${lore.summary}</p>
-                </div>
-            </a>
-        </div>
+            </div>
+            <div class="pt-3 pb-1 px-1">
+                <h3 class="font-mono text-xs text-black uppercase truncate font-bold group-hover:text-red-800 transition-colors">${lore.title}</h3>
+                <p class="text-[9px] text-gray-600 mt-1 line-clamp-2 font-sans leading-tight">${lore.summary}</p>
+            </div>
+        </a>
     `;
+
+    // Blur mantığını uygula
+    const canvas = cardDiv.querySelector('.blur-canvas');
+    const img = cardDiv.querySelector('.main-image');
+
+    if (blurHash && canvas) {
+        renderBlurHash(canvas, blurHash);
+    }
+
+    if (img) {
+        if (img.complete) handleImageLoad(img, canvas);
+        else img.onload = () => handleImageLoad(img, canvas);
+    }
+
+    return cardDiv; // String yerine element döndürüyoruz (createCard logic'ine uygun olması için)
 };
 
 /**
@@ -110,15 +135,26 @@ const renderGrid = (data) => {
     const container = document.getElementById('archive-grid');
     if (!container) return;
 
+    // Önce container'ı tamamen temizle
     container.innerHTML = ''; 
-    
+
     if (data.length === 0) {
         container.innerHTML = '<div class="col-span-full text-center text-gray-500 font-mono py-12">> NO RECORDS MATCH YOUR QUERY.</div>';
         return;
     }
 
-    const html = data.map(item => generateCard(item)).join('');
-    container.innerHTML = html;
+    // Kartları tek tek kontrol ederek ekle
+    data.forEach(item => {
+        const card = generateCard(item);
+
+        if (typeof card === 'string') {
+            // Document ve Audio kartları "String" olarak geliyor, HTML olarak ekle
+            container.insertAdjacentHTML('beforeend', card);
+        } else {
+            // Image kartları "DOM Elementi" (div) olarak geliyor, appendChild ile ekle
+            container.appendChild(card);
+        }
+    });
 };
 
 const applyFilters = (searchTerm = '', filterType = 'all') => {

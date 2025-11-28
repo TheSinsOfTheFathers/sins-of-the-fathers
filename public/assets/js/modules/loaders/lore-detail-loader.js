@@ -1,11 +1,11 @@
 import { client, urlFor } from '../../lib/sanityClient.js';
 import { toHTML } from 'https://esm.sh/@portabletext/to-html@2.0.13';
+import { applyBlurToStaticImage } from '../../lib/imageUtils.js';
 
 /**
  * HTML'e Veri Enjeksiyonu
  */
 const renderLoreIntel = (doc) => {
-    
     const setText = (id, val) => {
         const el = document.getElementById(id);
         if(el) el.textContent = val || 'Unknown';
@@ -41,12 +41,24 @@ const renderLoreIntel = (doc) => {
     const mediaContainer = document.getElementById('lore-media-container');
     const mediaImg = document.getElementById('lore-image');
     
-    if (doc.mainImage) {
+    // ⬇️ BLURHASH ENTEGRASYON ALANI BAŞLANGIÇ ⬇️
+    if (doc.mainImage && doc.mainImage.asset) {
         if (mediaContainer) mediaContainer.classList.remove('hidden');
-        if (mediaImg) {
-            mediaImg.src = urlFor(doc.mainImage).width(800).quality(80).url();
-        }
+        
+        // Sanity URL'i oluşturma
+        const imageUrl = urlFor(doc.mainImage).width(800).quality(80).url();
+        // BlurHash verisini çekme (loadLoreDetails query'de olmalı)
+        const blurHash = doc.mainImage.asset.blurHash;
+        
+        // applyBlurToStaticImage fonksiyonunu çağırıyoruz
+        applyBlurToStaticImage('lore-image', imageUrl, blurHash);
+        
+    } else if (mediaImg) {
+        // Görsel yoksa Placeholder veya gizleme mantığını koruyabilirsin.
+        // Bu örnekte, görseli gizli tutuyoruz.
+        mediaImg.src = ''; 
     }
+    // ⬆️ BLURHASH ENTEGRASYON ALANI SONU ⬆️
 
     const bodyContainer = document.getElementById('lore-body');
     if (bodyContainer) {
@@ -75,6 +87,7 @@ const renderLoreIntel = (doc) => {
         }
     }
 
+    // Yükleme ekranını kaldırıp içeriği görünür yapma
     setTimeout(() => {
         const loader = document.getElementById('doc-loader');
         const content = document.getElementById('doc-content');
