@@ -9,6 +9,7 @@ import {
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import { db } from '../firebase-config.js';
 import { doc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import i18next from '../../lib/i18n.js';
 
 /* --------------------------------------------------------------------------
    NOIR UI HELPERS (Terminal Style Messages)
@@ -138,11 +139,11 @@ export function initAuth() {
       if (isRegister) {
         loginForm.classList.add('hidden');
         registerForm.classList.remove('hidden');
-        if(title) title.innerHTML = `<span class="text-gold">Create</span> <span class="text-white">Operative</span>`;
+        if(title) title.innerHTML = i18next.t('login_page.dynamic_title_register');
       } else {
         registerForm.classList.add('hidden');
         loginForm.classList.remove('hidden');
-        if(title) title.innerHTML = `<span class="text-white">System</span> <span class="text-gold">Access</span>`;
+        if(title) title.innerHTML = i18next.t('login_page.dynamic_title_login');
       }
     };
 
@@ -289,7 +290,7 @@ export function initAuth() {
     menu.innerHTML = `
       <button id="user-menu-btn" class="flex items-center gap-2 group focus:outline-none">
          <span class="hidden md:block text-[10px] font-mono text-gray-400 group-hover:text-gold tracking-widest uppercase">
-            Agent ${user.displayName ? user.displayName.split(' ')[0] : 'Unknown'}
+            ${i18next.t('agent_display', { name: user.displayName ? user.displayName.split(' ')[0] : 'Unknown' })}
          </span>
          <img class="w-8 h-8 rounded-sm object-cover border border-gray-700 group-hover:border-gold transition-colors" src="${avatarSrc}" alt="ID" />
       </button>

@@ -1,4 +1,5 @@
 import { client } from '../../lib/sanityClient.js';
+import { renderBlurHash, handleImageLoad } from '../../lib/imageUtils.js'; 
 
 let allLoreData = [];
 

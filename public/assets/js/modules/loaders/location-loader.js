@@ -1,4 +1,5 @@
 import { client } from '../../lib/sanityClient.js';
+import i18next from '../../lib/i18n.js';
 
 let mapInstance = null;
 
@@ -95,13 +96,11 @@ export async function displayLocations() {
         window.zoomToLocation = (lat, lng, z) => {
             map.flyTo([lat, lng], z, { duration: 2.0 });
             const display = document.getElementById('location-name-display');
-            if (display) display.textContent = `SECTOR: ${lat}, ${lng}`;
-        };
+            if (display) display.textContent = i18next.t('location_loader.sector_info', { lat: lat.toFixed(4), lng: lng.toFixed(4) });        };
         window.resetMap = () => {
             map.flyTo([40, -30], 3, { duration: 1.5 });
             const display = document.getElementById('location-name-display');
-            if (display) display.textContent = "GLOBAL ORBIT";
-        };
+            if (display) display.textContent = i18next.t('location_loader.global_orbit');        };
 
         const factionsData = {
             'ballantine-empire': [
@@ -141,9 +140,9 @@ export async function displayLocations() {
                 marker.bindPopup(`
                     <div class="text-left font-mono min-w-[150px]">
                         <h4 class="text-gold text-sm font-bold mb-1 border-b border-white/20 pb-1">${loc.name.toUpperCase()}</h4>
-                        <p class="text-[10px] text-gray-400 mb-2 line-clamp-2">${loc.summary || 'No Intel'}</p>
+                        <p class="text-[10px] text-gray-400 mb-2 line-clamp-2">${loc.summary || i18next.t('location_loader.no_intel')}</p>
                         <a href="location-detail.html?slug=${loc.slug}" class="block text-center bg-white/10 py-1 text-[9px] hover:bg-gold hover:text-black uppercase transition">
-                            INSPECT
+                            ${i18next.t('location_loader.inspect_button')}
                         </a>
                     </div>
                 `, { className: 'custom-popup-theme' });

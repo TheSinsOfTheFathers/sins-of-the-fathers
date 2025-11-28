@@ -1,23 +1,17 @@
 /**
  * THE SINS OF THE FATHERS
- * Main Execution Protocol (v4.0 - Optimized Dynamic Routing)
+ * Main Execution Protocol (v4.1 - i18n Integrated)
  * --------------------------------------------------------------
  * This file orchestrates module loading dynamically based on the current page's DOM presence.
  */
 
 import initAuth from './modules/auth/auth.js';
 import { initMobileMenu } from './modules/ui/mobile-menu.js';
+import { initI18n, changeLanguage } from './lib/i18n.js';
 
 /* --------------------------------------------------------------------------
    ROUTER CONFIGURATION (MAPPINGS)
-   --------------------------------------------------------------------------
-   Anahtar (Key): DOM'da aranacak unique ID.
-   Değer (Value): { 
-       log: Konsolda gösterilecek mesaj,
-       modulePath: Dinamik yüklenecek dosyanın yolu,
-       loaderFn: Dosyadan çağrılacak asenkron fonksiyonun adı 
-   }
-*/
+   -------------------------------------------------------------------------- */
 const ROUTER_CONFIGS = [
     { 
         id: ['protagonists-gallery', 'main-characters-gallery'],
@@ -81,7 +75,6 @@ const ROUTER_CONFIGS = [
     }
 ];
 
-
 /* --------------------------------------------------------------------------
    EXECUTION PROTOCOL (MAIN FUNCTION)
    -------------------------------------------------------------------------- */
@@ -92,9 +85,32 @@ document.addEventListener('DOMContentLoaded', async () => {
         "color: #000; background: #c5a059; padding: 5px; font-weight: bold; font-family: monospace;"
     );
 
+    // 1. GLOBAL FONKSİYON ATAMASI
+    // HTML'deki butonların (onclick) bu fonksiyona erişebilmesi için window'a atıyoruz.
+    window.changeAppLanguage = changeLanguage;
+
+    // 2. SENKRON UI BAŞLATMALARI
     initMobileMenu();
     initAuth();
+
+    // 3. i18n DİL PROTOKOLÜNÜ BAŞLAT
+    // Await kullanıyoruz ki çeviriler yüklenmeden sayfa içeriği render edilmesin.
+    try {
+        const currentLang = await initI18n();
+        console.log(` > Language Protocol: LOADED [${currentLang.toUpperCase()}]`);
+
+        // Aktif dil butonunu parlat (Görsel geri bildirim)
+        const activeBtn = document.querySelector(`.lang-btn[data-lang="${currentLang.substring(0,2)}"]`);
+        if (activeBtn) {
+            activeBtn.classList.add('text-white', 'font-bold', 'underline');
+            activeBtn.classList.remove('text-gray-500');
+        }
+
+    } catch (error) {
+        console.error(" ! Language Protocol Failure:", error);
+    }
     
+    // 4. SAYFAYA ÖZEL MODÜLLERİ YÜKLE (ROUTER)
     for (const config of ROUTER_CONFIGS) {
         
         const idsToCheck = Array.isArray(config.id) ? config.id : [config.id];
@@ -114,7 +130,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     console.error(`ERROR: Module ${config.modulePath} does not export function ${config.loaderFn}`);
                 }
                 
-                return; 
+                return; // Sayfa modülü bulunduğunda döngüyü kır (Performans)
 
             } catch (error) {
                 console.error(`FATAL ERROR: Failed to load module for ${config.log}`, error);

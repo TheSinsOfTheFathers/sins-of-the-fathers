@@ -1,7 +1,11 @@
+// 👇 İMPORT EKLENDİ
+import i18next from '../../lib/i18n.js';
+
 export function renderFamilyGraph(containerEl, { nodes = [], links = [] } = {}, options = {}) {
     const d3 = window.d3;
     if (!d3) {
-        containerEl.innerHTML = '<p class="text-red-500 font-mono text-xs text-center mt-10">ERROR: VISUALIZATION MODULE NOT LOADED.</p>';
+        // 👇 ÇEVİRİ: Hata mesajı
+        containerEl.innerHTML = `<p class="text-red-500 font-mono text-xs text-center mt-10">${i18next.t('family_graph.error_module')}</p>`;
         return;
     }
 
@@ -62,7 +66,8 @@ export function renderFamilyGraph(containerEl, { nodes = [], links = [] } = {}, 
     const nodeGroup = svg.append('g').attr('class', 'nodes');
 
     const sanitizedNodes = nodes.map((n, i) => {
-        if (!n) return { id: `node_missing_${i}`, label: '(unknown)' };
+        // 👇 ÇEVİRİ: Bilinmeyen düğüm ismi
+        if (!n) return { id: `node_missing_${i}`, label: i18next.t('family_graph.unknown_node') };
         n.id = n.id || n.slug || n._id || n.name || `node_${i}`;
         return n;
     });
@@ -197,9 +202,13 @@ export function renderFamilyGraph(containerEl, { nodes = [], links = [] } = {}, 
     node.on('mouseover', function(event, d) {
         d3.select(this).select('circle').attr('stroke', '#fff').attr('stroke-width', 2);
         tooltip.style.display = 'block';
+        
+        // 👇 ÇEVİRİ: Tooltip içeriği
+        const role = d.isMain ? i18next.t('family_graph.role_primary') : i18next.t('family_graph.role_associate');
+        
         tooltip.innerHTML = `
             <strong style="color:#fff">${d.label}</strong><br>
-            <span style="color:#666">${d.isMain ? 'PRIMARY SUBJECT' : 'ASSOCIATE'}</span>
+            <span style="color:#666">${role}</span>
         `;
     })
     .on('mousemove', function(event) {

@@ -1,5 +1,6 @@
 import { client } from '../../lib/sanityClient.js';
 import { renderBlurHash, handleImageLoad } from '../../lib/imageUtils.js';
+import i18next from '../../lib/i18n.js';
 
 /* --------------------------------------------------------------------------
    CARD TEMPLATES (NOIR STYLE)
@@ -211,7 +212,7 @@ export async function displayCharacters() {
             Object.keys(containers).forEach(key => {
                 const container = containers[key];
                 if (container && container.children.length === 0) {
-                    container.innerHTML = '<p class="text-xs font-mono text-gray-600 col-span-full text-center">// No records found in this clearance level.</p>';
+                    container.innerHTML = `<p class="text-xs font-mono text-gray-600 col-span-full text-center">${i18next.t('characters_page.no_records_found')}</p>`;
                 }
             });
 

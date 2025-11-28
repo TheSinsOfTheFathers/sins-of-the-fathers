@@ -4,7 +4,7 @@
     <!-- Meta Tags -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Chronicle | The Sins of the Fathers</title>
+    <title>Loading...</title>
 
     <!-- Timeline.js CSS (CDN) -->
     <link title="timeline-styles" rel="stylesheet" href="https://cdn.knightlab.com/libs/timeline3/latest/css/timeline.css">
@@ -103,21 +103,21 @@
 
             <!-- Desktop Menu -->
             <div class="hidden md:flex items-center space-x-8 text-sm uppercase tracking-widest font-semibold">
-                <a href="./characters.html" class="hover:text-gold transition-colors">The Bloodline</a>
-                <a href="./timeline.html" class="hover:text-gold transition-colors">History</a>
-                <a href="./factions.html" class="hover:text-gold transition-colors">Factions</a>
-                <a href="./locations.html" class="hover:text-gold transition-colors">Territories</a>
+                <a href="./characters.html" class="hover:text-gold transition-colors" data-i18n="nav.bloodline"></a>
+                <a href="./timeline.html" class="hover:text-gold transition-colors" data-i18n="nav.history"></a>
+                <a href="./factions.html" class="hover:text-gold transition-colors" data-i18n="nav.factions"></a>
+                <a href="./locations.html" class="hover:text-gold transition-colors" data-i18n="nav.territories"></a>
                 
                 <!-- Login Bölümü - (ID EKLENDİ: auth-controls) -->
                 <div class="border-l border-white/20 pl-8 ml-4 flex items-center gap-4" id="auth-controls">
 
                     <!-- LORE LİNKİ: Artık her zaman görünür, ancak içindeki kilit sadece misafire gözükür. -->
                     <a href="./lore.html" class="text-gold hover:text-white transition-colors flex items-center gap-2">
-                        <i class="fas fa-lock text-xs guest-lock"></i> Classified
+                        <i class="fas fa-lock text-xs guest-lock"></i> <span data-i18n="nav.classified"></span>
                     </a>
 
                     <!-- AUTH LİNKİ: SADECE MİSAFİR GÖRÜR -->
-                    <a href="./login.html" class="hover:text-gold transition-colors guest-only" id="auth-signin-link">Sign In</a>
+                    <a href="./login.html" class="hover:text-gold transition-colors guest-only" id="auth-signin-link" data-i18n="auth.login"></a>
                 </div>
             </div>
 
@@ -129,35 +129,38 @@
                     <span class="block w-full h-0.5 bg-gold"></span>
                 </button>
             </div>
+
+            <div class="hidden md:flex gap-2 font-mono text-[10px]">
+                <button class="lang-btn hover:text-gold transition-colors" data-lang="en" onclick="window.changeAppLanguage('en')">EN</button>
+                <span class="text-gray-600">/</span>
+                <button class="lang-btn hover:text-gold transition-colors" data-lang="tr" onclick="window.changeAppLanguage('tr')">TR</button>
+            </div>
         </nav>
     </header>
 
     <!-- Mobile Menu Overlay -->
     <div id="mobile-menu" class="hidden fixed inset-0 z-40 bg-black/95 flex-col items-center justify-center space-y-8 transition-opacity duration-300 backdrop-blur-xl">
-        <a href="../index.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest">Home</a>
-        <a href="characters.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest">Bloodline</a>
-        <a href="timeline.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest border-b border-gold pb-2">History</a>
-        <a href="factions.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest">Factions</a>
-        <a href="locations.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest">Territories</a>
-        <a href="lore.html" class="text-xl text-gold font-serif hover:text-white uppercase tracking-widest">Archives</a>
-        <a href="login.html" class="text-sm text-gray-400 hover:text-white mt-8 font-mono uppercase">Access Terminal</a>
+        <a href="../index.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.home"></a>
+        <a href="characters.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.bloodline"></a>
+        <a href="timeline.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest border-b border-gold pb-2" data-i18n="nav.history"></a>
+        <a href="factions.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.factions"></a>
+        <a href="locations.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.territories"></a>
+        <a href="lore.html" class="text-xl text-gold font-serif hover:text-white uppercase tracking-widest" data-i18n="nav.archives"></a>
+        <a href="login.html" class="text-sm text-gray-400 hover:text-white mt-8 font-mono uppercase" data-i18n="auth.login"></a>
     </div>
 
     <!-- Intro Section -->
     <section class="pt-28 pb-10 container mx-auto px-6 text-center z-10 relative">
         <div class="inline-block border-b border-gold mb-6 pb-2">
-            <h1 class="text-4xl md:text-6xl font-serif text-white uppercase tracking-wider">
-                The <span class="text-gold">Timeline</span>
+            <h1 class="text-4xl md:text-6xl font-serif text-white uppercase tracking-wider" data-i18n="timeline_page.title">
             </h1>
         </div>
         
         <div class="max-w-3xl mx-auto bg-white/5 border border-white/10 p-6 md:p-8 backdrop-blur-sm">
             <i class="fas fa-quote-left text-gold text-2xl mb-4 block"></i>
-            <p class="text-lg md:text-xl font-serif text-gray-300 leading-relaxed italic">
-                "The power of the Ballantine family grew by profiting from every major social and economic trauma in Scotland. Theirs is not a history of nobility, but of a ruthless philosophy of control passed down through generations."
+            <p class="text-lg md:text-xl font-serif text-gray-300 leading-relaxed italic" data-i18n="timeline_page.quote">
             </p>
-            <p class="text-right text-xs font-mono text-blood mt-4 uppercase tracking-widest">
-                — Archive Record #8821
+            <p class="text-right text-xs font-mono text-blood mt-4 uppercase tracking-widest" data-i18n="timeline_page.quote_source">
             </p>
         </div>
     </section>
@@ -168,7 +171,7 @@
         <!-- Loading State -->
         <div id="timeline-loading" class="absolute inset-0 flex flex-col items-center justify-center bg-obsidian z-20">
             <div class="loading-ring mb-4"></div>
-            <p class="font-mono text-gold text-sm uppercase tracking-widest animate-pulse">Reconstructing Historical Events...</p>
+            <p class="font-mono text-gold text-sm uppercase tracking-widest animate-pulse" data-i18n="timeline_page.loader_text"></p>
         </div>
 
         <!-- The Embed Div (main.js -> timeline-loader.js burayı hedef alacak) -->
@@ -180,14 +183,13 @@
         <p class="font-serif text-gold text-2xl mb-4">TSOF</p>
         
         <div class="flex justify-center space-x-6 mb-6 text-[10px] font-mono uppercase text-gray-500">
-            <a href="./privacy.html" class="hover:text-gold transition-colors">Privacy Protocol</a>
+            <a href="./privacy.html" class="hover:text-gold transition-colors" data-i18n="footer.privacy"></a>
             <span>|</span>
-            <a href="./terms.html" class="hover:text-gold transition-colors">Terms of Operation</a>
+            <a href="./terms.html" class="hover:text-gold transition-colors" data-i18n="footer.terms"></a>
         </div>
 
         <p class="text-gray-600 text-xs uppercase tracking-widest">
-            &copy; 2025 The Sins of the Fathers. <br>
-            Ruaraidh Ballantine & Havi are watching.
+            <span data-i18n="footer.copyright"></span>
         </p>
     </footer>
 
@@ -196,5 +198,14 @@
 
     <!-- SYSTEM CORE SCRIPT -->
     <script src="../assets/js/main.js" type="module" defer></script>
+    <script type="module">
+        import i18next from '../assets/js/lib/i18n.js';
+        i18next.on('initialized', () => {
+            document.title = i18next.t('timeline_page.meta_title');
+        });
+        if (i18next.isInitialized) {
+            document.title = i18next.t('timeline_page.meta_title');
+        }
+    </script>
 </body>
 </html>

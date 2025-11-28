@@ -1,4 +1,5 @@
 import { client } from '../../lib/sanityClient.js';
+import i18next from '../../lib/i18n.js'; // İMPORT EKLENDİ
 
 /* --------------------------------------------------------------------------
    CARD BUILDER LOGIC
@@ -10,24 +11,33 @@ const createFactionCard = (faction) => {
     const accentColor = faction.color?.hex || (isOldWorld ? '#b91c1c' : '#c5a059');
     const iconClass = isOldWorld ? 'fa-skull-crossbones' : 'fa-chess-king';
     
-    const leaderName = (faction.leader && faction.leader.name) ? faction.leader.name : 'UNKNOWN';
+    const leaderName = (faction.leader && faction.leader.name) ? faction.leader.name : i18next.t('factions.unknown');
 
+    // 👇 STATS KISMI ÇEVİRİSİ
     const statsHTML = isOldWorld ? `
         <div>
-            <div class="flex justify-between text-[10px] font-mono text-gray-500 mb-1"><span>BRUTALITY</span> <span>95%</span></div>
+            <div class="flex justify-between text-[10px] font-mono text-gray-500 mb-1">
+                <span>${i18next.t('factions.stat_brutality')}</span> <span>95%</span>
+            </div>
             <div class="w-full h-1 bg-gray-900"><div class="h-1 bg-red-800 w-[95%] shadow-[0_0_5px_red]"></div></div>
         </div>
         <div>
-            <div class="flex justify-between text-[10px] font-mono text-gray-500 mb-1"><span>CHAOS</span> <span>80%</span></div>
+            <div class="flex justify-between text-[10px] font-mono text-gray-500 mb-1">
+                <span>${i18next.t('factions.stat_chaos')}</span> <span>80%</span>
+            </div>
             <div class="w-full h-1 bg-gray-900"><div class="h-1 bg-red-800 w-[80%]"></div></div>
         </div>
     ` : `
         <div>
-            <div class="flex justify-between text-[10px] font-mono text-gray-500 mb-1"><span>INFLUENCE</span> <span>98%</span></div>
+            <div class="flex justify-between text-[10px] font-mono text-gray-500 mb-1">
+                <span>${i18next.t('factions.stat_influence')}</span> <span>98%</span>
+            </div>
             <div class="w-full h-1 bg-gray-900"><div class="h-1 bg-gold w-[98%] shadow-[0_0_5px_gold]"></div></div>
         </div>
         <div>
-            <div class="flex justify-between text-[10px] font-mono text-gray-500 mb-1"><span>RESOURCES</span> <span>100%</span></div>
+            <div class="flex justify-between text-[10px] font-mono text-gray-500 mb-1">
+                <span>${i18next.t('factions.stat_resources')}</span> <span>100%</span>
+            </div>
             <div class="w-full h-1 bg-gray-900"><div class="h-1 bg-gold w-[100%]"></div></div>
         </div>
     `;
@@ -37,7 +47,6 @@ const createFactionCard = (faction) => {
     cardLink.className = `faction-card ${cardThemeClass} p-8 relative group min-h-[400px] flex flex-col justify-between rounded-sm transition-transform duration-300 hover:-translate-y-1`;
 
     cardLink.innerHTML = `
-        <!-- Background Icon Watermark -->
         <div class="absolute -right-6 -top-6 text-[10rem] opacity-5 pointer-events-none select-none" style="color: ${accentColor}">
             <i class="fas ${iconClass}"></i>
         </div>
@@ -49,24 +58,23 @@ const createFactionCard = (faction) => {
              
              <p class="text-xs font-mono text-gray-600 uppercase mb-6 tracking-widest flex items-center gap-2">
                 <i class="fas fa-circle text-[6px]" style="color:${accentColor}"></i>
-                ${faction.type || 'Organization'}
+                ${faction.type || i18next.t('factions.default_type')}
              </p>
              
              <div class="h-px w-12 mb-6 opacity-50" style="background-color:${accentColor}"></div>
              
              <p class="text-gray-400 text-sm leading-relaxed line-clamp-4 font-sans">
-                 ${faction.summary || faction.motto || 'Details classified.'}
+                 ${faction.summary || faction.motto || i18next.t('factions.details_classified')}
              </p>
         </div>
         
         <div class="space-y-6 mt-8">
-             <!-- Stats Block -->
              ${statsHTML}
         </div>
         
         <div class="mt-8 border-t border-white/5 pt-4 flex items-center justify-between text-xs font-mono" style="color:${accentColor}">
             <span><i class="fas fa-user-tie mr-2"></i>${leaderName.toUpperCase()}</span>
-            <span class="border border-current px-2 py-0.5 rounded-[1px] hover:bg-white/5">VIEW INTEL</span>
+            <span class="border border-current px-2 py-0.5 rounded-[1px] hover:bg-white/5">${i18next.t('factions.view_intel')}</span>
         </div>
     `;
     
@@ -109,12 +117,12 @@ export async function displayFactions() {
             factionsGrid.innerHTML = `
                 <div class="col-span-full text-center py-20 border border-red-900/30 bg-red-900/10">
                     <i class="fas fa-ban text-3xl text-red-800 mb-4"></i>
-                    <p class="text-red-500 font-mono uppercase">No Active Factions Found in Database.</p>
+                    <p class="text-red-500 font-mono uppercase">${i18next.t('factions.no_factions_found')}</p>
                 </div>`;
         }
     } catch (error) {
         console.error("Intel Retrieval Failed: ", error);
         if(loader) loader.style.display = 'none';
-        factionsGrid.innerHTML = '<p class="text-red-500 text-center font-mono col-span-full">CRITICAL ERROR: CONNECTION SEVERED.</p>';
+        factionsGrid.innerHTML = `<p class="text-red-500 text-center font-mono col-span-full">${i18next.t('factions.error_connection')}</p>`;
     }
 }

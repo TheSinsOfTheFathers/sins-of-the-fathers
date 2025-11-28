@@ -1,6 +1,7 @@
 import { client, urlFor } from '../../lib/sanityClient.js';
 import { toHTML } from 'https://esm.sh/@portabletext/to-html@2.0.13';
 import { applyBlurToStaticImage } from '../../lib/imageUtils.js';
+import i18next from '../../lib/i18n.js';
 
 const updateThreatDisplay = (level = 'neutral') => {
     const threatEl = document.getElementById('loc-threat');
@@ -39,25 +40,28 @@ const renderLocationIntel = (location) => {
         if (loader) loader.style.display = 'none';
     }
 
-    const setText = (id, text) => { const el = document.getElementById(id); if (el) el.textContent = text || 'N/A'; };
+    const setText = (id, text, fallbackKey) => { 
+        const el = document.getElementById(id); 
+        if (el) el.textContent = text || (fallbackKey ? i18next.t(fallbackKey) : ''); 
+    };
 
-    setText('loc-title', location.name);
-    setText('loc-faction', location.faction?.title || 'NEUTRAL GROUND');
-    setText('loc-status', location.status || 'UNKNOWN');
+    setText('loc-title', location.name, 'location_detail_page.placeholder_unknown');
+    setText('loc-faction', location.faction?.title, 'location_detail_page.tactical_unverified');
+    setText('loc-status', location.status, 'location_detail_page.tactical_operational');
     
     if (location.location) {
         setText('loc-coords', `${location.location.lat.toFixed(4)}° N, ${location.location.lng.toFixed(4)}° W`);
     } else {
-        setText('loc-coords', 'SIGNAL LOST');
+        setText('loc-coords', '--.--, --.--');
     }
 
-    updateThreatDisplay(location.securityLevel || 'Moderate');
+    updateThreatDisplay(location.securityLevel || i18next.t('location_detail_page.tactical_analyzing'));
 
     const descEl = document.getElementById('loc-description');
     if (descEl) {
-        descEl.innerHTML = location.description 
-            ? toHTML(location.description) 
-            : '<p class="text-red-500 font-mono">[DATA REDACTED]</p>';
+    descEl.innerHTML = location.description 
+        ? toHTML(location.description) 
+        : `<p class="animate-pulse">${i18next.t('location_detail_page.decrypting_history')}</p>`;
     }
 
     const eventsList = document.getElementById('loc-events');
@@ -83,7 +87,7 @@ const renderLocationIntel = (location) => {
                 </li>
             `).join('');
         } else {
-            eventsList.innerHTML = '<li class="text-xs text-gray-600 italic font-mono">No specific incidents tagged for this sector.</li>';
+            eventsList.innerHTML = `<li class="text-xs text-gray-600 italic">${i18next.t('location_detail_page.no_events_found')}</li>`;
         }
     }
 };
@@ -93,7 +97,10 @@ export async function loadLocationDetails() {
     const params = new URLSearchParams(window.location.search);
     const slug = params.get('slug');
 
-    if (!slug) return;
+    if (!slug) {
+        if (feedLoader) feedLoader.innerHTML = `<p class="text-red-500 font-mono">${i18next.t('location_detail_loader.error_missing_slug')}</p>`;
+        return;
+    }
 
     try {
         console.log(`> Connecting to drone feed: ${slug}`);
@@ -127,11 +134,12 @@ export async function loadLocationDetails() {
         if (result) {
             renderLocationIntel(result);
         } else {
-            if (feedLoader) feedLoader.innerHTML = '<p class="text-red-500 font-mono">TARGET OFFLINE</p>';
-            document.getElementById('loc-title').textContent = "404: LOST";
+            if (feedLoader) feedLoader.innerHTML = `<p class="text-red-500 font-mono">${i18next.t('location_detail_loader.error_not_found')}</p>`;
+            document.getElementById('loc-title').textContent = "404";
         }
 
     } catch (error) {
         console.error("Uplink Error:", error);
+        if (feedLoader) feedLoader.innerHTML = `<p class="text-red-500 font-mono">${i18next.t('location_detail_loader.error_fetch_failed')}</p>`;
     }
 }

@@ -1,4 +1,5 @@
 import { client, urlFor } from '../../lib/sanityClient.js';
+import i18next from '../../lib/i18n.js';
 
 /**
  * Veri Dönüştürücü: Sanity -> TimelineJS Formatı
@@ -8,7 +9,7 @@ const transformDataForTimeline = (eras) => {
     const allEvents = [];
 
     eras.forEach(era => {
-        const groupName = era.title_en || 'Unknown Era'; 
+        const groupName = era.title_en || i18next.t('timeline_loader.unknown_era'); 
         
         if (era.events && Array.isArray(era.events)) {
             era.events.forEach(evt => {
@@ -40,7 +41,7 @@ const transformDataForTimeline = (eras) => {
 
                 const formattedHeadline = `
                     <span class="text-gold font-serif tracking-wide uppercase">
-                        ${evt.title_en || 'Untitled Event'}
+                        ${evt.title_en || i18next.t('timeline_loader.untitled_event')}
                     </span>
                 `;
 
@@ -60,13 +61,13 @@ const transformDataForTimeline = (eras) => {
     return {
         title: {
             text: {
-                headline: "<span class='font-serif text-white'>THE BALLANTINE <span class='text-gold'>CHRONICLES</span></span>",
-                text: "<p class='text-gray-400 font-mono'>A visual record of blood, betrayal, and empire.</p>"
+                headline: i18next.t('timeline_loader.title_headline'),
+                text: i18next.t('timeline_loader.title_text')
             },
             media: {
-                url: "https://images.unsplash.com/photo-1533052379315-29e969401a49?q=80&w=2070&auto=format&fit=crop",
-                caption: "Archives",
-                credit: "System"
+                url: "https://images.unsplash.com/photo-1533052379315-29e969401a49?q=80&w=2070&auto.format&fit=crop",
+                caption: i18next.t('timeline_loader.title_media_caption'),
+                credit: i18next.t('timeline_loader.title_media_credit')
             }
         },
         events: allEvents 
@@ -77,6 +78,7 @@ export async function displayTimeline() {
     const embedId = 'timeline-embed';
     const embedEl = document.getElementById(embedId);
     const loaderEl = document.getElementById('timeline-loading');
+    const lang = i18next.language.startsWith('tr') ? 'tr' : 'en';
 
     if (!embedEl) return; 
 
@@ -91,7 +93,6 @@ export async function displayTimeline() {
                 date,
                 caption,
                 credit,
-                // Event görseli (Eğer image alanı bir asset reference ise)
                 image {
                     asset->{
                         url,
@@ -113,7 +114,8 @@ export async function displayTimeline() {
                 scale_factor: 2,
                 initial_zoom: 2,
                 timenav_position: 'bottom',
-                optimal_tick_width: 100
+                optimal_tick_width: 100,
+                lang: lang
             };
 
             if (window.TL) {
@@ -129,14 +131,14 @@ export async function displayTimeline() {
         } else {
             embedEl.innerHTML = `
                 <div class="flex h-full items-center justify-center text-red-500 font-mono border border-red-900/30">
-                    ARCHIVES EMPTY. NO RECORDS FOUND.
+                    ${i18next.t('timeline_loader.archives_empty')}
                 </div>`;
             if(loaderEl) loaderEl.style.display = 'none';
         }
 
     } catch (error) {
         console.error("Timeline Malfunction:", error);
-        if(loaderEl) loaderEl.innerHTML = "<span class='text-red-500'>DATA CORRUPTION DETECTED</span>";
-        if(embedEl) embedEl.innerHTML = "<p class='text-center pt-20 text-red-800'>SYSTEM FAILURE</p>";
+        if(loaderEl) loaderEl.innerHTML = `<span class='text-red-500'>${i18next.t('timeline_loader.data_corruption')}</span>`;
+        if(embedEl) embedEl.innerHTML = `<p class='text-center pt-20 text-red-800'>${i18next.t('timeline_loader.system_failure')}</p>`;
     }
 }

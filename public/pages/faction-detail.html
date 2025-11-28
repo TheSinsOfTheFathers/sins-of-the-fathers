@@ -4,7 +4,7 @@
     <!-- Meta Tags -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Faction HQ | The Sins of the Fathers</title>
+    <title>Loading...</title>
     
     <!-- Tailwind CSS (Custom Config) -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -82,16 +82,16 @@
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
             <!-- Marka -->
             <a href="../index.html" class="text-xl md:text-2xl font-serif text-gold tracking-widest uppercase hover:text-white transition-colors">
-                TSOF <span class="hidden md:inline text-xs text-gray-600 ml-2">// HQ ACCESS</span>
+                TSOF <span class="hidden md:inline text-xs text-gray-600 ml-2" data-i18n="faction_detail_page.header_subtitle"></span>
             </a>
             
             <!-- Sağ Navigasyon -->
             <div class="hidden md:flex items-center space-x-6 text-xs uppercase tracking-widest font-semibold">
                 <a href="factions.html" class="text-gray-500 hover:text-gold transition-colors flex items-center border-r border-white/10 pr-6">
-                    <i class="fas fa-arrow-left mr-2"></i> Exit Territory
+                    <i class="fas fa-arrow-left mr-2"></i> <span data-i18n="faction_detail_page.exit_territory"></span>
                 </a>
                 <div class="flex items-center gap-4" id="auth-controls">
-                    <a href="login.html" class="text-gold/80 hover:text-white transition-colors guest-only" id="auth-signin-link">Identify</a>
+                    <a href="login.html" class="text-gold/80 hover:text-white transition-colors guest-only" id="auth-signin-link" data-i18n="faction_detail_page.identify"></a>
                 </div>
             </div>
 
@@ -109,13 +109,13 @@
     <!-- Mobile Menu -->
     <div id="mobile-menu" class="hidden fixed inset-0 z-40 bg-black/95 flex-col items-center justify-center space-y-8 transition-opacity duration-300 backdrop-blur-xl">
         <a href="factions.html" class="text-lg text-red-500 font-serif hover:text-white border border-red-900 px-6 py-2 uppercase tracking-widest mb-4">
-            <i class="fas fa-arrow-left mr-2"></i> Exit Territory
+            <i class="fas fa-arrow-left mr-2"></i> <span data-i18n="faction_detail_page.exit_territory"></span>
         </a>
-        <a href="../index.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest">Home</a>
-        <a href="timeline.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest">History</a>
-        <a href="characters.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest">Bloodline</a>
-        <a href="locations.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest">Map</a>
-        <a href="login.html" class="text-sm text-gray-400 hover:text-white mt-8 font-mono uppercase">Access Terminal</a>
+        <a href="../index.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.home"></a>
+        <a href="timeline.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.history"></a>
+        <a href="characters.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.bloodline"></a>
+        <a href="locations.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.territories"></a>
+        <a href="login.html" class="text-sm text-gray-400 hover:text-white mt-8 font-mono uppercase" data-i18n="auth.login"></a>
     </div>
 
     <!-- HERO SECTION (JS ile Background değişir) -->
@@ -127,11 +127,9 @@
             <!-- Faksiyon İkonu (Sanity'den) -->
             <div id="faction-icon-container" class="mb-4 text-6xl hq-text opacity-80"></div>
             
-            <h1 id="faction-title" class="text-5xl md:text-7xl font-serif text-white uppercase tracking-wider mb-2 drop-shadow-lg">
-                Retrieving...
+            <h1 id="faction-title" class="text-5xl md:text-7xl font-serif text-white uppercase tracking-wider mb-2 drop-shadow-lg" data-i18n="faction_detail_page.retrieving">
             </h1>
-            <p id="faction-subtitle" class="font-mono text-gray-400 text-sm md:text-base max-w-2xl border-l-2 hq-text pl-4">
-                [Encrypting Connection...]
+            <p id="faction-subtitle" class="font-mono text-gray-400 text-sm md:text-base max-w-2xl border-l-2 hq-text pl-4" data-i18n="faction_detail_page.encrypting_connection">
             </p>
         </div>
     </div>
@@ -142,19 +140,19 @@
         <!-- STATS GRID -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
             <div class="bg-obsidian border border-white/10 p-6 shadow-lg hq-border-top">
-                <h3 class="text-xs font-mono text-gray-500 uppercase tracking-widest mb-1">Commander</h3>
+                <h3 class="text-xs font-mono text-gray-500 uppercase tracking-widest mb-1" data-i18n="faction_detail_page.stat_commander"></h3>
                 <div id="faction-leader" class="text-xl font-serif text-white flex items-center justify-between">
                      <span>-</span>
                 </div>
             </div>
             <div class="bg-obsidian border border-white/10 p-6 shadow-lg hq-border-top">
-                <h3 class="text-xs font-mono text-gray-500 uppercase tracking-widest mb-1">Base of Operations</h3>
+                <h3 class="text-xs font-mono text-gray-500 uppercase tracking-widest mb-1" data-i18n="faction_detail_page.stat_hq"></h3>
                 <div id="faction-hq" class="text-xl font-mono text-white">
                     [Hidden]
                 </div>
             </div>
             <div class="bg-obsidian border border-white/10 p-6 shadow-lg hq-border-top">
-                <h3 class="text-xs font-mono text-gray-500 uppercase tracking-widest mb-1">Threat Level</h3>
+                <h3 class="text-xs font-mono text-gray-500 uppercase tracking-widest mb-1" data-i18n="faction_detail_page.stat_threat"></h3>
                 <div class="flex items-center space-x-1 mt-1" id="threat-indicator">
                     <span class="threat-bar w-2 h-6 bg-gray-800"></span>
                     <span class="threat-bar w-2 h-6 bg-gray-800"></span>
@@ -162,7 +160,7 @@
                     <span class="threat-bar w-2 h-6 bg-gray-800"></span>
                     <span class="threat-bar w-2 h-6 bg-gray-800"></span>
                     <span class="threat-bar w-2 h-6 bg-gray-800"></span>
-                    <span id="threat-text" class="ml-2 font-bold font-mono text-xs text-gray-500">ANALYZING...</span>
+                    <span id="threat-text" class="ml-2 font-bold font-mono text-xs text-gray-500" data-i18n="faction_detail_page.threat_analyzing"></span>
                 </div>
             </div>
         </div>
@@ -172,14 +170,14 @@
             <!-- LEFT COLUMN (Lore & Members) -->
             <div class="lg:col-span-2 space-y-12">
                 <section>
-                    <h2 class="text-2xl font-serif text-white mb-6 border-b border-white/10 pb-2">Manifesto</h2>
+                    <h2 class="text-2xl font-serif text-white mb-6 border-b border-white/10 pb-2" data-i18n="faction_detail_page.section_manifesto"></h2>
                     <div id="faction-description" class="prose prose-invert font-sans leading-relaxed max-w-none text-gray-400"></div>
                 </section>
                 
                 <section>
                     <div class="flex justify-between items-end mb-6 border-b border-white/10 pb-2">
-                        <h2 class="text-2xl font-serif text-white">Known Associates</h2>
-                        <span class="text-xs font-mono text-gray-600">DB_QUERY_LIMIT: 6</span>
+                        <h2 class="text-2xl font-serif text-white" data-i18n="faction_detail_page.section_associates"></h2>
+                        <span class="text-xs font-mono text-gray-600" data-i18n="faction_detail_page.db_query_limit"></span>
                     </div>
                     <!-- Member Cards Injection Point -->
                     <div id="faction-roster" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
@@ -189,7 +187,7 @@
             <!-- RIGHT COLUMN: TACTICAL MINI MAP & DIPLOMACY -->
             <div class="lg:col-span-1">
                  <div class="bg-obsidian border border-white/10 p-6 sticky top-24">
-                     <h3 class="text-xs font-mono text-gray-500 uppercase tracking-widest mb-4">Tactical Surveillance</h3>
+                     <h3 class="text-xs font-mono text-gray-500 uppercase tracking-widest mb-4" data-i18n="faction_detail_page.section_surveillance"></h3>
                      
                      <!-- LEAFLET MINI MAP CONTAINER (Güncellendi) -->
                      <div class="w-full aspect-square bg-black border border-white/5 relative mb-4 group overflow-hidden rounded-sm">
@@ -204,14 +202,12 @@
                      </div>
                      
                      <!-- DIPLOMATIC RELATIONS LIST (Güncellendi) -->
-                     <!-- faction-detail-loader.js buraya 'Foreign Relations' basacak -->
-                     <h3 class="text-xs font-mono text-gray-500 uppercase tracking-widest mb-3 mt-6 pt-4 border-t border-white/5">Diplomatic Status</h3>
+                     <h3 class="text-xs font-mono text-gray-500 uppercase tracking-widest mb-3 mt-6 pt-4 border-t border-white/5" data-i18n="faction_detail_page.section_diplomatic"></h3>
                      <div id="faction-locations-list" class="space-y-2 min-h-[50px]">
-                         <span class="text-[10px] font-mono text-gray-600 animate-pulse">> Connecting to secure network...</span>
+                         <span class="text-[10px] font-mono text-gray-600 animate-pulse" data-i18n="faction_detail_page.connecting_network"></span>
                      </div>
                      
-                     <button onclick="window.location.href='locations.html'" class="w-full mt-6 py-3 border border-white/20 text-xs font-mono uppercase hover:bg-white/5 transition hq-text">
-                         ACCESS GLOBAL GRID
+                     <button onclick="window.location.href='locations.html'" class="w-full mt-6 py-3 border border-white/20 text-xs font-mono uppercase hover:bg-white/5 transition hq-text" data-i18n="faction_detail_page.access_global_grid">
                      </button>
                  </div>
             </div>
@@ -222,21 +218,29 @@
     <!-- LOADER -->
     <div id="factions-loader" class="fixed inset-0 z-30 bg-obsidian flex flex-col items-center justify-center pt-20">
         <i class="fas fa-fingerprint text-gold text-4xl mb-4 animate-pulse"></i>
-        <p class="font-mono text-xs text-gold uppercase tracking-[0.3em]">Verifying Clearance Code...</p>
+        <p class="font-mono text-xs text-gold uppercase tracking-[0.3em]" data-i18n="faction_detail_page.loader_text"></p>
     </div>
 
     <!-- Footer -->
     <footer class="py-12 bg-obsidian border-t border-white/5 text-center relative z-10">
         <p class="font-serif text-gold text-2xl mb-4">TSOF</p>
         <div class="flex justify-center space-x-6 mb-6 text-[10px] font-mono uppercase text-gray-500">
-            <a href="./privacy.html" class="hover:text-gold transition-colors">Privacy Protocol</a>
+            <a href="./privacy.html" class="hover:text-gold transition-colors" data-i18n="footer.privacy"></a>
             <span>|</span>
-            <a href="./terms.html" class="hover:text-gold transition-colors">Terms of Operation</a>
+            <a href="./terms.html" class="hover:text-gold transition-colors" data-i18n="footer.terms"></a>
         </div>
         <p class="text-gray-600 text-xs uppercase tracking-widest">
-            &copy; 2025 The Sins of the Fathers. <br>
-            Ruaraidh Ballantine & Havi are watching.
+            <span data-i18n="footer.copyright"></span>
         </p>
     </footer>
+    <script type="module">
+        import i18next from '../assets/js/lib/i18n.js';
+        i18next.on('initialized', () => {
+            document.title = i18next.t('faction_detail_page.meta_title');
+        });
+        if (i18next.isInitialized) {
+            document.title = i18next.t('faction_detail_page.meta_title');
+        }
+    </script>
 </body>
 </html>

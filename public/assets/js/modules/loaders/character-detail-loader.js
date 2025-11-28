@@ -1,5 +1,6 @@
 import { client } from '../../lib/sanityClient.js';
 import { applyBlurToStaticImage } from '../../lib/imageUtils.js';
+import i18next from '../../lib/i18n.js'; // Dil desteği için import
 
 /**
  * KARAKTER DETAYLARINI GÖRSELLEŞTİRİR
@@ -9,7 +10,7 @@ const renderCharacterDetails = async (character) => {
     const els = {
         loader: document.getElementById('file-loader'),
         dossier: document.getElementById('character-dossier'),
-        image: document.getElementById('char-image'), // Bu ID'yi kullanacağız
+        image: document.getElementById('char-image'), 
         statusBadge: document.getElementById('char-status'),
         name: document.getElementById('char-name'),
         alias: document.getElementById('char-alias'),
@@ -27,44 +28,45 @@ const renderCharacterDetails = async (character) => {
        1. META DATA ENJEKSİYONU
     ------------------------------------------------------ */
     
-    // --- GÖRSEL GÜNCELLEMESİ BAŞLANGIÇ ---
+    // GÖRSEL GÜNCELLEMESİ
     const imgUrl = character.image?.url || 'https://placehold.co/600x800/000000/333333?text=NO+IMAGE';
     const blurHash = character.image?.blurHash;
 
-    // applyBlurToStaticImage fonksiyonu, 'char-image' ID'li elementi bulur,
-    // arkasına canvas ekler ve blur efektini uygular.
     if (els.image) {
-        // Eğer placeholder ise blurHash kullanma, direkt url ver
         if (!character.image?.url) {
             els.image.src = imgUrl;
         } else {
             applyBlurToStaticImage('char-image', imgUrl, blurHash);
         }
     }
-    // --- GÖRSEL GÜNCELLEMESİ BİTİŞ ---
 
+    // STATUS GÜNCELLEMESİ (Çevirili)
     if (els.statusBadge) {
-        const status = character.status || 'Active';
-        els.statusBadge.textContent = status;
+        const rawStatus = character.status || 'Active';
+        // status_active, status_deceased gibi key'ler oluşturacağız
+        const statusKey = `character_detail_page.status_${rawStatus.toLowerCase()}`;
+        // Çeviri varsa kullan, yoksa veritabanındakini bas
+        els.statusBadge.textContent = i18next.exists(statusKey) ? i18next.t(statusKey) : rawStatus;
+        
         els.statusBadge.className = 'font-mono text-xs uppercase font-bold tracking-widest animate-pulse ' + 
-            (status.toLowerCase() === 'deceased' || status.toLowerCase() === 'kia' ? 'text-red-600' : 'text-green-500');
+            (rawStatus.toLowerCase() === 'deceased' || rawStatus.toLowerCase() === 'kia' ? 'text-red-600' : 'text-green-500');
     }
 
     els.name.textContent = character.name;
     if(character.alias) els.alias.textContent = `"${character.alias}"`;
     
-    document.title = `${character.name} // DOSSIER - The Sins of the Fathers`;
+    // Sayfa Başlığını Çevir
+    document.title = `${character.name} // ${i18next.t('character_detail_page.doc_title_suffix')}`;
 
-    if(els.faction) els.faction.textContent = character.faction?.title || 'Unknown / Freelancer';
-    if(els.location) els.location.textContent = character.origin || (character.faction ? 'Affiliated Territory' : 'Unknown');
+    if(els.faction) els.faction.textContent = character.faction?.title || i18next.t('character_detail_page.unknown');
+    if(els.location) els.location.textContent = character.origin || (character.faction ? i18next.t('character_detail_page.affiliated_territory') : i18next.t('character_detail_page.unknown'));
     if(els.role) els.role.textContent = character.role || character.title || 'Operative';
 
     if (els.bio) {
         if (character.description) {
-            // Basit paragraf bölme (Sanity block content kullanılmıyorsa)
             els.bio.innerHTML = character.description.split('\n').map(p => `<p>${p}</p>`).join('');
         } else {
-            els.bio.innerHTML = "<p class='text-red-500'>[DATA CORRUPTED] - Biography inaccessible.</p>";
+            els.bio.innerHTML = `<p class='text-red-500'>${i18next.t('character_detail_page.bio_error')}</p>`;
         }
     }
 
@@ -95,7 +97,6 @@ const renderCharacterDetails = async (character) => {
             
             let id = obj.slug || obj._id || obj._ref || null;
             let label = obj.name || obj.label || id;
-            // D3 grafiğinde blurHash kullanmak çok karmaşık olduğu için burada sadece URL kullanıyoruz
             let img = obj.image?.url || (obj.image && obj.image.asset && obj.image.asset.url) || null;
 
             if(typeof obj === 'string') { id = obj.toLowerCase(); label = obj; }
@@ -160,7 +161,6 @@ const renderCharacterDetails = async (character) => {
 
         if (nodes.length > 0) {
             try {
-                // D3 modülü dinamik import edilir
                 const module = await import('./d3-family-tree.js');
                 const width = familyContainer.clientWidth || 300;
                 const height = familyContainer.clientHeight || 400;
@@ -182,7 +182,6 @@ const renderCharacterDetails = async (character) => {
         }
     }
 };
-
 
 /**
  * SAYFA YÜKLENDİĞİNDE ÇALIŞAN ANA FONKSİYON
@@ -212,7 +211,6 @@ export const loadCharacterDetails = async () => {
                 character->{
                     name, 
                     "slug": slug.current,
-                    // Aile üyeleri için de blurHash lazım
                     "image": image.asset->{
                         url,
                         "blurHash": metadata.blurHash
@@ -224,7 +222,6 @@ export const loadCharacterDetails = async () => {
                 character->{
                     name,
                     "slug": slug.current,
-                    // İlişkiler için blurHash
                     "image": image.asset->{
                         url,
                         "blurHash": metadata.blurHash

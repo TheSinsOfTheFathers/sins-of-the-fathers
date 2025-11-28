@@ -1,5 +1,6 @@
 import { client } from '../../lib/sanityClient.js';
 import { toHTML } from 'https://esm.sh/@portabletext/to-html@2.0.13';
+import i18next from '../../lib/i18n.js';
 
 /**
  * MINI MAP ENGINE (Canlı Uydu Bağlantısı)
@@ -78,16 +79,15 @@ const renderFactionDetails = (faction) => {
         relations: document.getElementById('faction-locations-list')
     };
 
-    document.title = `${faction.title} // INTEL - The Sins of the Fathers`;
-
     const safeTitle = faction.title || 'Unknown Faction';
+    document.title = i18next.t('faction_detail_loader.meta_title', { factionName: safeTitle });
     if (els.title) {
         els.title.textContent = safeTitle;
         els.title.classList.remove('animate-fade-in-down');
         void els.title.offsetWidth; 
         els.title.classList.add('animate-fade-in-down');
     }
-    if (els.subtitle) els.subtitle.textContent = faction.motto ? `"${faction.motto}"` : "// MOTTO REDACTED";
+    if (els.subtitle) els.subtitle.textContent = faction.motto ? `"${faction.motto}"` : i18next.t('faction_detail_loader.motto_redacted');
     
     const type = faction.type || 'syndicate';
     const icon = type === 'syndicate' ? '<i class="fas fa-skull-crossbones"></i>' : '<i class="fas fa-chess-king"></i>';
@@ -101,12 +101,10 @@ const renderFactionDetails = (faction) => {
 
 
     if (els.leader) {
-        const leaderName = faction.leader ? faction.leader.name : 'UNKNOWN';
+        const leaderName = faction.leader ? faction.leader.name : i18next.t('faction_detail_loader.unknown_leader');
         const leaderSlug = faction.leader ? faction.leader.slug : null;
-        els.leader.innerHTML = `<span>${leaderName}</span>${leaderSlug ? `<a href="character-detail.html?slug=${leaderSlug}" title="View Profile"><i class="fas fa-external-link-alt text-xs opacity-50 hover:opacity-100"></i></a>` : ''}`;
-    }
-    if (els.hq) els.hq.textContent = faction.hqName || '[Encrypted Coords]';
-    
+        els.leader.innerHTML = `<span>${leaderName}</span>${leaderSlug ? `<a href="character-detail.html?slug=${leaderSlug}" title="${i18next.t('faction_detail_loader.view_profile')}"><i class="fas fa-external-link-alt text-xs opacity-50 hover:opacity-100"></i></a>` : ''}`;    }
+    if (els.hq) els.hq.textContent = faction.hqName || i18next.t('faction_detail_loader.encrypted_coords');    
     if (els.threat) {
         const threatLevel = (faction.threatLevel || 'unknown').toLowerCase();
         const threatContainer = els.threat.parentElement;
@@ -118,7 +116,7 @@ const renderFactionDetails = (faction) => {
             high: { text: 'HIGH', bars: 4, color: 'text-orange-500', barColor: 'bg-orange-500' },
             critical: { text: 'CRITICAL', bars: 5, color: 'text-gold', barColor: 'bg-gold' },
             extreme: { text: 'EXTREME', bars: 6, color: 'text-red-500', barColor: 'bg-red-500' },
-            unknown: { text: 'ANALYZING...', bars: 0, color: 'text-gray-500', barColor: 'bg-gray-800' }
+            unknown: { text: i18next.t('faction_detail_loader.threat_analyzing'), bars: 0, color: 'text-gray-500', barColor: 'bg-gray-800' }        
         };
         
         const config = levels[threatLevel] || levels.unknown;
@@ -151,8 +149,7 @@ const renderFactionDetails = (faction) => {
                 }
             });
         } else {
-            els.description.innerHTML = '<p class="text-gray-500 italic font-mono">// No records available.</p>';
-        }
+            els.description.innerHTML = `<p class="text-gray-500 italic font-mono">${i18next.t('faction_detail_loader.no_records_available')}</p>`;        }
     }
 
     if (els.roster) {
@@ -171,14 +168,12 @@ const renderFactionDetails = (faction) => {
                     </a>`;
             }).join('');
         } else {
-            els.roster.innerHTML = '<div class="text-xs font-mono text-gray-600 col-span-full py-4 text-center border border-dashed border-gray-800">// EMPTY</div>';
-        }
+            els.roster.innerHTML = `<div class="text-xs font-mono text-gray-600 col-span-full py-4 text-center border border-dashed border-gray-800">${i18next.t('faction_detail_loader.roster_empty')}</div>`;        }
     }
 
     if (els.relations) {
         const headerEl = els.relations.previousElementSibling;
-        if(headerEl) headerEl.textContent = "FOREIGN RELATIONS";
-
+        if(headerEl) headerEl.textContent = i18next.t('faction_detail_loader.foreign_relations');
         if (faction.relations && faction.relations.length > 0) {
             els.relations.innerHTML = faction.relations.map(rel => {
                 let statusColor = 'text-gray-500';
@@ -198,12 +193,11 @@ const renderFactionDetails = (faction) => {
                 `;
             }).join('');
         } else {
-            els.relations.innerHTML = '<div class="text-xs text-gray-600 font-mono text-center py-2">NO DIPLOMATIC RECORDS FOUND</div>';
-        }
+            els.relations.innerHTML = `<div class="text-xs text-gray-600 font-mono text-center py-2">${i18next.t('faction_detail_loader.no_diplomatic_records')}</div>`;        }
         
         const mapBtn = els.relations.parentElement.querySelector('button');
         if(mapBtn) {
-            mapBtn.innerText = "ACCESS GLOBAL MAP";
+            mapBtn.innerText = i18next.t('faction_detail_loader.access_global_map');
             mapBtn.onclick = () => window.location.href = 'locations.html';
         }
     }
@@ -219,7 +213,7 @@ export const loadFactionDetails = async () => {
     const factionSlug = params.get('slug');
 
     if (!factionSlug) {
-        if (loader) loader.innerHTML = '<p class="text-red-500 font-mono text-sm">ERROR: MISSING SLUG</p>';
+        if (loader) loader.innerHTML = `<p class="text-red-500 font-mono text-sm">${i18next.t('faction_detail_loader.error_missing_slug')}</p>`;
         return;
     }
 
@@ -260,10 +254,9 @@ export const loadFactionDetails = async () => {
         if (faction) {
             renderFactionDetails(faction);
         } else {
-            if (mainContainer) mainContainer.innerHTML = '<div class="h-[50vh] flex flex-col items-center justify-center text-red-800 font-mono"><span>ERROR 404: FILE CORRUPTED</span></div>';
+            if (mainContainer) mainContainer.innerHTML = `<div class="h-[50vh] flex flex-col items-center justify-center text-red-800 font-mono"><span>${i18next.t('faction_detail_loader.error_file_corrupted')}</span></div>`;
         }
     } catch (error) {
         console.error("Intel Failure:", error);
-        if (mainContainer) mainContainer.innerHTML = '<div class="h-[50vh] flex items-center justify-center text-red-500 font-mono">SYSTEM MALFUNCTION.</div>';
-    }
+        if (mainContainer) mainContainer.innerHTML = `<div class="h-[50vh] flex items-center justify-center text-red-500 font-mono">${i18next.t('faction_detail_loader.error_system_malfunction')}</div>`;    }
 };
