@@ -1,0 +1,68 @@
+name: Lighthouse Performance Audit
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened] # Yeni PR'larda ve her güncellemede çalıştır
+
+jobs:
+  build_deploy_and_audit:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # 1. Proje build adımları
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Projenin Node versiyonuna göre değiştirin
+      - name: Install Dependencies
+        run: npm ci # veya npm install
+      - name: Build Project
+        run: npm run build # Varsa build komutunuz
+
+      # 2. Firebase Preview Dağıtımı (URL'i almak için bu adım gerekli)
+      - name: Deploy to Firebase Preview Channel
+        id: deploy # Bu adıma ID veriyoruz
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
+          projectId: 'sins-of-the-fathers' # Kendi Firebase Proje ID'niz
+          channelId: 'pr-${{ github.event.pull_request.number }}' # PR numarası ile dinamik kanal oluştur
+          expires: '7d'
+      
+      # 3. Lighthouse CI Kurulumu
+      - name: Install Lighthouse CI
+        run: npm install -g @lhci/cli
+
+      # 4. Dinamik URL'leri Oluşturma ve Lighthouse'ı Çalıştırma
+      - name: Run Lighthouse CI on Multiple Pages
+        run: |
+          # Firebase Deploy adımından Preview URL'i yakala
+          PREVIEW_URL="${{ steps.deploy.outputs.details_url }}"
+          
+          # Sitemap'inizdeki kritik sayfaların yolları
+          PATHS=(
+            "/"
+            "/pages/characters.html"
+            "/pages/timeline.html"
+            "/pages/factions.html"
+            "/pages/locations.html"
+            "/pages/lore.html"
+          )
+          
+          # Dinamik URL listesini oluştur: BASE_URL + PATH
+          URL_LIST=""
+          for path in "${PATHS[@]}"; do
+            URL_LIST+="$PREVIEW_URL$path," # URL'leri virgülle ayırıyoruz
+          done
+          
+          # Lighthouse CI'ı birden fazla URL ile çalıştır
+          # --urls komutu lighthouserc.json içindeki URL'leri ezer
+          # --urls komutunda son virgülü kaldırmak için kesme işlemi yapıyoruz
+          lhci autorun --urls ${URL_LIST%,}
+        env:
+          # LHCI'ın PR'a sonuçları yorum atması için GITHUB_TOKEN gereklidir
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
