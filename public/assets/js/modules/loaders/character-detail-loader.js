@@ -1,171 +1,271 @@
-// modules/loaders/character-detail-loader.js
+import { client } from '../../lib/sanityClient.js';
+import { applyBlurToStaticImage } from '../../lib/imageUtils.js';
+import i18next from '../../lib/i18n.js';
+// 👇 SEO / SCHEMA İMPORTU
+import { injectSchema, generateCharacterSchema } from '../../lib/seo.js';
 
-import { client } from '../../../../../lib/sanityClient.js';
-import { FamilyTree } from '../ui/family-tree.js';
+/**
+ * KARAKTER DETAYLARINI GÖRSELLEŞTİRİR
+ * HTML Sayfasındaki ID'lere Sanity verilerini enjekte eder.
+ */
+const renderCharacterDetails = async (character) => {
+    const els = {
+        loader: document.getElementById('file-loader'),
+        dossier: document.getElementById('character-dossier'),
+        image: document.getElementById('char-image'), 
+        statusBadge: document.getElementById('char-status'),
+        name: document.getElementById('char-name'),
+        alias: document.getElementById('char-alias'),
+        faction: document.getElementById('char-faction'),
+        location: document.getElementById('char-location'),
+        role: document.getElementById('char-role'),
+        bio: document.getElementById('char-bio'),
+        quote: document.getElementById('char-quote'),
+        title: document.title
+    };
 
-// Sanity'den gelen zengin metin (block content) verisini HTML'e çeviren basit bir yardımcı fonksiyon
-function blocksToHtml(blocks) {
-    if (!blocks) return '';
-    return blocks.map(block => {
-        if (block._type === 'block' && block.children) {
-            const childrenHtml = block.children.map(child => {
-                let text = child.text;
-                if (child.marks && child.marks.includes('strong')) text = `<strong>${text}</strong>`;
-                if (child.marks && child.marks.includes('em')) text = `<em>${text}</em>`;
-                return text;
-            }).join('');
-            return `<p>${childrenHtml}</p>`;
+    if (!els.name) { console.error("ERROR: Dossier layout corrupted. Missing DOM elements."); return; }
+
+    /* ------------------------------------------------------
+       1. META DATA ENJEKSİYONU
+    ------------------------------------------------------ */
+    
+    // GÖRSEL GÜNCELLEMESİ
+    const imgUrl = character.image?.url || 'https://placehold.co/600x800/000000/333333?text=NO+IMAGE';
+    const blurHash = character.image?.blurHash;
+
+    if (els.image) {
+        if (!character.image?.url) {
+            els.image.src = imgUrl;
+        } else {
+            applyBlurToStaticImage('char-image', imgUrl, blurHash);
         }
-        return '';
-    }).join('');
-}
+    }
 
-let familyTree;
+    // 👇 SEO SCHEMA ENJEKSİYONU (BURAYA EKLENDİ)
+    try {
+        const schemaData = generateCharacterSchema({
+            name: character.name,
+            image: { url: imgUrl },
+            description: character.description || "",
+            faction: character.faction,
+            role: character.role || character.title
+        });
+        injectSchema(schemaData);
+        console.log("> SEO Protocol: Character Schema Injected.");
+    } catch (err) {
+        console.warn("> SEO Protocol Warning: Failed to inject schema.", err);
+    }
+    // -----------------------------------------------------
 
-const renderCharacterDetails = (character) => {
-    const contentDiv = document.getElementById('character-detail-content');
-    if (!contentDiv) return;
+    // STATUS GÜNCELLEMESİ (Çevirili)
+    if (els.statusBadge) {
+        const rawStatus = character.status || 'Active';
+        const statusKey = `character_detail_page.status_${rawStatus.toLowerCase()}`;
+        els.statusBadge.textContent = i18next.exists(statusKey) ? i18next.t(statusKey) : rawStatus;
+        
+        els.statusBadge.className = 'font-mono text-xs uppercase font-bold tracking-widest animate-pulse ' + 
+            (rawStatus.toLowerCase() === 'deceased' || rawStatus.toLowerCase() === 'kia' ? 'text-red-600' : 'text-green-500');
+    }
 
-    // Sayfa başlığını ve meta etiketlerini güncelle
-    document.title = `${character.name} - The Sins of the Fathers`;
-    document.querySelector('meta[name="description"]')?.setAttribute('content', `Details about ${character.name}, ${character.title}. ${character.description || ''}`);
+    els.name.textContent = character.name;
+    if(character.alias) els.alias.textContent = `"${character.alias}"`;
+    
+    // Sayfa Başlığını Çevir
+    document.title = `${character.name} // ${i18next.t('character_detail_page.doc_title_suffix')}`;
 
-    const relationshipsHtml = character.relationships?.map(rel => `
-        <div class="relationship-card">
-            <strong class="relationship-name">${rel.name}</strong>
-            <span class="relationship-status">${rel.status}</span>
-        </div>
-    `).join('') || '<p class="text-neutral-400">No known relationships.</p>';
+    if(els.faction) els.faction.textContent = character.faction?.title || i18next.t('character_detail_page.unknown');
+    if(els.location) els.location.textContent = character.origin || (character.faction ? i18next.t('character_detail_page.affiliated_territory') : i18next.t('character_detail_page.unknown'));
+    if(els.role) els.role.textContent = character.role || character.title || 'Operative';
 
-    // Zengin metin alanlarını HTML'e çevir
-    const storyHtml = blocksToHtml(character.story);
+    if (els.bio) {
+        if (character.description) {
+            els.bio.innerHTML = character.description.split('\n').map(p => `<p>${p}</p>`).join('');
+        } else {
+            els.bio.innerHTML = `<p class='text-red-500'>${i18next.t('character_detail_page.bio_error')}</p>`;
+        }
+    }
 
-    contentDiv.innerHTML = `
-        <div class="animate-fade-in">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12 items-start mb-12">
-                <div class="md:col-span-1">
-                    <img src="${character.image_url}" alt="${character.name}" class="w-full h-auto rounded-lg shadow-lg object-cover">
-                </div>
-                <div class="md:col-span-2">
-                    <h1 class="text-5xl lg:text-6xl font-serif text-yellow-500 mb-2">${character.name}</h1>
-                    <p class="text-xl text-neutral-400 italic mb-6">"${character.title}"</p>
-                    <div class="prose prose-invert max-w-none text-neutral-300">
-                        <p>${character.description || 'No description available.'}</p>
-                    </div>
-                </div>
-            </div>
-            <div class="mb-12">
-                <h2 class="section-title">Family Tree</h2>
-                <div id="family-tree" class="w-full h-[600px] bg-neutral-950/50 rounded-lg border border-neutral-800 overflow-hidden"></div>
-            </div>
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
-                <div class="lg:col-span-2">
-                    <h2 class="section-title">Story</h2>
-                    <div class="prose prose-invert max-w-none text-neutral-300">${storyHtml || "<p>This character's story has not yet been written.</p>"}</div>
-                </div>
-                <div class="lg:col-span-1">
-                    <h2 class="section-title">Relationships</h2>
-                    <div class="space-y-4">${relationshipsHtml}</div>
-                </div>
-            </div>
-        </div>
-    `;
+    if(els.quote) els.quote.textContent = character.quote ? `"${character.quote}"` : "...";
 
-    // Aile ağacını render et
-    const familyData = buildFamilyTreeData(character);
-    const container = document.getElementById('family-tree');
-    if (container && familyData.nodes.length > 0) {
-        if (!familyTree) familyTree = new FamilyTree(container);
-        familyTree.update(familyData);
+    /* ------------------------------------------------------
+       2. YÜKLEME EKRANINI KALDIR
+    ------------------------------------------------------ */
+    setTimeout(() => {
+        if (els.loader) els.loader.classList.add('opacity-0', 'pointer-events-none');
+        if (els.dossier) els.dossier.classList.remove('opacity-0');
+    }, 800);
+
+    /* ------------------------------------------------------
+       3. NETWORK (AİLE AĞACI) - D3 LOGIC
+    ------------------------------------------------------ */
+    const familyContainer = document.getElementById('family-graph');
+    if (familyContainer) {
+        const loadingEl = familyContainer.querySelector('.d3-loading');
+        const emptyEl = familyContainer.querySelector('.d3-empty');
+        
+        if (loadingEl) loadingEl.style.display = 'flex';
+
+        const nodesMap = new Map();
+        
+        const addNode = (obj, isMain = false) => {
+            if (!obj) return;
+            
+            let id = obj.slug || obj._id || obj._ref || null;
+            let label = obj.name || obj.label || id;
+            let img = obj.image?.url || (obj.image && obj.image.asset && obj.image.asset.url) || null;
+
+            if(typeof obj === 'string') { id = obj.toLowerCase(); label = obj; }
+
+            if (obj.character) { 
+                const inner = obj.character;
+                id = inner.slug || inner._ref || inner._id;
+                label = inner.name || label;
+                img = inner.image?.url || img;
+            }
+            
+            if (!id) return;
+            
+            id = String(id).replace(/\s+/g, '-').toLowerCase();
+
+            if (!nodesMap.has(id)) {
+                nodesMap.set(id, {
+                    id,
+                    label,
+                    image: img,
+                    isMain,
+                    group: isMain ? 'protagonist' : 'associate'
+                });
+            } else if (isMain) {
+                nodesMap.get(id).isMain = true;
+            }
+            return id; 
+        };
+
+        const mainId = addNode(character, true);
+        const links = [];
+
+        if (character.relationships && Array.isArray(character.relationships)) {
+            character.relationships.forEach(rel => {
+                const targetId = addNode(rel.character || rel);
+                if (mainId && targetId && mainId !== targetId) {
+                    links.push({ 
+                        source: mainId, 
+                        target: targetId, 
+                        label: rel.status || rel.type || '', 
+                        strength: 1
+                    });
+                }
+            });
+        }
+
+        if (character.family && Array.isArray(character.family)) {
+            character.family.forEach(fam => {
+                 const targetId = addNode(fam.character || fam);
+                 if (mainId && targetId && mainId !== targetId) {
+                    links.push({ 
+                        source: mainId, 
+                        target: targetId, 
+                        label: fam.relation || 'Family', 
+                        strength: 1.5
+                    });
+                 }
+            });
+        }
+
+        const nodes = Array.from(nodesMap.values());
+
+        if (nodes.length > 0) {
+            try {
+                const module = await import('./d3-family-tree.js');
+                const width = familyContainer.clientWidth || 300;
+                const height = familyContainer.clientHeight || 400;
+                
+                await module.renderFamilyGraph(familyContainer, { nodes, links }, { width, height, layout: 'force' });
+                
+                if (loadingEl) loadingEl.style.display = 'none';
+            } catch (err) {
+                console.error('D3 Render Failed:', err);
+                if (emptyEl) {
+                     emptyEl.style.display = 'flex'; 
+                     emptyEl.innerHTML = 'Error rendering network.<br>System failure.';
+                }
+            }
+        } else {
+             if (loadingEl) loadingEl.style.display = 'none';
+             if (emptyEl) emptyEl.style.display = 'flex'; 
+             if (emptyEl) emptyEl.classList.remove('hidden');
+        }
     }
 };
 
-// Sanity'den gelen veri yapısına göre aile ağacı verisini oluşturan yeni fonksiyon
-function buildFamilyTreeData(character) {
-    const familyData = { nodes: [], links: [] };
-    const processedIds = new Set();
-
-    // Ana karakteri ekle
-    familyData.nodes.push({
-        id: character._id,
-        name: character.name,
-        image: character.image_url,
-        description: character.description
-    });
-    processedIds.add(character._id);
-
-    // Ana karakterin aile üyelerini işle
-    if (character.family) {
-        character.family.forEach(relation => {
-            const relatedChar = relation.character;
-            if (!relatedChar) return;
-
-            // Eğer aile üyesi daha önce eklenmediyse, node listesine ekle
-            if (!processedIds.has(relatedChar._id)) {
-                familyData.nodes.push({
-                    id: relatedChar._id,
-                    name: relatedChar.name,
-                    image: relatedChar.image_url,
-                    description: relatedChar.description
-                });
-                processedIds.add(relatedChar._id);
-            }
-
-            // Bağlantıyı oluştur
-            familyData.links.push({
-                source: character._id,
-                target: relatedChar._id,
-                type: relation.relation
-            });
-        });
-    }
-
-    return familyData;
-}
-
+/**
+ * SAYFA YÜKLENDİĞİNDE ÇALIŞAN ANA FONKSİYON
+ */
 export const loadCharacterDetails = async () => {
-    const contentDiv = document.getElementById('character-detail-content');
-    if (!contentDiv) return;
-
     const params = new URLSearchParams(window.location.search);
-    const characterSlug = params.get('slug'); // ID yerine SLUG kullanıyoruz
+    const characterSlug = params.get('slug'); 
 
     if (!characterSlug) {
-        contentDiv.innerHTML = '<p class="text-red-500 text-center">No character specified.</p>';
+        console.error("Access Denied: Missing slug parameter.");
         return;
     }
 
     try {
-        // Tek bir karakteri ve onunla ilişkili AİLE üyelerini TEK BİR SORGUDAs getiren güçlü GROQ sorgusu
+        console.log(`> Querying database for Subject: ${characterSlug}`);
+
         const query = `*[_type == "character" && slug.current == $slug][0]{
-            _id,
-            name,
-            title,
-            description,
-            story,
-            relationships,
-            "image_url": image.asset->url,
-            "family": family[]{
+            ...,
+            "image": image.asset->{
+                url,
+                "blurHash": metadata.blurHash,
+                "lqip": metadata.lqip
+            },
+            faction->{title, color}, 
+            family[] {
                 relation,
                 character->{
-                    _id,
+                    name, 
+                    "slug": slug.current,
+                    "image": image.asset->{
+                        url,
+                        "blurHash": metadata.blurHash
+                    }
+                }
+            },
+            relationships[] {
+                status,
+                character->{
                     name,
-                    description,
-                    "image_url": image.asset->url
+                    "slug": slug.current,
+                    "image": image.asset->{
+                        url,
+                        "blurHash": metadata.blurHash
+                    }
                 }
             }
         }`;
-        const params = { slug: characterSlug };
+        
+        const sanityParams = { slug: characterSlug };
 
-        const character = await client.fetch(query, params);
+        const character = await client.fetch(query, sanityParams);
 
         if (character) {
-            renderCharacterDetails(character);
+            console.log("> Access Granted. Rendering file.");
+            await renderCharacterDetails(character); 
         } else {
-            contentDiv.innerHTML = `<p class="text-red-500 text-center">Character not found.</p>`;
+             document.body.innerHTML = `
+                <div class="flex h-screen items-center justify-center bg-black text-red-600 font-mono">
+                   ERROR 404: Subject not found in archives.
+                </div>`;
         }
-    } catch (error) {
-        console.error("Error fetching character details from Sanity: ", error);
-        contentDiv.innerHTML = '<p class="text-red-500 text-center">Failed to load character details.</p>';
+    } 
+    catch (error) {
+        console.error("System Failure:", error);
+        const loaderText = document.querySelector('#file-loader p');
+        if(loaderText) {
+            loaderText.textContent = "CONNECTION FAILED";
+            loaderText.classList.add('text-red-500');
+        }
     }
 };

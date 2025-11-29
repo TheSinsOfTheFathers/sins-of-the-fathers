@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="privacy_page.page_title">Privacy Protocol | The Sins of the Fathers</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { 'gold': '#c5a059', 'obsidian': '#050505' },
+                    fontFamily: { 
+                        serif: ['Cinzel', 'serif'], 
+                        sans: ['Lato', 'sans-serif'], 
+                        mono: ['Courier Prime', 'monospace'] 
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400&family=Courier+Prime&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+    <style>
+        body { background-color: #050505; color: #ccc; }
+        .noise-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 50; opacity: 0.05;
+            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MDAiIGhlaWdodD0iNTAwIj48ZmlsdGVyIGlkPSJub2lzZSI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuNjUiIG51bU9jdGF2ZXM9IjMiIHN0aXRjaFRpbGVzPSJzdGl0Y2giLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCgjbm9pc2UpIiBvcGFjaXR5PSIwLjA1Ii8+PC9zdmc+');
+        }
+        .legal-section h2 { border-bottom: 1px solid #333; padding-bottom: 0.5rem; margin-bottom: 1rem; margin-top: 2rem; color: #c5a059; font-family: 'Cinzel', serif; }
+        .legal-section p { margin-bottom: 1rem; font-size: 0.95rem; line-height: 1.6; }
+        .legal-section ul { list-style-type: disc; margin-left: 1.5rem; margin-bottom: 1rem; color: #9ca3af; }
+        
+        /* Hamburger Animation */
+        #hamburger-button span { transition: 0.3s; }
+        #hamburger-button.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 6px); }
+        #hamburger-button.active span:nth-child(2) { opacity: 0; }
+        #hamburger-button.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -6px); }
+    </style>
+
+    <script src="../assets/js/main.js" type="module" defer></script>
+</head>
+<body class="flex flex-col min-h-screen font-sans selection:bg-gold selection:text-black">
+    <div class="noise-overlay"></div>
+
+    <header class="w-full bg-obsidian/90 border-b border-white/10 sticky top-0 z-40 backdrop-blur-md">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="../index.html" class="text-xl font-serif text-gold uppercase tracking-widest">TSOF <span class="text-xs text-gray-500 ml-2 hidden md:inline" data-i18n="privacy_page.header_code">// LEGAL_DOCS_01</span></a>
+            
+            <div class="flex items-center gap-4">
+                <a href="../index.html" class="text-xs font-mono text-gray-500 hover:text-gold uppercase hidden md:inline-block" data-i18n="privacy_page.close_file">Close File</a>
+                
+                <div class="hidden md:flex gap-2 font-mono text-[10px]">
+                    <button class="lang-btn hover:text-gold transition-colors" data-lang="en" onclick="window.changeAppLanguage('en')">EN</button>
+                    <span class="text-gray-600">/</span>
+                    <button class="lang-btn hover:text-gold transition-colors" data-lang="tr" onclick="window.changeAppLanguage('tr')">TR</button>
+                </div>
+
+                <div class="md:hidden relative z-50">
+                    <button id="hamburger-button" class="text-gold focus:outline-none flex flex-col justify-between w-6 h-5">
+                        <span class="block w-full h-0.5 bg-gold"></span>
+                        <span class="block w-full h-0.5 bg-gold"></span>
+                        <span class="block w-full h-0.5 bg-gold"></span>
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div id="mobile-menu" class="hidden fixed inset-0 z-40 bg-black/95 flex-col items-center justify-center space-y-8 transition-opacity duration-300 backdrop-blur-xl">
+        <a href="./characters.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.bloodline">The Bloodline</a>
+        <a href="./timeline.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.history">History</a>
+        <a href="./factions.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.factions">Factions</a>
+        <a href="./locations.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.territories">Territories</a>
+        <a href="./lore.html" class="text-xl text-gold font-serif hover:text-white border border-gold px-6 py-2 uppercase tracking-widest" data-i18n="nav.archives">Archives</a>
+        
+        <div class="flex gap-4 font-mono text-sm mt-4">
+            <button class="lang-btn hover:text-gold transition-colors" data-lang="en" onclick="window.changeAppLanguage('en')">EN</button>
+            <span class="text-gray-600">/</span>
+            <button class="lang-btn hover:text-gold transition-colors" data-lang="tr" onclick="window.changeAppLanguage('tr')">TR</button>
+        </div>
+    </div>
+
+    <main class="flex-grow container mx-auto px-6 py-12 max-w-4xl relative z-10">
+        
+        <div class="border border-white/10 bg-white/5 p-8 md:p-12 rounded-sm shadow-2xl relative overflow-hidden">
+            <div class="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
+                <i class="fas fa-shield-alt text-9xl text-white"></i>
+            </div>
+
+            <h1 class="text-3xl md:text-4xl font-serif text-white mb-2" data-i18n="privacy_page.main_title">Privacy Protocol</h1>
+            <p class="text-xs font-mono text-gold uppercase mb-8 tracking-widest" data-i18n="privacy_page.last_updated">Last Updated: November 2025</p>
+
+            <div class="legal-section text-gray-300">
+                <p data-i18n="privacy_page.intro">Welcome to the <strong>The Sins of the Fathers</strong> digital platform ("The Fortress"). We value the privacy of our operatives and readers. This document outlines how we collect, use, and protect your data.</p>
+
+                <h2 data-i18n="privacy_page.sec1_title">1. Data Collection (Intel Gathering)</h2>
+                <p data-i18n="privacy_page.sec1_desc">We collect information to provide a better experience and to manage your access to The Fortress.</p>
+                <ul>
+                    <li data-i18n="privacy_page.sec1_li1"><strong>Identity Data:</strong> When you sign up via Google or Email (Firebase Auth), we store your email address, display name, and profile picture URL.</li>
+                    <li data-i18n="privacy_page.sec1_li2"><strong>Operational Data:</strong> We track your interaction with the timeline, factions, and lore pages to improve the narrative experience (via Google Analytics).</li>
+                    <li data-i18n="privacy_page.sec1_li3"><strong>Technical Data:</strong> IP address, browser type, and device information are automatically logged for security and diagnostic purposes.</li>
+                </ul>
+
+                <h2 data-i18n="privacy_page.sec2_title">2. Use of Data (Mission Objectives)</h2>
+                <p data-i18n="privacy_page.sec2_desc">Your data is used solely for the following purposes:</p>
+                <ul>
+                    <li data-i18n="privacy_page.sec2_li1">To authenticate your identity and secure your account.</li>
+                    <li data-i18n="privacy_page.sec2_li2">To personalize your dossier (profile page) and save your allegiance (faction choice).</li>
+                    <li data-i18n="privacy_page.sec2_li3">To analyze system performance and user engagement.</li>
+                    <li data-i18n="privacy_page.sec2_li4">We <strong>do not</strong> sell your personal data to third-party brokers.</li>
+                </ul>
+
+                <h2 data-i18n="privacy_page.sec3_title">3. Third-Party Systems (Alliances)</h2>
+                <p data-i18n="privacy_page.sec3_desc">We utilize trusted third-party services to operate this infrastructure:</p>
+                <ul>
+                    <li data-i18n="privacy_page.sec3_li1"><strong>Firebase (Google):</strong> For authentication, database, and hosting services.</li>
+                    <li data-i18n="privacy_page.sec3_li2"><strong>Sanity.io:</strong> For content management and delivery.</li>
+                    <li data-i18n="privacy_page.sec3_li3"><strong>Shopier / Gumroad:</strong> For processing external purchases. Note: We do not store your credit card information on our servers; payment processing happens on their secure platforms.</li>
+                </ul>
+
+                <h2 data-i18n="privacy_page.sec4_title">4. Data Retention (Burn Identity)</h2>
+                <p data-i18n="privacy_page.sec4_desc">You have the right to disappear. You can delete your account ("Burn Identity") at any time through your Profile page. Upon deletion, your personal identifier in our primary database is removed. Some anonymous logs may remain for system integrity.</p>
+
+                <h2 data-i18n="privacy_page.sec5_title">5. Cookies (Tracking Beacons)</h2>
+                <p data-i18n="privacy_page.sec5_desc">We use cookies to maintain your session and preferences. You may disable cookies in your browser settings, but some terminal functions may become unavailable.</p>
+
+                <h2 data-i18n="privacy_page.sec6_title">6. Contact</h2>
+                <p data-i18n="privacy_page.sec6_desc">For any inquiries regarding this protocol, please contact the architect at:</p>
+                <p class="font-mono text-gold">support@thesinsofthefathers.com</p>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="py-12 bg-obsidian border-t border-white/5 text-center relative z-10">
+        <p class="font-serif text-gold text-2xl mb-4">TSOF</p>
+        
+        <div class="flex justify-center space-x-6 mb-6 text-[10px] font-mono uppercase text-gray-500">
+            <a href="./privacy.html" class="hover:text-gold transition-colors" data-i18n="footer.privacy">Privacy Protocol</a>
+            <span>|</span>
+            <a href="./terms.html" class="hover:text-gold transition-colors" data-i18n="footer.terms">Terms of Operation</a>
+        </div>
+
+        <p class="text-gray-600 text-xs uppercase tracking-widest">
+            &copy; 2025 The Sins of the Fathers. <br>
+            <span data-i18n="footer.copyright_slogan">Ruaraidh Ballantine & Havi are watching.</span>
+        </p>
+    </footer>
+</body>
+</html>

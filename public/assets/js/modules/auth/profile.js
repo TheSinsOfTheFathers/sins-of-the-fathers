@@ -1,105 +1,171 @@
 import { auth, db, storage } from '../firebase-config.js';
-import { onAuthStateChanged, updateProfile } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import { doc, getDoc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { onAuthStateChanged, updateProfile, deleteUser } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import { doc, getDoc, setDoc, deleteDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 import { ref as storageRef, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js';
+
+/* --------------------------------------------------------------------------
+   HELPER: Visual Feedback (Noir Style)
+   -------------------------------------------------------------------------- */
+function updateButtonStatus(btn, text, status = 'default') {
+    btn.innerText = text;
+    if (status === 'loading') {
+        btn.classList.add('opacity-70', 'cursor-wait');
+    } else if (status === 'success') {
+        btn.classList.remove('bg-gold', 'text-black');
+        btn.classList.add('bg-green-600', 'text-white');
+        setTimeout(() => {
+            btn.innerText = 'UPDATE RECORDS'; 
+            btn.classList.remove('bg-green-600', 'text-white');
+            btn.classList.add('bg-gold', 'text-black');
+        }, 3000);
+    } else if (status === 'error') {
+        btn.classList.add('bg-red-900', 'text-white');
+        setTimeout(() => {
+            btn.innerText = 'UPDATE RECORDS';
+            btn.classList.remove('bg-red-900', 'text-white');
+        }, 3000);
+    }
+}
 
 export async function loadProfilePage() {
   const container = document.getElementById('profile-content');
-  if (!container) return;
+  const loader = document.getElementById('profile-loader');
+  
+  const nameInput = document.getElementById('display-name');
+  const emailInput = document.getElementById('user-email');
+  const bioInput = document.querySelector('textarea'); 
+  const factionInputs = document.querySelectorAll('input[name="faction"]');
+  const form = document.getElementById('profile-form');
+  const submitBtn = form ? form.querySelector('button[type="submit"]') : null;
+  
+  const idCardImage = document.getElementById('profile-image-preview');
+  const fileInput = document.getElementById('profile-photo-input');
+  const burnIdentityBtn = document.querySelector('#auth-signout-btn'); 
 
-  // Wait for auth state
+  if (!container) return; 
+
   onAuthStateChanged(auth, async (user) => {
     if (!user) {
-      // redirect to login with return param
-      window.location.assign('login.html?redirect=profile.html');
+      window.location.href = '/pages/login.html?redirect=profile';
       return;
     }
 
-    // Fetch user profile from Firestore
+    console.log(`> Accessing File: ${user.uid}`);
+
     const userDocRef = doc(db, 'users', user.uid);
     let userData = {};
     try {
       const snap = await getDoc(userDocRef);
       if (snap.exists()) userData = snap.data();
     } catch (err) {
-      console.error('Failed to load user profile', err);
+      console.error('Failed to decrypt user profile', err);
     }
 
-    // Render simple profile form with avatar upload
-    container.innerHTML = `
-      <h1 class="text-4xl font-serif text-yellow-500 mb-6">Profile</h1>
-      <div class="bg-neutral-800 p-6 rounded">
-        <form id="profile-form" class="profile-form space-y-4">
-          <div class="flex items-center space-x-4">
-            <div>
-              <img id="avatar-preview" src="${user.photoURL || ''}" alt="avatar" class="w-20 h-20 rounded-full object-cover ${user.photoURL ? '' : 'hidden'}" />
-            </div>
-            <div>
-              <label class="block text-sm text-gray-300">Change photo</label>
-              <input type="file" id="avatar-file" accept="image/*" />
-            </div>
-          </div>
-          <div>
-            <label class="block text-sm text-gray-300">Email</label>
-            <input type="text" name="email" value="${user.email || ''}" disabled class="w-full mt-1 p-2 rounded bg-neutral-900 border border-neutral-700" />
-          </div>
-          <div>
-            <label class="block text-sm text-gray-300">Display name</label>
-            <input type="text" name="displayName" value="${user.displayName || (userData.displayName || '')}" class="w-full mt-1 p-2 rounded bg-neutral-900 border border-neutral-700" />
-          </div>
-          <div>
-            <button id="save-profile-btn" class="py-2 px-4 bg-yellow-500 text-black rounded font-bold">Save</button>
-          </div>
-        </form>
-        <p id="profile-message" class="profile-message text-sm text-gray-300 mt-4"></p>
-      </div>
-    `;
+    if(emailInput) emailInput.value = user.email;
+    if(nameInput) nameInput.value = user.displayName || userData.displayName || '';
+    
+    if(bioInput && userData.bio) bioInput.value = userData.bio;
 
-    const form = document.getElementById('profile-form');
-    const msg = document.getElementById('profile-message');
-    const fileInput = document.getElementById('avatar-file');
-    const avatarPreview = document.getElementById('avatar-preview');
+    const currentPhoto = user.photoURL || userData.photoURL;
+    if (currentPhoto && idCardImage) {
+        idCardImage.src = currentPhoto;
+    }
 
-    fileInput.addEventListener('change', (ev) => {
-      const f = ev.target.files && ev.target.files[0];
-      if (!f) return;
-      const url = URL.createObjectURL(f);
-      avatarPreview.src = url;
-      avatarPreview.classList.remove('hidden');
-    });
+    if (userData.faction) {
+        factionInputs.forEach(radio => {
+            if (radio.value === userData.faction) radio.checked = true;
+        });
+    }
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const displayName = form.querySelector('input[name="displayName"]').value.trim();
-      const file = fileInput.files && fileInput.files[0];
-      try {
-        let photoURL = user.photoURL || null;
-        if (file) {
-          // upload to Firebase Storage
-          const sRef = storageRef(storage, `avatars/${user.uid}/${file.name}`);
-          await uploadBytes(sRef, file);
-          photoURL = await getDownloadURL(sRef);
-        }
+    if (loader) {
+        setTimeout(() => {
+            loader.classList.add('opacity-0', 'pointer-events-none'); 
+            container.classList.remove('opacity-0'); 
+        }, 600); 
+    }
 
-        // Update Auth profile
-        await updateProfile(auth.currentUser, { displayName, photoURL });
-        // Update Firestore
-        await setDoc(doc(db, 'users', user.uid), {
-          displayName,
-          photoURL,
-          updatedAt: serverTimestamp(),
-        }, { merge: true });
+    /* --------------------------------------------------------------------------
+       EVENT LISTENERS
+       -------------------------------------------------------------------------- */
 
-        // Update UI and message
-        msg.textContent = 'Profile updated.';
-        // update menu avatar if present
-        const menuImg = document.querySelector('#user-menu img.user-avatar');
-        if (menuImg && photoURL) menuImg.src = photoURL;
-      } catch (err) {
-        console.error('Failed to update profile', err);
-        msg.textContent = 'Failed to update profile.';
-      }
-    });
+    if (fileInput && idCardImage) {
+        fileInput.addEventListener('change', (ev) => {
+            const f = ev.target.files && ev.target.files[0];
+            if (!f) return;
+            if(f.size > 2 * 1024 * 1024) {
+                alert("Image file too large. Compress data packet.");
+                return;
+            }
+            const url = URL.createObjectURL(f);
+            idCardImage.src = url; 
+        });
+    }
+
+    if (form) {
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            updateButtonStatus(submitBtn, 'ENCRYPTING DATA...', 'loading');
+
+            const newName = nameInput.value.trim();
+            const newBio = bioInput ? bioInput.value.trim() : '';
+            let selectedFaction = null;
+            factionInputs.forEach(r => { if(r.checked) selectedFaction = r.value; });
+
+            const file = fileInput && fileInput.files[0];
+
+            try {
+                let photoURL = user.photoURL;
+
+                if (file) {
+                    const sRef = storageRef(storage, `avatars/${user.uid}/${Date.now()}_${file.name}`);
+                    await uploadBytes(sRef, file);
+                    photoURL = await getDownloadURL(sRef);
+                }
+
+                if (auth.currentUser) {
+                     await updateProfile(auth.currentUser, { displayName: newName, photoURL });
+                }
+
+                await setDoc(userDocRef, {
+                    displayName: newName,
+                    photoURL: photoURL,
+                    bio: newBio,
+                    faction: selectedFaction || 'neutral',
+                    updatedAt: serverTimestamp(),
+                }, { merge: true });
+
+                console.log('> Profile Updated Successfully');
+                updateButtonStatus(submitBtn, 'ACCESS GRANTED', 'success');
+                
+                const headerAvatar = document.querySelector('#user-menu-btn img');
+                if(headerAvatar && photoURL) headerAvatar.src = photoURL;
+
+            } catch (err) {
+                console.error('> Update Failed:', err);
+                updateButtonStatus(submitBtn, 'UPLOAD FAILED', 'error');
+            }
+        });
+    }
+
+    const burnBtn = document.querySelector('.lg\\:col-span-4 button'); 
+
+    if (burnBtn && !burnBtn.hasAttribute('data-listening')) {
+        burnBtn.setAttribute('data-listening', 'true'); 
+        burnBtn.addEventListener('click', async () => {
+            if (confirm("WARNING: This action will permanently scrub your identity from the Ballantine Archives. This cannot be undone. Proceed?")) {
+                try {
+                    await deleteDoc(userDocRef); 
+                    await deleteUser(user);
+                    alert("Identity scorched. Redirecting...");
+                    window.location.href = '/index.html';
+                } catch (err) {
+                    console.error(err);
+                    alert("Error: Clearance insufficient. Re-login required.");
+                }
+            }
+        });
+    }
+
   });
 }
 
