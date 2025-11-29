@@ -86,10 +86,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     );
 
     // 1. GLOBAL FONKSİYON ATAMASI
-    // HTML'deki butonların (onclick) bu fonksiyona erişebilmesi için window'a atıyoruz.
+    // HTML'deki butonların (onclick="changeAppLanguage(...)") erişebilmesi için window'a atıyoruz.
     window.changeAppLanguage = changeLanguage;
 
     // 2. SENKRON UI BAŞLATMALARI
+    // Not: Mobil menü elemanı sayfada yoksa mobile-menu.js içindeki kontrol sayesinde hata vermez.
     initMobileMenu();
     initAuth();
 
@@ -111,10 +112,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
     
     // 4. SAYFAYA ÖZEL MODÜLLERİ YÜKLE (ROUTER)
+    // Bu kısım çalışmadan önce Dil verisi hazır olduğu için 'lore-detail-loader' 
+    // doğru dildeki içeriği Sanity'den çekebilir.
     for (const config of ROUTER_CONFIGS) {
         
         const idsToCheck = Array.isArray(config.id) ? config.id : [config.id];
         
+        // Sayfada bu ID'lerden biri var mı kontrol et
         const isPageActive = idsToCheck.some(id => document.getElementById(id));
 
         if (isPageActive) {
@@ -122,15 +126,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             console.log(config.log);
 
             try {
+                // Dinamik import ile sadece gerekli JS dosyasını yükle
                 const module = await import(config.modulePath);
                 
                 if (module[config.loaderFn]) {
-                    module[config.loaderFn]();
+                    // Modülü başlat
+                    await module[config.loaderFn]();
                 } else {
                     console.error(`ERROR: Module ${config.modulePath} does not export function ${config.loaderFn}`);
                 }
                 
-                return; // Sayfa modülü bulunduğunda döngüyü kır (Performans)
+                return; // Sayfa modülü bulunduğunda döngüyü kır (Performans için)
 
             } catch (error) {
                 console.error(`FATAL ERROR: Failed to load module for ${config.log}`, error);

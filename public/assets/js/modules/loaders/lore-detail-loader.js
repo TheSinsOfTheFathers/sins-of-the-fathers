@@ -1,7 +1,20 @@
 import { client, urlFor } from '../../lib/sanityClient.js';
 import { toHTML } from 'https://esm.sh/@portabletext/to-html@2.0.13';
 import { renderBlurHash, applyBlurToStaticImage } from '../../lib/imageUtils.js';
-import i18next from '../../lib/i18n.js'; // İMPORT EKLENDİ
+import i18next from '../../lib/i18n.js';
+
+/* --------------------------------------------------------------------------
+   YARDIMCI: STATİK HTML ÇEVİRİSİ (EKSİK OLAN KISIM BURASIYDI)
+   -------------------------------------------------------------------------- */
+const updateStaticTranslations = () => {
+    // Sayfadaki tüm data-i18n özniteliğine sahip elementleri bulur
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        // i18next kütüphanesi ile anahtarı çevirir ve metni günceller
+        const translation = i18next.t(key);
+        if (translation) el.textContent = translation;
+    });
+};
 
 /* --------------------------------------------------------------------------
    RENDER LOGIC (GÖRÜNTÜLEME MOTORU)
@@ -19,7 +32,6 @@ const renderLoreIntel = (doc) => {
     setText('lore-source', doc.source, 'lore_detail.unknown_source');
     
     if (document.getElementById('lore-date')) {
-        // Tarih formatını yerel dile göre ayarla
         const dateStr = doc.date 
             ? new Date(doc.date).toLocaleDateString(i18next.language, { year: 'numeric', month: 'short', day: 'numeric' })
             : i18next.t('lore_detail.undated');
@@ -71,7 +83,6 @@ const renderLoreIntel = (doc) => {
             audio.src = doc.audioURL;
             audio.load();
 
-            // Status metnini güncelle (Çeviri ile)
             statusText.textContent = i18next.t('lore_detail.audio_standby');
 
             const togglePlay = () => {
@@ -88,6 +99,7 @@ const renderLoreIntel = (doc) => {
                 }
             };
             
+            // Event listener çakışmalarını önlemek için butonu klonla ve değiştir
             const newPlayBtn = playBtn.cloneNode(true);
             playBtn.parentNode.replaceChild(newPlayBtn, playBtn);
             newPlayBtn.addEventListener('click', togglePlay);
@@ -118,7 +130,7 @@ const renderLoreIntel = (doc) => {
             };
         }
 
-        if (paperWrapper) {
+        if (paperWrapper && !doc.body) {
             paperWrapper.style.display = 'none';
         }
 
@@ -167,6 +179,10 @@ const renderLoreIntel = (doc) => {
         const content = document.getElementById('doc-content');
         if(loader) loader.classList.add('hidden');
         if(content) content.classList.remove('opacity-0');
+        
+        // ÖNEMLİ: İçerik yüklendikten sonra statik çevirileri de güncelle
+        updateStaticTranslations(); 
+        
     }, 800); 
 };
 
@@ -175,16 +191,30 @@ export const loadLoreDetails = async () => {
     const container = document.getElementById('evidence-container'); 
     if (!container) return; 
 
+    // Sayfa ilk yüklendiğinde statik elemanları (header/footer) çevir
+    // i18next'in hazır olup olmadığını kontrol et
+    if (i18next.isInitialized) {
+        updateStaticTranslations();
+    } else {
+        i18next.on('initialized', () => {
+            updateStaticTranslations();
+        });
+    }
+
     const params = new URLSearchParams(window.location.search);
     const loreSlug = params.get('slug');
 
     if (!loreSlug) return;
 
     try {
+        const lang = i18next.language || 'en';
+        const titleField = lang === 'tr' ? 'title_tr' : 'title_en';
+        const bodyField = lang === 'tr' ? 'content_tr' : 'content_en';
+
         const query = `*[_type == "lore" && slug.current == $slug][0]{
-            "title": title_en,
-            "body": content_en,
             _id,
+            "title": coalesce(${titleField}, title_en), 
+            "body": coalesce(${bodyField}, content_en),
             "date": date,
             source,
             author,

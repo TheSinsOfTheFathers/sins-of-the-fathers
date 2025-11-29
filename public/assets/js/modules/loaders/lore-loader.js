@@ -1,7 +1,6 @@
 import { client } from '../../lib/sanityClient.js';
 import { renderBlurHash, handleImageLoad } from '../../lib/imageUtils.js'; 
 import i18next from '../../lib/i18n.js'; // i18next import
-// 👇 SEO İMPORTU EKLENDİ
 import { injectSchema } from '../../lib/seo.js'; 
 
 let allLoreData = [];
@@ -12,7 +11,7 @@ let allLoreData = [];
 
 const createDocumentCard = (lore) => `
     <div class="archive-card bg-[#e6e2d3] text-black p-6 rounded-sm shadow-lg relative overflow-hidden group h-fit break-inside-avoid">
-        <div class="absolute top-2 right-2 border border-red-900 text-red-900 text-[10px] font-bold px-2 py-0.5 transform rotate-12 opacity-70">DOC_${lore._createdAt.slice(0,4)}</div>
+        <div class="absolute top-2 right-2 border border-red-900 text-red-900 text-[10px] font-bold px-2 py-0.5 transform rotate-12 opacity-70">DOC_${lore._createdAt ? lore._createdAt.slice(0,4) : '2025'}</div>
         <h3 class="font-mono font-bold text-lg mb-2 uppercase underline decoration-red-800 decoration-2 tracking-tighter">
             <a href="lore-detail.html?slug=${lore.slug}" class="hover:text-red-900">${lore.title}</a>
         </h3>
@@ -71,6 +70,7 @@ const createRestrictedCard = (lore) => `
 const createImageCard = (lore) => {
     const imgUrl = lore.image?.url || 'https://via.placeholder.com/400';
     const blurHash = lore.image?.blurHash;
+    const dateStr = lore.date ? new Date(lore.date).toLocaleDateString(i18next.language) : i18next.t('lore_loader.no_date');
 
     const cardDiv = document.createElement('div');
     cardDiv.className = 'archive-card bg-white p-3 shadow-lg h-fit break-inside-avoid hover:rotate-1 transition-transform duration-300';
@@ -78,16 +78,10 @@ const createImageCard = (lore) => {
     cardDiv.innerHTML = `
         <a href="lore-detail.html?slug=${lore.slug}" class="block group">
             <div class="relative w-full aspect-video bg-gray-200 overflow-hidden border border-gray-300">
-                
                 <canvas class="blur-canvas absolute inset-0 w-full h-full object-cover z-0"></canvas>
-
-                <img src="${imgUrl}" 
-                     class="main-image relative w-full h-full object-cover grayscale contrast-125 opacity-0 transition-all duration-700 z-10" 
-                     loading="lazy" 
-                     alt="Evidence">
-                
+                <img src="${imgUrl}" class="main-image relative w-full h-full object-cover grayscale contrast-125 opacity-0 transition-all duration-700 z-10" loading="lazy" alt="Evidence">
                 <div class="absolute bottom-2 right-2 text-black font-bold text-[8px] px-1 rotate-[-5deg] opacity-60 font-mono z-20 bg-white/50">
-                    ${lore.date || i18next.t('lore_loader.no_date')}
+                    ${dateStr}
                 </div>
             </div>
             <div class="pt-3 pb-1 px-1">
@@ -100,10 +94,7 @@ const createImageCard = (lore) => {
     const canvas = cardDiv.querySelector('.blur-canvas');
     const img = cardDiv.querySelector('.main-image');
 
-    if (blurHash && canvas) {
-        renderBlurHash(canvas, blurHash);
-    }
-
+    if (blurHash && canvas) renderBlurHash(canvas, blurHash);
     if (img) {
         if (img.complete) handleImageLoad(img, canvas);
         else img.onload = () => handleImageLoad(img, canvas);
@@ -112,14 +103,9 @@ const createImageCard = (lore) => {
     return cardDiv;
 };
 
-/* --------------------------------------------------------------------------
-   KART DAĞITICI (Dispatcher)
-   -------------------------------------------------------------------------- */
 const generateCard = (lore) => {
     if (lore.restricted) return createRestrictedCard(lore);
-    
     const type = lore.loreType || 'document';
-    
     switch(type) {
         case 'audio': return createAudioCard(lore);
         case 'image': return createImageCard(lore);
@@ -127,9 +113,6 @@ const generateCard = (lore) => {
     }
 };
 
-/* --------------------------------------------------------------------------
-   FILTER LOGIC
-   -------------------------------------------------------------------------- */
 const renderGrid = (data) => {
     const container = document.getElementById('archive-grid');
     if (!container) return;
@@ -143,32 +126,12 @@ const renderGrid = (data) => {
 
     data.forEach(item => {
         const card = generateCard(item);
-
         if (typeof card === 'string') {
             container.insertAdjacentHTML('beforeend', card);
         } else {
             container.appendChild(card);
         }
     });
-};
-
-const applyFilters = (searchTerm = '', filterType = 'all') => {
-    const lowerTerm = searchTerm.toLowerCase();
-    
-    const filtered = allLoreData.filter(item => {
-        const matchesSearch = 
-            (item.title || '').toLowerCase().includes(lowerTerm) || 
-            (item.summary || '').toLowerCase().includes(lowerTerm);
-            
-        let matchesType = true;
-        if (filterType === 'documents') matchesType = item.loreType === 'document' || !item.loreType;
-        if (filterType === 'audio') matchesType = item.loreType === 'audio';
-        if (filterType === 'classified') matchesType = item.restricted === true;
-
-        return matchesSearch && matchesType;
-    });
-
-    renderGrid(filtered);
 };
 
 /* --------------------------------------------------------------------------
@@ -180,14 +143,23 @@ export async function displayLoreList() {
     
     if (!container) return;
 
+    // Arama Placeholder'ını çevir
+    const searchInput = document.getElementById('archive-search');
+    if(searchInput) searchInput.placeholder = i18next.t('search.placeholder');
+
     try {
         console.log("> Accessing Archives...");
+
+        // Mevcut dile göre alanları seç
+        const lang = i18next.language || 'en';
+        const titleField = lang === 'tr' ? 'title_tr' : 'title_en';
+        const summaryField = lang === 'tr' ? 'summary_tr' : 'summary_en';
 
         const query = `*[_type == "lore"] | order(date desc) {
             _id,
             _createdAt,
-            "title": title_en,
-            "summary": summary_en,
+            "title": coalesce(${titleField}, title_en), 
+            "summary": coalesce(${summaryField}, summary_en),
             "slug": slug.current,
             "loreType": loreType,
             "restricted": restricted,
@@ -201,7 +173,7 @@ export async function displayLoreList() {
         
         allLoreData = await client.fetch(query);
 
-        // 👇 SEO / SCHEMA ENJEKSİYONU (ItemList)
+        // SEO Schema
         try {
             const itemList = allLoreData.map((lore, index) => ({
                 "@type": "ListItem",
@@ -218,7 +190,7 @@ export async function displayLoreList() {
             const schemaData = {
                 "@context": "https://schema.org",
                 "@type": "CollectionPage",
-                "name": i18next.t('archive_page.meta_title') || "Classified Archives | TSOF",
+                "name": i18next.t('archive_page.meta_title') || "Classified Archives",
                 "description": "Directory of all known lore and evidence.",
                 "mainEntity": {
                     "@type": "ItemList",
@@ -226,11 +198,9 @@ export async function displayLoreList() {
                 }
             };
             injectSchema(schemaData);
-            console.log("> SEO Protocol: Lore List Schema Injected.");
         } catch (e) {
             console.warn("Schema Error:", e);
         }
-        // -----------------------------------------------------
 
         if (loader) loader.style.display = 'none';
         container.classList.remove('opacity-0');
@@ -245,40 +215,54 @@ export async function displayLoreList() {
     }
 }
 
+// public/assets/js/modules/loaders/lore-loader.js içinde:
+
 function setupSearchInterface() {
-    const searchInput = document.querySelector('input[placeholder*="Search"]'); 
-    const filterButtons = document.querySelectorAll('button.uppercase'); 
+    const searchInput = document.getElementById('archive-search'); 
+    const filterButtons = document.querySelectorAll('#archive-filters button'); 
+
+    // Arama ve Filtreleme fonksiyonu
+    const applyFilters = () => {
+        const term = searchInput ? searchInput.value.toLowerCase() : '';
+        
+        // Düzeltme: Butonun yazısına değil, data-filter özelliğine bakıyoruz
+        const activeBtn = document.querySelector('#archive-filters button.border-gold');
+        const activeType = activeBtn ? activeBtn.getAttribute('data-filter') : 'all';
+
+        const filtered = allLoreData.filter(item => {
+            const matchesSearch = 
+                (item.title || '').toLowerCase().includes(term) || 
+                (item.summary || '').toLowerCase().includes(term);
+                
+            let matchesType = true;
+            // 'activeType' artık 'all', 'text' veya 'audio' olarak doğrudan geliyor
+            if (activeType === 'text') matchesType = item.loreType === 'document' || !item.loreType;
+            if (activeType === 'audio') matchesType = item.loreType === 'audio';
+            if (activeType === 'classified') matchesType = item.restricted === true;
+
+            return matchesSearch && matchesType;
+        });
+
+        renderGrid(filtered);
+    };
 
     if (searchInput) {
-        searchInput.addEventListener('input', (e) => {
-            const activeBtn = document.querySelector('button.bg-gold\\/10'); 
-            const type = activeBtn ? mapBtnTextToType(activeBtn.textContent) : 'all';
-            applyFilters(e.target.value, type);
-        });
+        searchInput.addEventListener('input', applyFilters);
     }
 
     if (filterButtons) {
         filterButtons.forEach(btn => {
-            btn.addEventListener('click', () => {
+            btn.addEventListener('click', (e) => {
                 filterButtons.forEach(b => {
                     b.classList.remove('bg-gold/10', 'text-gold', 'font-bold', 'border-gold');
                     b.classList.add('text-gray-500', 'border-gray-700');
                 });
-                btn.classList.remove('text-gray-500', 'border-gray-700');
-                btn.classList.add('bg-gold/10', 'text-gold', 'font-bold', 'border-gold');
+                const clickedBtn = e.target.closest('button');
+                clickedBtn.classList.remove('text-gray-500', 'border-gray-700');
+                clickedBtn.classList.add('bg-gold/10', 'text-gold', 'font-bold', 'border-gold');
 
-                const type = mapBtnTextToType(btn.textContent);
-                const term = searchInput ? searchInput.value : '';
-                applyFilters(term, type);
+                applyFilters();
             });
         });
     }
-}
-
-function mapBtnTextToType(text) {
-    const t = text.toLowerCase();
-    if (t.includes('audio')) return 'audio';
-    if (t.includes('doc')) return 'documents';
-    if (t.includes('class')) return 'classified';
-    return 'all';
 }

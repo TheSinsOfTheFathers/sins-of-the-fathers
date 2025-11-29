@@ -72,28 +72,65 @@
 
     </style>
 
+    <!-- Main JS (Router bu dosyada olduğu için başka script eklemeye gerek yok) -->
     <script src="../assets/js/main.js" type="module" defer></script>
 </head>
 
 <body class="flex flex-col min-h-screen selection:bg-gold selection:text-black">
     <div class="noise-overlay"></div>
 
+    <!-- HEADER (MOBİL MENÜ EKLENDİ) -->
     <header class="fixed top-0 w-full z-50 bg-obsidian/90 backdrop-blur-md border-b border-white/5 transition-all">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="../index.html" class="text-xl md:text-2xl font-serif text-gold tracking-widest uppercase hover:text-white transition-colors">
+            
+            <!-- Logo -->
+            <a href="../index.html" class="text-xl md:text-2xl font-serif text-gold tracking-widest uppercase hover:text-white transition-colors z-50 relative">
                 TSOF <span class="hidden md:inline text-xs text-gray-600 ml-2 font-mono" data-i18n="lore_detail.header_reader">// READER</span>
             </a>
-            <a href="lore.html" class="text-xs uppercase tracking-widest text-gray-500 hover:text-gold transition-colors flex items-center font-mono">
-                <i class="fas fa-arrow-left mr-2"></i> <span data-i18n="lore_detail.back_to_archives">Back to Archives</span>
-            </a>
 
-            <div class="hidden md:flex gap-2 font-mono text-[10px]">
-                <button class="lang-btn hover:text-gold transition-colors" data-lang="en" onclick="window.changeAppLanguage('en')">EN</button>
-                <span class="text-gray-600">/</span>
-                <button class="lang-btn hover:text-gold transition-colors" data-lang="tr" onclick="window.changeAppLanguage('tr')">TR</button>
+            <!-- Desktop Nav -->
+            <div class="hidden md:flex items-center gap-6">
+                <a href="lore.html" class="text-xs uppercase tracking-widest text-gray-500 hover:text-gold transition-colors flex items-center font-mono">
+                    <i class="fas fa-arrow-left mr-2"></i> <span data-i18n="lore_detail.back_to_archives">Back to Archives</span>
+                </a>
+                <div class="flex gap-2 font-mono text-[10px]">
+                    <button class="lang-btn hover:text-gold transition-colors" data-lang="en" onclick="window.changeAppLanguage('en')">EN</button>
+                    <span class="text-gray-600">/</span>
+                    <button class="lang-btn hover:text-gold transition-colors" data-lang="tr" onclick="window.changeAppLanguage('tr')">TR</button>
+                </div>
             </div>
+
+            <!-- Mobile Menu Button (Hamburger) -->
+            <button id="mobile-menu-btn" class="md:hidden text-gold z-50 focus:outline-none">
+                <i class="fas fa-bars text-xl"></i>
+            </button>
         </nav>
+
+        <!-- Mobile Menu Overlay -->
+        <div id="mobile-menu" class="fixed inset-0 bg-black/95 z-40 flex flex-col justify-center items-center opacity-0 pointer-events-none transition-opacity duration-300">
+            <div class="flex flex-col gap-8 text-center font-serif text-xl tracking-widest text-gray-300">
+                <a href="lore.html" class="hover:text-gold transition-colors" data-i18n="lore_detail.back_to_archives">Back to Archives</a>
+                <a href="../index.html" class="hover:text-gold transition-colors">Home</a>
+                
+                <!-- Mobile Language Switcher -->
+                <div class="flex justify-center gap-6 font-mono text-sm mt-4 text-gold">
+                    <button class="lang-btn" data-lang="en" onclick="window.changeAppLanguage('en')">EN</button>
+                    <span>/</span>
+                    <button class="lang-btn" data-lang="tr" onclick="window.changeAppLanguage('tr')">TR</button>
+                </div>
+            </div>
+        </div>
     </header>
+
+    <!-- Mobile Menu Overlay (EKSİKTİ - EKLENDİ) -->
+    <div id="mobile-menu" class="hidden fixed inset-0 z-40 bg-black/95 flex-col items-center justify-center space-y-8 transition-opacity duration-300 backdrop-blur-xl">
+        <a href="./pages/characters.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.bloodline"></a>
+        <a href="./pages/timeline.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.history"></a>
+        <a href="./pages/factions.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.factions"></a>
+        <a href="./pages/locations.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.territories"></a>
+        <a href="./pages/lore.html" class="text-xl text-gold font-serif hover:text-white border border-gold px-6 py-2 uppercase tracking-widest" data-i18n="nav.archives"></a>
+        <a href="./pages/login.html" class="text-sm text-gray-400 hover:text-white mt-8 font-mono uppercase" data-i18n="auth.login"></a>
+    </div>
 
     <main class="flex-grow pt-28 pb-20 px-6">
         
@@ -143,11 +180,13 @@
                     
                     <div id="lore-media-container" class="mb-8 hidden">
                         
+                         <!-- Resim Alanı -->
                          <div id="image-wrapper" class="relative w-full h-64 md:h-96 bg-black overflow-hidden border border-white/10 group hidden">
                              <img src="" id="lore-image" class="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition duration-700">
                              <div class="absolute bottom-2 right-2 bg-black px-2 py-1 text-[10px] font-mono text-white" data-i18n="lore_detail.fig_evidence">FIG. A // EVIDENCE</div>
                          </div>
 
+                         <!-- Ses Oynatıcı -->
                          <div id="audio-player-wrapper" class="w-full bg-[#080808] border-l-2 border-gold relative overflow-hidden group hidden shadow-[0_10px_40px_-10px_rgba(0,0,0,0.8)] mt-4">
     
                             <div class="absolute inset-0 opacity-[0.03] pointer-events-none" 
@@ -186,6 +225,7 @@
                                 
                                     <div class="relative h-16 bg-black/40 border border-white/10 group-hover:border-gold/30 transition-colors cursor-pointer overflow-hidden backdrop-blur-sm" id="audio-progress-container">
                                     
+                                        <!-- Görselleştirme Çubukları (Statik) -->
                                         <div class="absolute inset-0 flex items-end justify-between px-1 pb-0 opacity-20 gap-[2px] pointer-events-none">
                                             <div class="w-1 bg-gold h-[40%]"></div><div class="w-1 bg-gold h-[70%]"></div><div class="w-1 bg-gold h-[30%]"></div>
                                             <div class="w-1 bg-gold h-[50%]"></div><div class="w-1 bg-gold h-[90%]"></div><div class="w-1 bg-gold h-[20%]"></div>
@@ -204,8 +244,10 @@
                                             <div class="w-1 bg-gold h-[50%]"></div><div class="w-1 bg-gold h-[80%]"></div><div class="w-1 bg-gold h-[40%]"></div>
                                         </div>
                                     
+                                        <!-- İlerleme Çubuğu -->
                                         <div id="audio-progress-bar" class="absolute top-0 bottom-0 left-0 bg-gold/10 border-r-2 border-gold shadow-[0_0_15px_rgba(197,160,89,0.3)] w-0 pointer-events-none transition-all duration-100 ease-linear"></div>
                                     
+                                        <!-- Hover Çizgisi -->
                                         <div class="absolute inset-y-0 w-[1px] bg-white/40 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" id="hover-line"></div>
                                     </div>
                                 
@@ -216,6 +258,7 @@
                                 </div>
                             </div>
     
+                            <!-- Dekoratif Köşeler -->
                             <div class="absolute top-0 right-0 w-6 h-6 border-t border-r border-gold/20"></div>
                             <div class="absolute bottom-0 left-0 w-6 h-6 border-b border-l border-gold/20"></div>
                         </div>
