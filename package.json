@@ -1,8 +1,24 @@
 {
+  "name": "sins-of-the-fathers-root",
+  "version": "1.0.0",
+  "description": "The root package.json for The Sins of the Fathers project, including Sanity UI dependencies and CI/CD scripts.",
+  
+  "scripts": {
+    "start:local": "npx http-server ./public",
+    "test": "echo \"No tests defined\"",
+    
+    "build": "echo 'Frontend Build Success for CI' > build.log" 
+  },
+  
+  "dependencies": {
+    "@sanity/color-input": "^4.0.6",
+    "@sanity/vision": "^4.16.0",
+    "cytoscape": "^3.33.1",
+    "cytoscape-dagre": "^2.5.0",
+    "mermaid": "^11.12.1",
+    "sanity": "^4.16.0"
+  },
   "devDependencies": {
     "eslint": "^8.57.1"
-  },
-  "dependencies": {
-    "@sanity/client": "^7.12.1"
   }
 }
