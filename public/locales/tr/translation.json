@@ -234,21 +234,17 @@
     "link_login": "Terminale Eriş"
   },
   "lore_detail": {
-    "page_title": "Kanıt Dosyası | The Sins of the Fathers",
-    "header_reader": "// OKUYUCU",
-    "back_to_archives": "Arşive Dön",
-    "metadata_title": "Dosya Verileri",
-    "meta_origin": "KAYNAK",
-    "meta_date": "TARİH",
-    "meta_author": "YAZAR / KONUŞMACI",
-    "meta_clearance": "YETKİ",
-    "meta_confidential": "GİZLİ",
-    "tagged_entities": "Bağlantılı Varlıklar",
-    "fig_evidence": "ŞEKİL A // KANIT",
-    "audio_trans": "Ses Kaydı İletimi",
-    "record_id": "Arşiv Kayıt No:",
-    "warning_text": "UYARI: Bu materyalin izinsiz dağıtımı aforoz veya infaz ile cezalandırılır.",
-    "stamp_verified": "ONAYLANDI"
+    "unknown_source": "Anonim Kaynak",
+    "undated": "Tarihsiz Kayıt",
+    "redacted": "SANSÜRLENDİ",
+    "no_links": "// İlişkili bağlantı yok",
+    "audio_standby": "HAZIR",
+    "audio_playing": "OYNATILIYOR...",
+    "audio_paused": "DURAKLATILDI",
+    "audio_ended": "İLETİM SONA ERDİ",
+    "classified_tooltip": "Gizli Bilgi",
+    "error_not_found": "HATA 404: DOSYA ARŞİVDE BULUNAMADI",
+    "error_system": "SİSTEM HATASI: VERİ AKIŞI OKUNAMIYOR"
   },
   "privacy_page": {
     "page_title": "Gizlilik Protokolü | The Sins of the Fathers",

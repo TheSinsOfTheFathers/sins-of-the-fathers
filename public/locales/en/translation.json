@@ -234,21 +234,17 @@
     "link_login": "Access Terminal"
   },
   "lore_detail": {
-    "page_title": "Evidence Record | The Sins of the Fathers",
-    "header_reader": "// READER",
-    "back_to_archives": "Back to Archives",
-    "metadata_title": "File Metadata",
-    "meta_origin": "ORIGIN",
-    "meta_date": "DATE",
-    "meta_author": "AUTHOR / SPEAKER",
-    "meta_clearance": "CLEARANCE",
-    "meta_confidential": "CONFIDENTIAL",
-    "tagged_entities": "Tagged Entities",
-    "fig_evidence": "FIG. A // EVIDENCE",
-    "audio_trans": "Audio Log Transmission",
-    "record_id": "Archived Record ID:",
-    "warning_text": "WARNING: Unauthorized distribution of this material is punishable by excommunication or termination.",
-    "stamp_verified": "VERIFIED"
+    "unknown_source": "Anonymous Source",
+    "undated": "Undated Record",
+    "redacted": "REDACTED",
+    "no_links": "// No associated links",
+    "audio_standby": "STANDBY",
+    "audio_playing": "PLAYING...",
+    "audio_paused": "PAUSED",
+    "audio_ended": "TRANSMISSION ENDED",
+    "classified_tooltip": "Classified Info",
+    "error_not_found": "ERROR 404: FILE NOT FOUND IN ARCHIVE",
+    "error_system": "SYSTEM ERROR: CANNOT READ DATA STREAM"
   },
   "privacy_page": {
     "page_title": "Privacy Protocol | The Sins of the Fathers",
