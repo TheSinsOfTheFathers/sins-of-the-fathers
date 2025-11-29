@@ -30,16 +30,8 @@ const firebaseConfig = {
 let app, db, analytics, auth, functionsInstance, googleProvider, storage;
 
 try {
-    // 👇 KRİTİK DEBUG ADIMI: Localhost için App Check debug token'ını etkinleştir
-    // Bu, yerel geliştirme sırasında API çağrılarının engellenmesini önler.
-    if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1") {
-        self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
-    }
-
     app = initializeApp(firebaseConfig);
     
-    // 👇 APP CHECK BAŞLATMA
-    // RECAPTCHA_SITE_KEY'i kullanarak App Check'i başlat
     initializeAppCheck(app, {
         provider: new ReCaptchaV3Provider(RECAPTCHA_SITE_KEY),
         isTokenAutoRefreshEnabled: true
