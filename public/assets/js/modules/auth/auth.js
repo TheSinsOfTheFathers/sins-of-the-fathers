@@ -1,20 +1,25 @@
-import { auth, googleProvider, RECAPTCHA_SITE_KEY, functions } from '../firebase-config.js';
+import { auth, googleProvider, RECAPTCHA_SITE_KEY, functions } from '../firebase-config.js'; 
 import { httpsCallable } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
-  onAuthStateChanged,
-  updateProfile
+  onAuthStateChanged
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import { db } from '../firebase-config.js';
 import { doc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import i18next from '../../lib/i18n.js';
 
+/* --------------------------------------------------------------------------
+   NOIR UI HELPERS (Terminal Style Messages)
+   -------------------------------------------------------------------------- */
 function showMessage(target, msg, type = 'info') {
   if (!target) return;
-  target.textContent = msg;
-  target.className = `auth-message ${type}`;
+  target.textContent = `> ${msg}`;
+  if (type === 'error') target.className = 'text-red-500 font-mono text-xs animate-pulse';
+  else if (type === 'success') target.className = 'text-gold font-mono text-xs';
+  else target.className = 'text-gray-500 font-mono text-xs';
 }
 
 function ensureToastContainer() {
@@ -22,363 +27,317 @@ function ensureToastContainer() {
   if (!container) {
     container = document.createElement('div');
     container.id = 'toast-container';
-    container.style.position = 'fixed';
-    container.style.right = '16px';
-    container.style.top = '16px';
-    container.style.zIndex = '9999';
-    container.style.display = 'flex';
-    container.style.flexDirection = 'column';
-    container.style.gap = '8px';
+    Object.assign(container.style, {
+      position: 'fixed', right: '20px', bottom: '20px', zIndex: '9999',
+      display: 'flex', flexDirection: 'column', gap: '10px'
+    });
     document.body.appendChild(container);
   }
   return container;
 }
 
-function showPopup(type, message, {timeout = 6000} = {}) {
+function showPopup(type, message, {timeout = 5000} = {}) {
   const container = ensureToastContainer();
   const toast = document.createElement('div');
-  toast.className = `toast toast-${type}`;
-  toast.style.minWidth = '240px';
-  toast.style.maxWidth = '360px';
-  toast.style.padding = '10px 12px';
-  toast.style.borderRadius = '8px';
-  toast.style.boxShadow = '0 6px 18px rgba(0,0,0,0.15)';
-  toast.style.color = '#fff';
-  toast.style.fontSize = '14px';
-  toast.style.display = 'flex';
-  toast.style.justifyContent = 'space-between';
-  toast.style.alignItems = 'center';
-  toast.style.gap = '12px';
-  if (type === 'error') toast.style.background = '#ef4444';
-  else if (type === 'success') toast.style.background = '#10b981';
-  else toast.style.background = '#111827';
+  
+  const isError = type === 'error';
+  const borderColor = isError ? '#4a0404' : '#c5a059';
+  const textColor = isError ? '#ff5555' : '#c5a059';
+  const icon = isError ? '⚠ ERROR:' : '✓ SYSTEM:';
 
-  const text = document.createElement('div');
-  text.textContent = message;
-  text.style.flex = '1';
-  toast.appendChild(text);
-
-  const closeBtn = document.createElement('button');
-  closeBtn.textContent = '×';
-  closeBtn.style.background = 'transparent';
-  closeBtn.style.border = 'none';
-  closeBtn.style.color = 'rgba(255,255,255,0.9)';
-  closeBtn.style.fontSize = '18px';
-  closeBtn.style.cursor = 'pointer';
-  closeBtn.style.padding = '0 4px';
-  closeBtn.addEventListener('click', () => {
-    if (toast && toast.parentNode) toast.parentNode.removeChild(toast);
+  Object.assign(toast.style, {
+      minWidth: '280px', maxWidth: '400px', padding: '15px', 
+      background: '#050505',
+      borderLeft: `3px solid ${borderColor}`,
+      borderTop: '1px solid #222', borderRight: '1px solid #222', borderBottom: '1px solid #222',
+      boxShadow: '0 10px 30px rgba(0,0,0,0.9)', 
+      color: '#ccc', fontFamily: "'Courier Prime', monospace", fontSize: '12px',
+      display: 'flex', alignItems: 'flex-start', gap: '12px',
+      opacity: '0', transform: 'translateY(20px)', transition: 'all 0.3s ease'
   });
-  toast.appendChild(closeBtn);
+
+  toast.innerHTML = `
+    <span style="color:${textColor}; font-weight:bold; white-space:nowrap;">${icon}</span>
+    <span style="line-height:1.4;">${message}</span>
+  `;
+  
+  requestAnimationFrame(() => {
+      toast.style.opacity = '1';
+      toast.style.transform = 'translateY(0)';
+  });
 
   container.appendChild(toast);
-  if (timeout > 0) setTimeout(() => { if (toast.parentNode) toast.parentNode.removeChild(toast); }, timeout);
+
+  if (timeout > 0) {
+      setTimeout(() => { 
+          toast.style.opacity = '0';
+          toast.style.transform = 'translateY(10px)';
+          setTimeout(() => { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 300);
+      }, timeout);
+  }
   return toast;
 }
 
 function firebaseErrorToMessage(err) {
-  if (!err) return 'Unknown error.';
+  if (!err) return 'Unknown system failure.';
   const code = err.code || '';
   switch (code) {
-    case 'auth/email-already-in-use': return 'This email address is already in use.';
-    case 'auth/invalid-email': return 'Invalid email address.';
-    case 'auth/invalid-credential': return 'Invalid credentials.';
-    case 'auth/weak-password': return 'Password is too weak. Must be at least 6 characters.';
-    case 'auth/user-not-found': return 'User not found.';
-    case 'auth/wrong-password': return 'Incorrect password.';
-    case 'auth/popup-closed-by-user': return 'Google sign-in window was closed.';
-    case 'auth/popup-blocked': return "Please allow popups in your browser to use Google sign-in.";
-    case 'auth/network-request-failed': return 'Network error. Check your internet connection.';
-    case 'auth/too-many-requests': return 'Too many attempts. Please try again later.';
-    case 'auth/unauthorized-domain': return 'This app is not authorized to use Firebase Authentication on this domain.';
+    case 'auth/email-already-in-use': return 'Identity already exists in the database.';
+    case 'auth/invalid-email': return 'Invalid communication frequency (Email).';
+    case 'auth/invalid-credential': return 'Access Denied: Credentials rejected.';
+    case 'auth/weak-password': return 'Security Alert: Key is too weak (Min 6 chars).';
+    case 'auth/user-not-found': return 'Operative not found in archives.';
+    case 'auth/wrong-password': return 'Encryption key mismatch (Wrong Password).';
     default:
-      return err.message || 'An unexpected error occurred.';
+      return err.message || 'System malfunction.';
   }
 }
 
-async function loadRecaptcha(siteKey) {
-  if (!siteKey) return false;
-  if (window.grecaptcha) return true;
-  return new Promise((resolve) => {
-    const scriptId = 'recaptcha-api-script';
-    if (document.getElementById(scriptId)) {
-      const check = () => (window.grecaptcha ? resolve(true) : setTimeout(check, 200));
-      check();
-      return;
-    }
-    const s = document.createElement('script');
-    s.id = scriptId;
-    s.src = `https://www.google.com/recaptcha/api.js?render=${encodeURIComponent(siteKey)}`;
-    s.async = true;
-    s.defer = true;
-    s.onload = () => {
-      const check = () => (window.grecaptcha ? resolve(true) : setTimeout(check, 200));
-      check();
-    };
-    s.onerror = () => resolve(false);
-    document.head.appendChild(s);
-  });
-}
+/* --------------------------------------------------------------------------
+   RECAPTCHA LOGIC
+   -------------------------------------------------------------------------- */
+let recaptchaReadyPromise = new Promise(resolve => {
+  if (window.grecaptcha && window.grecaptcha.execute) {
+    resolve();
+  } else {
+    const checkInterval = setInterval(() => {
+        if (window.grecaptcha && window.grecaptcha.execute) {
+            clearInterval(checkInterval);
+            resolve();
+        }
+    }, 500);
+  }
+});
 
 async function getRecaptchaToken(action = 'auth') {
-  if (!RECAPTCHA_SITE_KEY) {
-    return null;
-  }
-
+  if (!RECAPTCHA_SITE_KEY) return null;
   try {
-    await loadRecaptcha(RECAPTCHA_SITE_KEY); 
-        
-    const token = await new Promise((resolve) => {
-      window.grecaptcha.ready(async () => {
-        const t = await window.grecaptcha.execute(RECAPTCHA_SITE_KEY, { action });
-        resolve(t);
-      });
-    });
-        
+    await recaptchaReadyPromise;
+    const token = await window.grecaptcha.execute(RECAPTCHA_SITE_KEY, { action });
     return token;
   } catch (e) {
-    console.warn('reCAPTCHA execution error:', e);
+    console.error('Bot detection failed:', e);
     return null;
   }
 }
 
+/* --------------------------------------------------------------------------
+   MAIN AUTH INIT
+   -------------------------------------------------------------------------- */
 export function initAuth() {
-  // --- Element Lookups ---
   const registerForm = document.getElementById('auth-register-form');
   const loginForm = document.getElementById('auth-login-form');
   const googleBtn = document.getElementById('google-signin-btn');
   const googleBtnRegister = document.getElementById('google-signin-btn-register');
-  const authControls = document.getElementById('auth-controls');
-  const signinLink = document.getElementById('auth-signin-link');
   const authMessage = document.getElementById('auth-message');
-
-  // --- Form Switcher Logic (Login Page Specific) ---
-  const title = document.getElementById('form-title');
   const switchLogin = document.getElementById('switch-to-login');
   const switchRegister = document.getElementById('switch-to-register');
 
-  if (loginForm && registerForm && title && switchLogin && switchRegister) {
+  if (loginForm && registerForm && switchLogin && switchRegister) {
     const switchTo = (isRegister) => {
+      const title = document.querySelector('h1') || document.getElementById('form-title');
       if (isRegister) {
         loginForm.classList.add('hidden');
         registerForm.classList.remove('hidden');
-        title.textContent = "Create Account";
+        if(title) title.innerHTML = i18next.t('login_page.dynamic_title_register');
       } else {
         registerForm.classList.add('hidden');
         loginForm.classList.remove('hidden');
-        title.textContent = "Sign In";
+        if(title) title.innerHTML = i18next.t('login_page.dynamic_title_login');
       }
     };
 
-    switchRegister.addEventListener('click', (e) => {
-      e.preventDefault();
-      switchTo(true);
-    });
-    switchLogin.addEventListener('click', (e) => {
-      e.preventDefault();
-      switchTo(false);
-    });
-
-    if (window.location.hash === '#register') {
-      switchTo(true);
-    }
+    switchRegister.addEventListener('click', (e) => { e.preventDefault(); switchTo(true); });
+    switchLogin.addEventListener('click', (e) => { e.preventDefault(); switchTo(false); });
   }
 
-  // --- Event Listeners for Forms ---
+  /* --- EMAIL / PASSWORD REGISTER --- */
   if (registerForm) {
     registerForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = registerForm.querySelector('input[name="email"]').value.trim();
       const password = registerForm.querySelector('input[name="password"]').value.trim();
-      showMessage(authMessage, 'Creating account...', 'info');
+      
+      showMessage(authMessage, 'Initiating vetting protocol...', 'info');
+
       try {
         const signupToken = await getRecaptchaToken('signup');
-        if (RECAPTCHA_SITE_KEY && !signupToken) {
-          showPopup('error', 'reCAPTCHA verification failed. Please try again.');
-          return;
-        }
-        
         const verifyRecaptchaToken = httpsCallable(functions, 'verifyRecaptchaToken');
-        await verifyRecaptchaToken({ 
-          token: signupToken,
-          action: 'signup'
-        });
+        await verifyRecaptchaToken({ token: signupToken, action: 'signup' });
 
-        console.debug('reCAPTCHA token (signup) verified by cloud function');
+        showMessage(authMessage, 'Creating dossier...', 'info');
         const userCred = await createUserWithEmailAndPassword(auth, email, password);
-        try {
-          await setDoc(doc(db, 'users', userCred.user.uid), {
+        
+        await setDoc(doc(db, 'users', userCred.user.uid), {
             email: email,
             provider: 'password',
             createdAt: serverTimestamp(),
-          });
-        } catch (writeErr) {
-          console.error('Failed to write user profile to Firestore', writeErr);
-        }
+            role: 'recruit',
+            faction: 'undecided'
+        }, { merge: true });
 
-        showMessage(authMessage, 'Account created. Redirecting…', 'success');
-        setTimeout(() => window.location.assign('profile.html'), 800);
+        showMessage(authMessage, 'Identity Verified. Redirecting...', 'success');
+        setTimeout(() => window.location.href = './pages/profile.html', 1000);
       } catch (err) {
         showPopup('error', firebaseErrorToMessage(err));
-        console.error('Sign up error', err);
+        showMessage(authMessage, 'Registration Failed.', 'error');
       }
     });
   }
 
+  /* --- EMAIL / PASSWORD LOGIN --- */
   if (loginForm) {
     loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = loginForm.querySelector('input[name="email"]').value.trim();
       const password = loginForm.querySelector('input[name="password"]').value.trim();
-      showMessage(authMessage, 'Signing in…', 'info');
+
+      showMessage(authMessage, 'Decrypting credentials...', 'info');
+
       try {
         const loginToken = await getRecaptchaToken('login');
-        if (RECAPTCHA_SITE_KEY && !loginToken) {
-          showPopup('error', 'reCAPTCHA verification failed. Please try again.');
-          return;
-        }
-
         const verifyRecaptchaToken = httpsCallable(functions, 'verifyRecaptchaToken');
-        await verifyRecaptchaToken({ 
-          token: loginToken,
-          action: 'login'
-        });
+        await verifyRecaptchaToken({ token: loginToken, action: 'login' });
 
-        console.debug('reCAPTCHA token (login) verified by cloud function');
+        showMessage(authMessage, 'Access Granted.', 'success');
         await signInWithEmailAndPassword(auth, email, password);
-        showMessage(authMessage, 'Signed in. Redirecting…', 'success');
-        setTimeout(() => window.location.assign('../index.html'), 600);
+        
+        setTimeout(() => window.location.href = '../index.html', 800); 
       } catch (err) {
         showPopup('error', firebaseErrorToMessage(err));
-        console.error('Sign in error', err);
+        showMessage(authMessage, 'Access Denied.', 'error');
       }
     });
   }
 
-  // --- Unified Google Sign-In Handler ---
+  /* --- GOOGLE LOGIN --- */
   const handleGoogleSignIn = async (e) => {
     e.preventDefault();
-    showMessage(authMessage, 'Signing in with Google…', 'info');
+    showMessage(authMessage, 'Contacting Google satellites...', 'info');
+    
     try {
-      const googleToken = await getRecaptchaToken('google_signin');
-      if (RECAPTCHA_SITE_KEY && !googleToken) {
-        showPopup('error', 'reCAPTCHA verification failed. Please try again.');
-        return;
-      }
+        const googleToken = await getRecaptchaToken('google_signin');
+        const verifyRecaptchaToken = httpsCallable(functions, 'verifyRecaptchaToken');
+        await verifyRecaptchaToken({ token: googleToken, action: 'google_signin' });
 
-      const verifyRecaptchaToken = httpsCallable(functions, 'verifyRecaptchaToken');
-      await verifyRecaptchaToken({ 
-        token: googleToken,
-        action: 'google_signin'
-      });
-
-      console.debug('reCAPTCHA token (google) verified by cloud function');
-      const result = await signInWithPopup(auth, googleProvider);
-      try {
+        const result = await signInWithPopup(auth, googleProvider);
         const u = result.user;
-        await setDoc(doc(db, 'users', u.uid), {
-          email: u.email,
-          displayName: u.displayName || null,
-          photoURL: u.photoURL || null,
-          provider: 'google',
-          lastLogin: serverTimestamp(),
-        }, { merge: true });
-      } catch (writeErr) {
-        console.error('Failed to write Google user profile to Firestore', writeErr);
-      }
 
-      showMessage(authMessage, 'Signed in with Google. Redirecting…', 'success');
-      setTimeout(() => window.location.assign('../index.html'), 600);
+        await setDoc(doc(db, 'users', u.uid), {
+            email: u.email,
+            displayName: u.displayName || null,
+            photoURL: u.photoURL || null,
+            provider: 'google',
+            lastLogin: serverTimestamp(),
+        }, { merge: true });
+
+        showMessage(authMessage, 'Biometrics confirmed.', 'success');
+        setTimeout(() => window.location.href = '/public/index.html', 800);
     } catch (err) {
       showPopup('error', firebaseErrorToMessage(err));
-      console.error('Google sign-in error', err);
+      showMessage(authMessage, 'Signal Lost.', 'error');
     }
   };
 
-  if (googleBtn) {
-    googleBtn.addEventListener('click', handleGoogleSignIn);
-  }
-  if (googleBtnRegister) {
-    googleBtnRegister.addEventListener('click', handleGoogleSignIn);
-  }
+  if (googleBtn) googleBtn.addEventListener('click', handleGoogleSignIn);
+  if (googleBtnRegister) googleBtnRegister.addEventListener('click', handleGoogleSignIn);
 
 
-  document.addEventListener('click', (ev) => {
-    const target = ev.target;
-    if (target && target.classList && target.classList.contains('user-menu-signout')) {
-      ev.preventDefault();
-      (async () => {
-        try {
-          await signOut(auth);
-          if (authMessage) showMessage(authMessage, 'Signed out', 'info');
-          setTimeout(() => window.location.reload(), 300);
-        } catch (err) {
-          if (authMessage) showPopup('error', 'Sign out failed. Please try again.');
-          console.error('Sign out (menu) error', err);
-        }
-      })();
-    }
-  });
-
+/* --------------------------------------------------------------------------
+   HEADER MENU & AUTH STATE (GÜNCELLENMİŞ VERSİYON)
+   -------------------------------------------------------------------------- */
   onAuthStateChanged(auth, (user) => {
+    const signinLink = document.getElementById('auth-signin-link');
+    
+    const guestLocks = document.querySelectorAll('.guest-only, .guest-lock'); 
+    
     if (user) {
       if (signinLink) signinLink.style.display = 'none';
+
+      guestLocks.forEach(el => el.style.display = 'none'); 
+
       ensureUserMenu(user);
+      
+      document.querySelectorAll('.restricted-overlay').forEach(overlay => overlay.style.display = 'none');
+      document.querySelectorAll('.restricted-content').forEach(content => content.classList.remove('restricted-content-blur'));
+
     } else {
-      if (signinLink) signinLink.style.display = '';
+      if (signinLink) signinLink.style.display = 'flex'; 
+
+      guestLocks.forEach(el => el.style.display = 'flex'); 
+      
       const existing = document.getElementById('user-menu');
-      if (existing && existing.parentNode) existing.parentNode.removeChild(existing);
+      if (existing) existing.remove();
+
+      document.querySelectorAll('.restricted-overlay').forEach(overlay => overlay.style.display = 'flex');
+      document.querySelectorAll('.restricted-content').forEach(content => content.classList.add('restricted-content-blur'));
     }
   });
-
 
   function ensureUserMenu(user) {
     const controls = document.getElementById('auth-controls');
     if (!controls) return;
+    if (document.getElementById('user-menu')) return;
 
-    let menu = document.getElementById('user-menu');
-    if (!menu) {
-      menu = document.createElement('div');
-      menu.id = 'user-menu';
-      menu.className = 'user-menu';
-      menu.style.position = 'relative';
-      menu.innerHTML = `
-        <button class="user-menu-button" aria-haspopup="true" aria-expanded="false">
-          <img class="user-avatar hidden" alt="avatar" />
-        </button>
-        <div class="user-menu-dropdown hidden" role="menu">
-          <a href="pages/profile.html" class="block px-4 py-2 hover:bg-neutral-800">Profile</a>
-          <a href="#" class="block px-4 py-2 hover:bg-neutral-800 user-menu-signout">Sign out</a>
-        </div>
-      `;
-      const avatarImg = menu.querySelector('img.user-avatar');
-      if (avatarImg && user.photoURL) {
-        avatarImg.src = user.photoURL;
-        avatarImg.classList.remove('hidden');
-      }
-      controls.appendChild(menu);
+    const menu = document.createElement('div');
+    menu.id = 'user-menu';
+    menu.className = 'relative ml-6';
+    
+    const avatarSrc = user.photoURL 
+        ? user.photoURL 
+        : `https://ui-avatars.com/api/?name=${encodeURIComponent(user.email)}&background=c5a059&color=000`;
 
-      const btn = menu.querySelector('.user-menu-button');
-      const dd = menu.querySelector('.user-menu-dropdown');
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        const open = !dd.classList.contains('hidden');
-        dd.classList.toggle('hidden', open);
-        btn.setAttribute('aria-expanded', String(!open));
-      });
-      document.addEventListener('click', (ev) => {
-        if (!menu.contains(ev.target)) {
-          dd.classList.add('hidden');
-          btn.setAttribute('aria-expanded', 'false');
-        }
-      });
-    } else {
-      const img = menu.querySelector('img.user-avatar');
-      if (img && user.photoURL) {
-        img.src = user.photoURL;
-        img.classList.remove('hidden');
-      }
-    }
+    menu.innerHTML = `
+      <button id="user-menu-btn" class="flex items-center gap-2 group focus:outline-none">
+         <span class="hidden md:block text-[10px] font-mono text-gray-400 group-hover:text-gold tracking-widest uppercase">
+            ${i18next.t('agent_display', { name: user.displayName ? user.displayName.split(' ')[0] : 'Unknown' })}
+         </span>
+         <img class="w-8 h-8 rounded-sm object-cover border border-gray-700 group-hover:border-gold transition-colors" src="${avatarSrc}" alt="ID" />
+      </button>
+
+      <div id="user-dropdown" class="hidden absolute right-0 mt-4 w-56 bg-obsidian border border-gold/30 shadow-[0_0_20px_rgba(0,0,0,0.8)] z-50 backdrop-blur-xl">
+          <!-- Corner Decoration -->
+          <div class="absolute -top-1 -left-1 w-2 h-2 border-t border-l border-gold opacity-50"></div>
+          <div class="absolute -bottom-1 -right-1 w-2 h-2 border-b border-r border-gold opacity-50"></div>
+          
+          <div class="px-4 py-3 border-b border-white/5">
+             <p class="text-[10px] text-gray-500 font-mono uppercase tracking-widest">Current Identity</p>
+             <p class="text-xs text-gold truncate font-mono">${user.email}</p>
+          </div>
+          
+          <div class="py-1">
+            <a href="/public/pages/profile.html" class="block px-4 py-2 text-xs text-gray-300 hover:bg-white/5 hover:text-white font-serif uppercase tracking-wide transition-colors">
+                <i class="fas fa-id-card mr-2 text-gold/70"></i> Access File
+            </a>
+          </div>
+
+          <div class="border-t border-white/10">
+            <button id="menu-signout-btn" class="w-full text-left px-4 py-3 text-xs text-red-800 hover:text-red-500 hover:bg-red-900/10 font-mono uppercase tracking-widest transition-colors">
+                <i class="fas fa-power-off mr-2"></i> Disconnect
+            </button>
+          </div>
+      </div>
+    `;
+    
+    controls.appendChild(menu);
+
+    const btn = document.getElementById('user-menu-btn');
+    const dropdown = document.getElementById('user-dropdown');
+    const signoutBtn = document.getElementById('menu-signout-btn');
+
+    btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        dropdown.classList.toggle('hidden');
+    });
+
+    signoutBtn.addEventListener('click', async () => {
+        try { await signOut(auth); window.location.href = '/public/index.html'; } 
+        catch (err) { console.error(err); }
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!menu.contains(e.target)) dropdown.classList.add('hidden');
+    });
   }
 }
 
