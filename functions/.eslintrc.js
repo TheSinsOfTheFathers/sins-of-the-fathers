@@ -16,10 +16,12 @@ module.exports = {
   parserOptions: {
     project: ["tsconfig.json"],
     sourceType: "module",
+    createDefaultProgram: true, 
   },
   ignorePatterns: [
-    "/lib/**/*", // Ignore built files.
-    "/generated/**/*", // Ignore generated files.
+    "/lib/**/*",
+    "/generated/**/*",
+    ".eslintrc.js",
   ],
   plugins: [
     "@typescript-eslint",
@@ -29,5 +31,6 @@ module.exports = {
     "quotes": ["error", "double"],
     "import/no-unresolved": 0,
     "indent": ["error", 2],
+    "linebreak-style": 0, 
   },
 };

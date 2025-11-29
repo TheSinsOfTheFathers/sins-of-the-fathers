@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en"> 
+<head>
+    <!-- Meta Tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading...</title>
+    
+    <!-- Tailwind CSS (Custom Config) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'blood': '#4a0404',
+                        'gold': '#c5a059',
+                        'obsidian': '#050505',
+                        'concrete': '#1a1a1a',
+                        'monitor-green': '#00ff41'
+                    },
+                    fontFamily: {
+                        serif: ['Cinzel', 'serif'],
+                        sans: ['Lato', 'sans-serif'],
+                        mono: ['Courier Prime', 'monospace']
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'blink': 'blink 1s steps(2, start) infinite'
+                    },
+                    keyframes: {
+                        blink: { '0%, 100%': { opacity: '1' }, '50%': { opacity: '0' } }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Courier+Prime&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+    <style>
+        body { background-color: #050505; color: #ccc; }
+        .noise-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 50;
+            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MDAiIGhlaWdodD0iNTAwIj48ZmlsdGVyIGlkPSJub2lzZSI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuNjUiIG51bU9jdGF2ZXM9IjMiIHN0aXRjaFRpbGVzPSJzdGl0Y2giLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCgjbm9pc2UpIiBvcGFjaXR5PSIwLjA1Ii8+PC9zdmc+');
+            opacity: 0.05;
+        }
+
+        /* Scanlines for the image feed */
+        .surveillance-feed {
+            position: relative;
+            overflow: hidden;
+        }
+        .surveillance-feed::before {
+            content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none; z-index: 10;
+        }
+        .rec-indicator { color: red; text-shadow: 0 0 5px red; }
+    </style>
+</head>
+
+<body class="flex flex-col min-h-screen selection:bg-white selection:text-black">
+    <div class="noise-overlay"></div>
+
+    <!-- Header (Simplified) -->
+    <header class="fixed top-0 w-full z-50 bg-obsidian/90 backdrop-blur-md border-b border-white/5 transition-all">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="../index.html" class="text-xl md:text-2xl font-serif text-gold tracking-widest uppercase hover:text-white transition-colors">
+                TSOF <span class="hidden md:inline text-xs text-gray-600 ml-2" data-i18n="location_detail_page.header_subtitle"></span>
+            </a>
+            
+            <a href="locations.html" class="text-xs uppercase tracking-widest text-gray-500 hover:text-gold transition-colors flex items-center">
+                <i class="fas fa-arrow-left mr-2"></i> <span data-i18n="location_detail_page.return_to_map"></span>
+            </a>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow pt-24 pb-12 px-4 md:px-6">
+        
+        <div id="location-intel" class="container mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- LEFT: THE FEED (VISUAL) -->
+            <div class="lg:col-span-2">
+                <!-- Surveillance Window -->
+                <div class="bg-black border border-white/10 relative shadow-2xl surveillance-feed aspect-video">
+                    <!-- Top HUD -->
+                    <div class="absolute top-4 left-4 right-4 z-20 flex justify-between items-start text-xs font-mono">
+                         <div class="text-white bg-black/50 px-2 py-1" data-i18n="location_detail_page.hud_cam_loading"></div>
+                         <div class="text-red-500 flex items-center bg-black/50 px-2 py-1"><div class="w-2 h-2 rounded-full bg-red-500 mr-2 animate-pulse"></div><span data-i18n="location_detail_page.hud_rec"></span></div>
+                    </div>
+
+                    <!-- THE IMAGE (Inject via JS) -->
+                    <img id="loc-image" src="https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?q=80&w=2874&auto=format&fit=crop" 
+                         alt="Location Surveillance" 
+                         class="w-full h-full object-cover grayscale opacity-60 contrast-125 hover:grayscale-0 transition-all duration-1000">
+                    
+                    <!-- Center Loader -->
+                    <div id="feed-loader" class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                         <div class="border border-white/30 p-4">
+                             <p class="font-mono text-xs text-white uppercase animate-blink" data-i18n="location_detail_page.hud_resolving_data"></p>
+                         </div>
+                    </div>
+
+                    <!-- Bottom HUD -->
+                    <div class="absolute bottom-4 left-4 z-20 font-mono text-xs text-gold/80" data-i18n="location_detail_page.hud_signal_strength">
+                    </div>
+                </div>
+
+                <!-- DESCRIPTION (LORE) -->
+                <div class="mt-8 border-l border-gold/30 pl-6 py-2">
+                    <h2 class="text-2xl font-serif text-white mb-4" data-i18n="location_detail_page.intel_briefing"></h2>
+                    <div id="loc-description" class="prose prose-invert prose-p:text-gray-400 font-sans leading-relaxed text-justify max-w-none">
+                        <p class="animate-pulse" data-i18n="location_detail_page.decrypting_history"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: THE DATA (METADATA) -->
+            <div class="lg:col-span-1 space-y-6">
+                
+                <!-- Main Title Box -->
+                <div class="bg-obsidian border border-white/10 p-6">
+                    <h4 class="font-mono text-[10px] text-gray-500 uppercase tracking-widest mb-1" data-i18n="location_detail_page.target_designation"></h4>
+                    <h1 id="loc-title" class="text-3xl font-serif text-white uppercase break-words tracking-wide" data-i18n="location_detail_page.placeholder_unknown">
+                    </h1>
+                </div>
+
+                <!-- Tactical Data -->
+                <div class="bg-white/5 border border-white/5 p-6 space-y-4">
+                    
+                    <div class="flex justify-between items-center border-b border-white/5 pb-2">
+                         <span class="text-xs font-mono text-gray-500" data-i18n="location_detail_page.tactical_control"></span>
+                         <span id="loc-faction" class="text-xs font-mono text-gold uppercase tracking-wider" data-i18n="location_detail_page.tactical_unverified"></span>
+                    </div>
+
+                    <div class="flex justify-between items-center border-b border-white/5 pb-2">
+                         <span class="text-xs font-mono text-gray-500" data-i18n="location_detail_page.tactical_coordinates"></span>
+                         <span id="loc-coords" class="text-xs font-mono text-white tracking-wider">--.--, --.--</span>
+                    </div>
+
+                    <div class="flex justify-between items-center border-b border-white/5 pb-2">
+                         <span class="text-xs font-mono text-gray-500" data-i18n="location_detail_page.tactical_threat"></span>
+                         <span id="loc-threat" class="text-xs font-mono text-red-500 uppercase font-bold flex items-center">
+                             <i class="fas fa-exclamation-triangle mr-2"></i> <span data-i18n="location_detail_page.tactical_analyzing"></span>
+                         </span>
+                    </div>
+
+                     <div class="flex justify-between items-center pb-2">
+                         <span class="text-xs font-mono text-gray-500" data-i18n="location_detail_page.tactical_status"></span>
+                         <span id="loc-status" class="text-xs font-mono text-green-500 uppercase" data-i18n="location_detail_page.tactical_operational"></span>
+                    </div>
+                </div>
+
+                <!-- Connected Events (Timeline Link) -->
+                <div class="bg-obsidian border border-white/10 p-6">
+                    <h4 class="font-mono text-[10px] text-gray-500 uppercase tracking-widest mb-4" data-i18n="location_detail_page.historical_events"></h4>
+                    <ul id="loc-events" class="space-y-3">
+                        <li class="text-xs text-gray-600 italic" data-i18n="location_detail_page.no_events_found"></li>
+                    </ul>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-12 bg-obsidian border-t border-white/5 text-center relative z-10">
+        <p class="font-serif text-gold text-2xl mb-4">TSOF</p>
+        
+        <div class="flex justify-center space-x-6 mb-6 text-[10px] font-mono uppercase text-gray-500">
+            <a href="./privacy.html" class="hover:text-gold transition-colors" data-i18n="footer.privacy"></a>
+            <span>|</span>
+            <a href="./terms.html" class="hover:text-gold transition-colors" data-i18n="footer.terms"></a>
+        </div>
+
+        <p class="text-gray-600 text-xs uppercase tracking-widest">
+            <span data-i18n="footer.copyright"></span>
+        </p>
+    </footer>
+
+    <script type="module" src="../assets/js/main.js"></script>
+    <script type="module">
+        import i18next from '../assets/js/lib/i18n.js';
+        i18next.on('initialized', () => {
+            document.title = i18next.t('location_detail_page.meta_title');
+        });
+        if (i18next.isInitialized) {
+            document.title = i18next.t('location_detail_page.meta_title');
+        }
+    </script>
+</body>
+</html>
