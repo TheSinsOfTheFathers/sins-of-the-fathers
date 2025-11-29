@@ -1,6 +1,8 @@
 import { client } from '../../lib/sanityClient.js';
 import { renderBlurHash, handleImageLoad } from '../../lib/imageUtils.js';
 import i18next from '../../lib/i18n.js';
+// 👇 SEO İMPORTU
+import { injectSchema } from '../../lib/seo.js';
 
 /* --------------------------------------------------------------------------
    CARD TEMPLATES (NOIR STYLE)
@@ -45,7 +47,6 @@ const createProtagonistCard = (character) => {
     }
 
     if (img) {
-        // Resim yüklendiğinde blur'u kapat, resmi aç
         if (img.complete) {
             handleImageLoad(img, canvas);
         } else {
@@ -83,7 +84,6 @@ const createOperativeCard = (character) => {
         </div>
     `;
 
-    // Blur ve Yükleme Mantığı
     const canvas = cardLink.querySelector('.blur-canvas');
     const img = cardLink.querySelector('.main-image');
 
@@ -128,7 +128,6 @@ const createAssetCard = (character) => {
         </div>
     `;
 
-    // Blur ve Yükleme Mantığı
     const canvas = cardLink.querySelector('.blur-canvas');
     const img = cardLink.querySelector('.main-image');
 
@@ -168,7 +167,6 @@ export async function displayCharacters() {
             title, 
             alias,
             slug, 
-            // DEĞİŞİKLİK: imageUrl string'i yerine image objesi
             "image": image.asset->{
                 url,
                 "blurHash": metadata.blurHash
@@ -180,12 +178,42 @@ export async function displayCharacters() {
 
         if (characters && characters.length > 0) {
             
+            // 👇 SEO / SCHEMA ENJEKSİYONU (ItemList)
+            try {
+                const itemList = characters.map((char, index) => ({
+                    "@type": "ListItem",
+                    "position": index + 1,
+                    "item": {
+                        "@type": "Person",
+                        "name": char.name,
+                        "jobTitle": char.title,
+                        "image": char.image?.url,
+                        "url": new URL(`character-detail.html?slug=${char.slug.current}`, window.location.origin).href
+                    }
+                }));
+
+                const schemaData = {
+                    "@context": "https://schema.org",
+                    "@type": "CollectionPage",
+                    "name": "Personnel Database | The Sins of the Fathers",
+                    "description": "Classified directory of all known operatives, assets, and targets.",
+                    "mainEntity": {
+                        "@type": "ItemList",
+                        "itemListElement": itemList
+                    }
+                };
+                injectSchema(schemaData);
+                console.log("> SEO Protocol: Character List Schema Injected.");
+            } catch (e) {
+                console.warn("Schema Error:", e);
+            }
+            // -----------------------------------------------------
+
             if(containers.protagonists) containers.protagonists.innerHTML = '';
             if(containers.main) containers.main.innerHTML = '';
             if(containers.side) containers.side.innerHTML = '';
 
             characters.forEach((character) => {
-                const slug = character.slug.current;
                 const lowerName = (character.name || '').toLowerCase();
                 const lowerAlias = character.alias ? character.alias.toLowerCase() : '';
 

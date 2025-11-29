@@ -1,5 +1,7 @@
 import { client } from '../../lib/sanityClient.js';
-import i18next from '../../lib/i18n.js'; // İMPORT EKLENDİ
+import i18next from '../../lib/i18n.js';
+// 👇 SEO İMPORTU EKLENDİ
+import { injectSchema } from '../../lib/seo.js';
 
 /* --------------------------------------------------------------------------
    CARD BUILDER LOGIC
@@ -13,7 +15,6 @@ const createFactionCard = (faction) => {
     
     const leaderName = (faction.leader && faction.leader.name) ? faction.leader.name : i18next.t('factions.unknown');
 
-    // 👇 STATS KISMI ÇEVİRİSİ
     const statsHTML = isOldWorld ? `
         <div>
             <div class="flex justify-between text-[10px] font-mono text-gray-500 mb-1">
@@ -91,6 +92,7 @@ export async function displayFactions() {
     if (!factionsGrid) return; 
 
     try {
+        console.log("> Accessing Faction Database...");
         const query = `*[_type == "faction"] | order(title asc) {
             title, 
             "slug": slug.current, 
@@ -104,16 +106,47 @@ export async function displayFactions() {
         
         const factions = await client.fetch(query);
 
-        if(loader) loader.style.display = 'none';
-        factionsGrid.innerHTML = '';
-        factionsGrid.classList.remove('opacity-0'); 
-
         if (factions && factions.length > 0) {
+            
+            // 👇 SEO / SCHEMA ENJEKSİYONU (ItemList)
+            try {
+                const itemList = factions.map((faction, index) => ({
+                    "@type": "ListItem",
+                    "position": index + 1,
+                    "item": {
+                        "@type": "Organization",
+                        "name": faction.title,
+                        "url": new URL(`faction-detail.html?slug=${faction.slug}`, window.location.origin).href
+                    }
+                }));
+
+                const schemaData = {
+                    "@context": "https://schema.org",
+                    "@type": "CollectionPage",
+                    "name": i18next.t('factions.meta_title') || "Factions Database | TSOF",
+                    "description": i18next.t('factions.meta_desc') || "List of all organizations and syndicates in the Ballantine Network.",
+                    "mainEntity": {
+                        "@type": "ItemList",
+                        "itemListElement": itemList
+                    }
+                };
+                injectSchema(schemaData);
+                console.log("> SEO Protocol: Faction List Schema Injected.");
+            } catch (e) {
+                console.warn("Schema Error:", e);
+            }
+            // -----------------------------------------------------
+
+            if(loader) loader.style.display = 'none';
+            factionsGrid.innerHTML = '';
+            factionsGrid.classList.remove('opacity-0'); 
+
             factions.forEach((faction) => {
                 const card = createFactionCard(faction);
                 factionsGrid.appendChild(card);
             });
         } else {
+            if(loader) loader.style.display = 'none';
             factionsGrid.innerHTML = `
                 <div class="col-span-full text-center py-20 border border-red-900/30 bg-red-900/10">
                     <i class="fas fa-ban text-3xl text-red-800 mb-4"></i>

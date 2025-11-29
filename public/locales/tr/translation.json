@@ -117,7 +117,9 @@
     "untitled_event": "İsimsiz Olay",
     "archives_empty": "ARŞİVLER BOŞ. KAYIT BULUNAMADI.",
     "data_corruption": "VERİ BOZULMASI TESPİT EDİLDİ",
-    "system_failure": "SİSTEM HATASI"
+    "system_failure": "SİSTEM HATASI",
+    "meta_title": "Kronolojik Tarihçe | The Sins of the Fathers"
+
   },
   "factions_page": {
     "meta_title": "Güç Dinamikleri | Babaların Günahları",
@@ -351,7 +353,9 @@
     "stat_influence": "NÜFUZ",
     "stat_resources": "KAYNAKLAR",
     "no_factions_found": "Veritabanında Aktif Grup Bulunamadı.",
-    "error_connection": "KRİTİK HATA: BAĞLANTI KESİLDİ."
+    "error_connection": "KRİTİK HATA: BAĞLANTI KESİLDİ.",
+    "meta_title": "Gruplar Veritabanı | The Sins of the Fathers",
+    "meta_desc": "Ballantine Ağındaki bilinen tüm organizasyonların ve sendikaların rehberi."
   },
   "locations": {
     "sector": "SEKTÖR",
@@ -362,5 +366,22 @@
     "hud_lat": "ENL",
     "hud_lng": "BOY",
     "error_uplink": "BAĞLANTI HATASI: UYDU ÇEVRİMDIŞI"
+  },
+  "archive_page": {
+    "meta_title": "Gizli Arşivler | The Sins of the Fathers"
+  },
+  "lore_loader": {
+    "unknown_source": "Bilinmiyor",
+    "content_pending": "İçerik çözümleniyor...",
+    "access_file": "Dosyaya Eriş",
+    "encrypted_audio": "Şifreli ses kaydı.",
+    "play_transmission": "İletimi Oynat",
+    "redacted": "SANSÜRLENDİ",
+    "classified": "Gizli",
+    "clearance_required": "Yetki Gerekli",
+    "no_date": "TARİHSİZ",
+    "no_records_query": "> SORGUYA UYGUN KAYIT BULUNAMADI.",
+    "system_error_short": "SİSTEM HATASI",
+    "connection_failed_long": "Veritabanı bağlantısı kesildi. Terminali yeniden yüklemeyi deneyin."
   }
 }

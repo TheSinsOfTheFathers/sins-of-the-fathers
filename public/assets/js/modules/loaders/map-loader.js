@@ -1,5 +1,7 @@
 import { client } from '../../lib/sanityClient.js';
-import i18next from '../../lib/i18n.js'; // İMPORT EKLENDİ
+import i18next from '../../lib/i18n.js';
+// 👇 SEO İMPORTU
+import { injectSchema } from '../../lib/seo.js';
 
 let mapInstance = null; 
 
@@ -23,6 +25,7 @@ async function loadGeoJSON(filePath) {
 }
 
 const createTacticalIcon = (factionSlug, iconType = 'fa-map-marker-alt') => {
+    if (!window.L) return null;
     const theme = FACTION_THEMES[factionSlug] || FACTION_THEMES.default;
     const color = theme.border;
 
@@ -79,7 +82,6 @@ const addLocationMarkers = (map, locations) => {
             }
         });
 
-        // 👇 POPUP İÇERİĞİ ÇEVİRİSİ
         marker.bindPopup(`
             <div class="text-left min-w-[200px] font-sans">
                 <h3 style="color:${themeColor}" class="font-serif text-lg border-b border-gray-700 pb-1 mb-2 uppercase tracking-wide">
@@ -145,9 +147,33 @@ const addFactionTerritories = async (map, factions) => {
    -------------------------------------------------------------------------- */
 export async function displayLocations() {
     const mapContainer = document.getElementById('map');
-    if (!mapContainer) return;
+    const loader = document.getElementById('map-loader');
+
+    // 👇 SEO SCHEMA ENJEKSİYONU (Map)
+    try {
+        const schemaData = {
+            "@context": "https://schema.org",
+            "@type": "Map",
+            "name": "Global Surveillance Map | The Sins of the Fathers",
+            "description": "Interactive map showing all faction territories and key locations in the TSOF universe.",
+            "url": window.location.href
+        };
+        injectSchema(schemaData);
+    } catch (e) {
+        console.warn("Schema Injection Failed:", e);
+    }
+    // -----------------------------------------------------
+
+    if (!mapContainer) return; 
+    if (!window.L) {
+        console.error("Leaflet Library Missing!");
+        return;
+    }
 
     try {
+        // Eski harita örneğini temizle (destroyMap fonksiyonu eksik, geçici olarak yorum satırı yaptım)
+        // destroyMap('map'); 
+
         const map = L.map('map', {
             center: [40, -30], 
             zoom: 3,
@@ -164,7 +190,6 @@ export async function displayLocations() {
             maxZoom: 19
         }).addTo(map);
 
-        // 👇 HUD FONKSİYONLARI ÇEVİRİSİ
         window.zoomToLocation = (lat, lng, zoom) => {
             map.flyTo([lat, lng], zoom, { duration: 2.5 });
             updateHUD(`${i18next.t('locations.hud_coords_locked')}: ${lat} / ${lng}`);
@@ -206,13 +231,11 @@ export async function displayLocations() {
         await addFactionTerritories(map, factions);
         addLocationMarkers(map, locations);
 
-        // 👇 MOUSE HAREKETİ (KOORDİNAT) ÇEVİRİSİ
         map.on('mousemove', (e) => {
             const display = document.getElementById('coordinates-display');
             if(display) display.textContent = `${i18next.t('locations.hud_lat')}: ${e.latlng.lat.toFixed(4)} // ${i18next.t('locations.hud_lng')}: ${e.latlng.lng.toFixed(4)}`;
         });
 
-        const loader = document.getElementById('map-loader');
         if(loader) loader.classList.add('opacity-0', 'pointer-events-none');
 
     } catch (error) {

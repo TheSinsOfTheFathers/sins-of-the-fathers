@@ -117,7 +117,8 @@
     "untitled_event": "Untitled Event",
     "archives_empty": "ARCHIVES EMPTY. NO RECORDS FOUND.",
     "data_corruption": "DATA CORRUPTION DETECTED",
-    "system_failure": "SYSTEM FAILURE"
+    "system_failure": "SYSTEM FAILURE",
+    "meta_title": "Chronological History | The Sins of the Fathers"
   },
   "factions_page": {
     "meta_title": "Power Dynamics | The Sins of the Fathers",
@@ -351,7 +352,9 @@
     "stat_influence": "INFLUENCE",
     "stat_resources": "RESOURCES",
     "no_factions_found": "No Active Factions Found in Database.",
-    "error_connection": "CRITICAL ERROR: CONNECTION SEVERED."
+    "error_connection": "CRITICAL ERROR: CONNECTION SEVERED.",
+    "meta_title": "Factions Database | The Sins of the Fathers",
+    "meta_desc": "Directory of all known organizations and syndicates in the Ballantine Network."
   },
   "locations": {
     "sector": "SECTOR",
@@ -362,5 +365,22 @@
     "hud_lat": "LAT",
     "hud_lng": "LNG",
     "error_uplink": "UPLINK FAILED: SATELLITE OFFLINE"
+  },
+  "archive_page": {
+    "meta_title": "Classified Archives | The Sins of the Fathers"
+  },
+  "lore_loader": {
+    "unknown_source": "Unknown",
+    "content_pending": "Content parsing pending...",
+    "access_file": "Access File",
+    "encrypted_audio": "Encrypted audio log.",
+    "play_transmission": "Play Transmission",
+    "redacted": "REDACTED",
+    "classified": "Classified",
+    "clearance_required": "Clearance Required",
+    "no_date": "NO_DATE",
+    "no_records_query": "> NO RECORDS MATCH YOUR QUERY.",
+    "system_error_short": "SYSTEM ERROR",
+    "connection_failed_long": "Database connection failed. Try reloading terminal."
   }
 }

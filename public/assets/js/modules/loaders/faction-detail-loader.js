@@ -1,6 +1,9 @@
 import { client } from '../../lib/sanityClient.js';
 import { toHTML } from 'https://esm.sh/@portabletext/to-html@2.0.13';
+import { applyBlurToStaticImage } from '../../lib/imageUtils.js';
 import i18next from '../../lib/i18n.js';
+// 👇 SEO İMPORTU (injectSchema'yı çağırıyoruz)
+import { injectSchema } from '../../lib/seo.js';
 
 /**
  * MINI MAP ENGINE (Canlı Uydu Bağlantısı)
@@ -10,8 +13,6 @@ const initMiniMap = (lat, lng, color, containerId = 'mini-map') => {
 
     const container = document.getElementById(containerId);
     
-    // Haritanın tekrar tekrar oluşturulmasını engelleyen sorunu çözmek için
-    // Önceki harita örneğini temizle
     if (container._leaflet_id) {
         const mapInstance = container._leaflet_map;
         if (mapInstance) {
@@ -81,6 +82,39 @@ const renderFactionDetails = (faction) => {
 
     const safeTitle = faction.title || 'Unknown Faction';
     document.title = i18next.t('faction_detail_loader.meta_title', { factionName: safeTitle });
+
+    // 👇 SEO / SCHEMA ENJEKSİYONU (Manuel Obje Oluşturma)
+    try {
+        // Description için HTML taglerini temizleyip düz metin alalım (Basitçe)
+        const plainDesc = faction.description 
+            ? faction.description.map(block => block.children?.map(child => child.text).join('')).join(' ') 
+            : faction.motto || "";
+
+        const schemaData = {
+            "@context": "https://schema.org",
+            "@type": "Organization", // Grup olduğu için Organization kullanıyoruz
+            "name": safeTitle,
+            "slogan": faction.motto,
+            "description": plainDesc.substring(0, 160) + "...", // SEO için kısa tut
+            "url": window.location.href,
+            "logo": faction.image?.asset?.url,
+            "founder": faction.leader ? {
+                "@type": "Person",
+                "name": faction.leader.name
+            } : undefined,
+            "location": faction.hqName ? {
+                "@type": "Place",
+                "name": faction.hqName
+            } : undefined
+        };
+
+        injectSchema(schemaData);
+        console.log("> SEO Protocol: Faction Schema Injected.");
+    } catch (err) {
+        console.warn("> SEO Protocol Warning: Failed to inject schema.", err);
+    }
+    // -----------------------------------------------------
+
     if (els.title) {
         els.title.textContent = safeTitle;
         els.title.classList.remove('animate-fade-in-down');
@@ -98,7 +132,6 @@ const renderFactionDetails = (faction) => {
     if (faction.hqLocation?.lat && faction.hqLocation?.lng) {
         setTimeout(() => initMiniMap(faction.hqLocation.lat, faction.hqLocation.lng, themeColor), 500);
     }
-
 
     if (els.leader) {
         const leaderName = faction.leader ? faction.leader.name : i18next.t('faction_detail_loader.unknown_leader');

@@ -2,6 +2,8 @@ import { client, urlFor } from '../../lib/sanityClient.js';
 import { toHTML } from 'https://esm.sh/@portabletext/to-html@2.0.13';
 import { applyBlurToStaticImage } from '../../lib/imageUtils.js';
 import i18next from '../../lib/i18n.js';
+// 👇 SEO / SCHEMA İMPORTU
+import { injectSchema } from '../../lib/seo.js';
 
 const updateThreatDisplay = (level = 'neutral') => {
     const threatEl = document.getElementById('loc-threat');
@@ -29,11 +31,38 @@ const updateThreatDisplay = (level = 'neutral') => {
 const renderLocationIntel = (location) => {
     document.title = `${location.name} // SURVEILLANCE FEED`;
 
+    // 👇 SEO SCHEMA ENJEKSİYONU (BURAYA EKLENDİ)
+    try {
+        const schemaData = {
+            "@context": "https://schema.org",
+            "@type": "Place",
+            "name": location.name,
+            "description": location.description 
+                ? location.description.map(block => block.children?.map(child => child.text).join('')).join(' ').substring(0, 160) 
+                : "A key territory in The Sins of the Fathers universe.",
+            "url": window.location.href,
+            "image": location.mainImage?.asset?.url,
+            "geo": (location.location) ? {
+                "@type": "GeoCoordinates",
+                "latitude": location.location.lat,
+                "longitude": location.location.lng
+            } : undefined,
+            "containedInPlace": location.faction ? {
+                "@type": "Place",
+                "name": location.faction.title
+            } : undefined
+        };
+        injectSchema(schemaData);
+        console.log("> SEO Protocol: Location Schema Injected.");
+    } catch (err) {
+        console.warn("> SEO Protocol Warning: Failed to inject schema.", err);
+    }
+    // -----------------------------------------------------
+
     if (location.mainImage && location.mainImage.asset) {
         const url = urlFor(location.mainImage).width(1000).height(600).fit('crop').quality(75).url();
-        const blurHash = location.mainImage.asset.blurHash; // Query'e eklediğin blurHash
+        const blurHash = location.mainImage.asset.blurHash; 
         
-        // Tek satırda hallediyoruz:
         applyBlurToStaticImage('loc-image', url, blurHash);
 
         const loader = document.getElementById('feed-loader');

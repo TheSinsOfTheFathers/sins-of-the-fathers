@@ -1,5 +1,7 @@
 import { client, urlFor } from '../../lib/sanityClient.js';
 import i18next from '../../lib/i18n.js';
+// 👇 SEO İMPORTU
+import { injectSchema } from '../../lib/seo.js';
 
 /**
  * Veri Dönüştürücü: Sanity -> TimelineJS Formatı
@@ -52,7 +54,9 @@ const transformDataForTimeline = (eras) => {
                         text: formattedText
                     },
                     media: mediaObj,
-                    group: groupName
+                    group: groupName,
+                    // Schema için ek veri taşıyoruz (TimelineJS tarafından kullanılmaz, sadece burada lazım)
+                    _raw_date: evt.date
                 });
             });
         }
@@ -107,6 +111,37 @@ export async function displayTimeline() {
         if (eras && eras.length > 0) {
             
             const timelineData = transformDataForTimeline(eras);
+
+            // 👇 SEO SCHEMA ENJEKSİYONU (ItemList of Events)
+            try {
+                const itemList = timelineData.events.map((evt, index) => ({
+                    "@type": "ListItem",
+                    "position": index + 1,
+                    "item": {
+                        "@type": "Event", // Veya Article
+                        "name": evt.text.headline.replace(/<[^>]*>/g, '').trim(),
+                        "description": evt.text.text.replace(/<[^>]*>/g, '').trim(),
+                        "startDate": evt._raw_date,
+                        "image": evt.media?.url
+                    }
+                }));
+
+                const schemaData = {
+                    "@context": "https://schema.org",
+                    "@type": "CollectionPage",
+                    "name": i18next.t('timeline_loader.meta_title'),
+                    "description": i18next.t('timeline_loader.title_text').replace(/<[^>]*>/g, '').trim(),
+                    "mainEntity": {
+                        "@type": "ItemList",
+                        "itemListElement": itemList
+                    }
+                };
+                injectSchema(schemaData);
+                console.log("> SEO Protocol: Timeline Schema Injected.");
+            } catch (e) {
+                console.warn("Schema Error:", e);
+            }
+            // -----------------------------------------------------
 
             const options = {
                 font: null, 

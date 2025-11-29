@@ -1,5 +1,6 @@
 import { client } from '../../lib/sanityClient.js';
 import i18next from '../../lib/i18n.js';
+import { injectSchema } from '../../lib/seo.js';
 
 let mapInstance = null;
 
@@ -69,6 +70,20 @@ async function loadLayer(map, path, theme) {
 export async function displayLocations() {
     const mapContainer = document.getElementById('map');
     const loader = document.getElementById('map-loader');
+
+    // SEO Schema
+    try {
+        const schemaData = {
+            "@context": "https://schema.org",
+            "@type": "Map",
+            "name": "Global Surveillance Map | The Sins of the Fathers",
+            "description": "Interactive map showing all faction territories and key locations in the TSOF universe.",
+            "url": window.location.href
+        };
+        injectSchema(schemaData);
+    } catch (e) {
+        console.warn("Schema Injection Failed:", e);
+    }
 
     if (!mapContainer) return; 
     if (!window.L) {

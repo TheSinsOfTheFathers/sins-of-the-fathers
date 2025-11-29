@@ -1,6 +1,8 @@
 import { client } from '../../lib/sanityClient.js';
 import { applyBlurToStaticImage } from '../../lib/imageUtils.js';
-import i18next from '../../lib/i18n.js'; // Dil desteği için import
+import i18next from '../../lib/i18n.js';
+// 👇 SEO / SCHEMA İMPORTU
+import { injectSchema, generateCharacterSchema } from '../../lib/seo.js';
 
 /**
  * KARAKTER DETAYLARINI GÖRSELLEŞTİRİR
@@ -40,12 +42,26 @@ const renderCharacterDetails = async (character) => {
         }
     }
 
+    // 👇 SEO SCHEMA ENJEKSİYONU (BURAYA EKLENDİ)
+    try {
+        const schemaData = generateCharacterSchema({
+            name: character.name,
+            image: { url: imgUrl },
+            description: character.description || "",
+            faction: character.faction,
+            role: character.role || character.title
+        });
+        injectSchema(schemaData);
+        console.log("> SEO Protocol: Character Schema Injected.");
+    } catch (err) {
+        console.warn("> SEO Protocol Warning: Failed to inject schema.", err);
+    }
+    // -----------------------------------------------------
+
     // STATUS GÜNCELLEMESİ (Çevirili)
     if (els.statusBadge) {
         const rawStatus = character.status || 'Active';
-        // status_active, status_deceased gibi key'ler oluşturacağız
         const statusKey = `character_detail_page.status_${rawStatus.toLowerCase()}`;
-        // Çeviri varsa kullan, yoksa veritabanındakini bas
         els.statusBadge.textContent = i18next.exists(statusKey) ? i18next.t(statusKey) : rawStatus;
         
         els.statusBadge.className = 'font-mono text-xs uppercase font-bold tracking-widest animate-pulse ' + 
