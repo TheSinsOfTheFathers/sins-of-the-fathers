@@ -1,20 +1,45 @@
 /**
  * THE SINS OF THE FATHERS
- * Main Execution Protocol (v4.5 - Final Stable)
+ * Main Execution Protocol (v4.7 - Sentry Integrated)
  * --------------------------------------------------------------
- * Orchestrates module loading, animations (GSAP), and localization (i18n).
+ * Orchestrates error monitoring (Sentry), module loading, animations (GSAP), and localization (i18n).
  */
 
-// 1. KÜTÜPHANE IMPORTLARI
+// 1. SENTRY IMPORT & CONFIGURATION (EN TEPEDE OLMALI)
+import * as Sentry from "@sentry/browser";
+
+Sentry.init({
+  // Ekran görüntünüzdeki DSN adresi:
+  dsn: "https://9a12c94e774235b975e6820692f11ba4@o4510453482520576.ingest.de.sentry.io/4510453491105872",
+  
+  integrations: [
+    Sentry.browserTracingIntegration(),
+    Sentry.replayIntegration(),
+  ],
+
+  // Performance Monitoring
+  // Geliştirme aşamasında (localhost) %100 yakalaması iyidir.
+  // Canlıya (Production) aldığınızda bunu 0.1 (%10) veya 0.2 (%20) yapmanız önerilir.
+  tracesSampleRate: 1.0, 
+  
+  // Hangi adreslerin takip edileceği (Localhost ve Sizin Domaininiz)
+  tracePropagationTargets: ["localhost", /^https:\/\/thesinsofthefathers\.com/],
+
+  // Session Replay (Hata anının videosu)
+  replaysSessionSampleRate: 0.1, // Tüm oturumların %10'unu kaydeder
+  replaysOnErrorSampleRate: 1.0, // Hata olursa %100 kaydeder
+});
+
+// 2. DİĞER KÜTÜPHANE IMPORTLARI
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import i18next, { initI18n, changeLanguage } from './lib/i18n.js'; // i18next eklendi
+import i18next, { initI18n, changeLanguage } from './lib/i18n.js';
 
-// 2. MODÜL IMPORTLARI
+// 3. MODÜL IMPORTLARI
 import initAuth from './modules/auth/auth.js';
 import { initMobileMenu } from './modules/ui/mobile-menu.js';
 
-// 3. GSAP AYARLARI
+// 4. GSAP AYARLARI
 gsap.registerPlugin(ScrollTrigger);
 
 /* --------------------------------------------------------------------------
@@ -144,10 +169,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                     btn.classList.remove('text-gray-500');
                 }
             });
-            
-            // Sayfayı yenilemeye gerek yok, i18next ve loader fonksiyonları dinamik çalışır
         } catch (e) {
             console.error("Language Switch Error:", e);
+            // Dil değiştirme hatası olursa Sentry'e bildir
+            Sentry.captureException(e);
         }
     };
 
@@ -194,6 +219,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                     break; 
                 } catch (error) {
                     console.error(`FATAL ERROR: Failed to load module for ${config.log}`, error);
+                    // Modül yükleme hatasını Sentry'e bildir
+                    Sentry.captureException(error, {
+                        tags: { module: config.modulePath }
+                    });
                 }
             }
         }
@@ -211,6 +240,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     } catch (error) {
         console.error(" ! System Protocol Failure:", error);
+        // Kritik sistem hatasını Sentry'e bildir
+        Sentry.captureException(error);
+        
         // Hata olsa bile sayfayı göster
         gsap.to("body", { autoAlpha: 1 });
     }

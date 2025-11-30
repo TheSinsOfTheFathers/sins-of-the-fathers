@@ -10,6 +10,7 @@
   "dependencies": {
     "@sanity/color-input": "^4.0.6",
     "@sanity/vision": "^4.16.0",
+    "@sentry/browser": "^10.27.0",
     "cytoscape": "^3.33.1",
     "cytoscape-dagre": "^2.5.0",
     "d3": "^7.9.0",
