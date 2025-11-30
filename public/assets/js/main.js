@@ -38,6 +38,7 @@ import i18next, { initI18n, changeLanguage } from './lib/i18n.js';
 // 3. MODÜL IMPORTLARI
 import initAuth from './modules/auth/auth.js';
 import { initMobileMenu } from './modules/ui/mobile-menu.js';
+import { initAudioSystem } from './modules/ui/audio-manager.js';
 
 // 4. GSAP AYARLARI
 gsap.registerPlugin(ScrollTrigger);
@@ -178,6 +179,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     initMobileMenu();
     initAuth();
+    initAudioSystem();
 
     try {
         // 1. DİL YÜKLEME (BEKLE)
