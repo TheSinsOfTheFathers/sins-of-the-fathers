@@ -402,5 +402,12 @@
   },
   "archive_page": {
     "meta_title": "Gizli Arşivler | The Sins of the Fathers"
-  }
+  },
+  "cookie_consent": {
+  "title": "GÖZETİM PROTOKOLÜ",
+  "text": "Bu terminal, operasyonel verimliliği artırmak ve oturum bütünlüğünü sağlamak için takip sinyalleri (çerezler) kullanır.",
+  "accept": "YETKİ VER",
+  "decline": "REDDET",
+  "policy_link": "Protokolü İncele"
+}
 }

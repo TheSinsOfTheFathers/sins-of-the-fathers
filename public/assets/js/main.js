@@ -1,63 +1,62 @@
 /**
  * THE SINS OF THE FATHERS
- * Main Execution Protocol (v4.7 - Sentry Integrated)
+ * Main Execution Protocol (v5.0 - GDPR Compliant)
  * --------------------------------------------------------------
- * Orchestrates error monitoring (Sentry), module loading, animations (GSAP), and localization (i18n).
+ * Orchestrates error monitoring (Sentry), module loading, animations (GSAP), 
+ * localization (i18n), audio system, and cookie consent.
  */
 
-// 1. SENTRY IMPORT & CONFIGURATION (EN TEPEDE OLMALI)
+// 1. IMPORTLAR
 import * as Sentry from "@sentry/browser";
-
-Sentry.init({
-  // Ekran görüntünüzdeki DSN adresi:
-  dsn: "https://9a12c94e774235b975e6820692f11ba4@o4510453482520576.ingest.de.sentry.io/4510453491105872",
-  
-  integrations: [
-    Sentry.browserTracingIntegration(),
-    Sentry.replayIntegration(),
-  ],
-
-  // Performance Monitoring
-  // Geliştirme aşamasında (localhost) %100 yakalaması iyidir.
-  // Canlıya (Production) aldığınızda bunu 0.1 (%10) veya 0.2 (%20) yapmanız önerilir.
-  tracesSampleRate: 1.0, 
-  
-  // Hangi adreslerin takip edileceği (Localhost ve Sizin Domaininiz)
-  tracePropagationTargets: ["localhost", /^https:\/\/thesinsofthefathers\.com/],
-
-  // Session Replay (Hata anının videosu)
-  replaysSessionSampleRate: 0.1, // Tüm oturumların %10'unu kaydeder
-  replaysOnErrorSampleRate: 1.0, // Hata olursa %100 kaydeder
-});
-
-// 2. DİĞER KÜTÜPHANE IMPORTLARI
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import i18next, { initI18n, changeLanguage } from './lib/i18n.js';
 
-// 3. MODÜL IMPORTLARI
+// Modüller
 import initAuth from './modules/auth/auth.js';
 import { initMobileMenu } from './modules/ui/mobile-menu.js';
 import { initAudioSystem } from './modules/ui/audio-manager.js';
+import { initCookieConsent } from './modules/ui/cookie-consent.js';
 
-// 4. GSAP AYARLARI
+// GSAP Ayarları
 gsap.registerPlugin(ScrollTrigger);
 
-/* --------------------------------------------------------------------------
-   VITE MODULE GLOB DEFINITION
-   -------------------------------------------------------------------------- */
+// Vite Modül Haritası
 const moduleMap = import.meta.glob([
     './modules/loaders/*.js', 
     './modules/auth/*.js'
 ]);
 
 /* --------------------------------------------------------------------------
-   YARDIMCI FONKSİYON: SAYFA ÇEVİRİSİ (STATİK HTML İÇİN)
+   YARDIMCI: SENTRY BAŞLATICI (Sadece İzin Varsa Çalışır)
+   -------------------------------------------------------------------------- */
+function initMonitoringSystem() {
+    // Çifte başlatmayı önle
+    if (window.isMonitoringActive) return;
+
+    console.log(" > System: Security Protocols (Sentry) Activated.");
+    
+    Sentry.init({
+        dsn: "https://9a12c94e774235b975e6820692f11ba4@o4510453482520576.ingest.de.sentry.io/4510453491105872",
+        integrations: [
+            Sentry.browserTracingIntegration(),
+            Sentry.replayIntegration(),
+        ],
+        tracesSampleRate: 1.0, 
+        tracePropagationTargets: ["localhost", /^https:\/\/thesinsofthefathers\.com/],
+        replaysSessionSampleRate: 0.1, 
+        replaysOnErrorSampleRate: 1.0, 
+    });
+
+    window.isMonitoringActive = true;
+}
+
+/* --------------------------------------------------------------------------
+   YARDIMCI: SAYFA ÇEVİRİSİ
    -------------------------------------------------------------------------- */
 function updatePageTranslations() {
     if (!i18next.isInitialized) return;
 
-    // data-i18n özniteliğine sahip tüm elementleri bul ve çevir
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         const translation = i18next.t(key);
@@ -65,15 +64,12 @@ function updatePageTranslations() {
         if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
             el.placeholder = translation;
         } else {
-            el.innerHTML = translation; // HTML etiketlerini (span, br vb.) korur
+            el.innerHTML = translation; 
         }
     });
 
-    // Sayfa başlığını (Title) güncelle
     const titleKey = document.body.getAttribute('data-page-title-key');
-    if (titleKey) {
-        document.title = i18next.t(titleKey);
-    }
+    if (titleKey) document.title = i18next.t(titleKey);
 }
 
 /* --------------------------------------------------------------------------
@@ -155,13 +151,23 @@ document.addEventListener('DOMContentLoaded', async () => {
     // FOUC ÖNLEME
     gsap.set("body", { autoAlpha: 0 });
 
-    // GLOBAL AYARLAR VE DİL DEĞİŞTİRME MANTIĞI
+    // KABUL EDİLMİŞSE BAŞLAT
+    // Daha önce 'accepted' denmişse, sistem hemen devreye girer.
+    if (localStorage.getItem('tsof_cookie_consent') === 'accepted') {
+        initMonitoringSystem();
+    }
+
+    // GLOBAL AYARLAR (Cookie Consent Callback Eklendi)
+    // Bu fonksiyonu window'a atıyoruz ki cookie-consent.js içinden çağırılabilsin.
+    window.enableTrackingSystem = () => {
+        initMonitoringSystem();
+    };
+
     window.changeAppLanguage = async (lang) => {
         try {
             await changeLanguage(lang);
-            updatePageTranslations(); // Dil değişince metinleri güncelle
+            updatePageTranslations();
             
-            // Aktif buton görselini güncelle
             document.querySelectorAll('.lang-btn').forEach(btn => {
                 btn.classList.remove('text-white', 'font-bold', 'underline');
                 btn.classList.add('text-gray-500');
@@ -172,8 +178,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         } catch (e) {
             console.error("Language Switch Error:", e);
-            // Dil değiştirme hatası olursa Sentry'e bildir
-            Sentry.captureException(e);
+            // Sentry aktifse hata gönderir, değilse göndermez (güvenli)
+            if (window.isMonitoringActive) Sentry.captureException(e);
         }
     };
 
@@ -182,21 +188,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     initAudioSystem();
 
     try {
-        // 1. DİL YÜKLEME (BEKLE)
+        // 1. DİL YÜKLEME
         const currentLang = await initI18n();
         console.log(` > Language Protocol: LOADED [${currentLang.toUpperCase()}]`);
 
-        // 2. SAYFAYI ÇEVİR (İLK YÜKLEME)
+        // 2. SAYFAYI ÇEVİR
         updatePageTranslations();
 
-        // Aktif dil butonunu işaretle
+        // 3. COOKIE CONSENT BAŞLAT
+        initCookieConsent();
+
+        // Dil butonu güncelleme
         const activeBtn = document.querySelector(`.lang-btn[data-lang="${currentLang.substring(0,2)}"]`);
         if (activeBtn) {
             activeBtn.classList.add('text-white', 'font-bold', 'underline');
             activeBtn.classList.remove('text-gray-500');
         }
 
-        // 3. MODÜL YÜKLEME (ROUTER)
+        // 4. MODÜL YÜKLEME
         let pageModuleLoaded = false;
 
         for (const config of ROUTER_CONFIGS) {
@@ -208,32 +217,31 @@ document.addEventListener('DOMContentLoaded', async () => {
                 try {
                     const loaderImporter = moduleMap[config.modulePath];
                     if (!loaderImporter) {
-                        console.error(`ERROR: Module path missing in glob: ${config.modulePath}`);
+                        console.error(`ERROR: Module path missing: ${config.modulePath}`);
                         continue; 
                     }
 
                     const module = await loaderImporter();
                     
                     if (module[config.loaderFn]) {
-                        await module[config.loaderFn](); // Sayfa modülünü çalıştır
+                        await module[config.loaderFn]();
                         pageModuleLoaded = true;
                     } 
                     break; 
                 } catch (error) {
-                    console.error(`FATAL ERROR: Failed to load module for ${config.log}`, error);
-                    // Modül yükleme hatasını Sentry'e bildir
-                    Sentry.captureException(error, {
-                        tags: { module: config.modulePath }
-                    });
+                    console.error(`ERROR: ${config.log}`, error);
+                    if (window.isMonitoringActive) {
+                        Sentry.captureException(error, { tags: { module: config.modulePath } });
+                    }
                 }
             }
         }
 
         if (!pageModuleLoaded) {
-            console.log(" > Standby Mode: Homepage or Static Page Active.");
+            console.log(" > Standby Mode: Static Page Active.");
         }
 
-        // 4. FİNAL: PERDEYİ AÇ
+        // 5. FİNAL: PERDEYİ AÇ
         gsap.to("body", { 
             autoAlpha: 1, 
             duration: 1.2, 
@@ -241,11 +249,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
 
     } catch (error) {
-        console.error(" ! System Protocol Failure:", error);
-        // Kritik sistem hatasını Sentry'e bildir
-        Sentry.captureException(error);
-        
-        // Hata olsa bile sayfayı göster
+        console.error(" ! System Failure:", error);
+        if (window.isMonitoringActive) Sentry.captureException(error);
         gsap.to("body", { autoAlpha: 1 });
     }
 });
