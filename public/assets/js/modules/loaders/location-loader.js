@@ -2,6 +2,9 @@ import { client } from '../../lib/sanityClient.js';
 import i18next from '../../lib/i18n.js';
 import { injectSchema } from '../../lib/seo.js';
 
+// 👇 1. GSAP IMPORT
+import gsap from 'gsap';
+
 let mapInstance = null;
 
 const FACTION_THEMES = {
@@ -12,7 +15,6 @@ const FACTION_THEMES = {
 
 /**
  * Harita Temizleyici (Anti-Initialized Error)
- * Harita divini ve memory referansını sıfırlar.
  */
 const destroyMap = (id) => {
     const container = document.getElementById(id);
@@ -23,6 +25,8 @@ const destroyMap = (id) => {
     }
     if (container) {
         container._leaflet_id = null; 
+        // GSAP ile temizlerken kalan stilleri sıfırla
+        gsap.set(container, { clearProps: "all" });
     }
 };
 
@@ -34,7 +38,7 @@ const createTacticalIcon = (slug) => {
     const color = (FACTION_THEMES[slug] || FACTION_THEMES.default).border;
     
     return L.divIcon({
-        className: 'tactical-pin',
+        className: 'tactical-pin', // GSAP ile bunu seçeceğiz
         html: `
             <div style="position:relative; width:30px; height:30px; display:flex; justify-content:center; align-items:center;">
                <div style="position:absolute; width:100%; height:100%; border:1px solid ${color}; border-radius:50%; opacity:0.5;" class="animate-spin-slow"></div>
@@ -48,11 +52,15 @@ const createTacticalIcon = (slug) => {
 
 async function loadLayer(map, path, theme) {
     try {
-        const res = await fetch(path);
-        if (!res.ok) throw new Error(`404 Not Found: ${path}`);
+        // VITE DÜZELTMESİ: '/public/assets/...' yerine '/assets/...' kullanılır.
+        // Eğer public klasörü root ise, path'i temizleyelim:
+        const cleanPath = path.replace('/public', '');
+        
+        const res = await fetch(cleanPath);
+        if (!res.ok) throw new Error(`404 Not Found: ${cleanPath}`);
         const data = await res.json();
         
-        L.geoJSON(data, {
+        const layer = L.geoJSON(data, {
             style: {
                 color: theme.border,
                 weight: 1,
@@ -62,14 +70,18 @@ async function loadLayer(map, path, theme) {
                 dashArray: '4 4'
             }
         }).addTo(map);
+
     } catch (e) {
-        console.warn(`[Map Layer Missing] ${path}`);
+        console.warn(`[Map Layer Missing] ${path}`, e);
     }
 }
 
 export async function displayLocations() {
     const mapContainer = document.getElementById('map');
     const loader = document.getElementById('map-loader');
+
+    // Başlangıçta haritayı gizle (FOUC önleme)
+    if (mapContainer) gsap.set(mapContainer, { opacity: 0, scale: 0.98 });
 
     // SEO Schema
     try {
@@ -88,6 +100,7 @@ export async function displayLocations() {
     if (!mapContainer) return; 
     if (!window.L) {
         console.error("Leaflet Library Missing!");
+        if(loader) loader.innerHTML = "<span class='text-red-500'>OFFLINE</span>";
         return;
     }
 
@@ -102,20 +115,26 @@ export async function displayLocations() {
         });
         mapInstance = map; 
 
-        L.control.zoom({ position: 'bottomright' }).addTo(map);
+        // Zoom kontrolünü ekle ama henüz gösterme (Animation için)
+        const zoomControl = L.control.zoom({ position: 'bottomright' }).addTo(map);
+        const zoomContainer = zoomControl.getContainer();
+        if(zoomContainer) gsap.set(zoomContainer, { autoAlpha: 0, x: 50 });
 
         L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
             maxZoom: 18
         }).addTo(map);
 
+        // Global Helper Functions
         window.zoomToLocation = (lat, lng, z) => {
             map.flyTo([lat, lng], z, { duration: 2.0 });
             const display = document.getElementById('location-name-display');
-            if (display) display.textContent = i18next.t('location_loader.sector_info', { lat: lat.toFixed(4), lng: lng.toFixed(4) });        };
+            if (display) display.textContent = i18next.t('location_loader.sector_info', { lat: lat.toFixed(4), lng: lng.toFixed(4) });        
+        };
         window.resetMap = () => {
             map.flyTo([40, -30], 3, { duration: 1.5 });
             const display = document.getElementById('location-name-display');
-            if (display) display.textContent = i18next.t('location_loader.global_orbit');        };
+            if (display) display.textContent = i18next.t('location_loader.global_orbit');        
+        };
 
         const factionsData = {
             'ballantine-empire': [
@@ -129,10 +148,13 @@ export async function displayLocations() {
             ]
         };
 
+        // GeoJSON Layerlarını yükle
+        // Not: Bunlar asenkron yüklenir, harita açıldıktan sonra gelirler.
         for (const [slug, files] of Object.entries(factionsData)) {
             const theme = FACTION_THEMES[slug] || FACTION_THEMES.default;
             for (const file of files) {
-                await loadLayer(map, `/public/assets/maps/${file}`, theme);
+                // Vite'da public klasörü root kabul edilir, o yüzden path'i düzelttik
+                await loadLayer(map, `/assets/maps/${file}`, theme);
             }
         }
 
@@ -142,6 +164,8 @@ export async function displayLocations() {
         
         const locations = await client.fetch(query);
         console.log(`> Found ${locations.length} locations.`);
+
+        const markerElements = []; // Animasyon için marker DOM elementlerini toplayacağız
 
         if (locations.length > 0) {
             locations.forEach(loc => {
@@ -161,20 +185,68 @@ export async function displayLocations() {
                         </a>
                     </div>
                 `, { className: 'custom-popup-theme' });
+
+                // Leaflet marker elementini al (DOM elementi)
+                const el = marker.getElement();
+                if (el) {
+                    markerElements.push(el);
+                    // Başlangıçta gizle (Stagger ile getireceğiz)
+                    gsap.set(el, { scale: 0, opacity: 0 });
+                }
             });
         }
 
-        if (loader) {
-            loader.classList.add('opacity-0', 'pointer-events-none');
-        }
-
+        // Mouse Move Event
         map.on('mousemove', (e) => {
             const el = document.getElementById('coordinates-display');
             if (el) el.textContent = `${e.latlng.lat.toFixed(4)} | ${e.latlng.lng.toFixed(4)}`;
         });
 
+        // 👇 2. GSAP MASTER TIMELINE
+        // -----------------------------------------------------
+        const tl = gsap.timeline();
+
+        // A. Loader'ı Kapat
+        if (loader) {
+            tl.to(loader, { 
+                autoAlpha: 0, 
+                duration: 0.5,
+                onComplete: () => loader.style.display = 'none' // Tamamen kaldır
+            });
+        }
+
+        // B. Harita Konteynerini Aç (Zoom-out efekti ile)
+        tl.to(mapContainer, { 
+            opacity: 1, 
+            scale: 1, 
+            duration: 1.2, 
+            ease: "power2.inOut" 
+        }, "-=0.2");
+
+        // C. Zoom Kontrollerini Kaydırarak Getir
+        if(zoomContainer) {
+            tl.to(zoomContainer, { autoAlpha: 1, x: 0, duration: 0.5 }, "-=0.5");
+        }
+
+        // D. Markerları "Pop" diye patlat (Stagger)
+        if (markerElements.length > 0) {
+            tl.to(markerElements, {
+                scale: 1,
+                opacity: 1,
+                duration: 0.6,
+                stagger: {
+                    amount: 1.5, // Toplam 1.5 saniye içinde hepsi gelecek (rastgelelik hissi verir)
+                    from: "random" // Rastgele sırayla gelsin, daha organik durur
+                },
+                ease: "back.out(2)" // Hafif yaylanma efekti (pop)
+            }, "-=0.5");
+        }
+
     } catch (err) {
         console.error("Map Critical Error:", err);
         if (mapContainer) mapContainer.innerHTML = '<p class="text-center text-red-500 mt-10">MAP SYSTEM FAILURE</p>';
+        if (loader) loader.style.display = 'none';
+        // Hata olsa bile container'ı göster
+        gsap.to(mapContainer, { opacity: 1 });
     }
 }

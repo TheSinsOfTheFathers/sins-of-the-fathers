@@ -3,6 +3,9 @@ import i18next from '../../lib/i18n.js';
 // 👇 SEO İMPORTU
 import { injectSchema } from '../../lib/seo.js';
 
+// 👇 1. GSAP IMPORT
+import gsap from 'gsap';
+
 /**
  * Veri Dönüştürücü: Sanity -> TimelineJS Formatı
  * Timeline.js events dizisi bekler: [{ start_date, text, media, group }]
@@ -55,7 +58,6 @@ const transformDataForTimeline = (eras) => {
                     },
                     media: mediaObj,
                     group: groupName,
-                    // Schema için ek veri taşıyoruz (TimelineJS tarafından kullanılmaz, sadece burada lazım)
                     _raw_date: evt.date
                 });
             });
@@ -86,6 +88,9 @@ export async function displayTimeline() {
 
     if (!embedEl) return; 
 
+    // 👇 2. BAŞLANGIÇ AYARI: Konteyneri gizle (FOUC Önleme)
+    gsap.set(embedEl, { autoAlpha: 0, scale: 0.98 });
+
     try {
         console.log("> Fetching Historical Data...");
 
@@ -112,13 +117,13 @@ export async function displayTimeline() {
             
             const timelineData = transformDataForTimeline(eras);
 
-            // 👇 SEO SCHEMA ENJEKSİYONU (ItemList of Events)
+            // SEO SCHEMA
             try {
                 const itemList = timelineData.events.map((evt, index) => ({
                     "@type": "ListItem",
                     "position": index + 1,
                     "item": {
-                        "@type": "Event", // Veya Article
+                        "@type": "Event", 
                         "name": evt.text.headline.replace(/<[^>]*>/g, '').trim(),
                         "description": evt.text.text.replace(/<[^>]*>/g, '').trim(),
                         "startDate": evt._raw_date,
@@ -141,7 +146,6 @@ export async function displayTimeline() {
             } catch (e) {
                 console.warn("Schema Error:", e);
             }
-            // -----------------------------------------------------
 
             const options = {
                 font: null, 
@@ -154,26 +158,52 @@ export async function displayTimeline() {
             };
 
             if (window.TL) {
+                // Timeline kütüphanesini başlat
                 window.timelineInstance = new TL.Timeline(embedId, timelineData, options);
                 
+                // 👇 3. GSAP ANIMASYONU: Sinematik Açılış
+                // --------------------------------------------------------
+                const tl = gsap.timeline();
+
+                // A. Loader'ı Sönümle
                 if(loaderEl) {
-                    setTimeout(() => loaderEl.style.display = 'none', 1500);
+                    tl.to(loaderEl, { 
+                        autoAlpha: 0, 
+                        duration: 0.6,
+                        ease: "power2.inOut",
+                        onComplete: () => loaderEl.style.display = 'none' 
+                    });
                 }
+
+                // B. Timeline Konteynerini Aç (Zoom-out + Fade-in)
+                // TimelineJS'in DOM'u render etmesi birkaç milisaniye sürebilir,
+                // bu yüzden animasyon loader bittikten hemen sonra başlar.
+                tl.to(embedEl, { 
+                    autoAlpha: 1, 
+                    scale: 1, 
+                    duration: 1.5, 
+                    ease: "power3.out" // Dramatik bir yavaşlama
+                }, "-=0.2"); // Loader kapanırken hafifçe başla
+
             } else {
                 throw new Error("TimelineJS library not loaded.");
             }
 
         } else {
+            if(loaderEl) loaderEl.style.display = 'none';
             embedEl.innerHTML = `
                 <div class="flex h-full items-center justify-center text-red-500 font-mono border border-red-900/30">
                     ${i18next.t('timeline_loader.archives_empty')}
                 </div>`;
-            if(loaderEl) loaderEl.style.display = 'none';
+            gsap.to(embedEl, { autoAlpha: 1 });
         }
 
     } catch (error) {
         console.error("Timeline Malfunction:", error);
         if(loaderEl) loaderEl.innerHTML = `<span class='text-red-500'>${i18next.t('timeline_loader.data_corruption')}</span>`;
-        if(embedEl) embedEl.innerHTML = `<p class='text-center pt-20 text-red-800'>${i18next.t('timeline_loader.system_failure')}</p>`;
+        if(embedEl) {
+            embedEl.innerHTML = `<p class='text-center pt-20 text-red-800'>${i18next.t('timeline_loader.system_failure')}</p>`;
+            gsap.to(embedEl, { autoAlpha: 1 });
+        }
     }
 }

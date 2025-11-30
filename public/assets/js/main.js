@@ -1,16 +1,57 @@
 /**
  * THE SINS OF THE FATHERS
- * Main Execution Protocol (v4.1 - i18n Integrated)
+ * Main Execution Protocol (v4.5 - Final Stable)
  * --------------------------------------------------------------
- * This file orchestrates module loading dynamically based on the current page's DOM presence.
+ * Orchestrates module loading, animations (GSAP), and localization (i18n).
  */
 
+// 1. KÜTÜPHANE IMPORTLARI
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import i18next, { initI18n, changeLanguage } from './lib/i18n.js'; // i18next eklendi
+
+// 2. MODÜL IMPORTLARI
 import initAuth from './modules/auth/auth.js';
 import { initMobileMenu } from './modules/ui/mobile-menu.js';
-import { initI18n, changeLanguage } from './lib/i18n.js';
+
+// 3. GSAP AYARLARI
+gsap.registerPlugin(ScrollTrigger);
 
 /* --------------------------------------------------------------------------
-   ROUTER CONFIGURATION (MAPPINGS)
+   VITE MODULE GLOB DEFINITION
+   -------------------------------------------------------------------------- */
+const moduleMap = import.meta.glob([
+    './modules/loaders/*.js', 
+    './modules/auth/*.js'
+]);
+
+/* --------------------------------------------------------------------------
+   YARDIMCI FONKSİYON: SAYFA ÇEVİRİSİ (STATİK HTML İÇİN)
+   -------------------------------------------------------------------------- */
+function updatePageTranslations() {
+    if (!i18next.isInitialized) return;
+
+    // data-i18n özniteliğine sahip tüm elementleri bul ve çevir
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        const translation = i18next.t(key);
+        
+        if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+            el.placeholder = translation;
+        } else {
+            el.innerHTML = translation; // HTML etiketlerini (span, br vb.) korur
+        }
+    });
+
+    // Sayfa başlığını (Title) güncelle
+    const titleKey = document.body.getAttribute('data-page-title-key');
+    if (titleKey) {
+        document.title = i18next.t(titleKey);
+    }
+}
+
+/* --------------------------------------------------------------------------
+   ROUTER CONFIGURATION
    -------------------------------------------------------------------------- */
 const ROUTER_CONFIGS = [
     { 
@@ -85,64 +126,92 @@ document.addEventListener('DOMContentLoaded', async () => {
         "color: #000; background: #c5a059; padding: 5px; font-weight: bold; font-family: monospace;"
     );
 
-    // 1. GLOBAL FONKSİYON ATAMASI
-    // HTML'deki butonların (onclick="changeAppLanguage(...)") erişebilmesi için window'a atıyoruz.
-    window.changeAppLanguage = changeLanguage;
+    // FOUC ÖNLEME
+    gsap.set("body", { autoAlpha: 0 });
 
-    // 2. SENKRON UI BAŞLATMALARI
-    // Not: Mobil menü elemanı sayfada yoksa mobile-menu.js içindeki kontrol sayesinde hata vermez.
+    // GLOBAL AYARLAR VE DİL DEĞİŞTİRME MANTIĞI
+    window.changeAppLanguage = async (lang) => {
+        try {
+            await changeLanguage(lang);
+            updatePageTranslations(); // Dil değişince metinleri güncelle
+            
+            // Aktif buton görselini güncelle
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('text-white', 'font-bold', 'underline');
+                btn.classList.add('text-gray-500');
+                if(btn.dataset.lang === lang) {
+                    btn.classList.add('text-white', 'font-bold', 'underline');
+                    btn.classList.remove('text-gray-500');
+                }
+            });
+            
+            // Sayfayı yenilemeye gerek yok, i18next ve loader fonksiyonları dinamik çalışır
+        } catch (e) {
+            console.error("Language Switch Error:", e);
+        }
+    };
+
     initMobileMenu();
     initAuth();
 
-    // 3. i18n DİL PROTOKOLÜNÜ BAŞLAT
-    // Await kullanıyoruz ki çeviriler yüklenmeden sayfa içeriği render edilmesin.
     try {
+        // 1. DİL YÜKLEME (BEKLE)
         const currentLang = await initI18n();
         console.log(` > Language Protocol: LOADED [${currentLang.toUpperCase()}]`);
 
-        // Aktif dil butonunu parlat (Görsel geri bildirim)
+        // 2. SAYFAYI ÇEVİR (İLK YÜKLEME)
+        updatePageTranslations();
+
+        // Aktif dil butonunu işaretle
         const activeBtn = document.querySelector(`.lang-btn[data-lang="${currentLang.substring(0,2)}"]`);
         if (activeBtn) {
             activeBtn.classList.add('text-white', 'font-bold', 'underline');
             activeBtn.classList.remove('text-gray-500');
         }
 
-    } catch (error) {
-        console.error(" ! Language Protocol Failure:", error);
-    }
-    
-    // 4. SAYFAYA ÖZEL MODÜLLERİ YÜKLE (ROUTER)
-    // Bu kısım çalışmadan önce Dil verisi hazır olduğu için 'lore-detail-loader' 
-    // doğru dildeki içeriği Sanity'den çekebilir.
-    for (const config of ROUTER_CONFIGS) {
-        
-        const idsToCheck = Array.isArray(config.id) ? config.id : [config.id];
-        
-        // Sayfada bu ID'lerden biri var mı kontrol et
-        const isPageActive = idsToCheck.some(id => document.getElementById(id));
+        // 3. MODÜL YÜKLEME (ROUTER)
+        let pageModuleLoaded = false;
 
-        if (isPageActive) {
-            
-            console.log(config.log);
+        for (const config of ROUTER_CONFIGS) {
+            const idsToCheck = Array.isArray(config.id) ? config.id : [config.id];
+            const isPageActive = idsToCheck.some(id => document.getElementById(id));
 
-            try {
-                // Dinamik import ile sadece gerekli JS dosyasını yükle
-                const module = await import(config.modulePath);
-                
-                if (module[config.loaderFn]) {
-                    // Modülü başlat
-                    await module[config.loaderFn]();
-                } else {
-                    console.error(`ERROR: Module ${config.modulePath} does not export function ${config.loaderFn}`);
+            if (isPageActive) {
+                console.log(config.log);
+                try {
+                    const loaderImporter = moduleMap[config.modulePath];
+                    if (!loaderImporter) {
+                        console.error(`ERROR: Module path missing in glob: ${config.modulePath}`);
+                        continue; 
+                    }
+
+                    const module = await loaderImporter();
+                    
+                    if (module[config.loaderFn]) {
+                        await module[config.loaderFn](); // Sayfa modülünü çalıştır
+                        pageModuleLoaded = true;
+                    } 
+                    break; 
+                } catch (error) {
+                    console.error(`FATAL ERROR: Failed to load module for ${config.log}`, error);
                 }
-                
-                return; // Sayfa modülü bulunduğunda döngüyü kır (Performans için)
-
-            } catch (error) {
-                console.error(`FATAL ERROR: Failed to load module for ${config.log}`, error);
             }
         }
-    }
 
-    console.log(" > Standby Mode: No dedicated page module loaded.");
+        if (!pageModuleLoaded) {
+            console.log(" > Standby Mode: Homepage or Static Page Active.");
+        }
+
+        // 4. FİNAL: PERDEYİ AÇ
+        gsap.to("body", { 
+            autoAlpha: 1, 
+            duration: 1.2, 
+            ease: "power2.inOut" 
+        });
+
+    } catch (error) {
+        console.error(" ! System Protocol Failure:", error);
+        // Hata olsa bile sayfayı göster
+        gsap.to("body", { autoAlpha: 1 });
+    }
 });

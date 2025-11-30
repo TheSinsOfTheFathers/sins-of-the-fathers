@@ -1,7 +1,14 @@
 import { client } from '../../lib/sanityClient.js';
 import { renderBlurHash, handleImageLoad } from '../../lib/imageUtils.js'; 
-import i18next from '../../lib/i18n.js'; // i18next import
+import i18next from '../../lib/i18n.js';
 import { injectSchema } from '../../lib/seo.js'; 
+
+// 👇 1. GSAP IMPORTLARI
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+// Plugin Kaydı
+gsap.registerPlugin(ScrollTrigger);
 
 let allLoreData = [];
 
@@ -10,7 +17,7 @@ let allLoreData = [];
    -------------------------------------------------------------------------- */
 
 const createDocumentCard = (lore) => `
-    <div class="archive-card bg-[#e6e2d3] text-black p-6 rounded-sm shadow-lg relative overflow-hidden group h-fit break-inside-avoid">
+    <div class="gsap-archive-card opacity-0 archive-card bg-[#e6e2d3] text-black p-6 rounded-sm shadow-lg relative overflow-hidden group h-fit break-inside-avoid">
         <div class="absolute top-2 right-2 border border-red-900 text-red-900 text-[10px] font-bold px-2 py-0.5 transform rotate-12 opacity-70">DOC_${lore._createdAt ? lore._createdAt.slice(0,4) : '2025'}</div>
         <h3 class="font-mono font-bold text-lg mb-2 uppercase underline decoration-red-800 decoration-2 tracking-tighter">
             <a href="lore-detail.html?slug=${lore.slug}" class="hover:text-red-900">${lore.title}</a>
@@ -28,7 +35,7 @@ const createDocumentCard = (lore) => `
 `;
 
 const createAudioCard = (lore) => `
-    <div class="archive-card bg-gray-900 border-l-4 border-gold p-5 shadow-lg h-fit break-inside-avoid group">
+    <div class="gsap-archive-card opacity-0 archive-card bg-gray-900 border-l-4 border-gold p-5 shadow-lg h-fit break-inside-avoid group">
         <div class="flex items-center justify-between mb-4">
             <h3 class="text-gold font-mono text-sm uppercase truncate w-2/3">
                 <i class="fas fa-microphone-alt mr-2"></i> ${lore.title}
@@ -48,7 +55,7 @@ const createAudioCard = (lore) => `
 `;
 
 const createRestrictedCard = (lore) => `
-    <div class="archive-card bg-black border border-red-900/40 relative overflow-hidden group h-fit break-inside-avoid cursor-not-allowed">
+    <div class="gsap-archive-card opacity-0 archive-card bg-black border border-red-900/40 relative overflow-hidden group h-fit break-inside-avoid cursor-not-allowed">
         <div class="p-6 filter blur-sm opacity-30 select-none pointer-events-none">
             <h3 class="text-white font-serif text-xl mb-2">${lore.title}</h3>
             <p class="text-gray-400 text-sm font-mono">${lore.summary || i18next.t('lore_loader.redacted')}</p>
@@ -73,7 +80,8 @@ const createImageCard = (lore) => {
     const dateStr = lore.date ? new Date(lore.date).toLocaleDateString(i18next.language) : i18next.t('lore_loader.no_date');
 
     const cardDiv = document.createElement('div');
-    cardDiv.className = 'archive-card bg-white p-3 shadow-lg h-fit break-inside-avoid hover:rotate-1 transition-transform duration-300';
+    // 👇 'gsap-archive-card' ve 'opacity-0' class'lara eklendi
+    cardDiv.className = 'gsap-archive-card opacity-0 archive-card bg-white p-3 shadow-lg h-fit break-inside-avoid hover:rotate-1 transition-transform duration-300';
     
     cardDiv.innerHTML = `
         <a href="lore-detail.html?slug=${lore.slug}" class="block group">
@@ -117,6 +125,7 @@ const renderGrid = (data) => {
     const container = document.getElementById('archive-grid');
     if (!container) return;
 
+    // Önceki kartları temizle
     container.innerHTML = ''; 
 
     if (data.length === 0) {
@@ -132,6 +141,25 @@ const renderGrid = (data) => {
             container.appendChild(card);
         }
     });
+
+    // 👇 2. GSAP ANİMASYONU (KARTLAR EKLENDİKTEN HEMEN SONRA)
+    // ----------------------------------------------------------------
+    // Eski animasyonları temizle (Memory Leak önleme)
+    ScrollTrigger.getAll().forEach(t => t.kill());
+
+    gsap.to(".gsap-archive-card", {
+        y: 0,
+        opacity: 1,
+        duration: 0.5,
+        stagger: 0.05, // Kartlar çok hızlı (0.05sn) sırayla gelsin
+        ease: "power2.out",
+        startAt: { y: 30, opacity: 0 }, // Başlangıç: 30px aşağıda ve gizli
+        scrollTrigger: {
+            trigger: container,
+            start: "top 90%",
+            toggleActions: "play none none none"
+        }
+    });
 };
 
 /* --------------------------------------------------------------------------
@@ -143,14 +171,15 @@ export async function displayLoreList() {
     
     if (!container) return;
 
-    // Arama Placeholder'ını çevir
     const searchInput = document.getElementById('archive-search');
     if(searchInput) searchInput.placeholder = i18next.t('search.placeholder');
+
+    // Başlangıçta Grid'i gizle (Loader görünürken)
+    gsap.set(container, { autoAlpha: 0 });
 
     try {
         console.log("> Accessing Archives...");
 
-        // Mevcut dile göre alanları seç
         const lang = i18next.language || 'en';
         const titleField = lang === 'tr' ? 'title_tr' : 'title_en';
         const summaryField = lang === 'tr' ? 'summary_tr' : 'summary_en';
@@ -202,8 +231,11 @@ export async function displayLoreList() {
             console.warn("Schema Error:", e);
         }
 
+        // Loader'ı kapat ve Grid'i göster
         if (loader) loader.style.display = 'none';
-        container.classList.remove('opacity-0');
+        
+        // Grid'i görünür yap (İçindeki kartlar henüz opacity-0)
+        gsap.to(container, { autoAlpha: 1, duration: 0.3 });
 
         renderGrid(allLoreData);
         setupSearchInterface();
@@ -212,20 +244,16 @@ export async function displayLoreList() {
         console.error("Archive Corrupted:", error);
         if(loader) loader.innerHTML = `<span class="text-red-500 font-mono">${i18next.t('lore_loader.system_error_short')}</span>`;
         container.innerHTML = `<p class="text-red-500 text-center col-span-full">${i18next.t('lore_loader.connection_failed_long')}</p>`;
+        gsap.to(container, { autoAlpha: 1 });
     }
 }
-
-// public/assets/js/modules/loaders/lore-loader.js içinde:
 
 function setupSearchInterface() {
     const searchInput = document.getElementById('archive-search'); 
     const filterButtons = document.querySelectorAll('#archive-filters button'); 
 
-    // Arama ve Filtreleme fonksiyonu
     const applyFilters = () => {
         const term = searchInput ? searchInput.value.toLowerCase() : '';
-        
-        // Düzeltme: Butonun yazısına değil, data-filter özelliğine bakıyoruz
         const activeBtn = document.querySelector('#archive-filters button.border-gold');
         const activeType = activeBtn ? activeBtn.getAttribute('data-filter') : 'all';
 
@@ -235,7 +263,6 @@ function setupSearchInterface() {
                 (item.summary || '').toLowerCase().includes(term);
                 
             let matchesType = true;
-            // 'activeType' artık 'all', 'text' veya 'audio' olarak doğrudan geliyor
             if (activeType === 'text') matchesType = item.loreType === 'document' || !item.loreType;
             if (activeType === 'audio') matchesType = item.loreType === 'audio';
             if (activeType === 'classified') matchesType = item.restricted === true;
@@ -243,6 +270,7 @@ function setupSearchInterface() {
             return matchesSearch && matchesType;
         });
 
+        // Filtreleme yapıldığında yeniden render et (Otomatik animasyon çalışır)
         renderGrid(filtered);
     };
 

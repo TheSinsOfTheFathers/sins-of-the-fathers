@@ -4,6 +4,13 @@ import i18next from '../../lib/i18n.js';
 // 👇 SEO İMPORTU
 import { injectSchema } from '../../lib/seo.js';
 
+// 👇 1. GSAP İMPORTLARI EKLENDİ
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+// ScrollTrigger'ı güvenli tarafta kalmak için burada da kaydedelim
+gsap.registerPlugin(ScrollTrigger);
+
 /* --------------------------------------------------------------------------
    CARD TEMPLATES (NOIR STYLE)
    -------------------------------------------------------------------------- */
@@ -11,7 +18,9 @@ import { injectSchema } from '../../lib/seo.js';
 const createProtagonistCard = (character) => {
     const cardLink = document.createElement('a');
     cardLink.href = `character-detail.html?slug=${character.slug.current}`;
-    cardLink.className = 'group relative w-full h-[500px] overflow-hidden border border-white/10 bg-obsidian hover:border-gold transition-all duration-700 block shadow-2xl';
+    
+    // 👇 GSAP SEÇİCİSİ İÇİN 'gsap-protagonist' CLASS'I EKLENDİ
+    cardLink.className = 'gsap-protagonist group relative w-full h-[500px] overflow-hidden border border-white/10 bg-obsidian hover:border-gold transition-all duration-700 block shadow-2xl opacity-0'; // Başlangıçta opacity-0 ekledik ki animasyonla gelsin
 
     // Verileri hazırla
     const imageUrl = character.image?.url || 'https://placehold.co/600x800/0a0a0a/333333?text=CLASSIFIED';
@@ -42,16 +51,10 @@ const createProtagonistCard = (character) => {
     const canvas = cardLink.querySelector('.blur-canvas');
     const img = cardLink.querySelector('.main-image');
 
-    if (blurHash && canvas) {
-        renderBlurHash(canvas, blurHash);
-    }
-
+    if (blurHash && canvas) renderBlurHash(canvas, blurHash);
     if (img) {
-        if (img.complete) {
-            handleImageLoad(img, canvas);
-        } else {
-            img.onload = () => handleImageLoad(img, canvas);
-        }
+        if (img.complete) handleImageLoad(img, canvas);
+        else img.onload = () => handleImageLoad(img, canvas);
     }
 
     return cardLink;
@@ -60,7 +63,9 @@ const createProtagonistCard = (character) => {
 const createOperativeCard = (character) => {
     const cardLink = document.createElement('a');
     cardLink.href = `character-detail.html?slug=${character.slug.current}`;
-    cardLink.className = 'group block bg-white/5 border border-white/10 hover:border-white/40 hover:-translate-y-1 transition-all duration-300 shadow-lg';
+    
+    // 👇 GSAP SEÇİCİSİ İÇİN 'gsap-operative' CLASS'I EKLENDİ
+    cardLink.className = 'gsap-operative group block bg-white/5 border border-white/10 hover:border-white/40 hover:-translate-y-1 transition-all duration-300 shadow-lg opacity-0';
 
     const imageUrl = character.image?.url || 'https://placehold.co/400x500/0a0a0a/333?text=IMG_MISSING';
     const blurHash = character.image?.blurHash;
@@ -68,13 +73,10 @@ const createOperativeCard = (character) => {
 
     cardLink.innerHTML = `
         <div class="relative aspect-[3/4] overflow-hidden border-b border-white/5 bg-gray-900">
-            
             <canvas class="blur-canvas absolute inset-0 w-full h-full object-cover z-0"></canvas>
-            
             <img src="${imageUrl}" alt="${character.name}" 
                  class="main-image relative w-full h-full object-cover grayscale opacity-0 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500 z-10"
                  loading="lazy">
-                 
             <div class="absolute inset-0 border-2 border-transparent group-hover:border-gold/20 transition-all z-20 pointer-events-none"></div>
         </div>
         
@@ -87,16 +89,10 @@ const createOperativeCard = (character) => {
     const canvas = cardLink.querySelector('.blur-canvas');
     const img = cardLink.querySelector('.main-image');
 
-    if (blurHash && canvas) {
-        renderBlurHash(canvas, blurHash);
-    }
-
+    if (blurHash && canvas) renderBlurHash(canvas, blurHash);
     if (img) {
-        if (img.complete) {
-            handleImageLoad(img, canvas);
-        } else {
-            img.onload = () => handleImageLoad(img, canvas);
-        }
+        if (img.complete) handleImageLoad(img, canvas);
+        else img.onload = () => handleImageLoad(img, canvas);
     }
 
     return cardLink;
@@ -105,7 +101,9 @@ const createOperativeCard = (character) => {
 const createAssetCard = (character) => {
     const cardLink = document.createElement('a');
     cardLink.href = `character-detail.html?slug=${character.slug.current}`;
-    cardLink.className = 'group flex items-center space-x-4 p-3 border border-white/5 bg-black/40 hover:bg-white/5 hover:border-red-900/50 transition-all duration-300';
+    
+    // 👇 GSAP SEÇİCİSİ İÇİN 'gsap-asset' CLASS'I EKLENDİ
+    cardLink.className = 'gsap-asset group flex items-center space-x-4 p-3 border border-white/5 bg-black/40 hover:bg-white/5 hover:border-red-900/50 transition-all duration-300 opacity-0';
 
     const imageUrl = character.image?.url || 'https://ui-avatars.com/api/?background=333&color=fff&name=' + character.name;
     const blurHash = character.image?.blurHash;
@@ -113,9 +111,7 @@ const createAssetCard = (character) => {
 
     cardLink.innerHTML = `
         <div class="relative w-12 h-12 overflow-hidden rounded-sm border border-gray-700 group-hover:border-red-800 shrink-0 bg-gray-800">
-            
             <canvas class="blur-canvas absolute inset-0 w-full h-full object-cover z-0"></canvas>
-            
             <img src="${imageUrl}" 
                  class="main-image w-full h-full object-cover grayscale opacity-0 transition-opacity duration-300 z-10" 
                  alt="${character.name}"
@@ -131,16 +127,10 @@ const createAssetCard = (character) => {
     const canvas = cardLink.querySelector('.blur-canvas');
     const img = cardLink.querySelector('.main-image');
 
-    if (blurHash && canvas) {
-        renderBlurHash(canvas, blurHash);
-    }
-
+    if (blurHash && canvas) renderBlurHash(canvas, blurHash);
     if (img) {
-        if (img.complete) {
-            handleImageLoad(img, canvas);
-        } else {
-            img.onload = () => handleImageLoad(img, canvas);
-        }
+        if (img.complete) handleImageLoad(img, canvas);
+        else img.onload = () => handleImageLoad(img, canvas);
     }
 
     return cardLink;
@@ -178,7 +168,7 @@ export async function displayCharacters() {
 
         if (characters && characters.length > 0) {
             
-            // 👇 SEO / SCHEMA ENJEKSİYONU (ItemList)
+            // 👇 SEO / SCHEMA ENJEKSİYONU
             try {
                 const itemList = characters.map((char, index) => ({
                     "@type": "ListItem",
@@ -237,12 +227,65 @@ export async function displayCharacters() {
                 }
             });
 
+            // Boş durum kontrolü
             Object.keys(containers).forEach(key => {
                 const container = containers[key];
                 if (container && container.children.length === 0) {
                     container.innerHTML = `<p class="text-xs font-mono text-gray-600 col-span-full text-center">${i18next.t('characters_page.no_records_found')}</p>`;
                 }
             });
+
+            // 👇 2. GSAP ANİMASYONLARI (ELEMENTLER EKLENDİKTEN SONRA)
+            // ----------------------------------------------------------------
+            
+            // A. Başrol Karakterleri (Daha yavaş ve dramatik)
+            if (containers.protagonists && containers.protagonists.children.length > 0) {
+                gsap.to(".gsap-protagonist", {
+                    opacity: 1,
+                    y: 0,
+                    startAt: { y: 100, opacity: 0 }, // Başlangıç değerleri
+                    duration: 1.5,
+                    stagger: 0.3, // Kartlar arası 0.3sn bekleme
+                    ease: "power4.out",
+                    scrollTrigger: {
+                        trigger: containers.protagonists,
+                        start: "top 80%", // Ekranın %80'ine gelince başla
+                    }
+                });
+            }
+
+            // B. Ana Operatörler (Hızlı ve akıcı)
+            if (containers.main && containers.main.children.length > 0) {
+                gsap.to(".gsap-operative", {
+                    opacity: 1,
+                    y: 0,
+                    scale: 1,
+                    startAt: { y: 50, opacity: 0, scale: 0.95 },
+                    duration: 0.8,
+                    stagger: 0.1,
+                    ease: "back.out(1.2)",
+                    scrollTrigger: {
+                        trigger: containers.main,
+                        start: "top 85%",
+                    }
+                });
+            }
+
+            // C. Yan Karakterler/Assetler (Hızlı liste dökümü)
+            if (containers.side && containers.side.children.length > 0) {
+                gsap.to(".gsap-asset", {
+                    opacity: 1,
+                    x: 0,
+                    startAt: { x: -30, opacity: 0 },
+                    duration: 0.5,
+                    stagger: 0.05,
+                    ease: "power2.out",
+                    scrollTrigger: {
+                        trigger: containers.side,
+                        start: "top 90%",
+                    }
+                });
+            }
 
         } else {
             if (containers.main) containers.main.innerHTML = '<p class="text-red-500 font-mono">DATABASE CONNECTION FAILED.</p>';

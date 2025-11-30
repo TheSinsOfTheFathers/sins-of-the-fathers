@@ -2,15 +2,50 @@ import { client, urlFor } from '../../lib/sanityClient.js';
 import { toHTML } from 'https://esm.sh/@portabletext/to-html@2.0.13';
 import { renderBlurHash, applyBlurToStaticImage } from '../../lib/imageUtils.js';
 import i18next from '../../lib/i18n.js';
+import { injectSchema } from '../../lib/seo.js';
+
+// 👇 1. GSAP IMPORT
+import gsap from 'gsap';
 
 /* --------------------------------------------------------------------------
-   YARDIMCI: STATİK HTML ÇEVİRİSİ (EKSİK OLAN KISIM BURASIYDI)
+   HELPER: SCRAMBLE TEXT (ŞİFRE ÇÖZME EFEKTİ)
+   -------------------------------------------------------------------------- */
+const animateScramble = (element, finalText, duration = 1) => {
+    if (!element) return;
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#%&";
+    const originalText = finalText || element.textContent;
+    const length = originalText.length;
+    
+    let obj = { value: 0 };
+    
+    gsap.to(obj, {
+        value: 1,
+        duration: duration,
+        ease: "none",
+        onUpdate: () => {
+            const progress = Math.floor(obj.value * length);
+            let result = "";
+            for (let i = 0; i < length; i++) {
+                if (i < progress) {
+                    result += originalText[i];
+                } else {
+                    result += chars[Math.floor(Math.random() * chars.length)];
+                }
+            }
+            element.textContent = result;
+        },
+        onComplete: () => {
+            element.textContent = originalText;
+        }
+    });
+};
+
+/* --------------------------------------------------------------------------
+   YARDIMCI: STATİK HTML ÇEVİRİSİ
    -------------------------------------------------------------------------- */
 const updateStaticTranslations = () => {
-    // Sayfadaki tüm data-i18n özniteliğine sahip elementleri bulur
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
-        // i18next kütüphanesi ile anahtarı çevirir ve metni günceller
         const translation = i18next.t(key);
         if (translation) el.textContent = translation;
     });
@@ -28,7 +63,11 @@ const renderLoreIntel = (doc) => {
     };
 
     setText('lore-title', doc.title);
-    setText('lore-id', `#${doc._id.slice(-6).toUpperCase()}`); 
+    
+    const docId = `#${doc._id.slice(-6).toUpperCase()}`;
+    // ID'yi direkt yazmak yerine aşağıda animasyonla yazacağız, şimdilik boş bırakabiliriz veya placeholder koyabiliriz.
+    setText('lore-id', '#######'); 
+
     setText('lore-source', doc.source, 'lore_detail.unknown_source');
     
     if (document.getElementById('lore-date')) {
@@ -45,8 +84,9 @@ const renderLoreIntel = (doc) => {
     if (tagsContainer && doc.relatedEntities) {
         tagsContainer.innerHTML = doc.relatedEntities.map(ref => {
             const typeSlug = ref._type === 'character' ? 'character-detail' : 'faction-detail'; 
+            // class'a 'gsap-tag' ve 'opacity-0' ekledim
             return `
-                <a href="${typeSlug}.html?slug=${ref.slug}" class="text-[10px] font-mono uppercase border border-gray-700 bg-white/5 px-2 py-1 hover:border-gold hover:text-gold transition text-gray-400">
+                <a href="${typeSlug}.html?slug=${ref.slug}" class="gsap-tag opacity-0 text-[10px] font-mono uppercase border border-gray-700 bg-white/5 px-2 py-1 hover:border-gold hover:text-gold transition text-gray-400">
                     #${ref.title || ref.name}
                 </a>
             `;
@@ -61,7 +101,7 @@ const renderLoreIntel = (doc) => {
     const audioWrapper = document.getElementById('audio-player-wrapper');
     const paperWrapper = document.querySelector('.paper-bg'); 
 
-    // Reset
+    // Reset Classes
     if (mediaContainer) mediaContainer.classList.add('hidden');
     if (imageWrapper) imageWrapper.classList.add('hidden');
     if (audioWrapper) audioWrapper.classList.add('hidden');
@@ -91,6 +131,9 @@ const renderLoreIntel = (doc) => {
                     playBtn.innerHTML = '<i class="fas fa-pause text-xl ml-0"></i>';
                     statusText.textContent = i18next.t('lore_detail.audio_playing');
                     statusText.classList.add("animate-pulse", "text-red-500");
+                    
+                    // GSAP: Equalizer efekti veya oynuyor hissi
+                    gsap.to(playBtn, { scale: 0.9, duration: 0.1, yoyo: true, repeat: 1 });
                 } else {
                     audio.pause();
                     playBtn.innerHTML = '<i class="fas fa-play text-xl ml-1"></i>';
@@ -99,7 +142,6 @@ const renderLoreIntel = (doc) => {
                 }
             };
             
-            // Event listener çakışmalarını önlemek için butonu klonla ve değiştir
             const newPlayBtn = playBtn.cloneNode(true);
             playBtn.parentNode.replaceChild(newPlayBtn, playBtn);
             newPlayBtn.addEventListener('click', togglePlay);
@@ -173,26 +215,107 @@ const renderLoreIntel = (doc) => {
         }
     }
 
-    // Loader Kapat
-    setTimeout(() => {
-        const loader = document.getElementById('doc-loader');
-        const content = document.getElementById('doc-content');
-        if(loader) loader.classList.add('hidden');
-        if(content) content.classList.remove('opacity-0');
-        
-        // ÖNEMLİ: İçerik yüklendikten sonra statik çevirileri de güncelle
-        updateStaticTranslations(); 
-        
-    }, 800); 
+    // ÖNEMLİ: Çevirileri güncelle
+    updateStaticTranslations();
+
+    // 👇 2. GSAP REVEAL ANIMATION (Eski setTimeout yerine)
+    // -----------------------------------------------------------------------
+    const loader = document.getElementById('doc-loader');
+    const content = document.getElementById('doc-content');
+    
+    // GSAP Timeline
+    const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
+
+    // A. Loader Out
+    if(loader) tl.to(loader, { autoAlpha: 0, duration: 0.5 });
+    
+    // B. Content In (Hemen ardından)
+    if(content) {
+        tl.to(content, { autoAlpha: 1, duration: 0.5 }, "-=0.3");
+        content.classList.remove('opacity-0'); // CSS class'ını temizle
+    }
+
+    // C. Başlık ve ID Animasyonu
+    const titleEl = document.getElementById('lore-title');
+    const idEl = document.getElementById('lore-id');
+    const metaEl = document.getElementById('lore-meta'); // Tarih, Yazar vb. kapsayıcısı
+
+    if(titleEl) {
+        tl.from(titleEl, { y: -20, opacity: 0, duration: 0.8 }, "-=0.2");
+    }
+    
+    // ID Scramble Effect
+    if(idEl) {
+        tl.add(() => animateScramble(idEl, docId, 1.0), "-=0.6");
+    }
+
+    // D. Metadata (Yazar, Kaynak) soldan gelir
+    if(metaEl) {
+        tl.from(metaEl, { x: -20, opacity: 0, duration: 0.6 }, "-=0.8");
+    }
+
+    // E. Etiketler (Tags) sırayla gelir
+    const tags = document.querySelectorAll('.gsap-tag');
+    if(tags.length > 0) {
+        tl.to(tags, {
+            opacity: 1,
+            y: 0,
+            duration: 0.4,
+            stagger: 0.05,
+            startAt: { y: 10 }
+        }, "-=0.5");
+    }
+
+    // F. Medya (Audio veya Resim)
+    if (mediaContainer && !mediaContainer.classList.contains('hidden')) {
+        // Audio ise yukarıdan iner
+        if (doc.audioURL) {
+            tl.from(audioWrapper, { y: -30, opacity: 0, duration: 0.8, ease: "back.out(1.2)" }, "-=0.4");
+        } 
+        // Resim ise bulanıktan netleşir
+        else {
+            const img = document.getElementById('lore-image');
+            if(img) tl.from(img, { scale: 1.05, filter: "blur(10px)", duration: 1.2 }, "-=0.4");
+        }
+    }
+
+    // G. Kağıt/Belge Metni (Masaya sürülme efekti)
+    if (paperWrapper && paperWrapper.style.display !== 'none') {
+        tl.from(paperWrapper, {
+            y: 50,
+            opacity: 0,
+            duration: 1.0,
+            ease: "power3.out"
+        }, "-=0.6"); // Diğerleriyle biraz örtüşerek başla
+    }
+
+    // H. Redacted (Gizlenmiş) metinler varsa onlara dikkat çek
+    const redactedItems = document.querySelectorAll('.bg-black.text-black');
+    if(redactedItems.length > 0) {
+        gsap.to(redactedItems, {
+            backgroundColor: "#222", // Hafifçe grileşip
+            duration: 0.5,
+            repeat: 1,
+            yoyo: true,
+            delay: 1.5, // En sonda çalışsın
+            ease: "sine.inOut",
+            onComplete: () => gsap.set(redactedItems, { backgroundColor: "black" }) // Siyaha dön
+        });
+    }
 };
 
 
 export const loadLoreDetails = async () => {
     const container = document.getElementById('evidence-container'); 
-    if (!container) return; 
+    
+    // FOUC Önleme: Konteyneri gizle
+    if (container) {
+        // İçerik kısmını gizle, loader kalsın
+        const content = document.getElementById('doc-content');
+        if(content) gsap.set(content, { autoAlpha: 0 });
+    }
 
-    // Sayfa ilk yüklendiğinde statik elemanları (header/footer) çevir
-    // i18next'in hazır olup olmadığını kontrol et
+    // i18next kontrolü
     if (i18next.isInitialized) {
         updateStaticTranslations();
     } else {
@@ -219,12 +342,7 @@ export const loadLoreDetails = async () => {
             source,
             author,
             "audioURL": audioFile.asset->url, 
-            mainImage {
-                asset->{
-                    url,
-                    "blurHash": metadata.blurHash
-                }
-            },
+            mainImage { asset->{ url, "blurHash": metadata.blurHash } },
             "relatedEntities": coalesce(relatedCharacters[]->{name, "title": name, "slug": slug.current, _type}, []) 
                              + coalesce(relatedFactions[]->{"title": title, "slug": slug.current, _type}, [])
         }`;

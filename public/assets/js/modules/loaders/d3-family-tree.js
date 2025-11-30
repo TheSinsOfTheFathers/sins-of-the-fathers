@@ -1,17 +1,17 @@
-// 👇 İMPORT EKLENDİ
+// 👇 MODERN İMPORTLAR
+import * as d3 from 'd3';
 import i18next from '../../lib/i18n.js';
+import gsap from 'gsap';
 
 export function renderFamilyGraph(containerEl, { nodes = [], links = [] } = {}, options = {}) {
-    const d3 = window.d3;
-    if (!d3) {
-        // 👇 ÇEVİRİ: Hata mesajı
-        containerEl.innerHTML = `<p class="text-red-500 font-mono text-xs text-center mt-10">${i18next.t('family_graph.error_module')}</p>`;
-        return;
-    }
+    
+    // D3 kontrolü artık import edildiği için gerekmez ama container kontrolü yapalım
+    if (!containerEl) return;
 
     containerEl.innerHTML = ''; 
     containerEl.classList.add('d3-container', 'cursor-move'); 
 
+    // Tooltip Oluşturma
     let tooltip = document.createElement('div');
     tooltip.className = 'd3-tooltip';
     Object.assign(tooltip.style, {
@@ -27,7 +27,8 @@ export function renderFamilyGraph(containerEl, { nodes = [], links = [] } = {}, 
         textTransform: 'uppercase',
         letterSpacing: '1px',
         zIndex: '50',
-        boxShadow: '0 0 15px rgba(197, 160, 89, 0.2)'
+        boxShadow: '0 0 15px rgba(197, 160, 89, 0.2)',
+        borderRadius: '4px'
     });
     containerEl.appendChild(tooltip);
 
@@ -42,32 +43,36 @@ export function renderFamilyGraph(containerEl, { nodes = [], links = [] } = {}, 
         .attr('preserveAspectRatio', 'xMidYMid meet')
         .style('background-color', 'transparent'); 
 
+    // --- DEFS & MARKERS ---
     const defs = svg.append('defs');
 
+    // Glow Filter
     const filter = defs.append("filter").attr("id", "glow");
     filter.append("feGaussianBlur").attr("stdDeviation", "2.5").attr("result", "coloredBlur");
     const feMerge = filter.append("feMerge");
     feMerge.append("feMergeNode").attr("in", "coloredBlur");
     feMerge.append("feMergeNode").attr("in", "SourceGraphic");
 
+    // Ok Uçları (Markers)
     defs.append('marker')
         .attr('id', 'arrow-gold')
-        .attr('viewBox', '0 -5 10 10').attr('refX', 22).attr('refY', 0)
+        .attr('viewBox', '0 -5 10 10').attr('refX', 28).attr('refY', 0) // refX biraz artırıldı (daireden uzaklaşsın diye)
         .attr('markerWidth', 6).attr('markerHeight', 6).attr('orient', 'auto')
         .append('path').attr('d', 'M0,-5L10,0L0,5').attr('fill', '#c5a059');
 
     defs.append('marker')
         .attr('id', 'arrow-gray')
-        .attr('viewBox', '0 -5 10 10').attr('refX', 22).attr('refY', 0)
+        .attr('viewBox', '0 -5 10 10').attr('refX', 25).attr('refY', 0)
         .attr('markerWidth', 6).attr('markerHeight', 6).attr('orient', 'auto')
         .append('path').attr('d', 'M0,-5L10,0L0,5').attr('fill', '#444');
 
     const linkGroup = svg.append('g').attr('class', 'links');
     const nodeGroup = svg.append('g').attr('class', 'nodes');
 
+    // --- DATA HAZIRLIĞI ---
     const sanitizedNodes = nodes.map((n, i) => {
-        // 👇 ÇEVİRİ: Bilinmeyen düğüm ismi
         if (!n) return { id: `node_missing_${i}`, label: i18next.t('family_graph.unknown_node') };
+        // Önceki loader dosyasında "id" slug olarak atanmıştı, onu koruyoruz.
         n.id = n.id || n.slug || n._id || n.name || `node_${i}`;
         return n;
     });
@@ -83,6 +88,7 @@ export function renderFamilyGraph(containerEl, { nodes = [], links = [] } = {}, 
     const renderNodes = sanitizedNodes;
     const renderLinks = sanitizedLinks;
 
+    // --- LINKS RENDER ---
     const link = linkGroup.selectAll('line')
         .data(renderLinks).enter().append('line')
         .attr('stroke', d => (d.strength && d.strength > 1.2) ? '#c5a059' : '#333') 
@@ -104,9 +110,12 @@ export function renderFamilyGraph(containerEl, { nodes = [], links = [] } = {}, 
         .attr('text-anchor', 'middle')
         .text(d => d.label ? d.label.toUpperCase() : '');
 
+    // --- NODES RENDER ---
     const node = nodeGroup.selectAll('g.node')
         .data(renderNodes, d => d.id).enter().append('g')
         .attr('class', 'node')
+        // GSAP: Başlangıçta görünmez yap (Animation için)
+        .attr('opacity', 0) 
         .call(d3.drag() 
             .on('start', (event, d) => {
                 if (!event.active && simulation) simulation.alphaTarget(0.3).restart();
@@ -125,9 +134,10 @@ export function renderFamilyGraph(containerEl, { nodes = [], links = [] } = {}, 
         .attr('r', d => d.isMain ? 26 : 18)
         .attr('fill', '#050505') 
         .attr('stroke', d => d.isMain ? '#c5a059' : '#333')
-        .attr('stroke-width', d => d.isMain ? 2 : 1);
+        .attr('stroke-width', d => d.isMain ? 2 : 1)
+        .attr('class', 'node-circle');
 
-    const imageSize = 36;
+    // Resim Kırpma (ClipPath)
     const clipIdBase = `clip-${Math.random().toString(36).substr(2, 9)}`;
     
     defs.selectAll('.node-clip')
@@ -169,14 +179,15 @@ export function renderFamilyGraph(containerEl, { nodes = [], links = [] } = {}, 
         .attr('letter-spacing', '1px');
 
 
+    // --- SIMULATION ---
     const simulation = d3.forceSimulation(renderNodes)
-        .force('link', d3.forceLink(renderLinks).id(d => d.id).distance(100))
-        .force('charge', d3.forceManyBody().strength(-300)) 
+        .force('link', d3.forceLink(renderLinks).id(d => d.id).distance(120)) // Mesafe biraz artırıldı
+        .force('charge', d3.forceManyBody().strength(-400)) 
         .force('center', d3.forceCenter(width / 2, height / 2))
-        .force('collide', d3.forceCollide(d => (d.isMain ? 35 : 25)).strength(0.7));
+        .force('collide', d3.forceCollide(d => (d.isMain ? 40 : 30)).strength(0.8));
 
     simulation.on('tick', () => {
-        
+        // Node'ların alan dışına çıkmasını engelle
         renderNodes.forEach(d => {
             d.x = Math.max(20, Math.min(width - 20, d.x));
             d.y = Math.max(20, Math.min(height - 20, d.y));
@@ -199,11 +210,11 @@ export function renderFamilyGraph(containerEl, { nodes = [], links = [] } = {}, 
         node.attr('transform', d => `translate(${d.x},${d.y})`);
     });
 
+    // --- INTERACTION ---
     node.on('mouseover', function(event, d) {
-        d3.select(this).select('circle').attr('stroke', '#fff').attr('stroke-width', 2);
+        d3.select(this).select('.node-circle').attr('stroke', '#fff').attr('stroke-width', 2);
         tooltip.style.display = 'block';
         
-        // 👇 ÇEVİRİ: Tooltip içeriği
         const role = d.isMain ? i18next.t('family_graph.role_primary') : i18next.t('family_graph.role_associate');
         
         tooltip.innerHTML = `
@@ -212,26 +223,36 @@ export function renderFamilyGraph(containerEl, { nodes = [], links = [] } = {}, 
         `;
     })
     .on('mousemove', function(event) {
-        tooltip.style.left = (event.offsetX + 15) + 'px';
-        tooltip.style.top = (event.offsetY + 15) + 'px';
+        // Tooltip pozisyonunu container'a göre ayarla
+        const rect = containerEl.getBoundingClientRect();
+        const mouseX = event.clientX - rect.left;
+        const mouseY = event.clientY - rect.top;
+
+        tooltip.style.left = (mouseX + 15) + 'px';
+        tooltip.style.top = (mouseY + 15) + 'px';
     })
     .on('mouseout', function() {
-        d3.select(this).select('circle')
+        d3.select(this).select('.node-circle')
             .attr('stroke', d => d.isMain ? '#c5a059' : '#333')
             .attr('stroke-width', d => d.isMain ? 2 : 1);
         tooltip.style.display = 'none';
     });
 
+    // 👇 NAVİGASYON DÜZELTMESİ
     node.on('click', (event, d) => {
         if (event.defaultPrevented) return; 
         
-        if (d.slug) {
-            window.location.href = `character-detail.html?slug=${d.slug}`;
+        // Loader dosyasında 'id' parametresi slug'a eşitlenmişti.
+        const slug = d.slug || d.id; 
+
+        if (slug && !slug.startsWith('node_')) { // Geçici ID değilse git
+            window.location.href = `character-detail.html?slug=${slug}`;
         } else {
-            console.warn("Node clicked but no slug found:", d);
+            console.warn("Node clicked but no valid slug found:", d);
         }
     });
 
+    // Zoom Behavior
     const zoom = d3.zoom()
         .scaleExtent([0.5, 3])
         .on('zoom', (event) => {
@@ -241,5 +262,27 @@ export function renderFamilyGraph(containerEl, { nodes = [], links = [] } = {}, 
 
     svg.call(zoom);
     
+    // --- GSAP ENTRANCE ANIMATION ---
+    // Node'lar "Pop" diye patlayarak gelsin
+    gsap.to(nodeGroup.selectAll('.node').nodes(), {
+        opacity: 1,
+        scale: 1,
+        startAt: { scale: 0 },
+        duration: 0.5,
+        stagger: {
+            amount: 0.5,
+            from: "center"
+        },
+        ease: "back.out(1.7)"
+    });
+
+    // Linkler yavaşça belirtsin
+    gsap.from(linkGroup.selectAll('line').nodes(), {
+        opacity: 0,
+        duration: 1,
+        delay: 0.3,
+        stagger: 0.05
+    });
+
     return { svg, simulation };
 }

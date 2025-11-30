@@ -2,8 +2,8 @@ import { client } from '../../lib/sanityClient.js';
 import { toHTML } from 'https://esm.sh/@portabletext/to-html@2.0.13';
 import { applyBlurToStaticImage } from '../../lib/imageUtils.js';
 import i18next from '../../lib/i18n.js';
-// 👇 SEO İMPORTU (injectSchema'yı çağırıyoruz)
 import { injectSchema } from '../../lib/seo.js';
+import gsap from 'gsap';
 
 /**
  * MINI MAP ENGINE (Canlı Uydu Bağlantısı)
@@ -14,13 +14,9 @@ const initMiniMap = (lat, lng, color, containerId = 'mini-map') => {
     const container = document.getElementById(containerId);
     
     if (container._leaflet_id) {
-        const mapInstance = container._leaflet_map;
-        if (mapInstance) {
-            mapInstance.remove();
-        }
+        container.innerHTML = ""; 
+        container._leaflet_id = null;
     }
-    
-    if (container._leaflet_id) return; 
 
     const map = L.map(containerId, {
         center: [lat, lng],
@@ -42,8 +38,8 @@ const initMiniMap = (lat, lng, color, containerId = 'mini-map') => {
         className: 'radar-ping',
         html: `
             <div class="relative w-4 h-4 flex items-center justify-center">
-                <div class="absolute w-full h-full bg-[${color}] rounded-full animate-ping opacity-75" style="background-color: ${color}"></div>
-                <div class="absolute w-2 h-2 bg-[${color}] rounded-full shadow-[0_0_10px_${color}]" style="background-color: ${color}"></div>
+                <div class="absolute w-full h-full rounded-full animate-ping opacity-75" style="background-color: ${color}"></div>
+                <div class="absolute w-2 h-2 rounded-full shadow-[0_0_10px_${color}]" style="background-color: ${color}"></div>
             </div>
         `,
         iconSize: [20, 20],
@@ -51,6 +47,8 @@ const initMiniMap = (lat, lng, color, containerId = 'mini-map') => {
     });
 
     L.marker([lat, lng], { icon: radarIcon }).addTo(map);
+
+    gsap.from(container, { opacity: 0, scale: 0.9, duration: 1, ease: "power2.out" });
 };
 
 /**
@@ -63,6 +61,10 @@ const applyFactionTheme = (colorHex, bannerUrl) => {
     const banner = document.getElementById('faction-banner');
     if (banner && bannerUrl) {
         banner.style.backgroundImage = `url('${bannerUrl}')`;
+        gsap.fromTo(banner, 
+            { opacity: 0, scale: 1.1 }, 
+            { opacity: 1, scale: 1, duration: 2, ease: "power2.out" }
+        );
     }
     return themeColor;
 };
@@ -77,50 +79,38 @@ const renderFactionDetails = (faction) => {
         iconContainer: document.getElementById('faction-icon-container'),
         roster: document.getElementById('faction-roster'),
         threat: document.getElementById('threat-text'),
-        relations: document.getElementById('faction-locations-list')
+        relations: document.getElementById('faction-locations-list'),
+        mainGrid: document.querySelector('main'),
+        // 👇 HATA DÜZELTMESİ: HTML'de ID olmadığı için Class ile seçiyoruz
+        sidebar: document.querySelector('.lg\\:col-span-1 > div') 
     };
 
     const safeTitle = faction.title || 'Unknown Faction';
     document.title = i18next.t('faction_detail_loader.meta_title', { factionName: safeTitle });
 
-    // 👇 SEO / SCHEMA ENJEKSİYONU (Manuel Obje Oluşturma)
+    // SEO / SCHEMA
     try {
-        // Description için HTML taglerini temizleyip düz metin alalım (Basitçe)
         const plainDesc = faction.description 
             ? faction.description.map(block => block.children?.map(child => child.text).join('')).join(' ') 
             : faction.motto || "";
 
         const schemaData = {
             "@context": "https://schema.org",
-            "@type": "Organization", // Grup olduğu için Organization kullanıyoruz
+            "@type": "Organization",
             "name": safeTitle,
             "slogan": faction.motto,
-            "description": plainDesc.substring(0, 160) + "...", // SEO için kısa tut
+            "description": plainDesc.substring(0, 160) + "...",
             "url": window.location.href,
             "logo": faction.image?.asset?.url,
-            "founder": faction.leader ? {
-                "@type": "Person",
-                "name": faction.leader.name
-            } : undefined,
-            "location": faction.hqName ? {
-                "@type": "Place",
-                "name": faction.hqName
-            } : undefined
+            "founder": faction.leader ? { "@type": "Person", "name": faction.leader.name } : undefined,
+            "location": faction.hqName ? { "@type": "Place", "name": faction.hqName } : undefined
         };
-
         injectSchema(schemaData);
-        console.log("> SEO Protocol: Faction Schema Injected.");
     } catch (err) {
-        console.warn("> SEO Protocol Warning: Failed to inject schema.", err);
+        console.warn("SEO Warning:", err);
     }
-    // -----------------------------------------------------
 
-    if (els.title) {
-        els.title.textContent = safeTitle;
-        els.title.classList.remove('animate-fade-in-down');
-        void els.title.offsetWidth; 
-        els.title.classList.add('animate-fade-in-down');
-    }
+    if (els.title) els.title.textContent = safeTitle;
     if (els.subtitle) els.subtitle.textContent = faction.motto ? `"${faction.motto}"` : i18next.t('faction_detail_loader.motto_redacted');
     
     const type = faction.type || 'syndicate';
@@ -130,7 +120,7 @@ const renderFactionDetails = (faction) => {
     const themeColor = applyFactionTheme(faction.color?.hex, faction.image?.asset?.url);
 
     if (faction.hqLocation?.lat && faction.hqLocation?.lng) {
-        setTimeout(() => initMiniMap(faction.hqLocation.lat, faction.hqLocation.lng, themeColor), 500);
+        setTimeout(() => initMiniMap(faction.hqLocation.lat, faction.hqLocation.lng, themeColor), 800);
     }
 
     if (els.leader) {
@@ -138,6 +128,8 @@ const renderFactionDetails = (faction) => {
         const leaderSlug = faction.leader ? faction.leader.slug : null;
         els.leader.innerHTML = `<span>${leaderName}</span>${leaderSlug ? `<a href="character-detail.html?slug=${leaderSlug}" title="${i18next.t('faction_detail_loader.view_profile')}"><i class="fas fa-external-link-alt text-xs opacity-50 hover:opacity-100"></i></a>` : ''}`;    }
     if (els.hq) els.hq.textContent = faction.hqName || i18next.t('faction_detail_loader.encrypted_coords');    
+    
+    // TEHDİT SEVİYESİ
     if (els.threat) {
         const threatLevel = (faction.threatLevel || 'unknown').toLowerCase();
         const threatContainer = els.threat.parentElement;
@@ -153,24 +145,31 @@ const renderFactionDetails = (faction) => {
         };
         
         const config = levels[threatLevel] || levels.unknown;
-
-        // Update the text content and class
         els.threat.textContent = config.text;
         els.threat.className = `ml-2 font-bold font-mono text-xs ${config.color}`;
 
-        // Select all threat bars and update their classes
         const bars = threatContainer.querySelectorAll('.threat-bar');
-        bars.forEach((bar, index) => {
-            // Reset classes first
-            bar.className = 'threat-bar w-2 h-6'; 
-            if (index < config.bars) {
-                bar.classList.add(config.barColor);
-            } else {
-                bar.classList.add('bg-gray-800');
+        bars.forEach((bar) => bar.className = 'threat-bar w-2 h-6 bg-gray-800');
+        
+        const activeBars = Array.from(bars).slice(0, config.bars);
+        
+        gsap.to(activeBars, {
+            duration: 0.1,
+            stagger: 0.1,
+            onStart: function() {
+                this.targets().forEach(t => {
+                    t.classList.remove('bg-gray-800');
+                    t.classList.add(config.barColor);
+                });
             }
         });
+        
+        if (config.bars >= 5) {
+            gsap.to(activeBars, { opacity: 0.5, duration: 0.5, repeat: -1, yoyo: true });
+        }
     }
 
+    // AÇIKLAMA
     if (els.description) {
         if (faction.description) {
             els.description.innerHTML = toHTML(faction.description, {
@@ -185,12 +184,13 @@ const renderFactionDetails = (faction) => {
             els.description.innerHTML = `<p class="text-gray-500 italic font-mono">${i18next.t('faction_detail_loader.no_records_available')}</p>`;        }
     }
 
+    // ÜYELER
     if (els.roster) {
         if (faction.members && faction.members.length > 0) {
             els.roster.innerHTML = faction.members.map(member => {
                 const avatarUrl = member.imageUrl || `https://ui-avatars.com/api/?background=1a1a1a&color=888&name=${encodeURIComponent(member.name || 'User')}`;
                 return `
-                    <a href="character-detail.html?slug=${member.slug}" class="roster-card bg-white/5 p-3 border border-white/5 flex items-center space-x-3 hover:bg-white/10 transition-all group">
+                    <a href="character-detail.html?slug=${member.slug}" class="gsap-roster-card opacity-0 roster-card bg-white/5 p-3 border border-white/5 flex items-center space-x-3 hover:bg-white/10 transition-all group">
                         <div class="w-10 h-10 bg-black overflow-hidden rounded-full border border-white/10 group-hover:border-[var(--theme-color)] transition-colors">
                             <img src="${avatarUrl}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500">
                         </div>
@@ -204,20 +204,21 @@ const renderFactionDetails = (faction) => {
             els.roster.innerHTML = `<div class="text-xs font-mono text-gray-600 col-span-full py-4 text-center border border-dashed border-gray-800">${i18next.t('faction_detail_loader.roster_empty')}</div>`;        }
     }
 
+    // İLİŞKİLER
     if (els.relations) {
         const headerEl = els.relations.previousElementSibling;
         if(headerEl) headerEl.textContent = i18next.t('faction_detail_loader.foreign_relations');
+        
         if (faction.relations && faction.relations.length > 0) {
             els.relations.innerHTML = faction.relations.map(rel => {
                 let statusColor = 'text-gray-500';
                 let icon = 'fa-minus';
-                
                 if(rel.status === 'hostile') { statusColor = 'text-red-500'; icon = 'fa-times'; }
                 if(rel.status === 'ally') { statusColor = 'text-green-500'; icon = 'fa-handshake'; }
                 if(rel.status === 'vassal') { statusColor = 'text-blue-400'; icon = 'fa-link'; }
 
                 return `
-                    <div class="flex justify-between items-center text-xs border-b border-white/5 pb-2 last:border-0 group cursor-help" title="${rel.description || 'No notes'}">
+                    <div class="gsap-relation-item opacity-0 flex justify-between items-center text-xs border-b border-white/5 pb-2 last:border-0 group cursor-help" title="${rel.description || 'No notes'}">
                         <span class="text-gray-300 group-hover:text-white transition-colors">${rel.targetName}</span>
                         <span class="font-mono ${statusColor} uppercase flex items-center gap-1">
                             <i class="fas ${icon} text-[9px]"></i> ${rel.status}
@@ -235,8 +236,65 @@ const renderFactionDetails = (faction) => {
         }
     }
 
-    const grid = document.querySelector('main'); 
-    if (grid) grid.classList.remove('opacity-0');
+    // 👇 GSAP: TÜM SAYFAYI ÇALIŞTIRAN ANA ANİMASYON
+    // -----------------------------------------------------------------------
+    if (els.mainGrid) els.mainGrid.classList.remove('opacity-0'); 
+
+    const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+    // 1. Başlık Elemanları (Null Check Eklendi)
+    const headerElements = [els.title, els.subtitle, els.iconContainer].filter(el => el);
+    if(headerElements.length > 0) {
+        tl.from(headerElements, {
+            x: -50,
+            opacity: 0,
+            duration: 1,
+            stagger: 0.1
+        });
+    }
+
+    // 2. Yan Panel (HATA BURADAYDI, ARTIK els.sidebar KULLANILIYOR)
+    if (els.sidebar) {
+        tl.from(els.sidebar, {
+            x: -20,
+            opacity: 0,
+            duration: 0.6
+        }, "-=0.5");
+    }
+
+    // 3. Açıklama
+    if(els.description) {
+        tl.from(els.description, {
+            y: 20,
+            opacity: 0,
+            duration: 0.8
+        }, "-=0.4");
+    }
+
+    // 4. Roster
+    const rosterCards = document.querySelectorAll('.gsap-roster-card');
+    if (rosterCards.length > 0) {
+        tl.to(rosterCards, {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            startAt: { y: 20, scale: 0.95 },
+            stagger: 0.1,
+            duration: 0.5
+        }, "-=0.2");
+    }
+
+    // 5. İlişkiler
+    const relationItems = document.querySelectorAll('.gsap-relation-item');
+    if (relationItems.length > 0) {
+        tl.to(relationItems, {
+            opacity: 1,
+            x: 0,
+            startAt: { x: -10 },
+            stagger: 0.05,
+            duration: 0.4
+        }, "<"); 
+    }
 };
 
 export const loadFactionDetails = async () => {
@@ -245,8 +303,11 @@ export const loadFactionDetails = async () => {
     const params = new URLSearchParams(window.location.search);
     const factionSlug = params.get('slug');
 
+    if(mainContainer) gsap.set(mainContainer, { opacity: 0 });
+
     if (!factionSlug) {
         if (loader) loader.innerHTML = `<p class="text-red-500 font-mono text-sm">${i18next.t('faction_detail_loader.error_missing_slug')}</p>`;
+        if(mainContainer) gsap.to(mainContainer, { opacity: 1 });
         return;
     }
 
@@ -256,40 +317,41 @@ export const loadFactionDetails = async () => {
             "hqName": hq, 
             "hqLocation": hqLocation,
             "color": color,
-            image { 
-                asset->{
-                    url,
-                    "blurHash": metadata.blurHash
-                } 
-            },
+            image { asset->{ url, "blurHash": metadata.blurHash } },
             leader->{ name, "slug": slug.current },
             "members": *[_type == "character" && references(^._id)] | order(name asc) [0...6] {
-                name, 
-                "slug": slug.current, 
-                title, 
-                "role": title, 
-                "image": image.asset->{
-                    url,
-                    "blurHash": metadata.blurHash
-                }
+                name, "slug": slug.current, title, "role": title, 
+                "imageUrl": image.asset->url
             },
             relations[] {
-                status,
-                description,
-                "targetName": target->title
+                status, description, "targetName": target->title
             }
         }`;
         
         const faction = await client.fetch(query, { slug: factionSlug });
 
-        if(loader) loader.style.display = 'none';
+        if(loader) {
+            gsap.to(loader, { 
+                opacity: 0, 
+                duration: 0.5, 
+                onComplete: () => loader.style.display = 'none' 
+            });
+        }
 
         if (faction) {
+            gsap.to(mainContainer, { opacity: 1, duration: 0.5 });
             renderFactionDetails(faction);
         } else {
-            if (mainContainer) mainContainer.innerHTML = `<div class="h-[50vh] flex flex-col items-center justify-center text-red-800 font-mono"><span>${i18next.t('faction_detail_loader.error_file_corrupted')}</span></div>`;
+            if (mainContainer) {
+                mainContainer.innerHTML = `<div class="h-[50vh] flex flex-col items-center justify-center text-red-800 font-mono"><span>${i18next.t('faction_detail_loader.error_file_corrupted')}</span></div>`;
+                gsap.to(mainContainer, { opacity: 1 });
+            }
         }
     } catch (error) {
         console.error("Intel Failure:", error);
-        if (mainContainer) mainContainer.innerHTML = `<div class="h-[50vh] flex items-center justify-center text-red-500 font-mono">${i18next.t('faction_detail_loader.error_system_malfunction')}</div>`;    }
+        if (mainContainer) {
+            mainContainer.innerHTML = `<div class="h-[50vh] flex items-center justify-center text-red-500 font-mono">${i18next.t('faction_detail_loader.error_system_malfunction')}</div>`;        
+            gsap.to(mainContainer, { opacity: 1 });
+        }
+    }
 };

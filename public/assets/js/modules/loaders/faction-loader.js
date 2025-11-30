@@ -1,7 +1,14 @@
 import { client } from '../../lib/sanityClient.js';
 import i18next from '../../lib/i18n.js';
-// 👇 SEO İMPORTU EKLENDİ
+// 👇 SEO İMPORTU
 import { injectSchema } from '../../lib/seo.js';
+
+// 👇 1. GSAP IMPORTLARI
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+// Plugin'i kaydet
+gsap.registerPlugin(ScrollTrigger);
 
 /* --------------------------------------------------------------------------
    CARD BUILDER LOGIC
@@ -45,7 +52,10 @@ const createFactionCard = (faction) => {
 
     const cardLink = document.createElement('a');
     cardLink.href = `faction-detail.html?slug=${faction.slug}`;
-    cardLink.className = `faction-card ${cardThemeClass} p-8 relative group min-h-[400px] flex flex-col justify-between rounded-sm transition-transform duration-300 hover:-translate-y-1`;
+    
+    // 👇 GSAP SEÇİCİSİ ('gsap-faction-card') ve 'opacity-0' EKLENDİ
+    // opacity-0 ekledik ki animasyon başlamadan önce görünmesinler.
+    cardLink.className = `gsap-faction-card opacity-0 ${cardThemeClass} p-8 relative group min-h-[400px] flex flex-col justify-between rounded-sm transition-transform duration-300 hover:-translate-y-1`;
 
     cardLink.innerHTML = `
         <div class="absolute -right-6 -top-6 text-[10rem] opacity-5 pointer-events-none select-none" style="color: ${accentColor}">
@@ -108,7 +118,7 @@ export async function displayFactions() {
 
         if (factions && factions.length > 0) {
             
-            // 👇 SEO / SCHEMA ENJEKSİYONU (ItemList)
+            // SEO / SCHEMA
             try {
                 const itemList = factions.map((faction, index) => ({
                     "@type": "ListItem",
@@ -145,6 +155,24 @@ export async function displayFactions() {
                 const card = createFactionCard(faction);
                 factionsGrid.appendChild(card);
             });
+
+            // 👇 2. GSAP ANİMASYONU (KARTLAR EKLENDİKTEN SONRA)
+            // ----------------------------------------------------------------
+            if (factionsGrid.children.length > 0) {
+                gsap.to(".gsap-faction-card", {
+                    y: 0,
+                    opacity: 1,
+                    duration: 0.8,
+                    stagger: 0.15, // Kartlar 0.15sn arayla gelsin (Domino etkisi)
+                    startAt: { y: 50, opacity: 0 }, // Başlangıçta 50px aşağıda ve görünmez olsun
+                    ease: "power2.out",
+                    scrollTrigger: {
+                        trigger: factionsGrid,
+                        start: "top 85%", // Grid ekranın %85'ine gelince başla
+                    }
+                });
+            }
+
         } else {
             if(loader) loader.style.display = 'none';
             factionsGrid.innerHTML = `
