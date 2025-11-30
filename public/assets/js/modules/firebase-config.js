@@ -4,13 +4,12 @@ import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebas
 import { getAuth, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFunctions } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js";
 import { getStorage } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
-// 👇 YENİ İMPORTLAR
 import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check.js";
 
 
 /* --------------------------------------------------------------------------
-    SECURITY CREDENTIALS
-    -------------------------------------------------------------------------- */
+   SECURITY CREDENTIALS
+   -------------------------------------------------------------------------- */
 const RECAPTCHA_SITE_KEY = "6LeoRfYrAAAAANpaxG70cHRmK5ciRKf7sVt9Crnz"; 
 
 const firebaseConfig = {
@@ -25,13 +24,20 @@ const firebaseConfig = {
 };
 
 /* --------------------------------------------------------------------------
-    SYSTEM INITIALIZATION
-    -------------------------------------------------------------------------- */
+   SYSTEM INITIALIZATION
+   -------------------------------------------------------------------------- */
 let app, db, analytics, auth, functionsInstance, googleProvider, storage;
 
 try {
     app = initializeApp(firebaseConfig);
     
+    if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
+        self.FIREBASE_APPCHECK_DEBUG_TOKEN = "CEB3654D-BDB3-420E-8BBA-DC35A0DCB72A"; 
+        
+        console.log("%c[SEC] Debug Token Injector :: ACTIVE", "color: #00ff00; background: #000;");
+    }
+
+    // App Check Başlatma
     initializeAppCheck(app, {
         provider: new ReCaptchaV3Provider(RECAPTCHA_SITE_KEY),
         isTokenAutoRefreshEnabled: true
@@ -59,8 +65,8 @@ try {
 }
 
 /* --------------------------------------------------------------------------
-    EXPORTS
-    -------------------------------------------------------------------------- */
+   EXPORTS
+   -------------------------------------------------------------------------- */
 export { 
     app, 
     db, 
