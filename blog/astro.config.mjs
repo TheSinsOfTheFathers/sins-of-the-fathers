@@ -5,6 +5,7 @@ import tailwindcss from '@tailwindcss/vite';
 import node from "@astrojs/node"; 
 
 export default defineConfig({
+  site: 'https://blog.thesinsofthefathers.com', 
   output: 'server', 
   adapter: node({
     // BURASI DEĞİŞTİ: 'standalone' yerine 'middleware' yapıyoruz.
