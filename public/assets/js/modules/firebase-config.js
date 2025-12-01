@@ -32,7 +32,7 @@ try {
     app = initializeApp(firebaseConfig);
     
     if (location.hostname === "localhost" || location.hostname === "127.0.0.1") {
-        self.FIREBASE_APPCHECK_DEBUG_TOKEN = "CEB3654D-BDB3-sansür-8BBA-DC35A0DCB72A"; 
+        self.FIREBASE_APPCHECK_DEBUG_TOKEN = "CEB3654D-BDB3-420E-8BBA-DC35A0DCB72A"; 
         
         console.log("%c[SEC] Debug Token Injector :: ACTIVE", "color: #00ff00; background: #000;");
     }

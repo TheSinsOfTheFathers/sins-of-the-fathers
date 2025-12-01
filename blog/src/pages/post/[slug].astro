@@ -1,0 +1,74 @@
+---
+import { sanityClient } from "sanity:client";
+import { urlFor } from "../../lib/urlFor";
+import { PortableText } from "astro-portabletext";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { t } from '../../i18n/utils'; 
+
+// SSR Modu
+export const prerender = false; 
+
+const { slug } = Astro.params;
+
+// 👇 1. DİL AYARI
+const urlLang = Astro.url.searchParams.get('lang');
+const lang = (urlLang === 'en' || urlLang === 'tr') ? urlLang : 'tr';
+
+const post = await sanityClient.fetch(`*[_type == "post" && slug.current == $slug][0]{
+  title,
+  publishedAt,
+  mainImage,
+  body,
+  authorName 
+}`, { slug });
+
+if (!post) return Astro.redirect("/404");
+
+function formatDate(dateString) {
+  return new Date(dateString).toLocaleDateString(lang, { 
+    year: "numeric", month: "long", day: "numeric"
+  });
+}
+---
+
+<BaseLayout title={post.title} lang={lang}>
+    
+    <div class="max-w-3xl mx-auto px-6 py-12">
+      
+      <div class="flex items-center gap-4 mb-6 text-xs font-mono text-[#c5a059] uppercase tracking-widest">
+        <span>{formatDate(post.publishedAt)}</span>
+        <span class="text-gray-700">|</span>
+        <span class="text-white">{t(lang, 'blog_detail.clearance_status')}</span>
+      </div>
+
+      <h1 class="text-3xl md:text-5xl font-serif text-white mb-8 leading-tight">
+        {post.title}
+      </h1>
+
+      {post.mainImage && (
+        <div class="relative w-full aspect-video mb-12 border border-white/10 overflow-hidden group">
+          <img 
+            src={urlFor(post.mainImage).width(1200).height(675).url()} 
+            alt={post.title}
+            class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000"
+          />
+          <div class="absolute inset-0 shadow-inner bg-gradient-to-t from-[#050505] to-transparent opacity-60"></div>
+        </div>
+      )}
+
+      <article class="prose prose-invert prose-lg max-w-none font-sans font-light text-gray-400">
+        <div class="space-y-6 leading-relaxed">
+            <PortableText value={post.body} />
+        </div>
+      </article>
+
+      <div class="mt-16 pt-8 border-t border-white/10 flex items-center gap-4">
+        <div class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-[#c5a059] font-serif border border-[#c5a059]">A</div>
+        <div>
+            <p class="text-xs text-gray-500 font-mono uppercase">{t(lang, 'blog_detail.reporter')}</p>
+            <p class="text-white font-serif tracking-wide">{post.authorName || t(lang, 'common.unknown_author')}</p>
+        </div>
+      </div>
+    </div>
+
+</BaseLayout>

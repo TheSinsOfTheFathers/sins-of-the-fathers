@@ -1,0 +1,21 @@
+{
+  "blog_page": {
+    "meta_title": "TSOF Blog Arşivleri",
+    "return_terminal": "TERMİNALE DÖN",
+    "title_prefix": "İstihbarat",
+    "title_suffix": "Kayıtları",
+    "subtitle": "Gizliliği kaldırılmış belgeler ve operasyon notları.",
+    "empty_title": "VERİTABANI BOŞ",
+    "empty_text": "Sanity Studio üzerinden yeni bir 'Post' oluşturun.",
+    "dossier_label": "DOSYA"
+  },
+  "blog_detail": {
+    "clearance_status": "GİZLİLİK: AÇIK",
+    "reporter": "RAPORU HAZIRLAYAN"
+  },
+  "common": {
+    "undated": "Tarihsiz Kayıt",
+    "unknown_author": "Bilinmeyen Ajan",
+    "read_more": "DOSYAYI İNCELE"
+  }
+}

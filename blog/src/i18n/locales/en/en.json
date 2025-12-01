@@ -1,0 +1,21 @@
+{
+    "blog_page": {
+    "meta_title": "TSOF Blog Archives",
+    "return_terminal": "RETURN TO TERMINAL",
+    "title_prefix": "Intelligence",
+    "title_suffix": "Records",
+    "subtitle": "Classified documents and operation notes.",
+    "empty_title": "DATABASE EMPTY",
+    "empty_text": "Create a new 'Post' via Sanity Studio.",
+    "dossier_label": "FILE"
+  },
+  "common": {
+    "undated": "Undated Record",
+    "unknown_author": "Unknown Agent",
+    "read_more": "ACCESS FILE"
+  },
+  "blog_detail": {
+    "clearance_status": "CLEARANCE: OPEN",
+    "reporter": "REPORT PREPARER"
+    }
+}
