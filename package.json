@@ -2,9 +2,10 @@
   "name": "sins-of-the-fathers-root",
   "version": "1.0.0",
   "description": "The root package.json for The Sins of the Fathers project.",
+  "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "node scripts/generate-sitemap.js && vite build",
+    "build": "node scripts/generate-sitemap.cjs && vite build",
     "preview": "vite preview"
   },
   "dependencies": {

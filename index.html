@@ -13,8 +13,16 @@
     <meta property="og:image" content="https://thesinsofthefathers.com/assets/images/og/social_share_logo.svg" />
     <meta name="twitter:card" content="summary_large_image" />
     <title>The Sins of the Fathers</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Courier+Prime&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    <link rel="stylesheet" href="./src/style.css">
 
-    <!-- Tailwind CSS -->
+    <!-- Howler.js (Audio Library) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -25,25 +33,28 @@
                         'gold': '#c5a059',
                         'gold-dim': '#8a6e3e',
                         'obsidian': '#050505',
-                        'charcoal': '#121212'
+                        'charcoal': '#121212',
+                        'terminal-green': '#0f0'
                     },
                     fontFamily: {
                         serif: ['Cinzel', 'serif'],
                         sans: ['Lato', 'sans-serif'],
                         mono: ['Courier Prime', 'monospace']
+                    },
+                    animation: {
+                        'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'scanline': 'scanline 2s linear infinite'
+                    },
+                    keyframes: {
+                        scanline: {
+                            '0%': { transform: 'translateY(-100%)' },
+                            '100%': { transform: 'translateY(100%)' }
+                        }
                     }
                 }
             }
         }
     </script>
-    
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Courier+Prime&display=swap" rel="stylesheet">
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-
-    <!-- Howler.js (Audio Library) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
 
     <style>
         /* Atmosferik Gürültü ve Dokular */
@@ -253,6 +264,6 @@
     </footer>
 
     <!-- Main Script -->
-    <script type="module" src="./assets/js/main.js"></script>
+    <script type="module" src="./src/main.js"></script>
 </body>
 </html>

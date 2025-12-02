@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en"> 
+<head>
+    <!-- Meta Tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Blood implies obligation. Explore the dark saga of Ruaraidh Ballantine and Havi. A tale of crime, dynasty, and inevitable fate.">
+    <meta name="keywords" content="Sins of the Fathers, Ballantine, Ruaraidh, Havi, Crime Saga, Noir, Dark Fiction">
+    <meta name="author" content="The Sins of the Fathers">
+    
+    <!-- Open Graph & Twitter Cards -->
+    <meta property="og:title" content="The Sins of the Fathers - The Dynasty" />
+    <meta property="og:image" content="https://thesinsofthefathers.com/assets/images/og/social_share_logo.svg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <title>The Sins of the Fathers</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Courier+Prime&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+
+    <!-- Howler.js (Audio Library) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'blood': '#4a0404',
+                        'gold': '#c5a059',
+                        'gold-dim': '#8a6e3e',
+                        'obsidian': '#050505',
+                        'charcoal': '#121212',
+                        'terminal-green': '#0f0'
+                    },
+                    fontFamily: {
+                        serif: ['Cinzel', 'serif'],
+                        sans: ['Lato', 'sans-serif'],
+                        mono: ['Courier Prime', 'monospace']
+                    },
+                    animation: {
+                        'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'scanline': 'scanline 2s linear infinite'
+                    },
+                    keyframes: {
+                        scanline: {
+                            '0%': { transform: 'translateY(-100%)' },
+                            '100%': { transform: 'translateY(100%)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Atmosferik Gürültü ve Dokular */
+        body {
+            background-color: #050505;
+            font-family: 'Lato', sans-serif;
+        }
+        .noise-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 50;
+            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MDAiIGhlaWdodD0iNTAwIj48ZmlsdGVyIGlkPSJub2lzZSI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuNjUiIG51bU9jdGF2ZXM9IjMiIHN0aXRjaFRpbGVzPSJzdGl0Y2giLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCgjbm9pc2UpIiBvcGFjaXR5PSIwLjA1Ii8+PC9zdmc+');
+            opacity: 0.05;
+        }
+        .vignette {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 40;
+            background: radial-gradient(circle, rgba(0,0,0,0) 50%, rgba(0,0,0,1) 100%);
+        }
+        
+        /* Hamburger Animation */
+        #hamburger-button span { transition: 0.3s; }
+        #hamburger-button.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 6px); }
+        #hamburger-button.active span:nth-child(2) { opacity: 0; }
+        #hamburger-button.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -6px); }
+
+        /* Özel Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #050505; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #555; }
+
+        /* Smooth Scroll */
+        html { scroll-behavior: smooth; }
+    </style>
+  <script type="module" crossorigin src="/assets/main-CoGTBBld.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/main-N0Q_qPQs.css">
+</head>
+
+<body class="text-gray-300 antialiased overflow-x-hidden selection:bg-red-900 selection:text-white">
+
+    <!-- Efekt Katmanları -->
+    <div class="noise-overlay"></div>
+    <div class="vignette"></div>
+
+    <!-- Header -->
+    <header class="fixed top-0 w-full z-50 transition-all duration-300 bg-obsidian/90 backdrop-blur-md border-b border-white/5">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <!-- Marka / Logo -->
+            <a href="index.html" class="nav-brand text-2xl md:text-3xl text-gold tracking-widest hover:text-white transition-colors uppercase font-serif">
+                TSOF
+            </a>
+
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex items-center space-x-8 text-sm uppercase tracking-widest font-semibold">
+                <a href="./pages/characters.html" class="hover:text-gold transition-colors" data-i18n="nav.bloodline"></a>
+                <a href="./pages/timeline.html" class="hover:text-gold transition-colors" data-i18n="nav.history"></a>
+                <a href="./pages/factions.html" class="hover:text-gold transition-colors" data-i18n="nav.factions"></a>
+                <a href="./pages/locations.html" class="hover:text-gold transition-colors" data-i18n="nav.territories"></a>
+                
+                <!-- Login Bölümü - (ID EKLENDİ: auth-controls) -->
+                <div class="border-l border-white/20 pl-8 ml-4 flex items-center gap-4" id="auth-controls">
+
+                    <!-- LORE LİNKİ: Artık her zaman görünür, ancak içindeki kilit sadece misafire gözükür. -->
+                    <a href="./pages/lore.html" class="text-gold hover:text-white transition-colors flex items-center gap-2">
+                        <i class="fas fa-lock text-xs guest-lock"></i> <span data-i18n="nav.classified"></span>
+                    </a>
+
+                    <!-- AUTH LİNKİ: SADECE MİSAFİR GÖRÜR -->
+                    <a href="./pages/login.html" class="hover:text-gold transition-colors guest-only" id="auth-signin-link" data-i18n="auth.login"></a>
+                </div>
+            </div>
+
+            <!-- Hamburger (ID EKLENDİ: hamburger-button) -->
+            <div class="md:hidden relative z-50">
+                <button id="hamburger-button" class="text-gold focus:outline-none flex flex-col justify-between w-6 h-5">
+                    <span class="block w-full h-0.5 bg-gold"></span>
+                    <span class="block w-full h-0.5 bg-gold"></span>
+                    <span class="block w-full h-0.5 bg-gold"></span>
+                </button>
+            </div>
+
+            <div class="hidden md:flex gap-2 font-mono text-[10px]">
+                <button class="lang-btn hover:text-gold transition-colors" data-lang="en" onclick="window.changeAppLanguage('en')">EN</button>
+                <span class="text-gray-600">/</span>
+                <button class="lang-btn hover:text-gold transition-colors" data-lang="tr" onclick="window.changeAppLanguage('tr')">TR</button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Mobile Menu Overlay (EKSİKTİ - EKLENDİ) -->
+    <div id="mobile-menu" class="hidden fixed inset-0 z-40 bg-black/95 flex-col items-center justify-center space-y-8 transition-opacity duration-300 backdrop-blur-xl">
+        <a href="./pages/characters.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.bloodline"></a>
+        <a href="./pages/timeline.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.history"></a>
+        <a href="./pages/factions.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.factions"></a>
+        <a href="./pages/locations.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.territories"></a>
+        <a href="./pages/lore.html" class="text-xl text-gold font-serif hover:text-white border border-gold px-6 py-2 uppercase tracking-widest" data-i18n="nav.archives"></a>
+        <a href="./pages/login.html" class="text-sm text-gray-400 hover:text-white mt-8 font-mono uppercase" data-i18n="auth.login"></a>
+    </div>
+
+    <!-- SECTION 1: THE HOOK -->
+    <section class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
+        <!-- Background -->
+        <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?q=80&w=2874&auto=format&fit=crop')] bg-cover bg-center opacity-20 grayscale"></div>
+        
+        <div class="relative z-10 container mx-auto px-4 text-center">
+            <span class="text-gold/70 uppercase tracking-[0.3em] text-sm md:text-base mb-4 block animate-pulse" data-i18n="home_page.hero.connection_status"></span>
+            
+            <h1 class="text-5xl md:text-8xl font-serif text-white mb-6 tracking-wide drop-shadow-2xl" data-i18n="home_page.hero.main_title"></h1>
+            
+            <p class="text-xl md:text-2xl text-gray-400 font-light mb-12 italic tracking-wide" data-i18n="home_page.hero.subtitle">
+            </p>
+
+            <div class="flex flex-col md:flex-row gap-6 justify-center">
+                <a href="./pages/characters.html" class="group relative px-8 py-4 border border-gold/30 bg-transparent overflow-hidden inline-block">
+                    <span class="absolute inset-0 w-full h-full bg-gold/10 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out"></span>
+                    <span class="relative text-gold uppercase tracking-widest font-semibold group-hover:text-white transition-colors" data-i18n="home_page.hero.button_archive">
+                    </span>
+                </a>
+
+                <a href="#acquisition" class="px-8 py-4 border border-white/10 text-gray-400 uppercase tracking-widest text-sm hover:border-white hover:text-white transition-all inline-block" data-i18n="home_page.hero.button_asset">
+                </a>
+            </div>
+        </div>
+
+        <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <i class="fas fa-chevron-down text-gray-600"></i>
+        </div>
+    </section>
+
+    <!-- SECTION 2: ACQUISITION -->
+    <section id="acquisition" class="py-24 bg-charcoal border-t border-white/5">
+        <div class="container mx-auto px-4 max-w-5xl">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-serif text-white mb-4" data-i18n="home_page.acquisition.title"></h2>
+                <div class="h-1 w-24 bg-red-900 mx-auto"></div>
+                <p class="mt-4 text-gray-500" data-i18n="home_page.acquisition.subtitle"></p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8 md:gap-0 border border-white/10 bg-obsidian/50 relative">
+                <div class="hidden md:block absolute left-1/2 top-10 bottom-10 w-px bg-gradient-to-b from-transparent via-white/10 to-transparent"></div>
+
+                <!-- DIRECT -->
+                <div class="p-10 flex flex-col justify-between group hover:bg-white/5 transition-colors duration-500">
+                    <div>
+                        <div class="flex items-center gap-3 mb-4 text-gold">
+                            <i class="fas fa-certificate text-xl"></i>
+                            <h3 class="text-xl font-serif uppercase tracking-widest" data-i18n="home_page.acquisition.direct_title"></h3>
+                        </div>
+                        <p class="text-sm text-gray-500 mb-8 leading-relaxed" data-i18n="home_page.acquisition.direct_description">
+                        </p>
+                    </div>
+                    <div class="space-y-4">
+                        <a href="https://www.shopier.com/your-store" target="_blank" class="block w-full py-3 px-4 border border-gray-700 text-gray-300 hover:border-gold hover:text-gold transition-all text-sm uppercase tracking-wider flex justify-between items-center">
+                            <span><i class="fas fa-shopping-bag mr-2"></i> Shopier</span>
+                            <span class="flex items-center opacity-50 gap-1">
+                                <i class="fas fa-moon text-base transform -rotate-[-15deg]"></i>
+                                <i class="fas fa-star text-[10px]"></i>
+                            </span>
+                        </a>
+                        <a href="https://your-username.gumroad.com/" target="_blank" class="block w-full py-3 px-4 border border-gray-700 text-gray-300 hover:border-pink-500/50 hover:text-pink-400 transition-all text-sm uppercase tracking-wider flex justify-between items-center">
+                            <span><i class="fas fa-shopping-bag mr-2"></i> Gumroad</span>
+                            <i class="fas fa-globe-americas text-lg opacity-50"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- PLATFORM -->
+                <div class="p-10 flex flex-col justify-between group hover:bg-white/5 transition-colors duration-500">
+                    <div>
+                        <div class="flex items-center gap-3 mb-4 text-gray-400">
+                            <i class="fas fa-tablet-alt text-xl"></i>
+                            <h3 class="text-xl font-serif uppercase tracking-widest text-white" data-i18n="home_page.acquisition.platform_title"></h3>
+                        </div>
+                        <p class="text-sm text-gray-500 mb-8 leading-relaxed" data-i18n="home_page.acquisition.platform_description">
+                        </p>
+                    </div>
+                    <div class="space-y-4">
+                        <a href="#" target="_blank" class="block w-full py-3 px-4 border border-gray-800 text-gray-400 hover:border-white hover:text-white transition-all text-sm uppercase tracking-wider">
+                            <i class="fab fa-amazon mr-2"></i> <span data-i18n="home_page.vendor.kindle"></span>
+                        </a>
+                        <a href="#" target="_blank" class="block w-full py-3 px-4 border border-gray-800 text-gray-400 hover:border-white hover:text-white transition-all text-sm uppercase tracking-wider">
+                            <i class="fab fa-apple mr-2"></i> <span data-i18n="home_page.vendor.apple_books"></span>
+                        </a>
+                        <!-- GOOGLE BOOKS TEKRAR EKLENDİ -->
+                        <a href="[GOOGLE_LINKIN]" target="_blank" class="block w-full py-3 px-4 border border-gray-800 text-gray-400 hover:border-blue-500 hover:text-white transition-all text-sm uppercase tracking-wider flex items-center">
+                            <i class="fab fa-google-play w-6 text-center mr-3"></i> <span data-i18n="home_page.vendor.google_books"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 bg-obsidian border-t border-white/5 text-center relative z-10">
+        <p class="font-serif text-gold text-2xl mb-4">TSOF</p>
+        
+        <div class="flex justify-center space-x-6 mb-6 text-[10px] font-mono uppercase text-gray-500">
+            <a href="./pages/privacy.html" class="hover:text-gold transition-colors" data-i18n="footer.privacy"></a>
+            <span>|</span>
+            <a href="./pages/terms.html" class="hover:text-gold transition-colors" data-i18n="footer.terms"></a>
+        </div>
+
+        <p class="text-gray-600 text-xs uppercase tracking-widest">
+            <span data-i18n="footer.copyright"></span>
+        </p>
+    </footer>
+
+    <!-- Main Script -->
+</body>
+</html>

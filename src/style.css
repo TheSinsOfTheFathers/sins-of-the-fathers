@@ -1,0 +1,14 @@
+@import "tailwindcss";
+
+html.lenis {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+  height: 100%;
+}

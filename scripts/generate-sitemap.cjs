@@ -103,15 +103,23 @@ async function generateSitemap() {
             }
         });
 
-        // 5. DOSYAYI KAYDET
+        // 5. DOSYAYI KAYDET (GÜNCELLENDİ)
         const xml = urlset.end({ pretty: true });
-        const outputPath = path.resolve(__dirname, '../public/sitemap.xml');
+
+        // Çıktı klasörünü belirle ('dist')
+        const outputDir = path.resolve(__dirname, '../dist');
+        const outputPath = path.resolve(outputDir, 'sitemap.xml');
+        
+        // Eğer 'dist' klasörü yoksa (build sırasında ilk bu script çalışacağı için),
+        // güvenli olması için onu oluştur.
+        if (!fs.existsSync(outputDir)) {
+            fs.mkdirSync(outputDir, { recursive: true });
+        }
         
         fs.writeFileSync(outputPath, xml);
         
         console.log(`✅ Sitemap generated successfully at: ${outputPath}`);
         console.log(`📊 Total URLs: ${staticPages.length + data.characters.length + data.factions.length + data.locations.length + data.lore.length}`);
-
     } catch (error) {
         console.error('❌ Sitemap generation failed:', error);
         process.exit(1);
