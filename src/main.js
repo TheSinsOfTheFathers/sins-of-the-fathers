@@ -18,7 +18,7 @@ import Lenis from '@studio-freight/lenis';
 import initAuth from './/modules/auth/auth.js';
 import { initMobileMenu } from './modules/ui/mobile-menu.js';
 import { initAudioSystem } from './modules/ui/audio-manager.js';
-import { initCookieConsent } from './modules/ui/cookie-consent.js';
+import { initCookieConsent } from './modules/ui/app-policy.js';
 
 // GSAP Ayarları
 gsap.registerPlugin(ScrollTrigger);

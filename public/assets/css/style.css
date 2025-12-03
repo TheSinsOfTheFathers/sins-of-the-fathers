@@ -1,0 +1,5 @@
+@import "tailwindcss";
+
+/* Fontları da buraya ekliyoruz ki her yerden erişilebilsin */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Courier+Prime&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css');
