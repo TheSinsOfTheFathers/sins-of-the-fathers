@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - dev  # <--- İşte 'dev' branch'ini buraya ekledik!
+      - dev
   pull_request:
     types: [opened, synchronize, reopened]
 
@@ -18,7 +18,14 @@ jobs:
           fetch-depth: 0  # SonarCloud analizi için bu değer 0 olmalı (tüm geçmişi çeker)
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
+        # DEĞİŞİKLİK: Eski 'sonarcloud-github-action' yerine güncel resmi action kullanıyoruz.
+        # Bu action, 'args' parametrelerini doğru şekilde işler.
+        uses: SonarSource/sonarqube-scan-action@v4
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # GitHub'ın kendi varsayılan token'ı
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}    # Bunu GitHub Secrets'a eklemiş olmalısınız
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          # Proje bilgilerini buraya ekliyoruz
+          args: >
+            -Dsonar.organization=atlas-sudo
+            -Dsonar.projectKey=Atlas-sudo_sins-of-the-fathers
