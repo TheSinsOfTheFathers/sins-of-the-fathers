@@ -110,7 +110,7 @@
     <!-- Hareketli Partikül Konteyneri -->
     <div id="particles-container"></div>
 
-    <main class="flex-grow flex items-center justify-center p-6">
+    <main class="grow flex items-center justify-center p-6">
         
         <div class="text-center max-w-3xl">
             
@@ -134,7 +134,7 @@
             <div id="subscription-form-container" class="mt-12 max-w-lg mx-auto p-4 border border-gold/20 bg-black/40 backdrop-blur-sm">
                 <p class="text-neutral-300 mb-4 font-serif italic">Initiate surveillance. Join the watch list.</p>
                 <form id="subscribe-form" class="flex flex-col sm:flex-row gap-3">
-                    <input type="email" id="email-input" placeholder="Operative Email..." required class="flex-grow px-4 py-3 rounded-md bg-obsidian/60 border border-gold/30 text-white placeholder-neutral-500 focus:outline-none focus:ring-1 focus:ring-gold transition duration-300 font-mono text-sm">
+                    <input type="email" id="email-input" placeholder="Operative Email..." required class="grow px-4 py-3 rounded-md bg-obsidian/60 border border-gold/30 text-white placeholder-neutral-500 focus:outline-none focus:ring-1 focus:ring-gold transition duration-300 font-mono text-sm">
                     <button type="submit" class="px-6 py-3 bg-gold hover:bg-white text-black font-bold uppercase tracking-wider rounded-md transition-colors duration-300 text-sm">
                         Confirm Access
                     </button>
@@ -154,6 +154,8 @@
 
     <!-- Gerekli Scriptler -->
     <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js" type="module"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js" type="module"></script>
     <script src="./assets/js/main-index.js" type="module"></script>
 </body>
 </html>

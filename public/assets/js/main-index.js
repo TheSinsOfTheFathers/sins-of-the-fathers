@@ -38,40 +38,59 @@ tsParticles.load("particles-container", {
 
 // --- ABONELİK FORMU İŞLEYİCİSİ ---
 import { db } from './modules/firebase-config.js';
-import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { collection, addDoc, serverTimestamp, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const subscribeForm = document.getElementById('subscribe-form');
+const emailInput = document.getElementById('email-input');
 const subscribeMessage = document.getElementById('subscribe-message');
 
 if (subscribeForm) {
-    subscribeForm.addEventListener('submit', async function(e) {
+    subscribeForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const emailInput = document.getElementById('email-input');
-        const email = emailInput.value;
+        const email = emailInput.value.trim();
 
-        if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            try {
-                await addDoc(collection(db, "subscribers"), {
+        // Temel e-posta formatı doğrulaması
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            subscribeMessage.textContent = 'Please enter a valid email.';
+            subscribeMessage.className = 'mt-3 text-sm h-4 text-red-500 font-mono error';
+            return;
+        }
+
+        subscribeMessage.textContent = 'Processing...';
+        subscribeMessage.className = 'mt-3 text-sm h-4 text-neutral-400 font-mono';
+
+        try {
+            // E-postanın zaten var olup olmadığını kontrol et
+            const subscribersRef = collection(db, "subscribers");
+            const q = query(subscribersRef, where("email", "==", email));
+            const querySnapshot = await getDocs(q);
+
+            if (!querySnapshot.empty) {
+                // E-posta zaten var
+                subscribeMessage.textContent = 'This email is already subscribed.';
+                subscribeMessage.className = 'mt-3 text-sm h-4 text-yellow-500 font-mono error';
+            } else {
+                // E-posta yok, yeni kayıt ekle
+                await addDoc(subscribersRef, {
                     email: email,
                     subscribedAt: serverTimestamp()
                 });
-                
-                subscribeMessage.textContent = 'Thank you for subscribing!';
-                subscribeMessage.className = 'success';
-                emailInput.value = '';
-            } catch (error) {
-                console.error("Error adding document: ", error);
-                subscribeMessage.textContent = 'Something went wrong. Please try again.';
-                subscribeMessage.className = 'error';
+                subscribeMessage.textContent = 'Success! Welcome to the watchlist.';
+                subscribeMessage.className = 'mt-3 text-sm h-4 text-green-500 font-mono success';
+                emailInput.value = ''; // Formu temizle
             }
-        } else {
-            subscribeMessage.textContent = 'Please enter a valid email address.';
-            subscribeMessage.className = 'error';
+        } catch (error) {
+            console.error("Error managing subscription: ", error);
+            subscribeMessage.textContent = 'A system error occurred. Try again.';
+            subscribeMessage.className = 'mt-3 text-sm h-4 text-red-500 font-mono error';
+        } finally {
+            // Mesajı birkaç saniye sonra temizle
+            setTimeout(() => {
+                if (!subscribeMessage.classList.contains('success')) {
+                   subscribeMessage.textContent = '';
+                   subscribeMessage.className = 'mt-3 text-sm h-4 text-neutral-400 font-mono';
+                }
+            }, 5000);
         }
-
-        setTimeout(() => {
-            subscribeMessage.textContent = '';
-            subscribeMessage.className = '';
-        }, 5000);
     });
 }
