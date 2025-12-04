@@ -1,0 +1,24 @@
+name: SonarCloud Analysis
+
+on:
+  push:
+    branches:
+      - main
+      - dev  # <--- İşte 'dev' branch'ini buraya ekledik!
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  sonarcloud:
+    name: SonarCloud Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # SonarCloud analizi için bu değer 0 olmalı (tüm geçmişi çeker)
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # GitHub'ın kendi varsayılan token'ı
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}    # Bunu GitHub Secrets'a eklemiş olmalısınız
