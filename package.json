@@ -6,9 +6,11 @@
   "scripts": {
     "dev": "vite",
     "build": "node scripts/generate-sitemap.cjs && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "partytown": "partytown copylib public/~partytown"
   },
   "dependencies": {
+    "@builder.io/partytown": "^0.10.3",
     "@sanity/color-input": "^4.0.6",
     "@sanity/vision": "^4.16.0",
     "@sentry/browser": "^10.27.0",
