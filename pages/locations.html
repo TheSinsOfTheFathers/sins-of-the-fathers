@@ -63,7 +63,7 @@
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="../src/main.js" type="module" defer></script>
     <script type="module">
-        import i18next from '../assets/js/lib/i18n.js';
+        import i18next from '../src/lib/i18n.js';
         i18next.on('initialized', () => {
             document.title = i18next.t('locations_page.meta_title');
         });
@@ -106,7 +106,7 @@
     </header>
 
     <!-- MOBILE MENU OVERLAY (Z-Index 60) -->
-    <div id="mobile-menu" class="hidden fixed inset-0 z-[60] bg-black flex-col items-center justify-center space-y-6">
+    <div id="mobile-menu" class="hidden fixed inset-0 z-60 bg-black flex-col items-center justify-center space-y-6">
         <a href="../index.html" class="text-xl text-white uppercase" data-i18n="nav.home"></a>
         <a href="characters.html" class="text-xl text-white uppercase" data-i18n="nav.characters"></a>
         <a href="factions.html" class="text-xl text-white uppercase" data-i18n="nav.factions"></a>
@@ -158,17 +158,17 @@
         <div id="map" class="w-full h-full bg-neutral-900"></div>
         
         <!-- Grid Overlay (Haritanın üstünde ama tıklamayı engellemez) -->
-        <div class="absolute inset-0 map-grid pointer-events-none opacity-30 z-[1]"></div>
+        <div class="absolute inset-0 map-grid pointer-events-none opacity-30 z-1"></div>
     </div>
 
     <!-- Loader (En Üst) -->
-    <div id="map-loader" class="fixed inset-0 z-[100] bg-obsidian flex flex-col items-center justify-center transition-opacity duration-1000">
+    <div id="map-loader" class="fixed inset-0 z-100 bg-obsidian flex flex-col items-center justify-center transition-opacity duration-1000">
         <i class="fas fa-circle-notch fa-spin text-gold text-2xl mb-2"></i>
         <p class="font-mono text-[10px] text-gold uppercase tracking-widest" data-i18n="locations_page.loader_text"></p>
     </div>
 
     <script type="module">
-        import i18next from '../assets/js/lib/i18n.js';
+        import i18next from '../src/lib/i18n.js';
         i18next.on('initialized', () => {
             document.title = i18next.t('locations_page.meta_title');
         });

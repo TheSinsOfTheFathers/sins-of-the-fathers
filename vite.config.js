@@ -4,12 +4,8 @@ import { defineConfig } from 'vite';
 import { resolve } from 'path';
 
 export default defineConfig({
-  // Vite'a projenin ana klasörünün burası olduğunu,
-  // ve ana index.html'in burada olduğunu söylüyoruz.
   root: process.cwd(), 
 
-  // Kaynak dosyalarımızın (JS, CSS) nerede olduğunu belirtiyoruz.
-  // Bu, Vite'ın geliştirme sunucusunda dosyaları doğru bulmasını sağlar.
   resolve: {
     alias: {
       '@': resolve(__dirname, './src'),
@@ -17,23 +13,29 @@ export default defineConfig({
   },
 
   build: {
-    // Vite'a build işlemi için hangi HTML dosyasını kullanacağını söylüyoruz.
     rollupOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
-        // Eğer pages klasöründe başka ana HTML dosyaların varsa,
-        // onları da buraya ekleyebilirsin. Örneğin:
-        // characters: resolve(__dirname, 'pages/characters.html'),
+        characterDetail: resolve(__dirname, 'pages/character-detail.html'),
+        characters: resolve(__dirname, 'pages/characters.html'),
+        factionDetail: resolve(__dirname, 'pages/faction-detail.html'),
+        factions: resolve(__dirname, 'pages/factions.html'),
+        locationDetail: resolve(__dirname, 'pages/location-detail.html'),
+        locations: resolve(__dirname, 'pages/locations.html'),
+        login: resolve(__dirname, 'pages/login.html'),
+        loreDetail: resolve(__dirname, 'pages/lore-detail.html'),
+        lore: resolve(__dirname, 'pages/lore.html'),
+        privacy: resolve(__dirname, 'pages/privacy.html'),
+        profile: resolve(__dirname, 'pages/profile.html'),
+        terms: resolve(__dirname, 'pages/terms.html'),
+        timeline: resolve(__dirname, 'pages/timeline.html'),
       },
     },
-    // "npm run build" komutunun çıktılarını "dist" klasörüne atmasını sağlıyoruz.
-    // Bu, Firebase Hosting için en iyi yöntemdir.
     outDir: './dist',
-    emptyOutDir: true, // Her build öncesi dist klasörünü temizle
+    emptyOutDir: true,
   },
   
   server: {
-    // `npm run dev` komutunun doğru çalışması için.
-    open: true, // Sunucu başlayınca tarayıcıda otomatik aç
+    open: true,
   }
 });

@@ -74,3 +74,6 @@ node_modules/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+
+# Build Output (BUNU EKLE)
+dist

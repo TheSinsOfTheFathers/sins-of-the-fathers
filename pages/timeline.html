@@ -199,7 +199,7 @@
     <!-- SYSTEM CORE SCRIPT -->
     <script src="../src/main.js" type="module" defer></script>
     <script type="module">
-        import i18next from '../assets/js/lib/i18n.js';
+        import i18next from '../src/lib/i18n.js';
         i18next.on('initialized', () => {
             document.title = i18next.t('timeline_page.meta_title');
         });
