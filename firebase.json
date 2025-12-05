@@ -30,6 +30,17 @@
     {
       "target": "blog-site",
       "public": "blog/dist/client",
+      "headers": [
+        {
+          "source": "**",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, no-store, must-revalidate"
+            }
+          ]
+        }
+      ],
       "ignore": [
         "firebase.json",
         "**/.*",
