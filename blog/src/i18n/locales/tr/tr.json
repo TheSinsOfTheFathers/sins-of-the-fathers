@@ -2,6 +2,7 @@
   "blog_page": {
     "meta_title": "TSOF Blog Arşivleri",
     "return_terminal": "TERMİNALE DÖN",
+    "return_index": "ARŞİVE DÖN",
     "title_prefix": "İstihbarat",
     "title_suffix": "Kayıtları",
     "subtitle": "Gizliliği kaldırılmış belgeler ve operasyon notları.",

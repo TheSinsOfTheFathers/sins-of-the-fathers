@@ -2,6 +2,7 @@
     "blog_page": {
     "meta_title": "TSOF Blog Archives",
     "return_terminal": "RETURN TO TERMINAL",
+    "return_index": "RETURN TO ARCHIVES",
     "title_prefix": "Intelligence",
     "title_suffix": "Records",
     "subtitle": "Classified documents and operation notes.",
