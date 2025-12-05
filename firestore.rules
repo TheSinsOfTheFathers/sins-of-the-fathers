@@ -18,13 +18,6 @@ service cloud.firestore {
       allow read: if true;
       allow write: if isAdmin();
     }
-
-    // --- Abonelikler ---
-    // Herkesin abone olmasına izin ver (sadece yeni kayıt oluşturma)
-    match /subscribers/{subscriberId} {
-      allow create: if true; // Herkese açık yazma erişimi
-      allow read, update, delete: if isSignedIn(); // Sadece giriş yapmış kullanıcılar (veya adminler)
-    }
     
     match /factions/{factionId} {
       allow read: if true;
