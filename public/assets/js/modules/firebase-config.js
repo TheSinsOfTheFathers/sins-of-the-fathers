@@ -4,15 +4,10 @@ import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebas
 import { getAuth, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFunctions } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js";
 import { getStorage } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
-// 👇 YENİ İMPORTLAR
-import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app-check.js";
-
 
 /* --------------------------------------------------------------------------
-    SECURITY CREDENTIALS
-    -------------------------------------------------------------------------- */
-const RECAPTCHA_SITE_KEY = "6LeoRfYrAAAAANpaxG70cHRmK5ciRKf7sVt9Crnz"; 
-
+   SECURITY CREDENTIALS
+   -------------------------------------------------------------------------- */
 const firebaseConfig = {
     apiKey: "AIzaSyB7Xa5tZYVenPEkkjB0KVJDkoV7pQ7_QcQ",
     authDomain: "thesinsofthefathers.com",
@@ -25,17 +20,12 @@ const firebaseConfig = {
 };
 
 /* --------------------------------------------------------------------------
-    SYSTEM INITIALIZATION
-    -------------------------------------------------------------------------- */
+   SYSTEM INITIALIZATION
+   -------------------------------------------------------------------------- */
 let app, db, analytics, auth, functionsInstance, googleProvider, storage;
 
 try {
     app = initializeApp(firebaseConfig);
-    
-    initializeAppCheck(app, {
-        provider: new ReCaptchaV3Provider(RECAPTCHA_SITE_KEY),
-        isTokenAutoRefreshEnabled: true
-    });
     
     db = getFirestore(app);
     auth = getAuth(app);
@@ -59,8 +49,8 @@ try {
 }
 
 /* --------------------------------------------------------------------------
-    EXPORTS
-    -------------------------------------------------------------------------- */
+   EXPORTS
+   -------------------------------------------------------------------------- */
 export { 
     app, 
     db, 
@@ -68,6 +58,5 @@ export {
     auth, 
     functionsInstance as functions, 
     googleProvider, 
-    storage, 
-    RECAPTCHA_SITE_KEY 
+    storage 
 };
