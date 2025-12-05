@@ -4,10 +4,11 @@ import { t } from '../i18n/utils';
 
 interface Props {
 	title: string;
-    lang: 'en' | 'tr'; // Mevcut dili alıyoruz
 }
 
-const { title, lang } = Astro.props;
+const { title } = Astro.props;
+const lang = Astro.locals.lang as 'en' | 'tr';
+const translations = Astro.locals.translations;
 ---
 
 <html lang={lang}>
@@ -19,13 +20,13 @@ const { title, lang } = Astro.props;
     <link rel="alternate" type="application/rss+xml" title="Sins of the Fathers Blog" href="/rss.xml" />
   </head>
 
-  <body class="bg-[#050505] text-gray-300 font-sans min-h-screen selection:bg-[#c5a059] selection:text-black">
+  <body class="bg-[#050505] text-gray-300 font-sans min-h-screen selection:bg-[#c5a059] selection:text-black flex flex-col">
     
     <header class="border-b border-white/10 bg-black/50 backdrop-blur-md sticky top-0 z-50">
       <div class="container mx-auto px-6 py-4 flex justify-between items-center">
         <div class="flex items-center gap-4">
             <a href="/" class="text-xl font-serif text-[#c5a059] tracking-widest uppercase hover:text-white transition-colors">
-              TSOF <span class="text-xs text-gray-600 ml-2">// {t(lang, 'blog_page.dossier_label')}</span> 
+              TSOF <span class="text-xs text-gray-600 ml-2">// {t(translations, 'blog_page.dossier_label')}</span> 
             </a>
             
             <div class="flex gap-2 font-mono text-[10px] ml-4 pt-0.5">
@@ -35,13 +36,13 @@ const { title, lang } = Astro.props;
             </div>
         </div>
         
-        <a href="/" class="text-xs font-mono text-gray-500 hover:text-[#c5a059] transition-colors border border-white/10 px-3 py-1">
-          {t(lang, 'blog_page.return_terminal')} &nbsp; &larr;
+        <a href="https://thesinsofthefathers.com" class="text-xs font-mono text-gray-500 hover:text-[#c5a059] transition-colors border border-white/10 px-3 py-1">
+          {t(translations, 'blog_page.return_terminal')} &nbsp; &larr;
         </a>
       </div>
     </header>
 
-    <main class="max-w-3xl mx-auto px-6 py-12">
+    <main class="w-full px-24 py-12 flex-grow">
         <slot />
     </main>
 

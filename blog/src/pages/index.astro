@@ -8,9 +8,9 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 // SSR Modu
 export const prerender = false;
 
-// 1. DİL AYARI
-const urlLang = Astro.url.searchParams.get('lang');
-const lang = (urlLang === 'en' || urlLang === 'tr') ? urlLang : 'tr';
+// 1. DİL AYARI - ARTIK MIDDLEWARE'DEN GELİYOR
+const lang = Astro.locals.lang as 'en' | 'tr';
+const translations = Astro.locals.translations;
 
 // 👇 DÜZELTİLEN KISIM BURASI
 // Ana sayfada belirli bir slug ARANMAZ. Tüm postlar çekilir.
@@ -21,11 +21,11 @@ const posts = await sanityClient.fetch(`*[_type == "post"] | order(publishedAt d
   excerpt,
   mainImage,
   authorName, 
-}`, { lang }); 
+}`); 
 
 // YARDIMCI FONKSİYONLAR
 function formatDate(dateString) {
-  if (!dateString) return t(lang, 'common.undated');
+  if (!dateString) return t(translations, 'common.undated');
   return new Date(dateString).toLocaleDateString(lang, {
     year: "numeric",
     month: "long",
@@ -34,21 +34,21 @@ function formatDate(dateString) {
 }
 ---
 
-<BaseLayout title={t(lang, 'blog_page.meta_title')} lang={lang}>
+<BaseLayout title={t(translations, 'blog_page.meta_title')}>
     
     <div class="mb-12 text-center md:text-left">
       <h1 class="text-4xl md:text-6xl font-serif text-white mb-2 tracking-wide drop-shadow-lg">
-        {t(lang, 'blog_page.title_prefix')} <span class="text-[#c5a059] italic">{t(lang, 'blog_page.title_suffix')}</span>
+        {t(translations, 'blog_page.title_prefix')} <span class="text-[#c5a059] italic">{t(translations, 'blog_page.title_suffix')}</span>
       </h1>
       <p class="text-gray-500 font-mono text-sm border-l-2 border-[#c5a059] pl-4 inline-block">
-        {t(lang, 'blog_page.subtitle')}
+        {t(translations, 'blog_page.subtitle')}
       </p>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {posts.length > 0 ? (
           posts.map((post) => (
-            <article class="group bg-white/5 border border-white/10 hover:border-[#c5a059] transition-all duration-500 overflow-hidden flex flex-col hover:-translate-y-1 shadow-lg hover:shadow-[#c5a059]/10">
+            <article class="group bg-white/5 border border-white/10 hover:border-[#c5a059] transition-all duration-500 overflow-hidden flex flex-col hover:translate-y-1 shadow-lg hover:shadow-[#c5a059]/10">
               
               {post.mainImage ? (
                 <div class="relative h-56 overflow-hidden">
@@ -71,11 +71,11 @@ function formatDate(dateString) {
                 <div class="flex items-center gap-2 mb-3 text-[10px] font-mono uppercase text-[#c5a059] tracking-wider mt-2">
                   <span>{formatDate(post.publishedAt)}</span>
                   <span class="text-gray-700">|</span>
-                  <span>{post.authorName || t(lang, 'common.unknown_author')}</span> 
+                  <span>{post.authorName || t(translations, 'common.unknown_author')}</span> 
                 </div>
 
                 <h2 class="text-2xl font-serif text-white mb-3 group-hover:text-[#c5a059] transition-colors leading-tight">
-                  <a href={`/post/${post.slug.current}?lang=${lang}`} class="hover:underline decoration-[#c5a059] underline-offset-4">
+                  <a href={`/post/${post.slug.current}`} class="hover:underline decoration-[#c5a059] underline-offset-4">
                     {post.title}
                   </a>
                 </h2>
@@ -84,16 +84,16 @@ function formatDate(dateString) {
                   {post.excerpt}
                 </p>
 
-                <a href={`/post/${post.slug.current}?lang=${lang}`} class="inline-flex items-center text-xs font-bold uppercase tracking-widest text-white border border-white/20 px-4 py-2 hover:bg-[#c5a059] hover:text-black hover:border-[#c5a059] transition-all self-start">
-                  {t(lang, 'common.read_more')} &nbsp; <span class="text-[10px]">&rarr;</span>
+                <a href={`/post/${post.slug.current}`} class="inline-flex items-center text-xs font-bold uppercase tracking-widest text-white border border-white/20 px-4 py-2 hover:bg-[#c5a059] hover:text-black hover:border-[#c5a059] transition-all self-start">
+                  {t(translations, 'common.read_more')} &nbsp; <span class="text-[10px]">&rarr;</span>
                 </a>
               </div>
             </article>
           ))
         ) : (
           <div class="col-span-full py-24 text-center border border-dashed border-white/10 rounded bg-white/5">
-            <p class="text-[#c5a059] font-mono text-xl mb-2">{t(lang, 'blog_page.empty_title')}</p>
-            <p class="text-gray-500 text-sm">{t(lang, 'blog_page.empty_text')}</p>
+            <p class="text-[#c5a059] font-mono text-xl mb-2">{t(translations, 'blog_page.empty_title')}</p>
+            <p class="text-gray-500 text-sm">{t(translations, 'blog_page.empty_text')}</p>
           </div>
         )}
       </div>
