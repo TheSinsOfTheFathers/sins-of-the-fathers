@@ -5,6 +5,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Loading...</title>
+
+    <script>
+        partytown = {
+            forward: ['dataLayer.push', 'gtag', 'fbq'], 
+            lib: '/~partytown/'
+        };
+    </script>
+    
+    <script>
+        /* Partytown 0.8.0 - MIT License */
+        !function(t,e,n,i,r,o,a,d,s,c,p,l){function u(){l||(l=1,"/"==(a=(o.lib||"/~partytown/")+(o.debug?"debug/":""))[0]&&(s=e.querySelectorAll('script[type="text/partytown"]'),i!=t?i.dispatchEvent(new CustomEvent("pt1",{detail:t,composed:!0})):(d=setTimeout(f,1e4),e.addEventListener("pt0",w),r?h(1):n.serviceWorker?n.serviceWorker.register(a+(o.swPath||"partytown-sw.js"),{scope:a}).then((function(t){t.active?h():t.installing&&t.installing.addEventListener("statechange",(function(t){"activated"==t.target.state&&h()}))}),console.error):f())))}function h(t){c=e.createElement(t?"script":"iframe"),t||(c.style.display="block",c.style.width="0",c.style.height="0",c.style.border="0",c.style.visibility="hidden",c.setAttribute("aria-hidden",!0)),c.src=a+"partytown-"+(t?"atomics.js?v=0.8.0":"sandbox-sw.html?"+Date.now()),e.body.appendChild(c)}function f(t,n){for(w(),t=0;t<s.length;t++)(n=e.createElement("script")).innerHTML=s[t].innerHTML,n.nonce=o.nonce,s[t].src&&(n.src=s[t].src),n.type="text/javascript",s[t].replaceWith(n)}function w(){clearTimeout(d)}i==t&&(o.forward||[]).map((function(e){p=t,e.split(".").map((function(e,n,i){p=p[e]=n+1<i.length?"push"==i[n+1]?[]:p[e]||{}:function(){(t._ptf=t._ptf||[]).push(i,arguments)}}))})),"complete"==e.readyState?u():(t.addEventListener("DOMContentLoaded",u),t.addEventListener("load",u))}(window,document,navigator,top,window.crossOriginIsolated);
+    </script>
     
     <!-- Tailwind CSS (Custom Config) -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -141,7 +153,7 @@
     </div>
 
     <!-- CONTENT -->
-    <main class="flex-grow container mx-auto px-6 py-12 -mt-8 relative z-10 opacity-0 transition-opacity duration-1000">
+    <main class="grow container mx-auto px-6 py-12 -mt-8 relative z-10 opacity-0 transition-opacity duration-1000">
         
         <!-- STATS GRID -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
@@ -201,7 +213,7 @@
                          <div id="mini-map" class="absolute inset-0 w-full h-full z-0 grayscale opacity-60 group-hover:opacity-100 group-hover:scale-105 transition-all duration-700"></div>
                          
                          <!-- Scanline / Glitch Overlay -->
-                         <div class="absolute inset-0 z-10 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-[length:100%_4px,6px_100%]"></div>
+                         <div class="absolute inset-0 z-10 pointer-events-none bg-[linear-gradient(rgba(18,16,16,0)_50%,rgba(0,0,0,0.25)_50%),linear-gradient(90deg,rgba(255,0,0,0.06),rgba(0,255,0,0.02),rgba(0,0,255,0.06))] bg-size-[100%_4px,6px_100%]"></div>
                          
                          <!-- Tıklayınca Ana Haritaya At -->
                          <a href="locations.html" class="absolute inset-0 z-20 cursor-crosshair" title="Enlarge Tactical Map"></a>

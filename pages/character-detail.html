@@ -6,6 +6,18 @@
     <meta name="description" content="Detailed dossier and network analysis of subjects involved in 'The Sins of the Fathers' conspiracy. Access biographies, affiliations, and lineage data.">
     <title>Loading...</title>
 
+    <script>
+        partytown = {
+            forward: ['dataLayer.push', 'gtag', 'fbq'], 
+            lib: '/~partytown/'
+        };
+    </script>
+    
+    <script>
+        /* Partytown 0.8.0 - MIT License */
+        !function(t,e,n,i,r,o,a,d,s,c,p,l){function u(){l||(l=1,"/"==(a=(o.lib||"/~partytown/")+(o.debug?"debug/":""))[0]&&(s=e.querySelectorAll('script[type="text/partytown"]'),i!=t?i.dispatchEvent(new CustomEvent("pt1",{detail:t,composed:!0})):(d=setTimeout(f,1e4),e.addEventListener("pt0",w),r?h(1):n.serviceWorker?n.serviceWorker.register(a+(o.swPath||"partytown-sw.js"),{scope:a}).then((function(t){t.active?h():t.installing&&t.installing.addEventListener("statechange",(function(t){"activated"==t.target.state&&h()}))}),console.error):f())))}function h(t){c=e.createElement(t?"script":"iframe"),t||(c.style.display="block",c.style.width="0",c.style.height="0",c.style.border="0",c.style.visibility="hidden",c.setAttribute("aria-hidden",!0)),c.src=a+"partytown-"+(t?"atomics.js?v=0.8.0":"sandbox-sw.html?"+Date.now()),e.body.appendChild(c)}function f(t,n){for(w(),t=0;t<s.length;t++)(n=e.createElement("script")).innerHTML=s[t].innerHTML,n.nonce=o.nonce,s[t].src&&(n.src=s[t].src),n.type="text/javascript",s[t].replaceWith(n)}function w(){clearTimeout(d)}i==t&&(o.forward||[]).map((function(e){p=t,e.split(".").map((function(e,n,i){p=p[e]=n+1<i.length?"push"==i[n+1]?[]:p[e]||{}:function(){(t._ptf=t._ptf||[]).push(i,arguments)}}))})),"complete"==e.readyState?u():(t.addEventListener("DOMContentLoaded",u),t.addEventListener("load",u))}(window,document,navigator,top,window.crossOriginIsolated);
+    </script>
+
     <link rel="icon" type="image/png" sizes="96x96" href="../assets/images/logo/favicon-96x96.png" />
     <link rel="icon" type="image/icon" href="../assets/images/logo/favicon.ico" />
     <link rel="icon" type="image/svg+xml" href="../assets/images/logo/favicon.svg" />
@@ -125,7 +137,7 @@
         </div>
     </div>
 
-    <main class="flex-grow pt-24 pb-12 px-4 md:px-0">
+    <main class="grow pt-24 pb-12 px-4 md:px-0">
         <div id="file-loader" class="fixed inset-0 bg-obsidian z-40 flex flex-col items-center justify-center font-mono">
             <div class="w-64 h-1 bg-gray-800 rounded mb-4 overflow-hidden relative">
                 <div class="absolute inset-0 bg-gold animate-[scanline_1s_infinite] w-full"></div>
@@ -136,11 +148,11 @@
         <div id="character-dossier" class="container mx-auto max-w-5xl opacity-0 transition-opacity duration-1000 delay-500">
             
             <div class="border border-white/10 bg-white/5 p-8 rounded-sm mb-8 relative overflow-hidden group">
-                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-gold to-transparent opacity-50"></div>
+                <div class="absolute top-0 left-0 w-full h-1 bg-liniear-to-r from-transparent via-gold to-transparent opacity-50"></div>
 
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
                     <div class="md:col-span-4 lg:col-span-3 relative">
-                        <div class="relative w-full aspect-[3/4] bg-black border border-white/10 overflow-hidden shadow-2xl">
+                        <div class="relative w-full aspect-3/4 bg-black border border-white/10 overflow-hidden shadow-2xl">
                             <img id="char-image" src="" alt="Subject Unknown" class="w-full h-full object-cover filter grayscale hover:grayscale-0 transition-all duration-700">
                             
                             <div class="absolute inset-0 border-2 border-transparent border-t-gold/30 border-b-gold/30 pointer-events-none"></div>
@@ -208,7 +220,7 @@
                             <div class="d3-loading absolute inset-0 flex items-center justify-center text-gold/50">
                                 <i class="fas fa-dna fa-spin text-2xl"></i>
                             </div>
-                            <div class="d3-empty hidden absolute inset-0 flex flex-col items-center justify-center text-gray-600 text-xs font-mono text-center px-4">
+                            <div class="d3-empty hidden absolute inset-0 flex-col items-center justify-center text-gray-600 text-xs font-mono text-center px-4">
                                 <i class="fas fa-unlink mb-2 text-xl"></i>
                                 <span data-i18n="character_detail_page.lineage_not_found">Lineage data not found.</span>
                             </div>

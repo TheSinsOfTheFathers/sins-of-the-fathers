@@ -5,6 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title data-i18n="lore_detail.page_title">Evidence Record | The Sins of the Fathers</title>
 
+    <script>
+        partytown = {
+            forward: ['dataLayer.push', 'gtag', 'fbq'], 
+            lib: '/~partytown/'
+        };
+    </script>
+    
+    <script>
+        /* Partytown 0.8.0 - MIT License */
+        !function(t,e,n,i,r,o,a,d,s,c,p,l){function u(){l||(l=1,"/"==(a=(o.lib||"/~partytown/")+(o.debug?"debug/":""))[0]&&(s=e.querySelectorAll('script[type="text/partytown"]'),i!=t?i.dispatchEvent(new CustomEvent("pt1",{detail:t,composed:!0})):(d=setTimeout(f,1e4),e.addEventListener("pt0",w),r?h(1):n.serviceWorker?n.serviceWorker.register(a+(o.swPath||"partytown-sw.js"),{scope:a}).then((function(t){t.active?h():t.installing&&t.installing.addEventListener("statechange",(function(t){"activated"==t.target.state&&h()}))}),console.error):f())))}function h(t){c=e.createElement(t?"script":"iframe"),t||(c.style.display="block",c.style.width="0",c.style.height="0",c.style.border="0",c.style.visibility="hidden",c.setAttribute("aria-hidden",!0)),c.src=a+"partytown-"+(t?"atomics.js?v=0.8.0":"sandbox-sw.html?"+Date.now()),e.body.appendChild(c)}function f(t,n){for(w(),t=0;t<s.length;t++)(n=e.createElement("script")).innerHTML=s[t].innerHTML,n.nonce=o.nonce,s[t].src&&(n.src=s[t].src),n.type="text/javascript",s[t].replaceWith(n)}function w(){clearTimeout(d)}i==t&&(o.forward||[]).map((function(e){p=t,e.split(".").map((function(e,n,i){p=p[e]=n+1<i.length?"push"==i[n+1]?[]:p[e]||{}:function(){(t._ptf=t._ptf||[]).push(i,arguments)}}))})),"complete"==e.readyState?u():(t.addEventListener("DOMContentLoaded",u),t.addEventListener("load",u))}(window,document,navigator,top,window.crossOriginIsolated);
+    </script>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -132,7 +144,7 @@
         <a href="./pages/login.html" class="text-sm text-gray-400 hover:text-white mt-8 font-mono uppercase" data-i18n="auth.login"></a>
     </div>
 
-    <main class="flex-grow pt-28 pb-20 px-6">
+    <main class="grow pt-28 pb-20 px-6">
         
         <div id="evidence-container" class="container mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
 
@@ -197,14 +209,14 @@
                         
                             <div class="relative z-10 p-6 md:p-8 flex flex-col md:flex-row items-center gap-6 md:gap-8">
                             
-                                <div class="flex-shrink-0 relative">
+                                <div class="shrink-0 relative">
                                     <div class="absolute inset-0 bg-gold/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                                     <button id="audio-play-btn" class="relative w-20 h-20 flex items-center justify-center bg-black border border-gold/30 text-gold rounded-full hover:border-gold hover:text-white hover:scale-105 transition-all duration-300 group-play shadow-2xl">
                                         <i class="fas fa-play text-2xl ml-1 group-play-hover:scale-110 transition-transform"></i>
                                     </button>
                                 </div>
                             
-                                <div class="flex-grow w-full space-y-4">
+                                <div class="grow w-full space-y-4">
                                 
                                     <div class="flex justify-between items-end border-b border-white/5 pb-2 mb-2">
                                         <div>
@@ -226,7 +238,7 @@
                                     <div class="relative h-16 bg-black/40 border border-white/10 group-hover:border-gold/30 transition-colors cursor-pointer overflow-hidden backdrop-blur-sm" id="audio-progress-container">
                                     
                                         <!-- Görselleştirme Çubukları (Statik) -->
-                                        <div class="absolute inset-0 flex items-end justify-between px-1 pb-0 opacity-20 gap-[2px] pointer-events-none">
+                                        <div class="absolute inset-0 flex items-end justify-between px-1 pb-0 opacity-20 gap-2px pointer-events-none">
                                             <div class="w-1 bg-gold h-[40%]"></div><div class="w-1 bg-gold h-[70%]"></div><div class="w-1 bg-gold h-[30%]"></div>
                                             <div class="w-1 bg-gold h-[50%]"></div><div class="w-1 bg-gold h-[90%]"></div><div class="w-1 bg-gold h-[20%]"></div>
                                             <div class="w-1 bg-gold h-[60%]"></div><div class="w-1 bg-gold h-[80%]"></div><div class="w-1 bg-gold h-[40%]"></div>
@@ -248,7 +260,7 @@
                                         <div id="audio-progress-bar" class="absolute top-0 bottom-0 left-0 bg-gold/10 border-r-2 border-gold shadow-[0_0_15px_rgba(197,160,89,0.3)] w-0 pointer-events-none transition-all duration-100 ease-linear"></div>
                                     
                                         <!-- Hover Çizgisi -->
-                                        <div class="absolute inset-y-0 w-[1px] bg-white/40 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" id="hover-line"></div>
+                                        <div class="absolute inset-y-0 w-1px bg-white/40 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" id="hover-line"></div>
                                     </div>
                                 
                                     <div class="flex justify-between items-center text-[10px] font-mono">
