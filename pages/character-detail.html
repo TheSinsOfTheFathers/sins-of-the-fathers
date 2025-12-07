@@ -22,39 +22,6 @@
     <link rel="icon" type="image/icon" href="../assets/images/logo/favicon.ico" />
     <link rel="icon" type="image/svg+xml" href="../assets/images/logo/favicon.svg" />
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'blood': '#4a0404',
-                        'gold': '#c5a059',
-                        'gold-dim': '#8a6e3e',
-                        'obsidian': '#050505',
-                        'charcoal': '#121212',
-                        'terminal-green': '#0f0'
-                    },
-                    fontFamily: {
-                        serif: ['Cinzel', 'serif'],
-                        sans: ['Lato', 'sans-serif'],
-                        mono: ['Courier Prime', 'monospace']
-                    },
-                    animation: {
-                        'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'scanline': 'scanline 2s linear infinite'
-                    },
-                    keyframes: {
-                        scanline: {
-                            '0%': { transform: 'translateY(-100%)' },
-                            '100%': { transform: 'translateY(100%)' }
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-
     <style>
         body { background-color: #050505; color: #d4d4d4; }
         .noise-overlay {
@@ -73,6 +40,8 @@
         #hamburger-button.active span:nth-child(2) { opacity: 0; }
         #hamburger-button.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -6px); }
     </style>
+
+    <link href="../src/style.css" rel="stylesheet">
     
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Courier+Prime&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
