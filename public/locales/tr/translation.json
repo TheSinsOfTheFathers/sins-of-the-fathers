@@ -37,7 +37,7 @@
   "footer": {
     "privacy": "Gizlilik Protokolü",
     "terms": "Operasyon Şartları",
-    "copyright": "© {{year}} Babaların Günahları",
+    "footer.copyright": "© {{year}} Babaların Günahları",
     "copyright_slogan": "Ruaraidh Ballantine & Havi seni izliyor."
   },
   "common_utils": {

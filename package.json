@@ -4,10 +4,10 @@
   "description": "The root package.json for The Sins of the Fathers project.",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "node scripts/generate-sitemap.cjs && vite build",
-    "preview": "vite preview",
-    "partytown": "partytown copylib public/~partytown"
+    "partytown": "partytown copylib public/~partytown",
+    "dev": "npm run partytown && vite",
+    "build": "npm run partytown && node scripts/generate-sitemap.cjs && vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
     "@builder.io/partytown": "^0.10.3",

@@ -37,7 +37,7 @@
   "footer": {
     "privacy": "Privacy Protocol",
     "terms": "Terms of Operation",
-    "copyright": "© {{year}} The Sins of the Fathers",
+    "footer.copyright": "© {{year}} The Sins of the Fathers",
     "copyright_slogan": "Ruaraidh Ballantine & Havi are watching."
   },
   "common_utils": {
