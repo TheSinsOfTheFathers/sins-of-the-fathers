@@ -36,9 +36,10 @@ export const updateContent = () => {
 export const changeLanguage = async (lng) => {
     await i18next.changeLanguage(lng);
     updateContent();
-    localStorage.setItem('i18nextLng', lng); // Tercihi hatırla
+    localStorage.setItem('i18nextLng', lng); 
     
-    // Dil butonlarını güncelle (Aktif olanı parlat)
+    document.documentElement.lang = lng; 
+    
     document.querySelectorAll('.lang-btn').forEach(btn => {
         if(btn.dataset.lang === lng) {
             btn.classList.add('text-white', 'font-bold', 'underline');
