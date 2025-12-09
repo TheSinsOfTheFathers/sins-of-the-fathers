@@ -4,8 +4,35 @@
     <!-- Meta Tags -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loading...</title>
+    <meta name="description" content="Surveillance Feed: Real-time intelligence and historical data on key locations within the TSOF operational theater.">
+    <meta name="keywords" content="TSOF, Locations, Map, Surveillance, Territory, Crime Scene, Intel">
+    <meta name="author" content="The Sins of the Fathers">
+    <meta name="theme-color" content="#050505">
+    <meta name="robots" content="noindex, follow">
+    
+    <!-- Title -->
+    <title>Surveillance Feed | TSOF</title>
 
+    <!-- Manifest -->
+    <link rel="manifest" href="../manifest.json">
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="../assets/images/logo/favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="../assets/images/logo/favicon.svg">
+    <link rel="icon" type="image/png" sizes="96x96" href="../assets/images/logo/favicon-96x96.png">
+    <link rel="shortcut icon" href="../assets/images/logo/favicon.ico">
+
+    <!-- External Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Courier+Prime&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    
+    <!-- Internal Styles -->
+    <link href="../src/style.css" rel="stylesheet">
+
+    <!-- Internal Scripts -->
+    <script src="../src/main.js" type="module"></script>
+
+    <!-- Partytown Configuration -->
     <script>
         partytown = {
             forward: ['dataLayer.push', 'gtag', 'fbq'], 
@@ -13,61 +40,77 @@
         };
     </script>
     
-    <script>
-        /* Partytown 0.8.0 - MIT License */
-        !function(t,e,n,i,r,o,a,d,s,c,p,l){function u(){l||(l=1,"/"==(a=(o.lib||"/~partytown/")+(o.debug?"debug/":""))[0]&&(s=e.querySelectorAll('script[type="text/partytown"]'),i!=t?i.dispatchEvent(new CustomEvent("pt1",{detail:t,composed:!0})):(d=setTimeout(f,1e4),e.addEventListener("pt0",w),r?h(1):n.serviceWorker?n.serviceWorker.register(a+(o.swPath||"partytown-sw.js"),{scope:a}).then((function(t){t.active?h():t.installing&&t.installing.addEventListener("statechange",(function(t){"activated"==t.target.state&&h()}))}),console.error):f())))}function h(t){c=e.createElement(t?"script":"iframe"),t||(c.style.display="block",c.style.width="0",c.style.height="0",c.style.border="0",c.style.visibility="hidden",c.setAttribute("aria-hidden",!0)),c.src=a+"partytown-"+(t?"atomics.js?v=0.8.0":"sandbox-sw.html?"+Date.now()),e.body.appendChild(c)}function f(t,n){for(w(),t=0;t<s.length;t++)(n=e.createElement("script")).innerHTML=s[t].innerHTML,n.nonce=o.nonce,s[t].src&&(n.src=s[t].src),n.type="text/javascript",s[t].replaceWith(n)}function w(){clearTimeout(d)}i==t&&(o.forward||[]).map((function(e){p=t,e.split(".").map((function(e,n,i){p=p[e]=n+1<i.length?"push"==i[n+1]?[]:p[e]||{}:function(){(t._ptf=t._ptf||[]).push(i,arguments)}}))})),"complete"==e.readyState?u():(t.addEventListener("DOMContentLoaded",u),t.addEventListener("load",u))}(window,document,navigator,top,window.crossOriginIsolated);
-    </script>
-    
-    <link href="../src/style.css" rel="stylesheet">
-    
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Courier+Prime&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-
-    <style>
-        body { background-color: #050505; color: #ccc; }
-        .noise-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 50;
-            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MDAiIGhlaWdodD0iNTAwIj48ZmlsdGVyIGlkPSJub2lzZSI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuNjUiIG51bU9jdGF2ZXM9IjMiIHN0aXRjaFRpbGVzPSJzdGl0Y2giLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCgjbm9pc2UpIiBvcGFjaXR5PSIwLjA1Ii8+PC9zdmc+');
-            opacity: 0.05;
-        }
-
-        /* Scanlines for the image feed */
-        .surveillance-feed {
-            position: relative;
-            overflow: hidden;
-        }
-        .surveillance-feed::before {
-            content: " "; display: block; position: absolute; top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            background-size: 100% 2px, 3px 100%;
-            pointer-events: none; z-index: 10;
-        }
-        .rec-indicator { color: red; text-shadow: 0 0 5px red; }
-    </style>
+    <!-- Partytown Script -->
+    <script type="module" src="../src/modules/loaders/partytown-loader.js"></script>
 </head>
-
 <body class="flex flex-col min-h-screen selection:bg-white selection:text-black">
+    
+    <!-- Visual Effects -->
     <div class="noise-overlay"></div>
 
-    <!-- Header (Simplified) -->
+    <!-- Header & Navigation (Detail View) -->
     <header class="fixed top-0 w-full z-50 bg-obsidian/90 backdrop-blur-md border-b border-white/5 transition-all">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <!-- Brand -->
             <a href="../index.html" class="text-xl md:text-2xl font-serif text-gold tracking-widest uppercase hover:text-white transition-colors">
-                TSOF <span class="hidden md:inline text-xs text-gray-600 ml-2" data-i18n="location_detail_page.header_subtitle"></span>
+                TSOF <span class="hidden md:inline text-xs text-gray-600 ml-2 font-mono" data-i18n="location_detail_page.header_subtitle">// SURVEILLANCE FEED</span>
             </a>
             
-            <a href="locations.html" class="text-xs uppercase tracking-widest text-gray-500 hover:text-gold transition-colors flex items-center">
-                <i class="fas fa-arrow-left mr-2"></i> <span data-i18n="location_detail_page.return_to_map"></span>
-            </a>
+            <!-- Desktop Controls -->
+            <div class="hidden md:flex items-center space-x-6 text-xs uppercase tracking-widest font-semibold">
+                <a href="./locations.html" class="text-gray-500 hover:text-gold transition-colors flex items-center border-r border-white/10 pr-6">
+                    <i class="fas fa-arrow-left mr-2"></i> <span data-i18n="location_detail_page.return_to_map">Return to Map</span>
+                </a>
+                
+                <!-- Auth Controls -->
+                <div class="flex items-center gap-4" id="auth-controls">
+                    <a href="./login.html" class="text-gold/80 hover:text-white transition-colors guest-only" id="auth-signin-link" data-i18n="auth.login">Login</a>
+                </div>
+            </div>
+
+            <!-- Mobile Controls -->
+            <div class="flex items-center gap-4 md:hidden">
+                <div class="relative z-50">
+                    <button id="hamburger-button" class="text-gold focus:outline-none flex flex-col justify-center items-center w-8 h-8 space-y-1.5 group">
+                        <span class="block w-6 h-0.5 bg-gold transition-transform duration-300"></span>
+                        <span class="block w-6 h-0.5 bg-gold transition-opacity duration-300"></span>
+                        <span class="block w-6 h-0.5 bg-gold transition-transform duration-300"></span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Language Switcher (Desktop) -->
+            <div class="hidden md:flex gap-2 font-mono text-[10px]">
+                <button class="lang-btn hover:text-gold transition-colors" data-lang="en" onclick="window.changeAppLanguage('en')">EN</button>
+                <span class="text-gray-600">/</span>
+                <button class="lang-btn hover:text-gold transition-colors" data-lang="tr" onclick="window.changeAppLanguage('tr')">TR</button>
+            </div>
         </nav>
     </header>
 
-    <!-- Main Content -->
-    <main class="grow pt-24 pb-12 px-4 md:px-6">
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="hidden fixed inset-0 z-40 bg-black/95 flex-col items-center justify-center space-y-8 transition-opacity duration-300 backdrop-blur-xl">
+        <a href="./locations.html" class="text-lg text-red-500 font-serif hover:text-white border border-red-900 px-6 py-2 uppercase tracking-widest mb-4">
+            <i class="fas fa-arrow-left mr-2"></i> <span data-i18n="location_detail_page.return_to_map">Return to Map</span>
+        </a>
+        <a href="../index.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.home">Home</a>
+        <a href="./timeline.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.history">History</a>
+        <a href="./characters.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.bloodline">Bloodline</a>
+        <a href="./factions.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.factions">Factions</a>
+        <a href="./login.html" class="text-sm text-gray-400 hover:text-white mt-8 font-mono uppercase" data-i18n="auth.login">Login</a>
         
-        <div id="location-intel" class="container mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Mobile Language -->
+        <div class="flex gap-4 font-mono text-sm mt-4">
+            <button class="lang-btn hover:text-gold transition-colors" data-lang="en" onclick="window.changeAppLanguage('en')">EN</button>
+            <span class="text-gray-600">/</span>
+            <button class="lang-btn hover:text-gold transition-colors" data-lang="tr" onclick="window.changeAppLanguage('tr')">TR</button>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="grow pt-24 pb-12 px-4 md:px-6 relative z-10">
+        
+        <div id="location-intel" class="container mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-3 gap-8 opacity-0 transition-opacity duration-1000">
             
             <!-- LEFT: THE FEED (VISUAL) -->
             <div class="lg:col-span-2">
@@ -75,32 +118,33 @@
                 <div class="bg-black border border-white/10 relative shadow-2xl surveillance-feed aspect-video">
                     <!-- Top HUD -->
                     <div class="absolute top-4 left-4 right-4 z-20 flex justify-between items-start text-xs font-mono">
-                         <div class="text-white bg-black/50 px-2 py-1" data-i18n="location_detail_page.hud_cam_loading"></div>
-                         <div class="text-red-500 flex items-center bg-black/50 px-2 py-1"><div class="w-2 h-2 rounded-full bg-red-500 mr-2 animate-pulse"></div><span data-i18n="location_detail_page.hud_rec"></span></div>
+                         <div class="text-white bg-black/50 px-2 py-1" data-i18n="location_detail_page.hud_cam_loading">CAM-04 // LOADING...</div>
+                         <div class="text-red-500 flex items-center bg-black/50 px-2 py-1"><div class="w-2 h-2 rounded-full bg-red-500 mr-2 animate-pulse"></div><span data-i18n="location_detail_page.hud_rec">REC</span></div>
                     </div>
 
                     <!-- THE IMAGE (Inject via JS) -->
-                    <img id="loc-image" src="https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?q=80&w=2874&auto=format&fit=crop" 
+                    <img id="loc-image" src="" 
                          alt="Location Surveillance" 
                          class="w-full h-full object-cover grayscale opacity-60 contrast-125 hover:grayscale-0 transition-all duration-1000">
                     
                     <!-- Center Loader -->
                     <div id="feed-loader" class="absolute inset-0 flex items-center justify-center pointer-events-none">
                          <div class="border border-white/30 p-4">
-                             <p class="font-mono text-xs text-white uppercase animate-blink" data-i18n="location_detail_page.hud_resolving_data"></p>
+                             <p class="font-mono text-xs text-white uppercase animate-blink" data-i18n="location_detail_page.hud_resolving_data">RESOLVING DATA STREAM...</p>
                          </div>
                     </div>
 
                     <!-- Bottom HUD -->
                     <div class="absolute bottom-4 left-4 z-20 font-mono text-xs text-gold/80" data-i18n="location_detail_page.hud_signal_strength">
+                        SIGNAL STRENGTH: 98%
                     </div>
                 </div>
 
                 <!-- DESCRIPTION (LORE) -->
                 <div class="mt-8 border-l border-gold/30 pl-6 py-2">
-                    <h2 class="text-2xl font-serif text-white mb-4" data-i18n="location_detail_page.intel_briefing"></h2>
+                    <h2 class="text-2xl font-serif text-white mb-4" data-i18n="location_detail_page.intel_briefing">Intel Briefing</h2>
                     <div id="loc-description" class="prose prose-invert prose-p:text-gray-400 font-sans leading-relaxed text-justify max-w-none">
-                        <p class="animate-pulse" data-i18n="location_detail_page.decrypting_history"></p>
+                        <p class="animate-pulse" data-i18n="location_detail_page.decrypting_history">Decrypting historical archives...</p>
                     </div>
                 </div>
             </div>
@@ -110,8 +154,9 @@
                 
                 <!-- Main Title Box -->
                 <div class="bg-obsidian border border-white/10 p-6">
-                    <h4 class="font-mono text-[10px] text-gray-500 uppercase tracking-widest mb-1" data-i18n="location_detail_page.target_designation"></h4>
+                    <h4 class="font-mono text-[10px] text-gray-500 uppercase tracking-widest mb-1" data-i18n="location_detail_page.target_designation">Target Designation</h4>
                     <h1 id="loc-title" class="text-3xl font-serif text-white uppercase wrap-break-words tracking-wide" data-i18n="location_detail_page.placeholder_unknown">
+                        UNKNOWN
                     </h1>
                 </div>
 
@@ -119,33 +164,33 @@
                 <div class="bg-white/5 border border-white/5 p-6 space-y-4">
                     
                     <div class="flex justify-between items-center border-b border-white/5 pb-2">
-                         <span class="text-xs font-mono text-gray-500" data-i18n="location_detail_page.tactical_control"></span>
-                         <span id="loc-faction" class="text-xs font-mono text-gold uppercase tracking-wider" data-i18n="location_detail_page.tactical_unverified"></span>
+                         <span class="text-xs font-mono text-gray-500" data-i18n="location_detail_page.tactical_control">Controlled By</span>
+                         <span id="loc-faction" class="text-xs font-mono text-gold uppercase tracking-wider" data-i18n="location_detail_page.tactical_unverified">UNVERIFIED</span>
                     </div>
 
                     <div class="flex justify-between items-center border-b border-white/5 pb-2">
-                         <span class="text-xs font-mono text-gray-500" data-i18n="location_detail_page.tactical_coordinates"></span>
+                         <span class="text-xs font-mono text-gray-500" data-i18n="location_detail_page.tactical_coordinates">Coordinates</span>
                          <span id="loc-coords" class="text-xs font-mono text-white tracking-wider">--.--, --.--</span>
                     </div>
 
                     <div class="flex justify-between items-center border-b border-white/5 pb-2">
-                         <span class="text-xs font-mono text-gray-500" data-i18n="location_detail_page.tactical_threat"></span>
+                         <span class="text-xs font-mono text-gray-500" data-i18n="location_detail_page.tactical_threat">Threat Level</span>
                          <span id="loc-threat" class="text-xs font-mono text-red-500 uppercase font-bold flex items-center">
-                             <i class="fas fa-exclamation-triangle mr-2"></i> <span data-i18n="location_detail_page.tactical_analyzing"></span>
+                             <i class="fas fa-exclamation-triangle mr-2"></i> <span data-i18n="location_detail_page.tactical_analyzing">ANALYZING</span>
                          </span>
                     </div>
 
                      <div class="flex justify-between items-center pb-2">
-                         <span class="text-xs font-mono text-gray-500" data-i18n="location_detail_page.tactical_status"></span>
-                         <span id="loc-status" class="text-xs font-mono text-green-500 uppercase" data-i18n="location_detail_page.tactical_operational"></span>
+                         <span class="text-xs font-mono text-gray-500" data-i18n="location_detail_page.tactical_status">Surveillance Status</span>
+                         <span id="loc-status" class="text-xs font-mono text-green-500 uppercase" data-i18n="location_detail_page.tactical_operational">OPERATIONAL</span>
                     </div>
                 </div>
 
                 <!-- Connected Events (Timeline Link) -->
                 <div class="bg-obsidian border border-white/10 p-6">
-                    <h4 class="font-mono text-[10px] text-gray-500 uppercase tracking-widest mb-4" data-i18n="location_detail_page.historical_events"></h4>
+                    <h4 class="font-mono text-[10px] text-gray-500 uppercase tracking-widest mb-4" data-i18n="location_detail_page.historical_events">Historical Events</h4>
                     <ul id="loc-events" class="space-y-3">
-                        <li class="text-xs text-gray-600 italic" data-i18n="location_detail_page.no_events_found"></li>
+                        <li class="text-xs text-gray-600 italic" data-i18n="location_detail_page.no_events_found">No recorded events found in this sector.</li>
                     </ul>
                 </div>
 
@@ -159,25 +204,30 @@
         <p class="font-serif text-gold text-2xl mb-4">TSOF</p>
         
         <div class="flex justify-center space-x-6 mb-6 text-[10px] font-mono uppercase text-gray-500">
-            <a href="./privacy.html" class="hover:text-gold transition-colors" data-i18n="footer.privacy"></a>
+            <a href="./privacy.html" class="hover:text-gold transition-colors" data-i18n="footer.privacy">Privacy Protocol</a>
             <span>|</span>
-            <a href="./terms.html" class="hover:text-gold transition-colors" data-i18n="footer.terms"></a>
+            <a href="./terms.html" class="hover:text-gold transition-colors" data-i18n="footer.terms">Terms of Operation</a>
         </div>
 
         <p class="text-gray-600 text-xs uppercase tracking-widest">
-            <span data-i18n="footer.copyright"></span>
+            <span data-i18n="footer.copyright_slogan">Ruaraidh Ballantine & Havi are watching.</span>
         </p>
     </footer>
 
-    <script type="module" src="../src/main.js"></script>
+    <!-- Page Specific Script (i18n Title Update) -->
     <script type="module">
         import i18next from '../src/lib/i18n.js';
-        i18next.on('initialized', () => {
-            document.title = i18next.t('location_detail_page.meta_title');
-        });
-        if (i18next.isInitialized) {
-            document.title = i18next.t('location_detail_page.meta_title');
-        }
+        
+        const updateTitle = () => {
+            if(i18next.isInitialized) {
+                document.title = i18next.t('location_detail_page.meta_title') || document.title;
+            }
+        };
+
+        i18next.on('initialized', updateTitle);
+        i18next.on('languageChanged', updateTitle);
+        
+        if (i18next.isInitialized) updateTitle();
     </script>
 </body>
 </html>

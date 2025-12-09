@@ -22,6 +22,7 @@ const createFactionCard = (faction) => {
     
     const leaderName = (faction.leader && faction.leader.name) ? faction.leader.name : i18next.t('factions.unknown');
 
+    // ... (statsHTML kısmı aynı kalacak) ...
     const statsHTML = isOldWorld ? `
         <div>
             <div class="flex justify-between text-[10px] font-mono text-gray-500 mb-1">
@@ -46,16 +47,14 @@ const createFactionCard = (faction) => {
             <div class="flex justify-between text-[10px] font-mono text-gray-500 mb-1">
                 <span>${i18next.t('factions.stat_resources')}</span> <span>100%</span>
             </div>
-            <div class="w-full h-1 bg-gray-900"><div class="h-1 bg-gold w-[100%]"></div></div>
+            <div class="w-full h-1 bg-gray-900"><div class="h-1 bg-gold w-100%"></div></div>
         </div>
     `;
 
     const cardLink = document.createElement('a');
     cardLink.href = `faction-detail.html?slug=${faction.slug}`;
     
-    // 👇 GSAP SEÇİCİSİ ('gsap-faction-card') ve 'opacity-0' EKLENDİ
-    // opacity-0 ekledik ki animasyon başlamadan önce görünmesinler.
-    cardLink.className = `gsap-faction-card opacity-0 ${cardThemeClass} p-8 relative group min-h-[400px] flex flex-col justify-between rounded-sm transition-transform duration-300 hover:-translate-y-1`;
+    cardLink.className = `faction-card gsap-faction-card opacity-0 ${cardThemeClass} p-8 relative group min-h-[400px] flex flex-col justify-between rounded-sm transition-transform duration-300 hover:-translate-y-1`;
 
     cardLink.innerHTML = `
         <div class="absolute -right-6 -top-6 text-[10rem] opacity-5 pointer-events-none select-none" style="color: ${accentColor}">

@@ -1,10 +1,38 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"> 
 <head>
+    <!-- Meta Tags -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Terms of Operation: User agreements, intellectual property rights, and conduct rules for accessing the TSOF network.">
+    <meta name="keywords" content="TSOF, Terms, Legal, Agreement, Rules, Copyright">
+    <meta name="author" content="The Sins of the Fathers">
+    <meta name="theme-color" content="#050505">
+    <meta name="robots" content="noindex, follow">
+    
+    <!-- Title -->
     <title data-i18n="terms_page.page_title">Terms of Operations | The Sins of the Fathers</title>
 
+    <!-- Manifest -->
+    <link rel="manifest" href="../manifest.json">
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="../assets/images/logo/favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="../assets/images/logo/favicon.svg">
+    <link rel="icon" type="image/png" sizes="96x96" href="../assets/images/logo/favicon-96x96.png">
+    <link rel="shortcut icon" href="../assets/images/logo/favicon.ico">
+
+    <!-- External Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Courier+Prime&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    
+    <!-- Internal Styles -->
+    <link href="../src/style.css" rel="stylesheet">
+
+    <!-- Internal Scripts -->
+    <script src="../src/main.js" type="module"></script>
+
+    <!-- Partytown Configuration -->
     <script>
         partytown = {
             forward: ['dataLayer.push', 'gtag', 'fbq'], 
@@ -12,63 +40,60 @@
         };
     </script>
     
-    <script>
-        /* Partytown 0.8.0 - MIT License */
-        !function(t,e,n,i,r,o,a,d,s,c,p,l){function u(){l||(l=1,"/"==(a=(o.lib||"/~partytown/")+(o.debug?"debug/":""))[0]&&(s=e.querySelectorAll('script[type="text/partytown"]'),i!=t?i.dispatchEvent(new CustomEvent("pt1",{detail:t,composed:!0})):(d=setTimeout(f,1e4),e.addEventListener("pt0",w),r?h(1):n.serviceWorker?n.serviceWorker.register(a+(o.swPath||"partytown-sw.js"),{scope:a}).then((function(t){t.active?h():t.installing&&t.installing.addEventListener("statechange",(function(t){"activated"==t.target.state&&h()}))}),console.error):f())))}function h(t){c=e.createElement(t?"script":"iframe"),t||(c.style.display="block",c.style.width="0",c.style.height="0",c.style.border="0",c.style.visibility="hidden",c.setAttribute("aria-hidden",!0)),c.src=a+"partytown-"+(t?"atomics.js?v=0.8.0":"sandbox-sw.html?"+Date.now()),e.body.appendChild(c)}function f(t,n){for(w(),t=0;t<s.length;t++)(n=e.createElement("script")).innerHTML=s[t].innerHTML,n.nonce=o.nonce,s[t].src&&(n.src=s[t].src),n.type="text/javascript",s[t].replaceWith(n)}function w(){clearTimeout(d)}i==t&&(o.forward||[]).map((function(e){p=t,e.split(".").map((function(e,n,i){p=p[e]=n+1<i.length?"push"==i[n+1]?[]:p[e]||{}:function(){(t._ptf=t._ptf||[]).push(i,arguments)}}))})),"complete"==e.readyState?u():(t.addEventListener("DOMContentLoaded",u),t.addEventListener("load",u))}(window,document,navigator,top,window.crossOriginIsolated);
-    </script>
-    
-    <link href="../src/style.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400&family=Courier+Prime&display=swap" rel="stylesheet">
-    
-    <style>
-        body { background-color: #050505; color: #ccc; }
-        .noise-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 50; opacity: 0.05; background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MDAiIGhlaWdodD0iNTAwIj48ZmlsdGVyIGlkPSJub2lzZSI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuNjUiIG51bU9jdGF2ZXM9IjMiIHN0aXRjaFRpbGVzPSJzdGl0Y2giLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCgjbm9pc2UpIiBvcGFjaXR5PSIwLjA1Ii8+PC9zdmc+'); }
-        .legal-section h2 { border-bottom: 1px solid #333; padding-bottom: 0.5rem; margin-bottom: 1rem; margin-top: 2rem; color: #c5a059; font-family: 'Cinzel', serif; }
-        .legal-section p { margin-bottom: 1rem; font-size: 0.95rem; line-height: 1.6; }
-        
-        /* Hamburger Animation */
-        #hamburger-button span { transition: 0.3s; }
-        #hamburger-button.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 6px); }
-        #hamburger-button.active span:nth-child(2) { opacity: 0; }
-        #hamburger-button.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -6px); }
-    </style>
-
-    <script src="../src/main.js" type="module" defer></script>
+    <!-- Partytown Script -->
+    <script type="module" src="../src/modules/loaders/partytown-loader.js"></script>
 </head>
-<body class="flex flex-col min-h-screen font-sans selection:bg-gold selection:text-black">
+
+<body class="flex flex-col min-h-screen selection:bg-gold selection:text-black">
+    
+    <!-- Visual Effects -->
     <div class="noise-overlay"></div>
 
-    <header class="w-full bg-obsidian/90 border-b border-white/10 sticky top-0 z-40 backdrop-blur-md">
+    <!-- Header & Navigation -->
+    <header class="fixed top-0 w-full z-50 bg-obsidian/90 backdrop-blur-md border-b border-white/5 transition-all">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="../index.html" class="text-xl font-serif text-gold uppercase tracking-widest">TSOF <span class="text-xs text-gray-500 ml-2 hidden md:inline" data-i18n="terms_page.header_code">// LEGAL_DOCS_02</span></a>
             
+            <!-- Brand -->
+            <a href="../index.html" class="text-xl md:text-2xl font-serif text-gold tracking-widest uppercase hover:text-white transition-colors">
+                TSOF <span class="hidden md:inline text-xs text-gray-600 ml-2 font-mono" data-i18n="terms_page.header_code">// LEGAL_DOCS_02</span>
+            </a>
+            
+            <!-- Desktop Controls -->
             <div class="flex items-center gap-4">
-                <a href="../index.html" class="text-xs font-mono text-gray-500 hover:text-gold uppercase hidden md:inline-block" data-i18n="terms_page.close_file">Close File</a>
+                <a href="../index.html" class="hidden md:inline-block text-xs font-mono text-gray-500 hover:text-gold uppercase tracking-widest border-r border-white/10 pr-4 transition-colors">
+                    <i class="fas fa-times mr-2"></i> <span data-i18n="terms_page.close_file">Close File</span>
+                </a>
                 
+                <!-- Language Switcher -->
                 <div class="hidden md:flex gap-2 font-mono text-[10px]">
                     <button class="lang-btn hover:text-gold transition-colors" data-lang="en" onclick="window.changeAppLanguage('en')">EN</button>
                     <span class="text-gray-600">/</span>
                     <button class="lang-btn hover:text-gold transition-colors" data-lang="tr" onclick="window.changeAppLanguage('tr')">TR</button>
                 </div>
 
+                <!-- Hamburger Button (Mobile) -->
                 <div class="md:hidden relative z-50">
-                    <button id="hamburger-button" class="text-gold focus:outline-none flex flex-col justify-between w-6 h-5">
-                        <span class="block w-full h-0.5 bg-gold"></span>
-                        <span class="block w-full h-0.5 bg-gold"></span>
-                        <span class="block w-full h-0.5 bg-gold"></span>
+                    <button id="hamburger-button" class="text-gold focus:outline-none flex flex-col justify-center items-center w-8 h-8 space-y-1.5 group">
+                        <span class="block w-6 h-0.5 bg-gold transition-transform duration-300"></span>
+                        <span class="block w-6 h-0.5 bg-gold transition-opacity duration-300"></span>
+                        <span class="block w-6 h-0.5 bg-gold transition-transform duration-300"></span>
                     </button>
                 </div>
             </div>
         </nav>
     </header>
 
+    <!-- Mobile Menu Overlay -->
     <div id="mobile-menu" class="hidden fixed inset-0 z-40 bg-black/95 flex-col items-center justify-center space-y-8 transition-opacity duration-300 backdrop-blur-xl">
-        <a href="./characters.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.bloodline">The Bloodline</a>
-        <a href="./timeline.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.history">History</a>
+        <a href="../index.html" class="text-lg text-red-500 font-serif hover:text-white border border-red-900 px-6 py-2 uppercase tracking-widest mb-4">
+            <i class="fas fa-times mr-2"></i> <span data-i18n="terms_page.close_file">Close File</span>
+        </a>
+        <a href="../index.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.home">Home</a>
+        <a href="./characters.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.bloodline">Bloodline</a>
         <a href="./factions.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.factions">Factions</a>
-        <a href="./locations.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.territories">Territories</a>
-        <a href="./lore.html" class="text-xl text-gold font-serif hover:text-white border border-gold px-6 py-2 uppercase tracking-widest" data-i18n="nav.archives">Archives</a>
-        
+        <a href="./login.html" class="text-sm text-gray-400 hover:text-white mt-8 font-mono uppercase" data-i18n="auth.login">Login</a>
+
+        <!-- Mobile Language -->
         <div class="flex gap-4 font-mono text-sm mt-4">
             <button class="lang-btn hover:text-gold transition-colors" data-lang="en" onclick="window.changeAppLanguage('en')">EN</button>
             <span class="text-gray-600">/</span>
@@ -76,13 +101,24 @@
         </div>
     </div>
 
-    <main class="grow container mx-auto px-6 py-12 max-w-4xl relative z-10">
+    <!-- Main Content Area -->
+    <main class="grow container mx-auto px-6 py-24 max-w-4xl relative z-10">
+        
         <div class="border border-white/10 bg-white/5 p-8 md:p-12 rounded-sm shadow-2xl relative overflow-hidden">
             
-            <h1 class="text-3xl md:text-4xl font-serif text-white mb-2" data-i18n="terms_page.main_title">Terms of Operation</h1>
-            <p class="text-xs font-mono text-gold uppercase mb-8 tracking-widest" data-i18n="terms_page.effective_date">Effective Date: November 2025</p>
+            <!-- Watermark Icon -->
+            <div class="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
+                <i class="fas fa-balance-scale text-9xl text-white"></i>
+            </div>
+            
+            <h1 class="text-3xl md:text-4xl font-serif text-white mb-2 uppercase tracking-wide" data-i18n="terms_page.main_title">
+                Terms of Operation
+            </h1>
+            <p class="text-xs font-mono text-gold uppercase mb-8 tracking-widest border-b border-white/10 pb-4" data-i18n="terms_page.effective_date">
+                Effective Date: November 2025
+            </p>
 
-            <div class="legal-section text-gray-300">
+            <div class="legal-section">
                 <p data-i18n="terms_page.intro">By accessing "The Sins of the Fathers" (the "Service" or "The Fortress"), you agree to be bound by these Terms. If you disagree with any part of the terms, then you may not access the Service.</p>
 
                 <h2 data-i18n="terms_page.sec1_title">1. Access & Accounts (Clearance)</h2>
@@ -111,6 +147,7 @@
         </div>
     </main>
 
+    <!-- Footer -->
     <footer class="py-12 bg-obsidian border-t border-white/5 text-center relative z-10">
         <p class="font-serif text-gold text-2xl mb-4">TSOF</p>
         
@@ -121,9 +158,24 @@
         </div>
 
         <p class="text-gray-600 text-xs uppercase tracking-widest">
-            &copy; 2025 The Sins of the Fathers. <br>
             <span data-i18n="footer.copyright_slogan">Ruaraidh Ballantine & Havi are watching.</span>
         </p>
     </footer>
+
+    <!-- Page Specific Script (i18n Title Update) -->
+    <script type="module">
+        import i18next from '../src/lib/i18n.js';
+        
+        const updateTitle = () => {
+            if(i18next.isInitialized) {
+                document.title = i18next.t('terms_page.page_title') || document.title;
+            }
+        };
+
+        i18next.on('initialized', updateTitle);
+        i18next.on('languageChanged', updateTitle);
+        
+        if (i18next.isInitialized) updateTitle();
+    </script>
 </body>
 </html>

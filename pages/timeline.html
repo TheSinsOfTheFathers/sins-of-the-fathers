@@ -4,8 +4,35 @@
     <!-- Meta Tags -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loading...</title>
+    <meta name="description" content="The Chronology: A timeline of events shaping the criminal underworld, from the rise of the Macphersons to the Ballantine takeover.">
+    <meta name="keywords" content="TSOF, Timeline, History, Chronology, Lore, Events, Backstory">
+    <meta name="author" content="The Sins of the Fathers">
+    <meta name="theme-color" content="#050505">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Title -->
+    <title data-i18n="timeline_page.meta_title">The History | TSOF Archives</title>
 
+    <!-- Manifest -->
+    <link rel="manifest" href="../manifest.json">
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="../assets/images/logo/favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="../assets/images/logo/favicon.svg">
+    <link rel="icon" type="image/png" sizes="96x96" href="../assets/images/logo/favicon-96x96.png">
+    <link rel="shortcut icon" href="../assets/images/logo/favicon.ico">
+
+    <!-- External Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Courier+Prime&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    
+    <!-- Timeline.js CSS (CDN) -->
+    <link title="timeline-styles" rel="stylesheet" href="https://cdn.knightlab.com/libs/timeline3/latest/css/timeline.css">
+
+    <!-- Internal Styles -->
+    <link href="../src/style.css" rel="stylesheet">
+
+    <!-- Partytown Configuration -->
     <script>
         partytown = {
             forward: ['dataLayer.push', 'gtag', 'fbq'], 
@@ -13,115 +40,56 @@
         };
     </script>
     
-    <script>
-        /* Partytown 0.8.0 - MIT License */
-        !function(t,e,n,i,r,o,a,d,s,c,p,l){function u(){l||(l=1,"/"==(a=(o.lib||"/~partytown/")+(o.debug?"debug/":""))[0]&&(s=e.querySelectorAll('script[type="text/partytown"]'),i!=t?i.dispatchEvent(new CustomEvent("pt1",{detail:t,composed:!0})):(d=setTimeout(f,1e4),e.addEventListener("pt0",w),r?h(1):n.serviceWorker?n.serviceWorker.register(a+(o.swPath||"partytown-sw.js"),{scope:a}).then((function(t){t.active?h():t.installing&&t.installing.addEventListener("statechange",(function(t){"activated"==t.target.state&&h()}))}),console.error):f())))}function h(t){c=e.createElement(t?"script":"iframe"),t||(c.style.display="block",c.style.width="0",c.style.height="0",c.style.border="0",c.style.visibility="hidden",c.setAttribute("aria-hidden",!0)),c.src=a+"partytown-"+(t?"atomics.js?v=0.8.0":"sandbox-sw.html?"+Date.now()),e.body.appendChild(c)}function f(t,n){for(w(),t=0;t<s.length;t++)(n=e.createElement("script")).innerHTML=s[t].innerHTML,n.nonce=o.nonce,s[t].src&&(n.src=s[t].src),n.type="text/javascript",s[t].replaceWith(n)}function w(){clearTimeout(d)}i==t&&(o.forward||[]).map((function(e){p=t,e.split(".").map((function(e,n,i){p=p[e]=n+1<i.length?"push"==i[n+1]?[]:p[e]||{}:function(){(t._ptf=t._ptf||[]).push(i,arguments)}}))})),"complete"==e.readyState?u():(t.addEventListener("DOMContentLoaded",u),t.addEventListener("load",u))}(window,document,navigator,top,window.crossOriginIsolated);
-    </script>
+    <!-- Partytown Script (Modular Loader) -->
+    <script type="module" src="../src/modules/loaders/partytown-loader.js"></script>
 
-    <!-- Timeline.js CSS (CDN) -->
-    <link title="timeline-styles" rel="stylesheet" href="https://cdn.knightlab.com/libs/timeline3/latest/css/timeline.css">
-
-    <link href="../src/style.css" rel="stylesheet">
-    
-    <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Courier+Prime&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-
-    <style>
-        /* BASE ATMOSPHERE */
-        body { background-color: #050505; color: #ccc; overflow-x: hidden; }
-        .noise-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 50;
-            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MDAiIGhlaWdodD0iNTAwIj48ZmlsdGVyIGlkPSJub2lzZSI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuNjUiIG51bU9jdGF2ZXM9IjMiIHN0aXRjaFRpbGVzPSJzdGl0Y2giLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCgjbm9pc2UpIiBvcGFjaXR5PSIwLjA1Ii8+PC9zdmc+');
-            opacity: 0.05;
-        }
-
-        /* --- TIMELINE.JS OVERRIDES (Dark Mode Hack) --- */
-        .tl-timeline, .tl-storyslider, .tl-slide-content, .tl-slide, .tl-slide-scrollable-container {
-            background-color: #050505 !important;
-        }
-        .tl-headline-date, .tl-headline {
-            font-family: 'Cinzel', serif !important;
-            color: #c5a059 !important; /* GOLD */
-            text-transform: uppercase;
-        }
-        .tl-text {
-            font-family: 'Lato', sans-serif !important;
-            color: #b0b0b0 !important;
-        }
-        .tl-timenav, .tl-timenav-slider {
-            background-color: #111 !important;
-            border-top: 1px solid #333 !important;
-        }
-        .tl-timegroup-message {
-            color: #666 !important;
-            text-shadow: none !important;
-        }
-        .tl-timemarker .tl-timemarker-content {
-            background-color: #000 !important;
-            border: 1px solid #c5a059 !important;
-            border-radius: 0 !important;
-        }
-        .tl-timemarker.tl-timemarker-active .tl-timemarker-content {
-            background-color: #c5a059 !important;
-            box-shadow: 0 0 15px rgba(197, 160, 89, 0.5);
-        }
-        .tl-media-content-container { border: 1px solid #333; }
-        .tl-slidenav-icon { color: #c5a059 !important; }
-
-        /* Custom Loading Spinner */
-        .loading-ring {
-            display: inline-block; width: 64px; height: 64px;
-        }
-        .loading-ring:after {
-            content: " "; display: block; width: 46px; height: 46px; margin: 8px; border-radius: 50%; border: 2px solid #c5a059; border-color: #c5a059 transparent #c5a059 transparent; animation: ring 1.2s linear infinite;
-        }
-        @keyframes ring { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    </style>
+    <!-- Main Logic -->
+    <script src="../src/main.js" type="module" defer></script>
 </head>
 
-<body class="font-lato antialiased flex flex-col min-h-screen selection:bg-blood selection:text-white">
-
+<body class="flex flex-col min-h-screen selection:bg-gold selection:text-black">
+    
+    <!-- Visual Effects -->
     <div class="noise-overlay"></div>
 
-    <!-- Header -->
-    <header class="fixed top-0 w-full z-50 transition-all duration-300 bg-obsidian/90 backdrop-blur-md border-b border-white/5">
+    <!-- Header & Navigation -->
+    <header class="fixed top-0 w-full z-50 bg-obsidian/90 backdrop-blur-md border-b border-white/5 transition-all">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <!-- Marka / Logo -->
-            <a href="../index.html" class="nav-brand text-2xl md:text-3xl text-gold tracking-widest hover:text-white transition-colors uppercase font-serif">
+            
+            <!-- Brand -->
+            <a href="../index.html" class="text-xl md:text-3xl font-serif text-gold tracking-widest uppercase hover:text-white transition-colors">
                 TSOF
             </a>
-
+            
             <!-- Desktop Menu -->
             <div class="hidden md:flex items-center space-x-8 text-sm uppercase tracking-widest font-semibold">
-                <a href="./characters.html" class="hover:text-gold transition-colors" data-i18n="nav.bloodline"></a>
-                <a href="./timeline.html" class="hover:text-gold transition-colors" data-i18n="nav.history"></a>
-                <a href="./factions.html" class="hover:text-gold transition-colors" data-i18n="nav.factions"></a>
-                <a href="./locations.html" class="hover:text-gold transition-colors" data-i18n="nav.territories"></a>
+                <a href="./characters.html" class="text-gray-400 hover:text-gold transition-colors" data-i18n="nav.bloodline">Bloodline</a>
+                <a href="./timeline.html" class="text-gold border-b border-gold" data-i18n="nav.history">History</a>
+                <a href="./factions.html" class="text-gray-400 hover:text-gold transition-colors" data-i18n="nav.factions">Factions</a>
+                <a href="./locations.html" class="text-gray-400 hover:text-gold transition-colors" data-i18n="nav.territories">Territories</a>
                 
-                <!-- Login Bölümü - (ID EKLENDİ: auth-controls) -->
+                <!-- Auth Controls -->
                 <div class="border-l border-white/20 pl-8 ml-4 flex items-center gap-4" id="auth-controls">
-
-                    <!-- LORE LİNKİ: Artık her zaman görünür, ancak içindeki kilit sadece misafire gözükür. -->
                     <a href="./lore.html" class="text-gold hover:text-white transition-colors flex items-center gap-2">
-                        <i class="fas fa-lock text-xs guest-lock"></i> <span data-i18n="nav.classified"></span>
+                        <i class="fas fa-lock text-xs guest-lock"></i> <span data-i18n="nav.classified">Classified</span>
                     </a>
-
-                    <!-- AUTH LİNKİ: SADECE MİSAFİR GÖRÜR -->
-                    <a href="./login.html" class="hover:text-gold transition-colors guest-only" id="auth-signin-link" data-i18n="auth.login"></a>
+                    <a href="./login.html" class="hover:text-gold transition-colors guest-only" id="auth-signin-link" data-i18n="auth.login">Login</a>
                 </div>
             </div>
 
-            <!-- Hamburger (ID EKLENDİ: hamburger-button) -->
-            <div class="md:hidden relative z-50">
-                <button id="hamburger-button" class="text-gold focus:outline-none flex flex-col justify-between w-6 h-5">
-                    <span class="block w-full h-0.5 bg-gold"></span>
-                    <span class="block w-full h-0.5 bg-gold"></span>
-                    <span class="block w-full h-0.5 bg-gold"></span>
-                </button>
+            <!-- Mobile Controls -->
+            <div class="flex items-center gap-4 md:hidden">
+                <!-- Hamburger -->
+                <div class="relative z-50">
+                    <button id="hamburger-button" class="text-gold focus:outline-none flex flex-col justify-center items-center w-8 h-8 space-y-1.5 group">
+                        <span class="block w-6 h-0.5 bg-gold transition-transform duration-300"></span>
+                        <span class="block w-6 h-0.5 bg-gold transition-opacity duration-300"></span>
+                        <span class="block w-6 h-0.5 bg-gold transition-transform duration-300"></span>
+                    </button>
+                </div>
             </div>
 
+            <!-- Language Switcher (Desktop) -->
             <div class="hidden md:flex gap-2 font-mono text-[10px]">
                 <button class="lang-btn hover:text-gold transition-colors" data-lang="en" onclick="window.changeAppLanguage('en')">EN</button>
                 <span class="text-gray-600">/</span>
@@ -132,27 +100,37 @@
 
     <!-- Mobile Menu Overlay -->
     <div id="mobile-menu" class="hidden fixed inset-0 z-40 bg-black/95 flex-col items-center justify-center space-y-8 transition-opacity duration-300 backdrop-blur-xl">
-        <a href="../index.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.home"></a>
-        <a href="characters.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.bloodline"></a>
-        <a href="timeline.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest border-b border-gold pb-2" data-i18n="nav.history"></a>
-        <a href="factions.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.factions"></a>
-        <a href="locations.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.territories"></a>
-        <a href="lore.html" class="text-xl text-gold font-serif hover:text-white uppercase tracking-widest" data-i18n="nav.archives"></a>
-        <a href="login.html" class="text-sm text-gray-400 hover:text-white mt-8 font-mono uppercase" data-i18n="auth.login"></a>
+        <a href="../index.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.home">Home</a>
+        <a href="./characters.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.bloodline">Bloodline</a>
+        <a href="./timeline.html" class="text-2xl text-gold font-serif border-b border-gold pb-2 uppercase tracking-widest" data-i18n="nav.history">History</a>
+        <a href="./factions.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.factions">Factions</a>
+        <a href="./locations.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.territories">Territories</a>
+        <a href="./lore.html" class="text-xl text-gold font-serif hover:text-white uppercase tracking-widest" data-i18n="nav.archives">Archives</a>
+        <a href="./login.html" class="text-sm text-gray-400 hover:text-white mt-8 font-mono uppercase" data-i18n="auth.login">Login</a>
+
+        <!-- Mobile Language -->
+        <div class="flex gap-4 font-mono text-sm mt-4">
+            <button class="lang-btn hover:text-gold transition-colors" data-lang="en" onclick="window.changeAppLanguage('en')">EN</button>
+            <span class="text-gray-600">/</span>
+            <button class="lang-btn hover:text-gold transition-colors" data-lang="tr" onclick="window.changeAppLanguage('tr')">TR</button>
+        </div>
     </div>
 
     <!-- Intro Section -->
     <section class="pt-28 pb-10 container mx-auto px-6 text-center z-10 relative">
         <div class="inline-block border-b border-gold mb-6 pb-2">
             <h1 class="text-4xl md:text-6xl font-serif text-white uppercase tracking-wider" data-i18n="timeline_page.title">
+                The History
             </h1>
         </div>
         
         <div class="max-w-3xl mx-auto bg-white/5 border border-white/10 p-6 md:p-8 backdrop-blur-sm">
             <i class="fas fa-quote-left text-gold text-2xl mb-4 block"></i>
             <p class="text-lg md:text-xl font-serif text-gray-300 leading-relaxed italic" data-i18n="timeline_page.quote">
+                "Time is a flat circle. Everything we have done or will do we will do over and over and over again."
             </p>
-            <p class="text-right text-xs font-mono text-blood mt-4 uppercase tracking-widest" data-i18n="timeline_page.quote_source">
+            <p class="text-right text-xs font-mono text-gold mt-4 uppercase tracking-widest" data-i18n="timeline_page.quote_source">
+                - ARCHIVE RECORD
             </p>
         </div>
     </section>
@@ -163,10 +141,10 @@
         <!-- Loading State -->
         <div id="timeline-loading" class="absolute inset-0 flex flex-col items-center justify-center bg-obsidian z-20">
             <div class="loading-ring mb-4"></div>
-            <p class="font-mono text-gold text-sm uppercase tracking-widest animate-pulse" data-i18n="timeline_page.loader_text"></p>
+            <p class="font-mono text-gold text-sm uppercase tracking-widest animate-pulse" data-i18n="timeline_page.loader_text">Synchronizing Chronology...</p>
         </div>
 
-        <!-- The Embed Div (main.js -> timeline-loader.js burayı hedef alacak) -->
+        <!-- The Embed Div (Targeted by JS) -->
         <div id="timeline-embed" style="width: 100%; height: 100%;"></div>
     </section>
     
@@ -175,29 +153,33 @@
         <p class="font-serif text-gold text-2xl mb-4">TSOF</p>
         
         <div class="flex justify-center space-x-6 mb-6 text-[10px] font-mono uppercase text-gray-500">
-            <a href="./privacy.html" class="hover:text-gold transition-colors" data-i18n="footer.privacy"></a>
+            <a href="./privacy.html" class="hover:text-gold transition-colors" data-i18n="footer.privacy">Privacy Protocol</a>
             <span>|</span>
-            <a href="./terms.html" class="hover:text-gold transition-colors" data-i18n="footer.terms"></a>
+            <a href="./terms.html" class="hover:text-gold transition-colors" data-i18n="footer.terms">Terms of Operation</a>
         </div>
 
         <p class="text-gray-600 text-xs uppercase tracking-widest">
-            <span data-i18n="footer.copyright"></span>
+            <span data-i18n="footer.copyright_slogan">Ruaraidh Ballantine & Havi are watching.</span>
         </p>
     </footer>
 
     <!-- Timeline.js Core Library -->
     <script src="https://cdn.knightlab.com/libs/timeline3/latest/js/timeline.js"></script>
 
-    <!-- SYSTEM CORE SCRIPT -->
-    <script src="../src/main.js" type="module" defer></script>
+    <!-- Page Specific Script (i18n Title Update) -->
     <script type="module">
         import i18next from '../src/lib/i18n.js';
-        i18next.on('initialized', () => {
-            document.title = i18next.t('timeline_page.meta_title');
-        });
-        if (i18next.isInitialized) {
-            document.title = i18next.t('timeline_page.meta_title');
-        }
+        
+        const updateTitle = () => {
+            if(i18next.isInitialized) {
+                document.title = i18next.t('timeline_page.meta_title') || document.title;
+            }
+        };
+
+        i18next.on('initialized', updateTitle);
+        i18next.on('languageChanged', updateTitle);
+        
+        if (i18next.isInitialized) updateTitle();
     </script>
 </body>
 </html>

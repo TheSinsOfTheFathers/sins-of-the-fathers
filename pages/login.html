@@ -1,10 +1,43 @@
 <!DOCTYPE html>
 <html lang="en"> 
 <head>
+    <!-- Meta Tags -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-i18n="login_page.tab_title">System Access // TSOF</title>
+    <meta name="description" content="Secure Terminal Access: Authorize identity to access classified archives and operational data of The Sins of the Fathers network.">
+    <meta name="keywords" content="TSOF, Login, Secure Access, Terminal, Noir, Crime Saga">
+    <meta name="author" content="The Sins of the Fathers">
+    <meta name="theme-color" content="#050505">
+    <meta name="robots" content="noindex, nofollow">
+    
+    <!-- Title -->
+    <title>System Access // TSOF</title>
 
+    <!-- Manifest -->
+    <link rel="manifest" href="../manifest.json">
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="../assets/images/logo/favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="../assets/images/logo/favicon.svg">
+    <link rel="icon" type="image/png" sizes="96x96" href="../assets/images/logo/favicon-96x96.png">
+    <link rel="shortcut icon" href="../assets/images/logo/favicon.ico">
+
+    <!-- External Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Courier+Prime&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    
+    <!-- Internal Styles -->
+    <link href="../src/style.css" rel="stylesheet">
+
+    <!-- Internal Scripts -->
+    <script src="../src/main.js" type="module" defer></script>
+
+    <!-- External Scripts -->
+
+    <!-- Google ReCaptcha -->
+    <script src="https://www.google.com/recaptcha/api.js?render=6LeoRfYrAAAAANpaxG70cHRmK5ciRKf7sVt9Crnz" async defer></script>
+
+    <!-- Partytown Configuration -->
     <script>
         partytown = {
             forward: ['dataLayer.push', 'gtag', 'fbq'], 
@@ -12,78 +45,53 @@
         };
     </script>
     
-    <script>
-        /* Partytown 0.8.0 - MIT License */
-        !function(t,e,n,i,r,o,a,d,s,c,p,l){function u(){l||(l=1,"/"==(a=(o.lib||"/~partytown/")+(o.debug?"debug/":""))[0]&&(s=e.querySelectorAll('script[type="text/partytown"]'),i!=t?i.dispatchEvent(new CustomEvent("pt1",{detail:t,composed:!0})):(d=setTimeout(f,1e4),e.addEventListener("pt0",w),r?h(1):n.serviceWorker?n.serviceWorker.register(a+(o.swPath||"partytown-sw.js"),{scope:a}).then((function(t){t.active?h():t.installing&&t.installing.addEventListener("statechange",(function(t){"activated"==t.target.state&&h()}))}),console.error):f())))}function h(t){c=e.createElement(t?"script":"iframe"),t||(c.style.display="block",c.style.width="0",c.style.height="0",c.style.border="0",c.style.visibility="hidden",c.setAttribute("aria-hidden",!0)),c.src=a+"partytown-"+(t?"atomics.js?v=0.8.0":"sandbox-sw.html?"+Date.now()),e.body.appendChild(c)}function f(t,n){for(w(),t=0;t<s.length;t++)(n=e.createElement("script")).innerHTML=s[t].innerHTML,n.nonce=o.nonce,s[t].src&&(n.src=s[t].src),n.type="text/javascript",s[t].replaceWith(n)}function w(){clearTimeout(d)}i==t&&(o.forward||[]).map((function(e){p=t,e.split(".").map((function(e,n,i){p=p[e]=n+1<i.length?"push"==i[n+1]?[]:p[e]||{}:function(){(t._ptf=t._ptf||[]).push(i,arguments)}}))})),"complete"==e.readyState?u():(t.addEventListener("DOMContentLoaded",u),t.addEventListener("load",u))}(window,document,navigator,top,window.crossOriginIsolated);
-    </script>
-    
-    <link href="../src/style.css" rel="stylesheet">
-    
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Courier+Prime&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-
-    <style>
-        body { background-color: #050505; color: #d4d4d4; }
-        .noise-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 50;
-            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MDAiIGhlaWdodD0iNTAwIj48ZmlsdGVyIGlkPSJub2lzZSI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuNjUiIG51bU9jdGF2ZXM9IjMiIHN0aXRjaFRpbGVzPSJzdGl0Y2giLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCgjbm9pc2UpIiBvcGFjaXR5PSIwLjA1Ii8+PC9zdmc+');
-            opacity: 0.05;
-        }
-        .terminal-input {
-            background: transparent; border: none; border-bottom: 1px solid #333; color: #fff; border-radius: 0; padding: 10px 0; transition: all 0.3s ease;
-        }
-        .terminal-input:focus {
-            outline: none; border-bottom: 1px solid #c5a059; box-shadow: 0 4px 6px -6px #c5a059;
-        }
-        input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:focus, input:-webkit-autofill:active {
-            -webkit-box-shadow: 0 0 0 30px #050505 inset !important; -webkit-text-fill-color: white !important; transition: background-color 5000s ease-in-out 0s;
-        }
-        #hamburger-button span { transition: 0.3s; }
-        #hamburger-button.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 6px); }
-        #hamburger-button.active span:nth-child(2) { opacity: 0; }
-        #hamburger-button.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -6px); }
-    </style>
-
-    <script src="https://www.google.com/recaptcha/api.js?render=6LeoRfYrAAAAANpaxG70cHRmK5ciRKf7sVt9Crnz&onload=onRecaptchaLoad" async defer></script>
-    <script src="../src/main.js" type="module" defer></script>
+    <!-- Partytown Script -->
+    <script type="module" src="../src/modules/loaders/partytown-loader.js"></script>
 </head>
-
 <body class="flex flex-col min-h-screen selection:bg-gold selection:text-black overflow-hidden relative">
+    
+    <!-- Visual Effects -->
     <div class="noise-overlay"></div>
 
+    <!-- Background Seal Animation -->
     <div class="absolute inset-0 flex items-center justify-center z-0 pointer-events-none overflow-hidden">
         <img src="../assets/images/logo/logo.svg" class="relative bottom-16 w-[80vh] h-[80vh] opacity-[0.03] animate-spin-slow invert filter sepia" alt="Background Seal">
     </div>
 
-    <header class="fixed top-0 w-full z-50 bg-obsidian/90 backdrop-blur-md border-b border-white/5">
+    <!-- Header & Navigation -->
+    <header class="fixed top-0 w-full z-50 bg-obsidian/90 backdrop-blur-md border-b border-white/5 transition-all">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <!-- Brand -->
             <a href="../index.html" class="text-xl md:text-2xl font-serif text-gold tracking-widest uppercase hover:text-white transition-colors">
                 TSOF <span class="hidden md:inline border-l border-white/20 pl-3 ml-3 text-xs text-gray-500 font-mono" data-i18n="login_page.header_subtitle">RESTRICTED AREA</span>
             </a>
             
             <div class="flex items-center space-x-4">
+                <!-- Language Switcher (Desktop) -->
                 <div class="hidden md:flex gap-2 font-mono text-[10px]">
                     <button class="lang-btn hover:text-gold transition-colors" data-lang="en" onclick="window.changeAppLanguage('en')">EN</button>
                     <span class="text-gray-600">/</span>
                     <button class="lang-btn hover:text-gold transition-colors" data-lang="tr" onclick="window.changeAppLanguage('tr')">TR</button>
                 </div>
 
+                <!-- Abort Button -->
                 <a href="../index.html" class="text-xs font-mono text-red-500/80 hover:text-red-500 uppercase tracking-widest border border-red-900/30 px-3 py-1 bg-red-900/10 hover:bg-red-900/20 transition-all">
                     <i class="fas fa-times mr-2"></i> <span data-i18n="login_page.header_abort">ABORT</span>
                 </a>
                 
+                <!-- Hamburger Button -->
                 <div class="md:hidden relative z-50">
-                    <button id="hamburger-button" class="text-gold focus:outline-none flex flex-col justify-between w-6 h-5">
-                        <span class="block w-full h-0.5 bg-gold"></span>
-                        <span class="block w-full h-0.5 bg-gold"></span>
-                        <span class="block w-full h-0.5 bg-gold"></span>
+                    <button id="hamburger-button" class="text-gold focus:outline-none flex flex-col justify-between w-6 h-5 group">
+                        <span class="block w-full h-0.5 bg-gold transition-transform duration-300"></span>
+                        <span class="block w-full h-0.5 bg-gold transition-opacity duration-300"></span>
+                        <span class="block w-full h-0.5 bg-gold transition-transform duration-300"></span>
                     </button>
                 </div>
             </div>
         </nav>
     </header>
 
+    <!-- Mobile Menu Overlay -->
     <div id="mobile-menu" class="hidden fixed inset-0 z-40 bg-black/95 flex-col items-center justify-center space-y-8 transition-opacity duration-300 backdrop-blur-xl">
         <a href="./characters.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.bloodline">The Bloodline</a>
         <a href="./timeline.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.history">History</a>
@@ -91,6 +99,7 @@
         <a href="./locations.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.territories">Territories</a>
         <a href="./lore.html" class="text-xl text-gold font-serif hover:text-white border border-gold px-6 py-2 uppercase tracking-widest" data-i18n="nav.archives">Archives</a>
         
+        <!-- Mobile Language -->
         <div class="flex gap-4 font-mono text-sm mt-4">
             <button class="lang-btn hover:text-gold transition-colors" data-lang="en" onclick="window.changeAppLanguage('en')">EN</button>
             <span class="text-gray-600">/</span>
@@ -98,6 +107,7 @@
         </div>
     </div>
 
+    <!-- Main Content Area -->
     <main class="w-full max-w-md mx-auto grow flex flex-col justify-center items-center relative z-10 px-6 pt-16 pb-48">
         
         <div class="relative top-5 w-full backdrop-blur-sm rounded-sm border-t border-b border-white/5">
@@ -105,10 +115,11 @@
             <h1 class="text-3xl font-serif text-center text-gold mb-1 tracking-widest uppercase" data-i18n="login_page.system_access">System Access</h1>
             <p class="text-[10px] font-mono text-center text-gray-600 uppercase mb-8 tracking-widest" data-i18n="login_page.verify_identity">Verify Identity to proceed</p>
 
+            <!-- Login Form -->
             <form id="auth-login-form" class="space-y-4 form-switch-transition">
                 <div class="group">
                     <label for="login-email" class="block text-[10px] text-gray-500 uppercase font-mono mb-1 group-focus-within:text-gold" data-i18n="login_page.label_email">Operative ID / Email</label>
-                    <input id="login-email" type="email" name="email" required class="w-full terminal-input font-mono text-sm" placeholder="operative@tsof.internal" data-i18n="[placeholder]login_page.placeholder_email" autocomplete="email"/>
+                    <input id="login-email" type="email" name="email" required class="w-full terminal-input font-mono text-sm" placeholder="operative@tsof.internal" autocomplete="email"/>
                 </div>
 
                 <div class="group">
@@ -141,6 +152,7 @@
                 </div>
             </form>
 
+            <!-- Register Form (Hidden by default) -->
             <form id="auth-register-form" class="space-y-4 form-switch-transition hidden">
                 <div class="group">
                     <label for="register-email" class="block text-[10px] text-gray-500 uppercase font-mono mb-1 group-focus-within:text-gold" data-i18n="login_page.label_new_email">New Operative Email</label>
@@ -182,6 +194,7 @@
         </div>
     </main>
 
+    <!-- Footer -->
     <footer class="py-8 bg-obsidian border-t border-white/5 text-center fixed bottom-0 w-full z-10">
         <p class="font-serif text-gold text-2xl mb-4">TSOF</p>
         
@@ -192,9 +205,24 @@
         </div>
 
         <p class="text-gray-600 text-xs uppercase tracking-widest">
-            &copy; 2025 The Sins of the Fathers. <br>
             <span data-i18n="footer.copyright_slogan">Ruaraidh Ballantine & Havi are watching.</span>
         </p>
     </footer>
+
+    <!-- Page Specific Script (i18n Title Update) -->
+    <script type="module">
+        import i18next from '../src/lib/i18n.js';
+        
+        const updateTitle = () => {
+            if(i18next.isInitialized) {
+                document.title = i18next.t('login_page.tab_title') || document.title;
+            }
+        };
+
+        i18next.on('initialized', updateTitle);
+        i18next.on('languageChanged', updateTitle);
+        
+        if (i18next.isInitialized) updateTitle();
+    </script>
 </body>
 </html>

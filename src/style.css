@@ -6,7 +6,9 @@
    ========================================= */
 body {
   background-color: #050505;
+  color: #d4d4d4; /* HTML'den gelen metin rengi */
   font-family: 'Lato', sans-serif;
+  
   ::selection {
     background: #D4AF37; /* Gold */
     color: #000;
@@ -43,6 +45,7 @@ html.lenis {
   top: 0; left: 0; width: 100%; height: 100%;
   pointer-events: none; 
   z-index: 50;
+  /* Base64 SVG Noise Pattern */
   background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MDAiIGhlaWdodD0iNTAwIj48ZmlsdGVyIGlkPSJub2lzZSI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuNjUiIG51bU9jdGF2ZXM9IjMiIHN0aXRjaFRpbGVzPSJzdGl0Y2giLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCgjbm9pc2UpIiBvcGFjaXR5PSIwLjA1Ii8+PC9zdmc+');
   opacity: 0.05;
 }
@@ -56,8 +59,20 @@ html.lenis {
 }
 
 /* =========================================
-  UI Components
+  UI Components (Utilities & Hamburger)
   ========================================= */
+  
+/* Loading Blur Utilities */
+.loading-blur { 
+  filter: blur(4px); 
+  transition: filter 0.5s ease; 
+}
+
+.loaded { 
+  filter: blur(0); 
+}
+
+/* Hamburger Animation */
 #hamburger-button span { 
   transition: 0.3s; 
 }
@@ -69,4 +84,481 @@ html.lenis {
 }
 #hamburger-button.active span:nth-child(3) { 
   transform: rotate(-45deg) translate(5px, -6px); 
+}
+
+/* =========================================
+  D3.js Graph Styles
+  ========================================= */
+.node circle { 
+  fill: #000; 
+  stroke: #c5a059; /* Gold variant */
+  stroke-width: 1.5px; 
+  transition: all 0.3s ease; 
+}
+
+.node circle:hover { 
+  fill: #c5a059; 
+  cursor: pointer; 
+}
+
+.node text { 
+  font-family: 'Courier Prime', monospace; 
+  font-size: 12px; 
+  fill: #a3a3a3; 
+  pointer-events: none; 
+}
+
+.link { 
+  fill: none; 
+  stroke: #333; 
+  stroke-width: 1px; 
+  opacity: 0.6; 
+}
+
+/* =========================================
+  Characters Page Specific
+  ========================================= */
+.grid-bg {
+  background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+  linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 30px 30px;
+}
+
+/* =========================================
+  Faction Detail Page Specific
+========================================= */
+
+/* Dynamic Theme Variable Default (JS will override this) */
+:root { 
+  --theme-color: #c5a059; 
+}
+
+/* Faction Specific UI Elements */
+.hq-border-top { 
+  border-top: 2px solid var(--theme-color); 
+}
+
+.hq-text { 
+  color: var(--theme-color); 
+}
+
+.hq-bg-glow { 
+  background: radial-gradient(circle, var(--theme-color) 0%, transparent 70%); 
+  opacity: 0.1; 
+}
+
+/* Roster Card Hover Effect */
+.roster-card { 
+  transition: all 0.3s ease; 
+}
+
+.roster-card:hover { 
+  border-color: var(--theme-color); 
+  transform: translateY(-2px); 
+}
+
+/* Threat Level Indicators */
+.threat-bar {
+  width: 0.5rem; /* w-2 */
+  height: 1.5rem; /* h-6 */
+  background-color: #1f2937; /* bg-gray-800 */
+  transition: background-color 0.5s ease;
+}
+
+.threat-bar.active {
+  background-color: var(--theme-color);
+  box-shadow: 0 0 5px var(--theme-color);
+}
+
+/* Leaflet Map "Noir" Mode Override */
+.leaflet-container { 
+  background: #050505 !important; 
+  filter: grayscale(100%) contrast(1.3) brightness(0.7); 
+}
+
+.leaflet-control-attribution { 
+  display: none !important; 
+}
+
+/* =========================================
+   Factions Page Specific
+   ========================================= */
+
+/* Radar Loading Animation */
+.radar-sweep {
+  width: 100%; height: 100%;
+  background: conic-gradient(from 0deg, transparent 0deg, rgba(197, 160, 89, 0.4) 360deg);
+  border-radius: 50%;
+  animation: radar 2s linear infinite;
+}
+@keyframes radar { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+/* Faction Card: Common */
+.faction-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.faction-card:hover {
+  transform: translateY(-5px);
+}
+
+/* Faction Card: The Old World (Macpherson) - Organic, Bloody */
+.faction-card.old-world {
+  border: 1px solid #4a0404;
+  background: linear-gradient(to bottom, #1a0505, #050505);
+  box-shadow: 0 4px 20px rgba(74, 4, 4, 0.2);
+}
+.faction-card.old-world:hover {
+  box-shadow: 0 10px 30px rgba(185, 28, 28, 0.3);
+  border-color: #b91c1c;
+}
+.faction-card.old-world h3 { color: #b91c1c; font-family: 'Cinzel', serif; }
+.faction-card.old-world .stat-fill { background-color: #7f1d1d; }
+
+/* Faction Card: The New Order (Ballantine) - Cold, Metallic */
+.faction-card.new-world {
+  border: 1px solid #334155;
+  border-top: 1px solid #c5a059;
+  background: linear-gradient(135deg, #0f172a 0%, #000000 100%);
+  box-shadow: 0 4px 20px rgba(197, 160, 89, 0.1);
+}
+.faction-card.new-world:hover {
+  box-shadow: 0 10px 30px rgba(197, 160, 89, 0.2);
+  border-color: #c5a059;
+}
+.faction-card.new-world h3 { color: #c5a059; font-family: 'Cinzel', serif; letter-spacing: 0.1em; }
+.faction-card.new-world .stat-fill { background-color: #c5a059; }
+
+/* =========================================
+   Locations Page Specific (Map UI)
+   ========================================= */
+
+/* Leaflet Map Filters (Noir Theme) */
+.leaflet-layer { 
+  filter: grayscale(100%) contrast(1.1) brightness(0.6); 
+}
+
+.leaflet-container { 
+  background: #080808 !important; 
+}
+
+/* Overlay Patterns */
+.map-grid {
+  background-image: 
+      linear-gradient(rgba(197, 160, 89, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(197, 160, 89, 0.05) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+/* Scan Line Animation */
+.scan-line {
+  height: 3px; 
+  background: rgba(197, 160, 89, 0.2);
+  box-shadow: 0 0 10px rgba(197, 160, 89, 0.4);
+  animation: scan 4s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes scan { 
+  0% { transform: translateY(0); } 
+  100% { transform: translateY(100vh); } 
+}
+
+/* Custom Leaflet Popups (Gold & Obsidian Theme) */
+.leaflet-popup-content-wrapper {
+  background: rgba(5,5,5,0.95);
+  border: 1px solid #c5a059;
+  color: #ccc; 
+  border-radius: 0;
+}
+
+.leaflet-popup-tip { 
+  background: #c5a059; 
+}
+
+.leaflet-popup-content { 
+  min-width: 190px !important; 
+}
+
+.leaflet-popup-close-button { 
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  z-index: 10 !important;
+  color: #c5a059 !important;
+}
+
+.leaflet-popup-close-button:hover { 
+  color: #fff !important; 
+}
+
+/* Custom Tactical Icon Animation */
+.custom-tactical-icon .animate-spin-slow { 
+  animation: spin 10s linear infinite; 
+}
+
+@keyframes spin { 
+  100% { transform: rotate(360deg); } 
+}
+
+/* =========================================
+   Login / Auth Page Specific
+   ========================================= */
+
+/* Terminal Input Style */
+.terminal-input {
+  background: transparent; 
+  border: none; 
+  border-bottom: 1px solid #333; 
+  color: #fff; 
+  border-radius: 0; 
+  padding: 10px 0; 
+  transition: all 0.3s ease;
+}
+
+.terminal-input:focus {
+  outline: none; 
+  border-bottom: 1px solid #c5a059; /* Gold */
+  box-shadow: 0 4px 6px -6px #c5a059;
+}
+
+/* Autocomplete Background Fix */
+input:-webkit-autofill, 
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px #050505 inset !important; 
+  -webkit-text-fill-color: white !important; 
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Background Seal Animation */
+.animate-spin-slow {
+  animation: spin 60s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Form Transition Helper */
+.form-switch-transition {
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+/* =========================================
+   Lore Detail Page Specific
+   ========================================= */
+
+/* Paper Texture Background */
+.paper-bg {
+  background-color: #181818;
+  background-image: 
+      linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 20px 20px;
+  border-left: 4px solid #c5a059;
+}
+
+/* Typography Overrides for Documents */
+.document-text p { 
+  margin-bottom: 1.5em; 
+  line-height: 1.8; 
+}
+
+.document-text h3 { 
+  font-family: 'Cinzel', serif; 
+  color: #c5a059; 
+  margin-top: 2em; 
+  margin-bottom: 0.5em; 
+}
+
+/* Typewriter Cursor Animation */
+.typewriter::after {
+  content: '|';
+  animation: cursor 1s infinite;
+}
+
+@keyframes cursor { 
+  0%, 100% { opacity: 1; } 
+  50% { opacity: 0; } 
+}
+
+/* =========================================
+   Lore / Archives Page Specific
+   ========================================= */
+
+/* Masonry Layout Card Fixes */
+.archive-card {
+  break-inside: avoid; /* Kartların sütunlar arasında bölünmesini engeller */
+  margin-bottom: 1.5rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  will-change: transform, opacity;
+}
+
+.archive-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+  border-color: #c5a059; /* Gold */
+}
+
+/* Scrollbar Hiding for Filter Bar */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+.scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* =========================================
+   Legal & Privacy Page Specific
+   ========================================= */
+
+.legal-section h2 { 
+  border-bottom: 1px solid #333; 
+  padding-bottom: 0.5rem; 
+  margin-bottom: 1rem; 
+  margin-top: 2rem; 
+  color: #c5a059; /* Gold */
+  font-family: 'Cinzel', serif; 
+  font-size: 1.25rem;
+}
+
+.legal-section p { 
+  margin-bottom: 1rem; 
+  font-size: 0.95rem; 
+  line-height: 1.7; 
+  color: #d1d5db; /* Gray-300 */
+}
+
+.legal-section ul { 
+  list-style-type: disc; 
+  margin-left: 1.5rem; 
+  margin-bottom: 1rem; 
+  color: #9ca3af; /* Gray-400 */
+}
+
+.legal-section li {
+  margin-bottom: 0.5rem;
+}
+
+.legal-section strong {
+  color: #fff;
+}
+
+/* =========================================
+   Profile / Operative Page Specific
+   ========================================= */
+
+/* Agent Input Field (Underline Style) */
+.agent-input {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid #333;
+  color: #c5a059;
+  width: 100%;
+  padding: 8px 0;
+  font-family: 'Courier Prime', monospace;
+  transition: all 0.3s ease;
+}
+
+.agent-input:focus {
+  outline: none;
+  border-color: #c5a059;
+  background: linear-gradient(to right, rgba(197, 160, 89, 0.05), transparent);
+}
+
+.agent-input::placeholder { 
+  color: #444; 
+}
+
+/* Allegiance Radio Selector */
+.allegiance-radio:checked + div {
+  border-color: #c5a059;
+  background-color: rgba(197, 160, 89, 0.1);
+}
+
+.allegiance-radio:checked + div .check-icon { 
+  opacity: 1; 
+}
+
+/* =========================================
+   Timeline Page Specific
+   ========================================= */
+
+/* Custom Loading Spinner (Ring) */
+.loading-ring {
+  display: inline-block; 
+  width: 64px; 
+  height: 64px;
+}
+
+.loading-ring:after {
+  content: " "; 
+  display: block; 
+  width: 46px; 
+  height: 46px; 
+  margin: 8px; 
+  border-radius: 50%; 
+  border: 2px solid #c5a059; /* Gold */
+  border-color: #c5a059 transparent #c5a059 transparent; 
+  animation: ring 1.2s linear infinite;
+}
+
+@keyframes ring { 
+  0% { transform: rotate(0deg); } 
+  100% { transform: rotate(360deg); } 
+}
+
+/* --- TIMELINE.JS OVERRIDES (Dark Mode Hack) --- */
+/* Bu stiller Timeline.js'in beyaz temasını ezer */
+
+.tl-timeline, 
+.tl-storyslider, 
+.tl-slide-content, 
+.tl-slide, 
+.tl-slide-scrollable-container {
+  background-color: #050505 !important;
+}
+
+.tl-headline-date, 
+.tl-headline {
+  font-family: 'Cinzel', serif !important;
+  color: #c5a059 !important; /* GOLD */
+  text-transform: uppercase;
+}
+
+.tl-text {
+  font-family: 'Lato', sans-serif !important;
+  color: #b0b0b0 !important;
+}
+
+.tl-timenav, 
+.tl-timenav-slider {
+  background-color: #111 !important;
+  border-top: 1px solid #333 !important;
+}
+
+.tl-timegroup-message {
+  color: #666 !important;
+  text-shadow: none !important;
+}
+
+.tl-timemarker .tl-timemarker-content {
+  background-color: #000 !important;
+  border: 1px solid #c5a059 !important;
+  border-radius: 0 !important;
+}
+
+.tl-timemarker.tl-timemarker-active .tl-timemarker-content {
+  background-color: #c5a059 !important;
+  box-shadow: 0 0 15px rgba(197, 160, 89, 0.5);
+}
+
+.tl-media-content-container { 
+  border: 1px solid #333; 
+}
+
+.tl-slidenav-icon { 
+  color: #c5a059 !important; 
 }

@@ -1,10 +1,38 @@
 <!DOCTYPE html>
 <html lang="en"> 
 <head>
+    <!-- Meta Tags -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Evidence Record: Classified documents, audio logs, and recovered data fragments from the TSOF archives.">
+    <meta name="keywords" content="TSOF, Lore, Evidence, Audio Logs, Documents, Fiction, Noir">
+    <meta name="author" content="The Sins of the Fathers">
+    <meta name="theme-color" content="#050505">
+    <meta name="robots" content="noindex, follow">
+    
+    <!-- Title -->
     <title data-i18n="lore_detail.page_title">Evidence Record | The Sins of the Fathers</title>
 
+    <!-- Manifest -->
+    <link rel="manifest" href="../manifest.json">
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="../assets/images/logo/favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="../assets/images/logo/favicon.svg">
+    <link rel="icon" type="image/png" sizes="96x96" href="../assets/images/logo/favicon-96x96.png">
+    <link rel="shortcut icon" href="../assets/images/logo/favicon.ico">
+
+    <!-- External Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Courier+Prime&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    
+    <!-- Internal Styles -->
+    <link href="../src/style.css" rel="stylesheet">
+
+    <!-- Internal Scripts -->
+    <script src="../src/main.js" type="module"></script>
+
+    <!-- Partytown Configuration -->
     <script>
         partytown = {
             forward: ['dataLayer.push', 'gtag', 'fbq'], 
@@ -12,56 +40,15 @@
         };
     </script>
     
-    <script>
-        /* Partytown 0.8.0 - MIT License */
-        !function(t,e,n,i,r,o,a,d,s,c,p,l){function u(){l||(l=1,"/"==(a=(o.lib||"/~partytown/")+(o.debug?"debug/":""))[0]&&(s=e.querySelectorAll('script[type="text/partytown"]'),i!=t?i.dispatchEvent(new CustomEvent("pt1",{detail:t,composed:!0})):(d=setTimeout(f,1e4),e.addEventListener("pt0",w),r?h(1):n.serviceWorker?n.serviceWorker.register(a+(o.swPath||"partytown-sw.js"),{scope:a}).then((function(t){t.active?h():t.installing&&t.installing.addEventListener("statechange",(function(t){"activated"==t.target.state&&h()}))}),console.error):f())))}function h(t){c=e.createElement(t?"script":"iframe"),t||(c.style.display="block",c.style.width="0",c.style.height="0",c.style.border="0",c.style.visibility="hidden",c.setAttribute("aria-hidden",!0)),c.src=a+"partytown-"+(t?"atomics.js?v=0.8.0":"sandbox-sw.html?"+Date.now()),e.body.appendChild(c)}function f(t,n){for(w(),t=0;t<s.length;t++)(n=e.createElement("script")).innerHTML=s[t].innerHTML,n.nonce=o.nonce,s[t].src&&(n.src=s[t].src),n.type="text/javascript",s[t].replaceWith(n)}function w(){clearTimeout(d)}i==t&&(o.forward||[]).map((function(e){p=t,e.split(".").map((function(e,n,i){p=p[e]=n+1<i.length?"push"==i[n+1]?[]:p[e]||{}:function(){(t._ptf=t._ptf||[]).push(i,arguments)}}))})),"complete"==e.readyState?u():(t.addEventListener("DOMContentLoaded",u),t.addEventListener("load",u))}(window,document,navigator,top,window.crossOriginIsolated);
-    </script>
-    
-    <link href="../src/style.css" rel="stylesheet">
-    
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Courier+Prime&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-
-    <style>
-        body { background-color: #050505; color: #ccc; }
-        .noise-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 50;
-            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MDAiIGhlaWdodD0iNTAwIj48ZmlsdGVyIGlkPSJub2lzZSI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuNjUiIG51bU9jdGF2ZXM9IjMiIHN0aXRjaFRpbGVzPSJzdGl0Y2giLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCgjbm9pc2UpIiBvcGFjaXR5PSIwLjA1Ii8+PC9zdmc+');
-            opacity: 0.05;
-        }
-
-        /* Paper Texture */
-        .paper-bg {
-            background-color: #181818;
-            background-image: 
-                linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
-                linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
-            background-size: 20px 20px;
-            border-left: 4px solid #c5a059;
-        }
-
-        /* Typography */
-        .document-text p { margin-bottom: 1.5em; line-height: 1.8; }
-        .document-text h3 { font-family: 'Cinzel', serif; color: #c5a059; margin-top: 2em; margin-bottom: 0.5em; }
-
-        /* Loader Animation */
-        .typewriter::after {
-            content: '|';
-            animation: cursor 1s infinite;
-        }
-        @keyframes cursor { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
-
-    </style>
-
-    <!-- Main JS (Router bu dosyada olduğu için başka script eklemeye gerek yok) -->
-    <script src="../src/main.js" type="module" defer></script>
+   <!-- Partytown Script -->
+    <script type="module" src="../src/modules/loaders/partytown-loader.js"></script>
 </head>
-
 <body class="flex flex-col min-h-screen selection:bg-gold selection:text-black">
+    
+    <!-- Visual Effects -->
     <div class="noise-overlay"></div>
 
-    <!-- HEADER (MOBİL MENÜ EKLENDİ) -->
+    <!-- Header & Navigation -->
     <header class="fixed top-0 w-full z-50 bg-obsidian/90 backdrop-blur-md border-b border-white/5 transition-all">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
             
@@ -72,9 +59,11 @@
 
             <!-- Desktop Nav -->
             <div class="hidden md:flex items-center gap-6">
-                <a href="lore.html" class="text-xs uppercase tracking-widest text-gray-500 hover:text-gold transition-colors flex items-center font-mono">
+                <a href="./lore.html" class="text-xs uppercase tracking-widest text-gray-500 hover:text-gold transition-colors flex items-center font-mono border-r border-white/10 pr-6">
                     <i class="fas fa-arrow-left mr-2"></i> <span data-i18n="lore_detail.back_to_archives">Back to Archives</span>
                 </a>
+                
+                <!-- Language Switcher -->
                 <div class="flex gap-2 font-mono text-[10px]">
                     <button class="lang-btn hover:text-gold transition-colors" data-lang="en" onclick="window.changeAppLanguage('en')">EN</button>
                     <span class="text-gray-600">/</span>
@@ -83,41 +72,40 @@
             </div>
 
             <!-- Mobile Menu Button (Hamburger) -->
-            <button id="mobile-menu-btn" class="md:hidden text-gold z-50 focus:outline-none">
-                <i class="fas fa-bars text-xl"></i>
-            </button>
-        </nav>
-
-        <!-- Mobile Menu Overlay -->
-        <div id="mobile-menu" class="fixed inset-0 bg-black/95 z-40 flex flex-col justify-center items-center opacity-0 pointer-events-none transition-opacity duration-300">
-            <div class="flex flex-col gap-8 text-center font-serif text-xl tracking-widest text-gray-300">
-                <a href="lore.html" class="hover:text-gold transition-colors" data-i18n="lore_detail.back_to_archives">Back to Archives</a>
-                <a href="../index.html" class="hover:text-gold transition-colors">Home</a>
-                
-                <!-- Mobile Language Switcher -->
-                <div class="flex justify-center gap-6 font-mono text-sm mt-4 text-gold">
-                    <button class="lang-btn" data-lang="en" onclick="window.changeAppLanguage('en')">EN</button>
-                    <span>/</span>
-                    <button class="lang-btn" data-lang="tr" onclick="window.changeAppLanguage('tr')">TR</button>
-                </div>
+            <div class="md:hidden relative z-50">
+                <button id="hamburger-button" class="text-gold focus:outline-none flex flex-col justify-center items-center w-8 h-8 space-y-1.5 group">
+                    <span class="block w-6 h-0.5 bg-gold transition-transform duration-300"></span>
+                    <span class="block w-6 h-0.5 bg-gold transition-opacity duration-300"></span>
+                    <span class="block w-6 h-0.5 bg-gold transition-transform duration-300"></span>
+                </button>
             </div>
-        </div>
+        </nav>
     </header>
 
-    <!-- Mobile Menu Overlay (EKSİKTİ - EKLENDİ) -->
+    <!-- Mobile Menu Overlay -->
     <div id="mobile-menu" class="hidden fixed inset-0 z-40 bg-black/95 flex-col items-center justify-center space-y-8 transition-opacity duration-300 backdrop-blur-xl">
-        <a href="./pages/characters.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.bloodline"></a>
-        <a href="./pages/timeline.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.history"></a>
-        <a href="./pages/factions.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.factions"></a>
-        <a href="./pages/locations.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.territories"></a>
-        <a href="./pages/lore.html" class="text-xl text-gold font-serif hover:text-white border border-gold px-6 py-2 uppercase tracking-widest" data-i18n="nav.archives"></a>
-        <a href="./pages/login.html" class="text-sm text-gray-400 hover:text-white mt-8 font-mono uppercase" data-i18n="auth.login"></a>
+        <a href="./lore.html" class="text-lg text-red-500 font-serif hover:text-white border border-red-900 px-6 py-2 uppercase tracking-widest mb-4">
+            <i class="fas fa-arrow-left mr-2"></i> <span data-i18n="lore_detail.back_to_archives">Back to Archives</span>
+        </a>
+        <a href="../index.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.home">Home</a>
+        <a href="./characters.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.bloodline">Bloodline</a>
+        <a href="./factions.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.factions">Factions</a>
+        <a href="./login.html" class="text-sm text-gray-400 hover:text-white mt-8 font-mono uppercase" data-i18n="auth.login">Login</a>
+
+        <!-- Mobile Language -->
+        <div class="flex gap-4 font-mono text-sm mt-4">
+            <button class="lang-btn hover:text-gold transition-colors" data-lang="en" onclick="window.changeAppLanguage('en')">EN</button>
+            <span class="text-gray-600">/</span>
+            <button class="lang-btn hover:text-gold transition-colors" data-lang="tr" onclick="window.changeAppLanguage('tr')">TR</button>
+        </div>
     </div>
 
-    <main class="grow pt-28 pb-20 px-6">
+    <!-- Main Content Area -->
+    <main class="grow pt-28 pb-20 px-4 md:px-6">
         
         <div id="evidence-container" class="container mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
 
+            <!-- Sidebar: Metadata -->
             <aside class="lg:col-span-3 lg:sticky lg:top-28 space-y-8 order-2 lg:order-1">
                 
                 <div class="bg-obsidian border border-white/10 p-5">
@@ -146,29 +134,33 @@
                 <div class="bg-white/5 border border-white/5 p-5">
                     <h4 class="text-[10px] font-mono text-gray-500 uppercase tracking-widest mb-4" data-i18n="lore_detail.tagged_entities">Tagged Entities</h4>
                     <div id="lore-tags" class="flex flex-wrap gap-2">
-                         </div>
+                        <!-- JS injects tags here -->
+                    </div>
                 </div>
 
             </aside>
 
 
+            <!-- Main Article Content -->
             <article class="lg:col-span-9 order-1 lg:order-2">
                 
+                <!-- Loading State -->
                 <div id="doc-loader" class="text-center py-20 font-mono text-gold text-xs uppercase tracking-widest typewriter" data-i18n="common.loading">
                     Reconstructing Fragmented Data...
                 </div>
 
+                <!-- Actual Content -->
                 <div id="doc-content" class="opacity-0 transition-opacity duration-1000">
                     
                     <div id="lore-media-container" class="mb-8 hidden">
                         
-                         <!-- Resim Alanı -->
+                         <!-- Image Area -->
                          <div id="image-wrapper" class="relative w-full h-64 md:h-96 bg-black overflow-hidden border border-white/10 group hidden">
-                             <img src="" id="lore-image" class="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition duration-700">
+                             <img src="" id="lore-image" alt="Evidence" class="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition duration-700">
                              <div class="absolute bottom-2 right-2 bg-black px-2 py-1 text-[10px] font-mono text-white" data-i18n="lore_detail.fig_evidence">FIG. A // EVIDENCE</div>
                          </div>
 
-                         <!-- Ses Oynatıcı -->
+                         <!-- Audio Player -->
                          <div id="audio-player-wrapper" class="w-full bg-[#080808] border-l-2 border-gold relative overflow-hidden group hidden shadow-[0_10px_40px_-10px_rgba(0,0,0,0.8)] mt-4">
     
                             <div class="absolute inset-0 opacity-[0.03] pointer-events-none" 
@@ -207,7 +199,7 @@
                                 
                                     <div class="relative h-16 bg-black/40 border border-white/10 group-hover:border-gold/30 transition-colors cursor-pointer overflow-hidden backdrop-blur-sm" id="audio-progress-container">
                                     
-                                        <!-- Görselleştirme Çubukları (Statik) -->
+                                        <!-- Visualizer Bars (Static) -->
                                         <div class="absolute inset-0 flex items-end justify-between px-1 pb-0 opacity-20 gap-2px pointer-events-none">
                                             <div class="w-1 bg-gold h-[40%]"></div><div class="w-1 bg-gold h-[70%]"></div><div class="w-1 bg-gold h-[30%]"></div>
                                             <div class="w-1 bg-gold h-[50%]"></div><div class="w-1 bg-gold h-[90%]"></div><div class="w-1 bg-gold h-[20%]"></div>
@@ -226,10 +218,10 @@
                                             <div class="w-1 bg-gold h-[50%]"></div><div class="w-1 bg-gold h-[80%]"></div><div class="w-1 bg-gold h-[40%]"></div>
                                         </div>
                                     
-                                        <!-- İlerleme Çubuğu -->
+                                        <!-- Progress Bar -->
                                         <div id="audio-progress-bar" class="absolute top-0 bottom-0 left-0 bg-gold/10 border-r-2 border-gold shadow-[0_0_15px_rgba(197,160,89,0.3)] w-0 pointer-events-none transition-all duration-100 ease-linear"></div>
                                     
-                                        <!-- Hover Çizgisi -->
+                                        <!-- Hover Line -->
                                         <div class="absolute inset-y-0 w-1px bg-white/40 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" id="hover-line"></div>
                                     </div>
                                 
@@ -240,7 +232,7 @@
                                 </div>
                             </div>
     
-                            <!-- Dekoratif Köşeler -->
+                            <!-- Decorative Corners -->
                             <div class="absolute top-0 right-0 w-6 h-6 border-t border-r border-gold/20"></div>
                             <div class="absolute bottom-0 left-0 w-6 h-6 border-b border-l border-gold/20"></div>
                         </div>
@@ -258,7 +250,8 @@
                     <div class="paper-bg p-8 md:p-12 shadow-2xl">
                         
                         <div class="font-serif text-gray-300 text-lg leading-relaxed document-text text-justify" id="lore-body">
-                             </div>
+                             <!-- Lore Content Injected Here -->
+                        </div>
 
                         <div class="mt-12 pt-8 border-t border-dashed border-white/20 flex justify-between items-end opacity-50 hover:opacity-100 transition-opacity">
                              <div class="text-[10px] font-mono text-gray-600 w-1/2" data-i18n="lore_detail.warning_text">
@@ -286,9 +279,24 @@
         </div>
 
         <p class="text-gray-600 text-xs uppercase tracking-widest">
-            &copy; 2025 The Sins of the Fathers. <br>
             <span data-i18n="footer.copyright_slogan">Ruaraidh Ballantine & Havi are watching.</span>
         </p>
     </footer>
+
+    <!-- Page Specific Script (i18n Title Update) -->
+    <script type="module">
+        import i18next from '../src/lib/i18n.js';
+        
+        const updateTitle = () => {
+            if(i18next.isInitialized) {
+                document.title = i18next.t('lore_detail.page_title') || document.title;
+            }
+        };
+
+        i18next.on('initialized', updateTitle);
+        i18next.on('languageChanged', updateTitle);
+        
+        if (i18next.isInitialized) updateTitle();
+    </script>
 </body>
 </html>

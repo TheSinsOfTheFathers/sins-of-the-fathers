@@ -1,10 +1,38 @@
 <!DOCTYPE html>
 <html lang="en"> 
 <head>
+    <!-- Meta Tags -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-i18n="archive_page.meta_title">Restricted Archives | The Sins of the Fathers</title>
+    <meta name="description" content="Restricted Archives: Searchable database of classified documents, audio logs, and historical records regarding the Ballantine and Macpherson bloodlines.">
+    <meta name="keywords" content="TSOF, Archives, Lore, Database, Classified, Documents, Audio Logs">
+    <meta name="author" content="The Sins of the Fathers">
+    <meta name="theme-color" content="#050505">
+    <meta name="robots" content="noindex, follow">
     
+    <!-- Title -->
+    <title data-i18n="archive_page.meta_title">Restricted Archives | TSOF</title>
+
+    <!-- Manifest -->
+    <link rel="manifest" href="../manifest.json">
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="../assets/images/logo/favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="../assets/images/logo/favicon.svg">
+    <link rel="icon" type="image/png" sizes="96x96" href="../assets/images/logo/favicon-96x96.png">
+    <link rel="shortcut icon" href="../assets/images/logo/favicon.ico">
+
+    <!-- External Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Courier+Prime&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    
+    <!-- Internal Styles -->
+    <link href="../src/style.css" rel="stylesheet">
+
+    <!-- External Scripts -->
+    <script src="../src/main.js" type="module"></script>
+
+    <!-- Partytown Configuration -->
     <script>
         partytown = {
             forward: ['dataLayer.push', 'gtag', 'fbq'], 
@@ -12,73 +40,51 @@
         };
     </script>
     
-    <script>
-        /* Partytown 0.8.0 - MIT License */
-        !function(t,e,n,i,r,o,a,d,s,c,p,l){function u(){l||(l=1,"/"==(a=(o.lib||"/~partytown/")+(o.debug?"debug/":""))[0]&&(s=e.querySelectorAll('script[type="text/partytown"]'),i!=t?i.dispatchEvent(new CustomEvent("pt1",{detail:t,composed:!0})):(d=setTimeout(f,1e4),e.addEventListener("pt0",w),r?h(1):n.serviceWorker?n.serviceWorker.register(a+(o.swPath||"partytown-sw.js"),{scope:a}).then((function(t){t.active?h():t.installing&&t.installing.addEventListener("statechange",(function(t){"activated"==t.target.state&&h()}))}),console.error):f())))}function h(t){c=e.createElement(t?"script":"iframe"),t||(c.style.display="block",c.style.width="0",c.style.height="0",c.style.border="0",c.style.visibility="hidden",c.setAttribute("aria-hidden",!0)),c.src=a+"partytown-"+(t?"atomics.js?v=0.8.0":"sandbox-sw.html?"+Date.now()),e.body.appendChild(c)}function f(t,n){for(w(),t=0;t<s.length;t++)(n=e.createElement("script")).innerHTML=s[t].innerHTML,n.nonce=o.nonce,s[t].src&&(n.src=s[t].src),n.type="text/javascript",s[t].replaceWith(n)}function w(){clearTimeout(d)}i==t&&(o.forward||[]).map((function(e){p=t,e.split(".").map((function(e,n,i){p=p[e]=n+1<i.length?"push"==i[n+1]?[]:p[e]||{}:function(){(t._ptf=t._ptf||[]).push(i,arguments)}}))})),"complete"==e.readyState?u():(t.addEventListener("DOMContentLoaded",u),t.addEventListener("load",u))}(window,document,navigator,top,window.crossOriginIsolated);
-    </script>
-    
-    <link href="../src/style.css" rel="stylesheet">
-    
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Courier+Prime&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-
-    <style>
-        body { background-color: #050505; color: #ccc; }
-        .noise-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 50;
-            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MDAiIGhlaWdodD0iNTAwIj48ZmlsdGVyIGlkPSJub2lzZSI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuNjUiIG51bU9jdGF2ZXM9IjMiIGRpdGl0Y2giLz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCgjbm9pc2UpIiBvcGFjaXR5PSIwLjA1Ii8+PC9zdmc+');
-            opacity: 0.05;
-        }
-        .archive-card {
-            break-inside: avoid;
-            margin-bottom: 1.5rem;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-        .archive-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-            border-color: #c5a059;
-        }
-    </style>
-
-    <script src="../src/main.js" type="module" defer></script>
+   <!-- Partytown Script -->
+    <script type="module" src="../src/modules/loaders/partytown-loader.js"></script>
 </head>
-
-<body class="flex flex-col min-h-screen selection:bg-blood selection:text-white">
+<body class="flex flex-col min-h-screen selection:bg-gold selection:text-black">
+    
+    <!-- Visual Effects -->
     <div class="noise-overlay"></div>
 
-    <!-- Header -->
+    <!-- Header & Navigation -->
     <header class="fixed top-0 w-full z-50 transition-all duration-300 bg-obsidian/90 backdrop-blur-md border-b border-white/5">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <!-- Brand -->
             <a href="../index.html" class="nav-brand text-2xl md:text-3xl text-gold tracking-widest hover:text-white transition-colors uppercase font-serif">
-                TSOF <span class="hidden md:inline text-xs text-gray-600 ml-2 font-mono" data-i18n="lore_detail.header_reader">// READER</span>
+                TSOF <span class="hidden md:inline text-xs text-gray-600 ml-2 font-mono" data-i18n="lore_detail.header_reader">// ARCHIVES</span>
             </a>
 
             <!-- Desktop Menu -->
             <div class="hidden md:flex items-center space-x-8 text-sm uppercase tracking-widest font-semibold">
-                <a href="./characters.html" class="hover:text-gold transition-colors" data-i18n="nav.bloodline">The Bloodline</a>
-                <a href="./timeline.html" class="hover:text-gold transition-colors" data-i18n="nav.history">History</a>
-                <a href="./factions.html" class="hover:text-gold transition-colors" data-i18n="nav.factions">Factions</a>
-                <a href="./locations.html" class="hover:text-gold transition-colors" data-i18n="nav.territories">Territories</a>
+                <a href="./characters.html" class="text-gray-400 hover:text-gold transition-colors" data-i18n="nav.bloodline">Bloodline</a>
+                <a href="./timeline.html" class="text-gray-400 hover:text-gold transition-colors" data-i18n="nav.history">History</a>
+                <a href="./factions.html" class="text-gray-400 hover:text-gold transition-colors" data-i18n="nav.factions">Factions</a>
+                <a href="./locations.html" class="text-gray-400 hover:text-gold transition-colors" data-i18n="nav.territories">Territories</a>
                 
+                <!-- Auth Controls -->
                 <div class="border-l border-white/20 pl-8 ml-4 flex items-center gap-4" id="auth-controls">
-                    <a href="./lore.html" class="text-gold hover:text-white transition-colors flex items-center gap-2">
+                    <a href="./lore.html" class="text-gold border-b border-gold flex items-center gap-2">
                         <i class="fas fa-lock text-xs guest-lock"></i> <span data-i18n="nav.classified">Classified</span>
                     </a>
                     <a href="./login.html" class="hover:text-gold transition-colors guest-only" id="auth-signin-link" data-i18n="auth.login">Sign In</a>
                 </div>
             </div>
 
-            <!-- Hamburger -->
-            <div class="md:hidden relative z-50">
-                <button id="hamburger-button" class="text-gold focus:outline-none flex flex-col justify-between w-6 h-5">
-                    <span class="block w-full h-0.5 bg-gold"></span>
-                    <span class="block w-full h-0.5 bg-gold"></span>
-                    <span class="block w-full h-0.5 bg-gold"></span>
-                </button>
+            <!-- Mobile Controls -->
+            <div class="flex items-center gap-4 md:hidden">
+                <!-- Hamburger -->
+                <div class="relative z-50">
+                    <button id="hamburger-button" class="text-gold focus:outline-none flex flex-col justify-between w-6 h-5 group">
+                        <span class="block w-full h-0.5 bg-gold transition-transform duration-300"></span>
+                        <span class="block w-full h-0.5 bg-gold transition-opacity duration-300"></span>
+                        <span class="block w-full h-0.5 bg-gold transition-transform duration-300"></span>
+                    </button>
+                </div>
             </div>
 
+            <!-- Language Switcher (Desktop) -->
             <div class="hidden md:flex gap-2 font-mono text-[10px]">
                 <button class="lang-btn hover:text-gold transition-colors" data-lang="en" onclick="window.changeAppLanguage('en')">EN</button>
                 <span class="text-gray-600">/</span>
@@ -87,58 +93,66 @@
         </nav>
     </header>
 
-    <!-- Mobile Menu -->
+    <!-- Mobile Menu Overlay -->
     <div id="mobile-menu" class="hidden fixed inset-0 z-40 bg-black/95 flex-col items-center justify-center space-y-8 transition-opacity duration-300 backdrop-blur-xl">
         <a href="../index.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.home">Home</a>
-        <a href="characters.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.bloodline">The Bloodline</a>
-        <a href="timeline.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.history">History</a>
-        <a href="factions.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.factions">Factions</a>
-        <a href="locations.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.territories">Territories</a>        
-        <a href="login.html" class="text-sm text-gray-400 hover:text-white mt-8 font-mono uppercase" data-i18n="auth.login">Access Terminal</a>
+        <a href="./characters.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.bloodline">The Bloodline</a>
+        <a href="./timeline.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.history">History</a>
+        <a href="./factions.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.factions">Factions</a>
+        <a href="./locations.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.territories">Territories</a>        
+        <a href="./login.html" class="text-sm text-gray-400 hover:text-white mt-8 font-mono uppercase" data-i18n="auth.login">Access Terminal</a>
+
+        <!-- Mobile Language -->
+        <div class="flex gap-4 font-mono text-sm mt-4">
+            <button class="lang-btn hover:text-gold transition-colors" data-lang="en" onclick="window.changeAppLanguage('en')">EN</button>
+            <span class="text-gray-600">/</span>
+            <button class="lang-btn hover:text-gold transition-colors" data-lang="tr" onclick="window.changeAppLanguage('tr')">TR</button>
+        </div>
     </div>
 
     <!-- SEARCH & FILTER TERMINAL -->
-    <div class="bg-charcoal border-b border-white/5 pt-24 pb-6 shadow-xl sticky top-0 z-40 backdrop-blur-lg bg-opacity-90">
+    <!-- Sticky positioned for easy access while scrolling archives -->
+    <div class="bg-obsidian/95 border-b border-white/5 pt-24 pb-6 shadow-xl sticky top-0 z-40 backdrop-blur-lg">
         <div class="container mx-auto px-6">
             <div class="flex flex-col md:flex-row justify-between items-end gap-4">
                 
+                <!-- Search Box -->
                 <div class="w-full md:w-1/2">
                     <label class="text-[10px] font-mono text-gold uppercase mb-1 block" data-i18n="search.label_query">Database Query</label>
                     <div class="relative group">
                         <span class="absolute left-3 top-3 font-mono text-gray-500 text-sm">></span>
-                        <!-- Placeholder JS tarafından güncellenecek -->
                         <input type="text" id="archive-search" placeholder="Search logs..." 
-                               class="w-full bg-black border border-gray-700 pl-8 pr-4 py-2 text-sm font-mono text-white focus:outline-none focus:border-gold transition-colors shadow-inner">
+                               class="w-full bg-black border border-gray-700 pl-8 pr-4 py-2 text-sm font-mono text-white focus:outline-none focus:border-gold transition-colors shadow-inner rounded-none placeholder:text-gray-700">
                         <div class="absolute right-2 top-2.5">
                             <i class="fas fa-search text-gray-600 group-hover:text-gold animate-pulse"></i>
                         </div>
                     </div>
                 </div>
 
+                <!-- Filter Tabs -->
                 <div class="flex space-x-2 overflow-x-auto pb-1 w-full md:w-auto scrollbar-hide" id="archive-filters">
-    <!-- ALL -->
-    <button data-filter="all" class="px-4 py-1 border border-gold bg-gold/10 text-gold text-xs uppercase tracking-wider font-bold" data-i18n="search.filter_all">
-        All
-    </button>
-    
-    <!-- DOCS -->
-    <button data-filter="text" class="px-4 py-1 border border-gray-700 text-gray-500 hover:border-gray-400 hover:text-white text-xs uppercase tracking-wider" data-i18n="search.filter_docs">
-        Docs
-    </button>
-    
-    <!-- AUDIO -->
-    <button data-filter="audio" class="px-4 py-1 border border-gray-700 text-gray-500 hover:border-gray-400 hover:text-white text-xs uppercase tracking-wider" data-i18n="search.filter_audio">
-        Audio
-    </button>
-</div>
+                    <!-- ALL -->
+                    <button data-filter="all" class="px-4 py-1 border border-gold bg-gold/10 text-gold text-xs uppercase tracking-wider font-bold transition-all hover:bg-gold/20" data-i18n="search.filter_all">
+                        All
+                    </button>
+                    <!-- DOCS -->
+                    <button data-filter="text" class="px-4 py-1 border border-gray-700 text-gray-500 hover:border-gray-400 hover:text-white text-xs uppercase tracking-wider transition-all" data-i18n="search.filter_docs">
+                        Docs
+                    </button>
+                    <!-- AUDIO -->
+                    <button data-filter="audio" class="px-4 py-1 border border-gray-700 text-gray-500 hover:border-gray-400 hover:text-white text-xs uppercase tracking-wider transition-all" data-i18n="search.filter_audio">
+                        Audio
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- MAIN CONTENT -->
-    <main class="grow container mx-auto px-6 py-8">
+    <main class="grow container mx-auto px-6 py-8 relative z-10">
+        <!-- Grid container with Masonry support via Tailwind columns -->
         <div id="archive-grid" class="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6 opacity-0 transition-opacity duration-1000">
-            <!-- Dinamik İçerik Buraya Gelecek -->
+            <!-- Dynamic Content Injected by Main.js -->
         </div>
     </main>
     
@@ -165,5 +179,21 @@
             <span data-i18n="footer.copyright_slogan">Ruaraidh Ballantine & Havi are watching.</span>
         </p>
     </footer>
+
+    <!-- Page Specific Script (i18n Title Update) -->
+    <script type="module">
+        import i18next from '../src/lib/i18n.js';
+        
+        const updateTitle = () => {
+            if(i18next.isInitialized) {
+                document.title = i18next.t('archive_page.meta_title') || document.title;
+            }
+        };
+
+        i18next.on('initialized', updateTitle);
+        i18next.on('languageChanged', updateTitle);
+        
+        if (i18next.isInitialized) updateTitle();
+    </script>
 </body>
 </html>
