@@ -1,4 +1,3 @@
-// blog/astro.config.mjs
 import { defineConfig } from 'astro/config';
 import sanity from "@sanity/astro";
 import tailwindcss from '@tailwindcss/vite'; 
@@ -8,7 +7,6 @@ export default defineConfig({
   site: 'https://blog.thesinsofthefathers.com', 
   output: 'server', 
   adapter: node({
-    // BURASI DEĞİŞTİ: 'standalone' yerine 'middleware' yapıyoruz.
     mode: 'middleware' 
   }),
   integrations: [
@@ -22,7 +20,6 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
     build: {
-      // Firebase functions ile çakışmayı önlemek için assets boyut limiti
       chunkSizeWarningLimit: 1000,
     }
   },

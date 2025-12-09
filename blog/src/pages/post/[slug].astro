@@ -3,15 +3,10 @@ import { sanityClient } from "sanity:client";
 import { urlFor } from "../../lib/urlFor";
 import { PortableText } from "astro-portabletext";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { t } from '../../i18n/utils'; 
 
-// SSR Modu
 export const prerender = false; 
 
 const { slug } = Astro.params;
-const lang = Astro.locals.lang as 'en' | 'tr';
-const translations = Astro.locals.translations;
-
 const post = await sanityClient.fetch(`*[_type == "post" && slug.current == $slug][0]{
   title,
   publishedAt,
@@ -23,7 +18,8 @@ const post = await sanityClient.fetch(`*[_type == "post" && slug.current == $slu
 if (!post) return Astro.redirect("/404");
 
 function formatDate(dateString) {
-  return new Date(dateString).toLocaleDateString(lang, { 
+  if (!dateString) return 'Undated Record';
+  return new Date(dateString).toLocaleDateString('en-US', { 
     year: "numeric", month: "long", day: "numeric"
   });
 }
@@ -36,7 +32,7 @@ function formatDate(dateString) {
       <div class="flex items-center gap-4 mb-6 text-xs font-mono text-[#c5a059] uppercase tracking-widest">
         <span>{formatDate(post.publishedAt)}</span>
         <span class="text-gray-700">|</span>
-        <span class="text-white">{t(translations, 'blog_detail.clearance_status')}</span>
+        <span class="text-white">CLEARANCE: OPEN</span>
       </div>
 
       <h1 class="text-3xl md:text-5xl font-serif text-white mb-8 leading-tight">
@@ -63,8 +59,8 @@ function formatDate(dateString) {
       <div class="mt-16 pt-8 border-t border-white/10 flex items-center gap-4">
         <div class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-[#c5a059] font-serif border border-[#c5a059]">A</div>
         <div>
-            <p class="text-xs text-gray-500 font-mono uppercase">{t(translations, 'blog_detail.reporter')}</p>
-            <p class="text-white font-serif tracking-wide">{post.authorName || t(translations, 'common.unknown_author')}</p>
+            <p class="text-xs text-gray-500 font-mono uppercase">REPORT PREPARER</p>
+            <p class="text-white font-serif tracking-wide">{post.authorName || 'Unknown Agent'}</p>
         </div>
       </div>
     </div>

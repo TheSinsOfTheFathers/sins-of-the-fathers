@@ -1,19 +1,10 @@
 ---
 import { sanityClient } from "sanity:client";
-// Doğru import yolu (Tek nokta)
 import { urlFor } from "../lib/urlFor";
-import { t } from '../i18n/utils'; 
 import BaseLayout from "../layouts/BaseLayout.astro";
 
-// SSR Modu
 export const prerender = false;
 
-// 1. DİL AYARI - ARTIK MIDDLEWARE'DEN GELİYOR
-const lang = Astro.locals.lang as 'en' | 'tr';
-const translations = Astro.locals.translations;
-
-// 👇 DÜZELTİLEN KISIM BURASI
-// Ana sayfada belirli bir slug ARANMAZ. Tüm postlar çekilir.
 const posts = await sanityClient.fetch(`*[_type == "post"] | order(publishedAt desc) {
   title,
   slug,
@@ -23,10 +14,9 @@ const posts = await sanityClient.fetch(`*[_type == "post"] | order(publishedAt d
   authorName, 
 }`); 
 
-// YARDIMCI FONKSİYONLAR
 function formatDate(dateString) {
-  if (!dateString) return t(translations, 'common.undated');
-  return new Date(dateString).toLocaleDateString(lang, {
+  if (!dateString) return 'Undated Record';
+  return new Date(dateString).toLocaleDateString('en-US', {
     year: "numeric",
     month: "long",
     day: "numeric",
@@ -34,14 +24,14 @@ function formatDate(dateString) {
 }
 ---
 
-<BaseLayout title={t(translations, 'blog_page.meta_title')}>
+<BaseLayout title="TSOF Blog Archives">
     
     <div class="mb-12 text-center md:text-left">
       <h1 class="text-4xl md:text-6xl font-serif text-white mb-2 tracking-wide drop-shadow-lg">
-        {t(translations, 'blog_page.title_prefix')} <span class="text-[#c5a059] italic">{t(translations, 'blog_page.title_suffix')}</span>
+        Intelligence <span class="text-[#c5a059] italic">Records</span>
       </h1>
       <p class="text-gray-500 font-mono text-sm border-l-2 border-[#c5a059] pl-4 inline-block">
-        {t(translations, 'blog_page.subtitle')}
+        Classified documents and operation notes.
       </p>
     </div>
 
@@ -71,7 +61,7 @@ function formatDate(dateString) {
                 <div class="flex items-center gap-2 mb-3 text-[10px] font-mono uppercase text-[#c5a059] tracking-wider mt-2">
                   <span>{formatDate(post.publishedAt)}</span>
                   <span class="text-gray-700">|</span>
-                  <span>{post.authorName || t(translations, 'common.unknown_author')}</span> 
+                  <span>{post.authorName || 'Unknown Agent'}</span> 
                 </div>
 
                 <h2 class="text-2xl font-serif text-white mb-3 group-hover:text-[#c5a059] transition-colors leading-tight">
@@ -85,15 +75,15 @@ function formatDate(dateString) {
                 </p>
 
                 <a href={`/post/${post.slug.current}`} class="inline-flex items-center text-xs font-bold uppercase tracking-widest text-white border border-white/20 px-4 py-2 hover:bg-[#c5a059] hover:text-black hover:border-[#c5a059] transition-all self-start">
-                  {t(translations, 'common.read_more')} &nbsp; <span class="text-[10px]">&rarr;</span>
+                  ACCESS FILE &nbsp; <span class="text-[10px]">&rarr;</span>
                 </a>
               </div>
             </article>
           ))
         ) : (
           <div class="col-span-full py-24 text-center border border-dashed border-white/10 rounded bg-white/5">
-            <p class="text-[#c5a059] font-mono text-xl mb-2">{t(translations, 'blog_page.empty_title')}</p>
-            <p class="text-gray-500 text-sm">{t(translations, 'blog_page.empty_text')}</p>
+            <p class="text-[#c5a059] font-mono text-xl mb-2">DATABASE EMPTY</p>
+            <p class="text-gray-500 text-sm">Create a new 'Post' via Sanity Studio.</p>
           </div>
         )}
       </div>
