@@ -17,9 +17,9 @@ const animateScramble = (element, finalText, duration = 1) => {
     const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&";
     const originalText = finalText || element.textContent;
     const length = originalText.length;
-    
+
     let obj = { value: 0 };
-    
+
     gsap.to(obj, {
         value: 1,
         duration: duration,
@@ -62,9 +62,9 @@ const updateThreatDisplay = (level = 'neutral') => {
         icon = 'fa-check-circle';
     }
 
-    threatEl.className = `text-xs font-mono uppercase font-bold flex items-center opacity-0 ${colorClass}`; // opacity-0 ekledim
+    threatEl.className = `text-xs font-mono uppercase font-bold flex items-center ${colorClass}`;
     threatEl.innerHTML = `<i class="fas ${icon} mr-2"></i> ${level}`;
-    
+
     // GSAP ile yanıp sönme (Pulse) efekti - Sadece yüksek tehditler için
     if (['high', 'critical', 'severe'].includes(normalized)) {
         gsap.to(threatEl, { opacity: 0.4, duration: 0.6, repeat: -1, yoyo: true });
@@ -92,8 +92,8 @@ const renderLocationIntel = (location) => {
             "@context": "https://schema.org",
             "@type": "Place",
             "name": location.name,
-            "description": location.description 
-                ? location.description.map(block => block.children?.map(child => child.text).join('')).join(' ').substring(0, 160) 
+            "description": location.description
+                ? location.description.map(block => block.children?.map(child => child.text).join('')).join(' ').substring(0, 160)
                 : "A key territory in The Sins of the Fathers universe.",
             "url": window.location.href,
             "image": location.mainImage?.asset?.url,
@@ -109,21 +109,21 @@ const renderLocationIntel = (location) => {
     // IMAGE PROCESSING
     if (location.mainImage && location.mainImage.asset) {
         const url = urlFor(location.mainImage).width(1000).height(600).fit('crop').quality(75).url();
-        const blurHash = location.mainImage.asset.blurHash; 
-        
+        const blurHash = location.mainImage.asset.blurHash;
+
         // GSAP: BlurHash kullanırken, resmi başlangıçta bulanık bırakacağız, animasyonla netleşecek
         applyBlurToStaticImage('loc-image', url, blurHash);
     }
 
-    const setText = (id, text, fallbackKey) => { 
-        const el = document.getElementById(id); 
-        if (el) el.textContent = text || (fallbackKey ? i18next.t(fallbackKey) : ''); 
+    const setText = (id, text, fallbackKey) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = text || (fallbackKey ? i18next.t(fallbackKey) : '');
     };
 
     setText('loc-title', location.name, 'location_detail_page.placeholder_unknown');
     setText('loc-faction', location.faction?.title, 'location_detail_page.tactical_unverified');
     setText('loc-status', location.status, 'location_detail_page.tactical_operational');
-    
+
     if (location.location) {
         setText('loc-coords', `${location.location.lat.toFixed(4)}° N, ${location.location.lng.toFixed(4)}° W`);
     } else {
@@ -133,9 +133,9 @@ const renderLocationIntel = (location) => {
     updateThreatDisplay(location.securityLevel || i18next.t('location_detail_page.tactical_analyzing'));
 
     if (els.desc) {
-        els.desc.innerHTML = location.description 
-        ? toHTML(location.description) 
-        : `<p class="animate-pulse">${i18next.t('location_detail_page.decrypting_history')}</p>`;
+        els.desc.innerHTML = location.description
+            ? toHTML(location.description)
+            : `<p class="animate-pulse">${i18next.t('location_detail_page.decrypting_history')}</p>`;
     }
 
     if (els.events) {
@@ -190,10 +190,10 @@ const renderLocationIntel = (location) => {
     // D. Metadata (Koordinat, Faction vb.) Stagger ile gelsin
     const metaElements = [els.coords, els.faction, els.status, els.threat].filter(el => el);
     if (metaElements.length > 0) {
-        tl.fromTo(metaElements, 
+        tl.fromTo(metaElements,
             { opacity: 0, x: -10 },
             { opacity: 1, x: 0, duration: 0.5, stagger: 0.1 }
-        , "-=0.5");
+            , "-=0.5");
     }
 
     // E. Açıklama metni alttan yukarı
@@ -220,12 +220,8 @@ const renderLocationIntel = (location) => {
 
 export async function loadLocationDetails() {
     const feedLoader = document.getElementById('feed-loader');
-    const mainContent = document.getElementById('location-content'); // HTML yapınızda main content'e bu ID'yi verdiğinizi varsayıyorum veya querySelector('main') kullanabilirsiniz.
+    const mainContent = document.getElementById('location-content');
     const container = mainContent || document.querySelector('main');
-
-    // Başlangıçta ana içeriği gizle (FOUC önleme)
-    if (container) gsap.set(container, { autoAlpha: 0 });
-
     const params = new URLSearchParams(window.location.search);
     const slug = params.get('slug');
 
@@ -246,7 +242,7 @@ export async function loadLocationDetails() {
                 events[] { title_en, date, relatedLocation }
             }
         }`;
-        
+
         const result = await client.fetch(query, { slug });
 
         if (result) {

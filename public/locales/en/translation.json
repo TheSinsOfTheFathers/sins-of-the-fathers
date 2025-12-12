@@ -10,7 +10,8 @@
     "bloodline": "The Bloodline",
     "archives": "Archives",
     "characters": "Characters",
-    "map": "Map"
+    "map": "Map",
+    "merch": "Merch"
   },
   "common": {
     "loading": "Decrypting Data...",
@@ -403,10 +404,10 @@
     "meta_title": "Classified Archives | The Sins of the Fathers"
   },
   "cookie_consent": {
-  "title": "SURVEILLANCE PROTOCOL",
-  "text": "This terminal uses tracking beacons (cookies) to improve operational efficiency and ensure session integrity.",
-  "accept": "AUTHORIZE",
-  "decline": "DECLINE",
-  "policy_link": "View Protocol"
-}
+    "title": "SURVEILLANCE PROTOCOL",
+    "text": "This terminal uses tracking beacons (cookies) to improve operational efficiency and ensure session integrity.",
+    "accept": "AUTHORIZE",
+    "decline": "DECLINE",
+    "policy_link": "View Protocol"
+  }
 }

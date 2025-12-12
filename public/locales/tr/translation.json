@@ -10,7 +10,8 @@
     "bloodline": "Kan Hattı",
     "archives": "Arşivler",
     "characters": "Karakterler",
-    "map": "Harita"
+    "map": "Harita",
+    "merch": "Ürünler"
   },
   "common": {
     "loading": "Veri Şifresi Çözülüyor...",
@@ -123,7 +124,6 @@
     "data_corruption": "VERİ BOZULMASI TESPİT EDİLDİ",
     "system_failure": "SİSTEM HATASI",
     "meta_title": "Kronolojik Tarihçe | The Sins of the Fathers"
-
   },
   "factions_page": {
     "meta_title": "Güç Dinamikleri | Babaların Günahları",
@@ -133,7 +133,7 @@
     "quote": "\"Barış diye bir şey yoktur. Sadece senin olanı almakla çaldığını savunmak arasındaki durgunluk vardır.\"",
     "loader_text": "Güç Yapıları Analiz Ediliyor..."
   },
-    "faction_detail_page": {
+  "faction_detail_page": {
     "meta_title": "Fraksiyon Karargahı | Babaların Günahları",
     "header_subtitle": "// KARARGAH ERİŞİMİ",
     "exit_territory": "Bölgeden Ayrıl",
@@ -404,10 +404,10 @@
     "meta_title": "Gizli Arşivler | The Sins of the Fathers"
   },
   "cookie_consent": {
-  "title": "GÖZETİM PROTOKOLÜ",
-  "text": "Bu terminal, operasyonel verimliliği artırmak ve oturum bütünlüğünü sağlamak için takip sinyalleri (çerezler) kullanır.",
-  "accept": "YETKİ VER",
-  "decline": "REDDET",
-  "policy_link": "Protokolü İncele"
-}
+    "title": "GÖZETİM PROTOKOLÜ",
+    "text": "Bu terminal, operasyonel verimliliği artırmak ve oturum bütünlüğünü sağlamak için takip sinyalleri (çerezler) kullanır.",
+    "accept": "YETKİ VER",
+    "decline": "REDDET",
+    "policy_link": "Protokolü İncele"
+  }
 }

@@ -4,7 +4,7 @@ import { defineConfig } from 'vite';
 import { resolve } from 'path';
 
 export default defineConfig({
-  root: process.cwd(), 
+  root: process.cwd(),
 
   resolve: {
     alias: {
@@ -29,12 +29,13 @@ export default defineConfig({
         profile: resolve(__dirname, 'pages/profile.html'),
         terms: resolve(__dirname, 'pages/terms.html'),
         timeline: resolve(__dirname, 'pages/timeline.html'),
+        merch: resolve(__dirname, 'pages/merch.html'),
       },
     },
     outDir: './dist',
     emptyOutDir: true,
   },
-  
+
   server: {
     open: true,
   }

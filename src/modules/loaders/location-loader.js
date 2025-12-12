@@ -8,9 +8,9 @@ import gsap from 'gsap';
 let mapInstance = null;
 
 const FACTION_THEMES = {
-    'ballantine-empire': { border: '#c5a059', fill: '#c5a059' }, 
-    'macpherson-clan':   { border: '#7f1d1d', fill: '#991b1b' }, 
-    'default':           { border: '#555555', fill: '#777777' }
+    'ballantine-empire': { border: '#c5a059', fill: '#c5a059' },
+    'macpherson-clan': { border: '#7f1d1d', fill: '#991b1b' },
+    'default': { border: '#555555', fill: '#777777' }
 };
 
 /**
@@ -24,7 +24,7 @@ const destroyMap = (id) => {
         mapInstance = null;
     }
     if (container) {
-        container._leaflet_id = null; 
+        container._leaflet_id = null;
         // GSAP ile temizlerken kalan stilleri sıfırla
         gsap.set(container, { clearProps: "all" });
     }
@@ -36,7 +36,7 @@ const destroyMap = (id) => {
 const createTacticalIcon = (slug) => {
     if (!window.L) return null;
     const color = (FACTION_THEMES[slug] || FACTION_THEMES.default).border;
-    
+
     return L.divIcon({
         className: 'tactical-pin', // GSAP ile bunu seçeceğiz
         html: `
@@ -52,14 +52,12 @@ const createTacticalIcon = (slug) => {
 
 async function loadLayer(map, path, theme) {
     try {
-        // VITE DÜZELTMESİ: '/public/assets/...' yerine '/assets/...' kullanılır.
-        // Eğer public klasörü root ise, path'i temizleyelim:
         const cleanPath = path.replace('/public', '');
-        
+
         const res = await fetch(cleanPath);
         if (!res.ok) throw new Error(`404 Not Found: ${cleanPath}`);
         const data = await res.json();
-        
+
         const layer = L.geoJSON(data, {
             style: {
                 color: theme.border,
@@ -97,10 +95,10 @@ export async function displayLocations() {
         console.warn("Schema Injection Failed:", e);
     }
 
-    if (!mapContainer) return; 
+    if (!mapContainer) return;
     if (!window.L) {
         console.error("Leaflet Library Missing!");
-        if(loader) loader.innerHTML = "<span class='text-red-500'>OFFLINE</span>";
+        if (loader) loader.innerHTML = "<span class='text-red-500'>OFFLINE</span>";
         return;
     }
 
@@ -113,12 +111,12 @@ export async function displayLocations() {
             zoomControl: false,
             attributionControl: false
         });
-        mapInstance = map; 
+        mapInstance = map;
 
         // Zoom kontrolünü ekle ama henüz gösterme (Animation için)
         const zoomControl = L.control.zoom({ position: 'bottomright' }).addTo(map);
         const zoomContainer = zoomControl.getContainer();
-        if(zoomContainer) gsap.set(zoomContainer, { autoAlpha: 0, x: 50 });
+        if (zoomContainer) gsap.set(zoomContainer, { autoAlpha: 0, x: 50 });
 
         L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
             maxZoom: 18
@@ -128,18 +126,18 @@ export async function displayLocations() {
         window.zoomToLocation = (lat, lng, z) => {
             map.flyTo([lat, lng], z, { duration: 2.0 });
             const display = document.getElementById('location-name-display');
-            if (display) display.textContent = i18next.t('location_loader.sector_info', { lat: lat.toFixed(4), lng: lng.toFixed(4) });        
+            if (display) display.textContent = i18next.t('location_loader.sector_info', { lat: lat.toFixed(4), lng: lng.toFixed(4) });
         };
         window.resetMap = () => {
             map.flyTo([40, -30], 3, { duration: 1.5 });
             const display = document.getElementById('location-name-display');
-            if (display) display.textContent = i18next.t('location_loader.global_orbit');        
+            if (display) display.textContent = i18next.t('location_loader.global_orbit');
         };
 
         const factionsData = {
             'ballantine-empire': [
-                'united-kingdom-border.geojson', 
-                'california-border.geojson', 
+                'united-kingdom-border.geojson',
+                'california-border.geojson',
                 'italy-border.geojson',
                 'netherlands-border.geojson'
             ],
@@ -161,7 +159,7 @@ export async function displayLocations() {
         const query = `*[_type == "location" && defined(location)] { 
             name, "slug": slug.current, location, faction->{slug}, summary 
         }`;
-        
+
         const locations = await client.fetch(query);
         console.log(`> Found ${locations.length} locations.`);
 
@@ -169,9 +167,9 @@ export async function displayLocations() {
 
         if (locations.length > 0) {
             locations.forEach(loc => {
-                const { lat, lng } = loc.location; 
+                const { lat, lng } = loc.location;
                 const fSlug = loc.faction?.slug?.current || 'default';
-                
+
                 const marker = L.marker([lat, lng], {
                     icon: createTacticalIcon(fSlug)
                 }).addTo(map);
@@ -208,23 +206,23 @@ export async function displayLocations() {
 
         // A. Loader'ı Kapat
         if (loader) {
-            tl.to(loader, { 
-                autoAlpha: 0, 
+            tl.to(loader, {
+                autoAlpha: 0,
                 duration: 0.5,
                 onComplete: () => loader.style.display = 'none' // Tamamen kaldır
             });
         }
 
         // B. Harita Konteynerini Aç (Zoom-out efekti ile)
-        tl.to(mapContainer, { 
-            opacity: 1, 
-            scale: 1, 
-            duration: 1.2, 
-            ease: "power2.inOut" 
+        tl.to(mapContainer, {
+            opacity: 1,
+            scale: 1,
+            duration: 1.2,
+            ease: "power2.inOut"
         }, "-=0.2");
 
         // C. Zoom Kontrollerini Kaydırarak Getir
-        if(zoomContainer) {
+        if (zoomContainer) {
             tl.to(zoomContainer, { autoAlpha: 1, x: 0, duration: 0.5 }, "-=0.5");
         }
 
