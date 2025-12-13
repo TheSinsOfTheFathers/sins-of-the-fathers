@@ -29,7 +29,6 @@ export default defineConfig({
         profile: resolve(__dirname, 'pages/profile.html'),
         terms: resolve(__dirname, 'pages/terms.html'),
         timeline: resolve(__dirname, 'pages/timeline.html'),
-        merch: resolve(__dirname, 'pages/merch.html'),
       },
     },
     outDir: './dist',
