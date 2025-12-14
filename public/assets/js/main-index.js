@@ -1,7 +1,22 @@
 // --- IMPORTLAR (SÜRÜMLER EŞİTLENDİ - v10.12.2) ---
-// db'yi firebase-config.js'den çekiyoruz. O dosyanın da temiz olduğundan emin olmalısın (aşağıda anlattım).
-import { db } from './modules/firebase-config.js';
-import { collection, addDoc, serverTimestamp, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+// Firebase config'i doğrudan CDN'den yükle
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc, serverTimestamp, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+// Firebase Config (landing page için)
+const firebaseConfig = {
+    apiKey: "AIzaSyB7Xa5tZYVenPEkkjB0KVJDkoV7pQ7_QcQ",
+    authDomain: "thesinsofthefathers.com",
+    databaseURL: "https://sins-of-the-fathers-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "sins-of-the-fathers",
+    storageBucket: "sins-of-the-fathers.appspot.com",
+    messagingSenderId: "287213062167",
+    appId: "1:287213062167:web:1f863b4e96641570f5b452",
+    measurementId: "G-9H3782YN0N"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 // --- GERİ SAYIM SAYACI ---
 const countdownDate = new Date("2026-01-01T00:00:00").getTime();
@@ -86,7 +101,6 @@ if (subscribeForm) {
             }
         } catch (error) {
             console.error("Error managing subscription: ", error);
-            // Hata mesajını daha açıklayıcı yapalım
             if (error.code === 'permission-denied') {
                 subscribeMessage.textContent = 'Access Denied: Firewall blocking connection.';
             } else {
