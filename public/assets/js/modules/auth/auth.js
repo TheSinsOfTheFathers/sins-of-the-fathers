@@ -1,4 +1,4 @@
-import { auth, googleProvider, RECAPTCHA_SITE_KEY, functions } from '../firebase-config.js'; 
+import { auth, googleProvider, RECAPTCHA_SITE_KEY, functions, db } from '../firebase-config.js';
 import { httpsCallable } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js';
 import {
   createUserWithEmailAndPassword,
@@ -7,7 +7,6 @@ import {
   signOut,
   onAuthStateChanged
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import { db } from '../firebase-config.js';
 import { doc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 import i18next from '../../lib/i18n.js';
 
@@ -36,44 +35,44 @@ function ensureToastContainer() {
   return container;
 }
 
-function showPopup(type, message, {timeout = 5000} = {}) {
+function showPopup(type, message, { timeout = 5000 } = {}) {
   const container = ensureToastContainer();
   const toast = document.createElement('div');
-  
+
   const isError = type === 'error';
   const borderColor = isError ? '#4a0404' : '#c5a059';
   const textColor = isError ? '#ff5555' : '#c5a059';
   const icon = isError ? '⚠ ERROR:' : '✓ SYSTEM:';
 
   Object.assign(toast.style, {
-      minWidth: '280px', maxWidth: '400px', padding: '15px', 
-      background: '#050505',
-      borderLeft: `3px solid ${borderColor}`,
-      borderTop: '1px solid #222', borderRight: '1px solid #222', borderBottom: '1px solid #222',
-      boxShadow: '0 10px 30px rgba(0,0,0,0.9)', 
-      color: '#ccc', fontFamily: "'Courier Prime', monospace", fontSize: '12px',
-      display: 'flex', alignItems: 'flex-start', gap: '12px',
-      opacity: '0', transform: 'translateY(20px)', transition: 'all 0.3s ease'
+    minWidth: '280px', maxWidth: '400px', padding: '15px',
+    background: '#050505',
+    borderLeft: `3px solid ${borderColor}`,
+    borderTop: '1px solid #222', borderRight: '1px solid #222', borderBottom: '1px solid #222',
+    boxShadow: '0 10px 30px rgba(0,0,0,0.9)',
+    color: '#ccc', fontFamily: "'Courier Prime', monospace", fontSize: '12px',
+    display: 'flex', alignItems: 'flex-start', gap: '12px',
+    opacity: '0', transform: 'translateY(20px)', transition: 'all 0.3s ease'
   });
 
   toast.innerHTML = `
     <span style="color:${textColor}; font-weight:bold; white-space:nowrap;">${icon}</span>
     <span style="line-height:1.4;">${message}</span>
   `;
-  
+
   requestAnimationFrame(() => {
-      toast.style.opacity = '1';
-      toast.style.transform = 'translateY(0)';
+    toast.style.opacity = '1';
+    toast.style.transform = 'translateY(0)';
   });
 
   container.appendChild(toast);
 
   if (timeout > 0) {
-      setTimeout(() => { 
-          toast.style.opacity = '0';
-          toast.style.transform = 'translateY(10px)';
-          setTimeout(() => { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 300);
-      }, timeout);
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateY(10px)';
+      setTimeout(() => { if (toast.parentNode) toast.remove(); }, 300);
+    }, timeout);
   }
   return toast;
 }
@@ -97,14 +96,14 @@ function firebaseErrorToMessage(err) {
    RECAPTCHA LOGIC
    -------------------------------------------------------------------------- */
 let recaptchaReadyPromise = new Promise(resolve => {
-  if (window.grecaptcha && window.grecaptcha.execute) {
+  if (globalThis.grecaptcha && globalThis.grecaptcha.execute) {
     resolve();
   } else {
     const checkInterval = setInterval(() => {
-        if (window.grecaptcha && window.grecaptcha.execute) {
-            clearInterval(checkInterval);
-            resolve();
-        }
+      if (globalThis.grecaptcha && globalThis.grecaptcha.execute) {
+        clearInterval(checkInterval);
+        resolve();
+      }
     }, 500);
   }
 });
@@ -113,7 +112,7 @@ async function getRecaptchaToken(action = 'auth') {
   if (!RECAPTCHA_SITE_KEY) return null;
   try {
     await recaptchaReadyPromise;
-    const token = await window.grecaptcha.execute(RECAPTCHA_SITE_KEY, { action });
+    const token = await globalThis.grecaptcha.execute(RECAPTCHA_SITE_KEY, { action });
     return token;
   } catch (e) {
     console.error('Bot detection failed:', e);
@@ -139,11 +138,11 @@ export function initAuth() {
       if (isRegister) {
         loginForm.classList.add('hidden');
         registerForm.classList.remove('hidden');
-        if(title) title.innerHTML = i18next.t('login_page.dynamic_title_register');
+        if (title) title.innerHTML = i18next.t('login_page.dynamic_title_register');
       } else {
         registerForm.classList.add('hidden');
         loginForm.classList.remove('hidden');
-        if(title) title.innerHTML = i18next.t('login_page.dynamic_title_login');
+        if (title) title.innerHTML = i18next.t('login_page.dynamic_title_login');
       }
     };
 
@@ -157,7 +156,7 @@ export function initAuth() {
       e.preventDefault();
       const email = registerForm.querySelector('input[name="email"]').value.trim();
       const password = registerForm.querySelector('input[name="password"]').value.trim();
-      
+
       showMessage(authMessage, 'Initiating vetting protocol...', 'info');
 
       try {
@@ -167,17 +166,17 @@ export function initAuth() {
 
         showMessage(authMessage, 'Creating dossier...', 'info');
         const userCred = await createUserWithEmailAndPassword(auth, email, password);
-        
+
         await setDoc(doc(db, 'users', userCred.user.uid), {
-            email: email,
-            provider: 'password',
-            createdAt: serverTimestamp(),
-            role: 'recruit',
-            faction: 'undecided'
+          email: email,
+          provider: 'password',
+          createdAt: serverTimestamp(),
+          role: 'recruit',
+          faction: 'undecided'
         }, { merge: true });
 
         showMessage(authMessage, 'Identity Verified. Redirecting...', 'success');
-        setTimeout(() => window.location.href = './pages/profile.html', 1000);
+        setTimeout(() => globalThis.location.href = './pages/profile.html', 1000);
       } catch (err) {
         showPopup('error', firebaseErrorToMessage(err));
         showMessage(authMessage, 'Registration Failed.', 'error');
@@ -201,8 +200,8 @@ export function initAuth() {
 
         showMessage(authMessage, 'Access Granted.', 'success');
         await signInWithEmailAndPassword(auth, email, password);
-        
-        setTimeout(() => window.location.href = '../index.html', 800); 
+
+        setTimeout(() => globalThis.location.href = '../index.html', 800);
       } catch (err) {
         showPopup('error', firebaseErrorToMessage(err));
         showMessage(authMessage, 'Access Denied.', 'error');
@@ -214,25 +213,25 @@ export function initAuth() {
   const handleGoogleSignIn = async (e) => {
     e.preventDefault();
     showMessage(authMessage, 'Contacting Google satellites...', 'info');
-    
+
     try {
-        const googleToken = await getRecaptchaToken('google_signin');
-        const verifyRecaptchaToken = httpsCallable(functions, 'verifyRecaptchaToken');
-        await verifyRecaptchaToken({ token: googleToken, action: 'google_signin' });
+      const googleToken = await getRecaptchaToken('google_signin');
+      const verifyRecaptchaToken = httpsCallable(functions, 'verifyRecaptchaToken');
+      await verifyRecaptchaToken({ token: googleToken, action: 'google_signin' });
 
-        const result = await signInWithPopup(auth, googleProvider);
-        const u = result.user;
+      const result = await signInWithPopup(auth, googleProvider);
+      const u = result.user;
 
-        await setDoc(doc(db, 'users', u.uid), {
-            email: u.email,
-            displayName: u.displayName || null,
-            photoURL: u.photoURL || null,
-            provider: 'google',
-            lastLogin: serverTimestamp(),
-        }, { merge: true });
+      await setDoc(doc(db, 'users', u.uid), {
+        email: u.email,
+        displayName: u.displayName || null,
+        photoURL: u.photoURL || null,
+        provider: 'google',
+        lastLogin: serverTimestamp(),
+      }, { merge: true });
 
-        showMessage(authMessage, 'Biometrics confirmed.', 'success');
-        setTimeout(() => window.location.href = '/public/index.html', 800);
+      showMessage(authMessage, 'Biometrics confirmed.', 'success');
+      setTimeout(() => globalThis.location.href = '/public/index.html', 800);
     } catch (err) {
       showPopup('error', firebaseErrorToMessage(err));
       showMessage(authMessage, 'Signal Lost.', 'error');
@@ -243,29 +242,29 @@ export function initAuth() {
   if (googleBtnRegister) googleBtnRegister.addEventListener('click', handleGoogleSignIn);
 
 
-/* --------------------------------------------------------------------------
-   HEADER MENU & AUTH STATE (GÜNCELLENMİŞ VERSİYON)
-   -------------------------------------------------------------------------- */
+  /* --------------------------------------------------------------------------
+     HEADER MENU & AUTH STATE (GÜNCELLENMİŞ VERSİYON)
+     -------------------------------------------------------------------------- */
   onAuthStateChanged(auth, (user) => {
     const signinLink = document.getElementById('auth-signin-link');
-    
-    const guestLocks = document.querySelectorAll('.guest-only, .guest-lock'); 
-    
+
+    const guestLocks = document.querySelectorAll('.guest-only, .guest-lock');
+
     if (user) {
       if (signinLink) signinLink.style.display = 'none';
 
-      guestLocks.forEach(el => el.style.display = 'none'); 
+      guestLocks.forEach(el => el.style.display = 'none');
 
       ensureUserMenu(user);
-      
+
       document.querySelectorAll('.restricted-overlay').forEach(overlay => overlay.style.display = 'none');
       document.querySelectorAll('.restricted-content').forEach(content => content.classList.remove('restricted-content-blur'));
 
     } else {
-      if (signinLink) signinLink.style.display = 'flex'; 
+      if (signinLink) signinLink.style.display = 'flex';
 
-      guestLocks.forEach(el => el.style.display = 'flex'); 
-      
+      guestLocks.forEach(el => el.style.display = 'flex');
+
       const existing = document.getElementById('user-menu');
       if (existing) existing.remove();
 
@@ -282,10 +281,10 @@ export function initAuth() {
     const menu = document.createElement('div');
     menu.id = 'user-menu';
     menu.className = 'relative ml-6';
-    
-    const avatarSrc = user.photoURL 
-        ? user.photoURL 
-        : `https://ui-avatars.com/api/?name=${encodeURIComponent(user.email)}&background=c5a059&color=000`;
+
+    const avatarSrc = user.photoURL
+      ? user.photoURL
+      : `https://ui-avatars.com/api/?name=${encodeURIComponent(user.email)}&background=c5a059&color=000`;
 
     menu.innerHTML = `
       <button id="user-menu-btn" class="flex items-center gap-2 group focus:outline-none">
@@ -318,7 +317,7 @@ export function initAuth() {
           </div>
       </div>
     `;
-    
+
     controls.appendChild(menu);
 
     const btn = document.getElementById('user-menu-btn');
@@ -326,17 +325,17 @@ export function initAuth() {
     const signoutBtn = document.getElementById('menu-signout-btn');
 
     btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        dropdown.classList.toggle('hidden');
+      e.stopPropagation();
+      dropdown.classList.toggle('hidden');
     });
 
     signoutBtn.addEventListener('click', async () => {
-        try { await signOut(auth); window.location.href = '/public/index.html'; } 
-        catch (err) { console.error(err); }
+      try { await signOut(auth); globalThis.location.href = '/public/index.html'; }
+      catch (err) { console.error(err); }
     });
 
     document.addEventListener('click', (e) => {
-        if (!menu.contains(e.target)) dropdown.classList.add('hidden');
+      if (!menu.contains(e.target)) dropdown.classList.add('hidden');
     });
   }
 }

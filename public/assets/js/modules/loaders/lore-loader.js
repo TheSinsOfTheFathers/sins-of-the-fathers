@@ -1,8 +1,8 @@
 import { client } from '../../lib/sanityClient.js';
-import { renderBlurHash, handleImageLoad } from '../../lib/imageUtils.js'; 
+import { renderBlurHash, handleImageLoad } from '../../lib/imageUtils.js';
 import i18next from '../../lib/i18n.js'; // i18next import
 // 👇 SEO İMPORTU EKLENDİ
-import { injectSchema } from '../../lib/seo.js'; 
+import { injectSchema } from '../../lib/seo.js';
 
 let allLoreData = [];
 
@@ -12,7 +12,7 @@ let allLoreData = [];
 
 const createDocumentCard = (lore) => `
     <div class="archive-card bg-[#e6e2d3] text-black p-6 rounded-sm shadow-lg relative overflow-hidden group h-fit break-inside-avoid">
-        <div class="absolute top-2 right-2 border border-red-900 text-red-900 text-[10px] font-bold px-2 py-0.5 transform rotate-12 opacity-70">DOC_${lore._createdAt.slice(0,4)}</div>
+        <div class="absolute top-2 right-2 border border-red-900 text-red-900 text-[10px] font-bold px-2 py-0.5 transform rotate-12 opacity-70">DOC_${lore._createdAt.slice(0, 4)}</div>
         <h3 class="font-mono font-bold text-lg mb-2 uppercase underline decoration-red-800 decoration-2 tracking-tighter">
             <a href="lore-detail.html?slug=${lore.slug}" class="hover:text-red-900">${lore.title}</a>
         </h3>
@@ -74,7 +74,7 @@ const createImageCard = (lore) => {
 
     const cardDiv = document.createElement('div');
     cardDiv.className = 'archive-card bg-white p-3 shadow-lg h-fit break-inside-avoid hover:rotate-1 transition-transform duration-300';
-    
+
     cardDiv.innerHTML = `
         <a href="lore-detail.html?slug=${lore.slug}" class="block group">
             <div class="relative w-full aspect-video bg-gray-200 overflow-hidden border border-gray-300">
@@ -117,10 +117,10 @@ const createImageCard = (lore) => {
    -------------------------------------------------------------------------- */
 const generateCard = (lore) => {
     if (lore.restricted) return createRestrictedCard(lore);
-    
+
     const type = lore.loreType || 'document';
-    
-    switch(type) {
+
+    switch (type) {
         case 'audio': return createAudioCard(lore);
         case 'image': return createImageCard(lore);
         default: return createDocumentCard(lore);
@@ -134,7 +134,7 @@ const renderGrid = (data) => {
     const container = document.getElementById('archive-grid');
     if (!container) return;
 
-    container.innerHTML = ''; 
+    container.innerHTML = '';
 
     if (data.length === 0) {
         container.innerHTML = `<div class="col-span-full text-center text-gray-500 font-mono py-12">${i18next.t('lore_loader.no_records_query')}</div>`;
@@ -154,12 +154,12 @@ const renderGrid = (data) => {
 
 const applyFilters = (searchTerm = '', filterType = 'all') => {
     const lowerTerm = searchTerm.toLowerCase();
-    
+
     const filtered = allLoreData.filter(item => {
-        const matchesSearch = 
-            (item.title || '').toLowerCase().includes(lowerTerm) || 
+        const matchesSearch =
+            (item.title || '').toLowerCase().includes(lowerTerm) ||
             (item.summary || '').toLowerCase().includes(lowerTerm);
-            
+
         let matchesType = true;
         if (filterType === 'documents') matchesType = item.loreType === 'document' || !item.loreType;
         if (filterType === 'audio') matchesType = item.loreType === 'audio';
@@ -177,7 +177,7 @@ const applyFilters = (searchTerm = '', filterType = 'all') => {
 export async function displayLoreList() {
     const container = document.getElementById('archive-grid');
     const loader = document.getElementById('archive-loader');
-    
+
     if (!container) return;
 
     try {
@@ -198,7 +198,7 @@ export async function displayLoreList() {
             "date": date,
             source
         }`;
-        
+
         allLoreData = await client.fetch(query);
 
         // 👇 SEO / SCHEMA ENJEKSİYONU (ItemList)
@@ -211,7 +211,7 @@ export async function displayLoreList() {
                     "name": lore.title,
                     "description": lore.summary,
                     "datePublished": lore.date,
-                    "url": new URL(`lore-detail.html?slug=${lore.slug}`, window.location.origin).href
+                    "url": new URL(`lore-detail.html?slug=${lore.slug}`, globalThis.location.origin).href
                 }
             }));
 
@@ -240,18 +240,18 @@ export async function displayLoreList() {
 
     } catch (error) {
         console.error("Archive Corrupted:", error);
-        if(loader) loader.innerHTML = `<span class="text-red-500 font-mono">${i18next.t('lore_loader.system_error_short')}</span>`;
+        if (loader) loader.innerHTML = `<span class="text-red-500 font-mono">${i18next.t('lore_loader.system_error_short')}</span>`;
         container.innerHTML = `<p class="text-red-500 text-center col-span-full">${i18next.t('lore_loader.connection_failed_long')}</p>`;
     }
 }
 
 function setupSearchInterface() {
-    const searchInput = document.querySelector('input[placeholder*="Search"]'); 
-    const filterButtons = document.querySelectorAll('button.uppercase'); 
+    const searchInput = document.querySelector('input[placeholder*="Search"]');
+    const filterButtons = document.querySelectorAll('button.uppercase');
 
     if (searchInput) {
         searchInput.addEventListener('input', (e) => {
-            const activeBtn = document.querySelector('button.bg-gold\\/10'); 
+            const activeBtn = document.querySelector(String.raw`button.bg-gold\/10`);
             const type = activeBtn ? mapBtnTextToType(activeBtn.textContent) : 'all';
             applyFilters(e.target.value, type);
         });

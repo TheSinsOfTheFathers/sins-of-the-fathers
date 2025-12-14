@@ -6,17 +6,17 @@ import { collection, addDoc, serverTimestamp, query, where, getDocs } from "http
 // --- GERİ SAYIM SAYACI ---
 const countdownDate = new Date("2026-01-01T00:00:00").getTime();
 
-const countdownFunction = setInterval(function() {
-    const now = new Date().getTime();
+const countdownFunction = setInterval(function () {
+    const now = Date.now();
     const distance = countdownDate - now;
 
     const days = Math.floor(distance / (1000 * 60 * 60 * 24));
     const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-    
+
     const elDays = document.getElementById("days");
-    if(elDays) {
+    if (elDays) {
         elDays.innerText = days.toString().padStart(2, '0');
         document.getElementById("hours").innerText = hours.toString().padStart(2, '0');
         document.getElementById("minutes").innerText = minutes.toString().padStart(2, '0');
@@ -26,7 +26,7 @@ const countdownFunction = setInterval(function() {
     if (distance < 0) {
         clearInterval(countdownFunction);
         const countdownContainer = document.getElementById("countdown");
-        if(countdownContainer) countdownContainer.innerHTML = "<p class='text-2xl text-yellow-500 font-serif'>The story has begun.</p>";
+        if (countdownContainer) countdownContainer.innerHTML = "<p class='text-2xl text-yellow-500 font-serif'>The story has begun.</p>";
     }
 }, 1000);
 
@@ -82,7 +82,7 @@ if (subscribeForm) {
                 });
                 subscribeMessage.textContent = 'Success! Welcome to the watchlist.';
                 subscribeMessage.className = 'mt-3 text-sm h-4 text-green-500 font-mono success';
-                emailInput.value = ''; 
+                emailInput.value = '';
             }
         } catch (error) {
             console.error("Error managing subscription: ", error);
@@ -96,8 +96,8 @@ if (subscribeForm) {
         } finally {
             setTimeout(() => {
                 if (!subscribeMessage.classList.contains('success')) {
-                   subscribeMessage.textContent = '';
-                   subscribeMessage.className = 'mt-3 text-sm h-4 text-neutral-400 font-mono';
+                    subscribeMessage.textContent = '';
+                    subscribeMessage.className = 'mt-3 text-sm h-4 text-neutral-400 font-mono';
                 }
             }, 5000);
         }

@@ -22,27 +22,23 @@ const firebaseConfig = {
 /* --------------------------------------------------------------------------
    SYSTEM INITIALIZATION
    -------------------------------------------------------------------------- */
-let app, db, analytics, auth, functionsInstance, googleProvider, storage;
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+const storage = getStorage(app);
+const googleProvider = new GoogleAuthProvider();
+const functionsInstance = getFunctions(app, "europe-west3");
 
+let analytics;
 try {
-    app = initializeApp(firebaseConfig);
-    
-    db = getFirestore(app);
-    auth = getAuth(app);
-    storage = getStorage(app);
     analytics = getAnalytics(app);
-    googleProvider = new GoogleAuthProvider();
-    
-    functionsInstance = getFunctions(app, "europe-west3");
-
     console.log(
-        "%c[SYSTEM] TSOF Secure Link :: ESTABLISHED", 
+        "%c[SYSTEM] TSOF Secure Link :: ESTABLISHED",
         "color: #c5a059; background: #050505; padding: 4px; border-left: 2px solid #c5a059; font-family: monospace;"
     );
-
 } catch (error) {
     console.error(
-        "%c[CRITICAL FAILURE] Core services could not initialize.", 
+        "%c[CRITICAL FAILURE] Analytics could not initialize.",
         "color: #ef4444; background: #000; font-weight: bold;"
     );
     console.error(error);
@@ -51,12 +47,12 @@ try {
 /* --------------------------------------------------------------------------
    EXPORTS
    -------------------------------------------------------------------------- */
-export { 
-    app, 
-    db, 
-    analytics, 
-    auth, 
-    functionsInstance as functions, 
-    googleProvider, 
-    storage 
+export {
+    app,
+    db,
+    analytics,
+    auth,
+    functionsInstance as functions,
+    googleProvider,
+    storage
 };

@@ -13,62 +13,62 @@ import { initI18n, changeLanguage } from './lib/i18n.js';
    ROUTER CONFIGURATION (MAPPINGS)
    -------------------------------------------------------------------------- */
 const ROUTER_CONFIGS = [
-    { 
+    {
         id: ['protagonists-gallery', 'main-characters-gallery'],
         log: " > Personnel Database Detected",
         modulePath: './modules/loaders/character-loader.js',
         loaderFn: 'displayCharacters'
     },
-    { 
-        id: 'character-dossier', 
+    {
+        id: 'character-dossier',
         log: " > Dossier Decryption Started",
         modulePath: './modules/loaders/character-detail-loader.js',
         loaderFn: 'loadCharacterDetails'
     },
-    { 
-        id: 'factions-grid', 
+    {
+        id: 'factions-grid',
         log: " > Tactical Overview Initialized",
         modulePath: './modules/loaders/faction-loader.js',
         loaderFn: 'displayFactions'
     },
-    { 
-        id: 'faction-title', 
+    {
+        id: 'faction-title',
         log: " > Faction Intel Access Requested",
         modulePath: './modules/loaders/faction-detail-loader.js',
         loaderFn: 'loadFactionDetails'
     },
-    { 
-        id: 'timeline-embed', 
+    {
+        id: 'timeline-embed',
         log: " > Constructing Chronology",
         modulePath: './modules/loaders/timeline-loader.js',
         loaderFn: 'displayTimeline'
     },
-    { 
-        id: 'map', 
+    {
+        id: 'map',
         log: " > Satellite Uplink Establishing...",
         modulePath: './modules/loaders/location-loader.js',
         loaderFn: 'displayLocations'
     },
-    { 
-        id: 'location-intel', 
+    {
+        id: 'location-intel',
         log: " > Focusing Drone Feed",
         modulePath: './modules/loaders/location-detail-loader.js',
         loaderFn: 'loadLocationDetails'
     },
-    { 
-        id: 'archive-grid', 
+    {
+        id: 'archive-grid',
         log: " > Archive Access Granted",
         modulePath: './modules/loaders/lore-loader.js',
         loaderFn: 'displayLoreList'
     },
-    { 
-        id: 'evidence-container', 
+    {
+        id: 'evidence-container',
         log: " > Examining Evidence",
         modulePath: './modules/loaders/lore-detail-loader.js',
         loaderFn: 'loadLoreDetails'
     },
-    { 
-        id: 'profile-content', 
+    {
+        id: 'profile-content',
         log: " > Verifying Biometrics",
         modulePath: './modules/auth/profile.js',
         loaderFn: 'loadProfilePage'
@@ -79,15 +79,15 @@ const ROUTER_CONFIGS = [
    EXECUTION PROTOCOL (MAIN FUNCTION)
    -------------------------------------------------------------------------- */
 document.addEventListener('DOMContentLoaded', async () => {
-    
+
     console.log(
-        "%c TSOF // SYSTEM ONLINE ", 
+        "%c TSOF // SYSTEM ONLINE ",
         "color: #000; background: #c5a059; padding: 5px; font-weight: bold; font-family: monospace;"
     );
 
     // 1. GLOBAL FONKSİYON ATAMASI
     // HTML'deki butonların (onclick) bu fonksiyona erişebilmesi için window'a atıyoruz.
-    window.changeAppLanguage = changeLanguage;
+    globalThis.changeAppLanguage = changeLanguage;
 
     // 2. SENKRON UI BAŞLATMALARI
     initMobileMenu();
@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.log(` > Language Protocol: LOADED [${currentLang.toUpperCase()}]`);
 
         // Aktif dil butonunu parlat (Görsel geri bildirim)
-        const activeBtn = document.querySelector(`.lang-btn[data-lang="${currentLang.substring(0,2)}"]`);
+        const activeBtn = document.querySelector(`.lang-btn[data-lang="${currentLang.substring(0, 2)}"]`);
         if (activeBtn) {
             activeBtn.classList.add('text-white', 'font-bold', 'underline');
             activeBtn.classList.remove('text-gray-500');
@@ -109,27 +109,27 @@ document.addEventListener('DOMContentLoaded', async () => {
     } catch (error) {
         console.error(" ! Language Protocol Failure:", error);
     }
-    
+
     // 4. SAYFAYA ÖZEL MODÜLLERİ YÜKLE (ROUTER)
     for (const config of ROUTER_CONFIGS) {
-        
+
         const idsToCheck = Array.isArray(config.id) ? config.id : [config.id];
-        
+
         const isPageActive = idsToCheck.some(id => document.getElementById(id));
 
         if (isPageActive) {
-            
+
             console.log(config.log);
 
             try {
                 const module = await import(config.modulePath);
-                
+
                 if (module[config.loaderFn]) {
                     module[config.loaderFn]();
                 } else {
                     console.error(`ERROR: Module ${config.modulePath} does not export function ${config.loaderFn}`);
                 }
-                
+
                 return; // Sayfa modülü bulunduğunda döngüyü kır (Performans)
 
             } catch (error) {

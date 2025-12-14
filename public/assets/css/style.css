@@ -4,14 +4,14 @@
     --font-serif: 'Cormorant Garamond', serif;
     --font-sans: 'Lato', sans-serif;
 
-    --color-bg-primary: #171717;   
-    --color-bg-secondary: #262626;  
-    --color-border: #404040;       
+    --color-bg-primary: #171717;
+    --color-bg-secondary: #262626;
+    --color-border: #404040;
 
-    --color-text-primary: #e5e5e5;  
+    --color-text-primary: #e5e5e5;
     --color-text-secondary: #a3a3a3;
-    
-    --color-accent-primary: #f59e0b; 
+
+    --color-accent-primary: #f59e0b;
     --color-accent-secondary: #eab308;
 }
 
@@ -41,7 +41,12 @@ body {
     flex: 1 0 auto;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
     font-family: var(--font-serif);
     color: var(--color-accent-primary);
 }
@@ -64,7 +69,8 @@ a:hover {
    - Sticky header for consistent navigation across all pages.
    -------------------------------------------------------------------------- */
 header {
-    background-color: rgba(23, 23, 23, 0.85); /* Neutral 900 with transparency */
+    background-color: rgba(23, 23, 23, 0.85);
+    /* Neutral 900 with transparency */
     backdrop-filter: blur(8px);
     border-bottom: 1px solid var(--color-border);
 }
@@ -73,7 +79,8 @@ header {
    4. Reusable Card Components (Characters, Factions)
    - Base style for character and faction cards.
    -------------------------------------------------------------------------- */
-.character-card, .faction-card {
+.character-card,
+.faction-card {
     background-color: var(--color-bg-secondary);
     border: 1px solid var(--color-border);
     border-radius: 0.5rem;
@@ -81,7 +88,8 @@ header {
     transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
-.character-card:hover, .faction-card:hover {
+.character-card:hover,
+.faction-card:hover {
     transform: translateY(-5px);
     border-color: var(--color-accent-secondary);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
@@ -109,7 +117,7 @@ header {
 }
 
 .faction-title {
-    font-size: 1.75rem; 
+    font-size: 1.75rem;
     color: var(--color-accent-primary);
     margin: 0;
 }
@@ -136,7 +144,7 @@ header {
 
 .faction-description {
     color: var(--color-text-secondary);
-    margin-top: auto; 
+    margin-top: auto;
     font-style: italic;
 }
 
@@ -163,8 +171,13 @@ header {
     width: 50%;
 }
 
-.timeline-item.left { left: 0; }
-.timeline-item.right { left: 50%; }
+.timeline-item.left {
+    left: 0;
+}
+
+.timeline-item.right {
+    left: 50%;
+}
 
 .timeline-item::after {
     content: '';
@@ -178,8 +191,13 @@ header {
     z-index: 1;
 }
 
-.timeline-item.left::after { right: -10px; }
-.timeline-item.right::after { left: -10px; }
+.timeline-item.left::after {
+    right: -10px;
+}
+
+.timeline-item.right::after {
+    left: -10px;
+}
 
 .timeline-content {
     padding: 20px 30px;
@@ -190,65 +208,147 @@ header {
 }
 
 @media screen and (max-width: 768px) {
-    .timeline::after { left: 31px; }
-    .timeline-item { width: 100%; padding-left: 70px; padding-right: 25px; }
-    .timeline-item.left, .timeline-item.right { left: 0%; }
-    .timeline-item.left::after, .timeline-item.right::after { left: 12px; }
+    .timeline::after {
+        left: 31px;
+    }
+
+    .timeline-item {
+        width: 100%;
+        padding-left: 70px;
+        padding-right: 25px;
+    }
+
+    .timeline-item.left,
+    .timeline-item.right {
+        left: 0%;
+    }
+
+    .timeline-item.left::after,
+    .timeline-item.right::after {
+        left: 12px;
+    }
 }
 
 
-.animate-fade-in-down { animation: fadeInDown 1.5s ease-out forwards; }
-.animate-fade-in-up { animation: fadeInUp 1.5s ease-out 0.5s forwards; opacity: 0; }
+.animate-fade-in-down {
+    animation: fadeInDown 1.5s ease-out forwards;
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 1.5s ease-out 0.5s forwards;
+    opacity: 0;
+}
 
 @keyframes fadeInDown {
-    from { 
-        opacity: 0; 
-        transform: translateY(-20px); 
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
     }
-    to { 
-        opacity: 1; 
-        transform: translateY(0); 
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
 @keyframes fadeInUp {
-    from { 
-        opacity: 0; 
-        transform: translateY(20px); 
+    from {
+        opacity: 0;
+        transform: translateY(20px);
     }
-    to { 
-        opacity: 1; 
-        transform: translateY(0); 
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
     }
 }
 
 
-.auth-login-form, auth-register-form, input { background-color: #0f0f0f; }
+.auth-login-form,
+auth-register-form,
+input {
+    background-color: #0f0f0f;
+}
 
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
-    border: 1px solid var(--color-accent-primary); 
+    border: 1px solid var(--color-accent-primary);
     -webkit-text-fill-color: var(--color-text-primary) !important;
     -webkit-box-shadow: 0 0 0 30px #0f0f0f inset !important;
     transition: background-color 5000s ease-in-out 0s;
 }
 
-.auth-message { margin-top: 0.5rem; }
-.auth-message.info { color: var(--color-text-secondary); }
-.auth-message.success { color: #86efac; }
-.auth-message.error { color: #fb7185; }
+.auth-message {
+    margin-top: 0.5rem;
+}
 
-.auth-signed-in { color: var(--color-accent-primary); font-weight: 700; }
+.auth-message.info {
+    color: var(--color-text-secondary);
+}
 
-.user-menu { display: inline-block; margin-left: 0.6rem; position: relative; }
-.user-menu-button { background: transparent; border: 1px solid var(--color-border); width: 2.4rem; height: 2.4rem; border-radius: 9999px; display: inline-flex; align-items: center; justify-content: center; color: var(--color-text-primary); font-weight:700 }
-.user-menu-button:hover { border-color: var(--color-accent-secondary); }
-.user-menu-button { display:inline-block; width:1.4rem; height:1.4rem; line-height:1.4rem; text-align:center; }
-.user-menu-dropdown { position: absolute; top: calc(100% + 0.4rem); right: 0; background: var(--color-bg-secondary); border: 1px solid var(--color-border); min-width: 180px; border-radius: 0.5rem; box-shadow: 0 8px 24px rgba(0,0,0,0.4); z-index: 60; overflow: hidden }
-.user-menu-dropdown a { display: block; color: var(--color-text-primary); padding: 0.5rem 0.75rem; }
-.user-menu-dropdown a:hover { background: rgba(255,255,255,0.02); color: var(--color-accent-secondary); }
+.auth-message.success {
+    color: #86efac;
+}
+
+.auth-message.error {
+    color: #fb7185;
+}
+
+.auth-signed-in {
+    color: var(--color-accent-primary);
+    font-weight: 700;
+}
+
+.user-menu {
+    display: inline-block;
+    margin-left: 0.6rem;
+    position: relative;
+}
+
+.user-menu-button {
+    background: transparent;
+    border: 1px solid var(--color-border);
+    width: 2.4rem;
+    height: 2.4rem;
+    border-radius: 9999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-primary);
+    font-weight: 700;
+    line-height: 1.4rem;
+    text-align: center;
+}
+
+.user-menu-button:hover {
+    border-color: var(--color-accent-secondary);
+}
+
+.user-menu-dropdown {
+    position: absolute;
+    top: calc(100% + 0.4rem);
+    right: 0;
+    background: var(--color-bg-secondary);
+    border: 1px solid var(--color-border);
+    min-width: 180px;
+    border-radius: 0.5rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    z-index: 60;
+    overflow: hidden
+}
+
+.user-menu-dropdown a {
+    display: block;
+    color: var(--color-text-primary);
+    padding: 0.5rem 0.75rem;
+}
+
+.user-menu-dropdown a:hover {
+    background: rgba(255, 255, 255, 0.02);
+    color: var(--color-accent-secondary);
+}
 
 .user-avatar {
     width: 48px;
@@ -271,9 +371,22 @@ input:-webkit-autofill:active {
     box-shadow: 0 0 10px rgba(245, 158, 11, 0.5);
 }
 
-.profile-form input { background-color: #0f0f0f; border: 1px solid var(--color-border); color: var(--color-text-primary); padding: 0.5rem; border-radius: 0.25rem }
-.profile-form label { color: var(--color-text-secondary); }
-.profile-message { color: var(--color-text-secondary); margin-top: 0.5rem }
+.profile-form input {
+    background-color: #0f0f0f;
+    border: 1px solid var(--color-border);
+    color: var(--color-text-primary);
+    padding: 0.5rem;
+    border-radius: 0.25rem
+}
+
+.profile-form label {
+    color: var(--color-text-secondary);
+}
+
+.profile-message {
+    color: var(--color-text-secondary);
+    margin-top: 0.5rem
+}
 
 .lore-card {
     display: block;
@@ -301,12 +414,12 @@ input:-webkit-autofill:active {
 }
 
 .lore-detail-article {
-    max-width: 48rem; 
+    max-width: 48rem;
     margin: 0 auto;
 }
 
 .lore-detail-title {
-    font-size: 3rem; 
+    font-size: 3rem;
     color: var(--color-accent-secondary);
     margin-bottom: 1.5rem;
     padding-bottom: 1rem;
@@ -383,25 +496,25 @@ main.flex-grow {
 .button-container {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem; 
+    gap: 1.5rem;
     width: 100%;
-    max-width: 320px; 
+    max-width: 320px;
 }
 
 .store-button {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0.875rem 1.75rem; 
-    border-radius: 0.5rem;     
-    font-size: 1rem;           
+    padding: 0.875rem 1.75rem;
+    border-radius: 0.5rem;
+    font-size: 1rem;
     font-weight: 700;
     text-decoration: none;
     transition: all 0.2s ease-out;
     border: 1px solid transparent;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
     line-height: 1.5;
-    text-transform: none; 
+    text-transform: none;
 }
 
 .store-button:hover {
@@ -416,7 +529,7 @@ main.flex-grow {
 
 .store-button i,
 .store-button .flag-icon {
-    height: 1.5rem; 
+    height: 1.5rem;
     width: auto;
     margin-right: 0.75rem;
     flex-shrink: 0;
@@ -424,10 +537,11 @@ main.flex-grow {
 }
 
 .shopier-button {
-    background-color: #6A00FF; 
+    background-color: #6A00FF;
     border-color: transparent;
     color: white;
 }
+
 .shopier-button:hover {
     background-color: #5d00e0;
 }
@@ -435,8 +549,9 @@ main.flex-grow {
 .gumroad-button {
     background-color: #FF90E8;
     border-color: transparent;
-    color: #000000; 
+    color: #000000;
 }
+
 .gumroad-button:hover {
     background-color: #ff78e0
 }
@@ -446,15 +561,17 @@ main.flex-grow {
     border-color: transparent;
     color: #000000;
 }
+
 .amazon-button:hover {
     background-color: #fca92b;
 }
 
 .apple-button {
-    background-color: #000000; 
-    border-color: #333; 
+    background-color: #000000;
+    border-color: #333;
     color: white;
 }
+
 .apple-button:hover {
     background-color: #1a1a1a;
     border-color: #555;
@@ -463,121 +580,38 @@ main.flex-grow {
 .google-button {
     background-color: #4285F4;
     border-color: transparent;
-    color: white;
+    color: #ffffff;
 }
+
 .google-button:hover {
     background-color: #3572E1;
+    color: #ffffff;
 }
-
-.mermaid-container {
-    background-color: rgba(23, 23, 23, 0.5); /* bg-neutral-900/50 */
-    border: 1px solid #404040; /* border-neutral-700 */
-    border-radius: 0.75rem; /* rounded-xl */
-    padding: 2rem;
-    backdrop-filter: blur(4px);
-    overflow: auto; /* Geniş ağaçların taşmasını engellemek için */
-}
-
-/* --- Karakter Kutuları (Düğümler) --- */
-.mermaid svg .node rect, 
-.mermaid svg .node circle,
-.mermaid svg .node polygon {
-    stroke-width: 2px !important;
-    stroke: #6b7280; /* Gri sınır - varsayılan */
-    fill: #1c1c1c !important; /* Koyu arka plan */
-}
-
-/* --- Karakter İsimleri --- */
-.mermaid svg .node .label {
-    font-family: 'Cormorant Garamond', serif !important;
-    font-size: 16px !important;
-    fill: #d1d5db !important; /* Gri metin - varsayılan */
-}
-
-/* --- İlişki Çizgileri --- */
-.mermaid svg .edgePath .path {
-    stroke: #525252 !important;
-    stroke-width: 1.5px !important;
-}
-
-/* --- İlişki Etiketleri (örn: "Father") --- */
-.mermaid svg .edgeLabel {
-    font-family: 'Lato', sans-serif !important;
-    font-size: 12px !important;
-    fill: #9ca3af !important;
-    background-color: transparent !important;
-}
-
-/* ### ŞİMDİ SİHİR BAŞLIYOR: ÖZEL SINIFLAR ### */
-
-/* Ballantine Kanı Sınıfı */
-.mermaid svg .node.ballantine rect { stroke: #993a3a !important; fill: #5a1d1d !important; }
-.mermaid svg .node.ballantine .label { fill: #fff !important; }
-
-/* Ana Karakter Sınıfı */
-.mermaid svg .node.mainCharacter rect { stroke: #ffbf2b !important; fill: #ca8a04 !important; }
-.mermaid svg .node.mainCharacter .label { fill: #111 !important; font-weight: bold; }
-
-/* Cagliari Kanı Sınıfı */
-.mermaid svg .node.cagliari rect { stroke: #60a5fa !important; fill: #2563eb !important; }
-.mermaid svg .node.cagliari .label { fill: #fff !important; }
-
-/* Katalizör Sınıfı */
-.mermaid svg .node.catalyst rect { stroke: #10b981 !important; fill: #065f46 !important; }
-.mermaid svg .node.catalyst .label { fill: #fff !important; }```
-
-/* --- MERMAID EK STİLLER (HIZLI KAZANIM) --- */
-/* Genel SVG font ve kontrast ayarı */
-.mermaid svg {
-    font-family: 'Cormorant Garamond', serif !important;
-    color: var(--color-text-primary);
-}
-
-/* Düğümlere daha belirgin gölge ve padding benzeri görünüm */
-.mermaid svg .node rect, .mermaid svg .node circle, .mermaid svg .node polygon {
-    filter: drop-shadow(0 8px 18px rgba(2,6,23,0.65));
-    rx: 8px;
-    ry: 8px;
-}
-
-.mermaid svg .node text, .mermaid svg .node .label {
-    fill: #f8fafc !important;
-    font-size: 15px !important;
-}
-
-.mermaid svg .edgePath path, .mermaid svg .edgePath .path {
-    stroke: #6b7280 !important;
-    stroke-width: 1.6px !important;
-}
-
-/* Daha sıcak bir vurgu için ana karakter sınıfı. Loader bu sınıfı ekliyor. */
-.mermaid svg g.mainCharacter rect,
-.mermaid svg .node.mainCharacter rect {
-    fill: #f59e0b !important;
-    stroke: #b45309 !important;
-    stroke-width: 2px !important;
-}
-.mermaid svg g.mainCharacter text,
-.mermaid svg .node.mainCharacter .label {
-    fill: #071228 !important;
-    font-weight: 700 !important;
-}
-
-/* Küçük ekranlarda grafik içeriğini daha iyi sarmala */
-.mermaid-container { max-width: 100%; overflow-x: auto; }
-
-/* Kenar etiketleri daha ince ve okunaklı */
-.mermaid svg .edgeLabel, .mermaid svg .edgeLabel tspan { fill: #9ca3af !important; font-family: 'Lato', sans-serif !important; }
-
-/* Eğer mermaid sınıf adları farklıysa, fallback olarak mainCharacter yerine mainCharacter- node elemanlarına da uygula */
-.mermaid svg g[class*="main"] rect { box-shadow: 0 10px 20px rgba(0,0,0,0.55); }
 
 /* --- D3 Family Graph Styles --- */
-.d3-container { background-color: rgba(23,23,23,0.45); border: 1px solid var(--color-border); border-radius: 0.75rem; padding: 1rem; overflow: auto; }
-.d3-container svg { display: block; }
-.d3-container .node text { pointer-events: none; }
-.d3-container .node circle { transition: stroke-width 0.15s ease; }
-.d3-container .link-label { pointer-events: none; }
+.d3-container {
+    background-color: rgba(23, 23, 23, 0.45);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
+    padding: 1rem;
+    overflow: auto;
+}
+
+.d3-container svg {
+    display: block;
+}
+
+.d3-container .node text {
+    pointer-events: none;
+}
+
+.d3-container .node circle {
+    transition: stroke-width 0.15s ease;
+}
+
+.d3-container .link-label {
+    pointer-events: none;
+}
 
 /* Tooltip for D3 nodes */
 .d3-tooltip {
@@ -585,28 +619,45 @@ main.flex-grow {
     color: #e6e6e6;
     padding: 8px 10px;
     border-radius: 6px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6);
     font-size: 13px;
     z-index: 60;
 }
 
 /* Tree link style */
-.tree-link { fill: none; stroke: #5b6870; stroke-width: 1.2px; }
+.tree-link {
+    fill: none;
+    stroke: #5b6870;
+    stroke-width: 1.2px;
+}
 
 /* Loading spinner inside the D3 container */
-.d3-loading { background: linear-gradient(180deg, rgba(0,0,0,0.35), rgba(0,0,0,0.55)); border-radius: 0.5rem; z-index: 55; }
+.d3-loading {
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.55));
+    border-radius: 0.5rem;
+    z-index: 55;
+}
+
 .spinner {
     width: 36px;
     height: 36px;
     border-radius: 50%;
-    border: 4px solid rgba(255,255,255,0.08);
+    border: 4px solid rgba(255, 255, 255, 0.08);
     border-top-color: var(--color-accent-primary);
     animation: spinner-rotate 1s linear infinite;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
-@keyframes spinner-rotate { to { transform: rotate(360deg); } }
 
-.d3-empty { text-align: center; font-style: italic; }
+@keyframes spinner-rotate {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.d3-empty {
+    text-align: center;
+    font-style: italic;
+}
 
 .hamburger-button span {
     transition: all 0.3s ease-in-out;
@@ -615,11 +666,16 @@ main.flex-grow {
 
 /* When Active (Open State) */
 .hamburger-button.active span:nth-child(1) {
-    transform: translateY(8px) rotate(45deg); /* Üst çizgi çapraz */
+    transform: translateY(8px) rotate(45deg);
+    /* Üst çizgi çapraz */
 }
+
 .hamburger-button.active span:nth-child(2) {
-    opacity: 0; /* Orta çizgi kaybolur */
+    opacity: 0;
+    /* Orta çizgi kaybolur */
 }
+
 .hamburger-button.active span:nth-child(3) {
-    transform: translateY(-8px) rotate(-45deg); /* Alt çizgi ters çapraz */
+    transform: translateY(-8px) rotate(-45deg);
+    /* Alt çizgi ters çapraz */
 }

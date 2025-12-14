@@ -5,9 +5,9 @@ import { injectSchema } from '../../lib/seo.js';
 let mapInstance = null;
 
 const FACTION_THEMES = {
-    'ballantine-empire': { border: '#c5a059', fill: '#c5a059' }, 
-    'macpherson-clan':   { border: '#7f1d1d', fill: '#991b1b' }, 
-    'default':           { border: '#555555', fill: '#777777' }
+    'ballantine-empire': { border: '#c5a059', fill: '#c5a059' },
+    'macpherson-clan': { border: '#7f1d1d', fill: '#991b1b' },
+    'default': { border: '#555555', fill: '#777777' }
 };
 
 /**
@@ -22,7 +22,7 @@ const destroyMap = (id) => {
         mapInstance = null;
     }
     if (container) {
-        container._leaflet_id = null; 
+        container._leaflet_id = null;
     }
 };
 
@@ -30,9 +30,9 @@ const destroyMap = (id) => {
  * Taktiksel Marker İkonu Oluşturucu
  */
 const createTacticalIcon = (slug) => {
-    if (!window.L) return null;
+    if (!globalThis.L) return null;
     const color = (FACTION_THEMES[slug] || FACTION_THEMES.default).border;
-    
+
     return L.divIcon({
         className: 'tactical-pin',
         html: `
@@ -51,7 +51,7 @@ async function loadLayer(map, path, theme) {
         const res = await fetch(path);
         if (!res.ok) throw new Error(`404 Not Found: ${path}`);
         const data = await res.json();
-        
+
         L.geoJSON(data, {
             style: {
                 color: theme.border,
@@ -63,7 +63,11 @@ async function loadLayer(map, path, theme) {
             }
         }).addTo(map);
     } catch (e) {
-        console.warn(`[Map Layer Missing] ${path}`);
+        if (e.message.includes('404')) {
+            console.warn(`[Map Layer Missing] ${path}`);
+        } else {
+            console.error("[Map Layer Error]", e);
+        }
     }
 }
 
@@ -78,15 +82,15 @@ export async function displayLocations() {
             "@type": "Map",
             "name": "Global Surveillance Map | The Sins of the Fathers",
             "description": "Interactive map showing all faction territories and key locations in the TSOF universe.",
-            "url": window.location.href
+            "url": globalThis.location.href
         };
         injectSchema(schemaData);
     } catch (e) {
         console.warn("Schema Injection Failed:", e);
     }
 
-    if (!mapContainer) return; 
-    if (!window.L) {
+    if (!mapContainer) return;
+    if (!globalThis.L) {
         console.error("Leaflet Library Missing!");
         return;
     }
@@ -100,7 +104,7 @@ export async function displayLocations() {
             zoomControl: false,
             attributionControl: false
         });
-        mapInstance = map; 
+        mapInstance = map;
 
         L.control.zoom({ position: 'bottomright' }).addTo(map);
 
@@ -108,19 +112,21 @@ export async function displayLocations() {
             maxZoom: 18
         }).addTo(map);
 
-        window.zoomToLocation = (lat, lng, z) => {
-            map.flyTo([lat, lng], z, { duration: 2.0 });
+        globalThis.zoomToLocation = (lat, lng, z) => {
+            map.flyTo([lat, lng], z, { duration: 2 });
             const display = document.getElementById('location-name-display');
-            if (display) display.textContent = i18next.t('location_loader.sector_info', { lat: lat.toFixed(4), lng: lng.toFixed(4) });        };
-        window.resetMap = () => {
+            if (display) display.textContent = i18next.t('location_loader.sector_info', { lat: lat.toFixed(4), lng: lng.toFixed(4) });
+        };
+        globalThis.resetMap = () => {
             map.flyTo([40, -30], 3, { duration: 1.5 });
             const display = document.getElementById('location-name-display');
-            if (display) display.textContent = i18next.t('location_loader.global_orbit');        };
+            if (display) display.textContent = i18next.t('location_loader.global_orbit');
+        };
 
         const factionsData = {
             'ballantine-empire': [
-                'united-kingdom-border.geojson', 
-                'california-border.geojson', 
+                'united-kingdom-border.geojson',
+                'california-border.geojson',
                 'italy-border.geojson',
                 'netherlands-border.geojson'
             ],
@@ -139,15 +145,15 @@ export async function displayLocations() {
         const query = `*[_type == "location" && defined(location)] { 
             name, "slug": slug.current, location, faction->{slug}, summary 
         }`;
-        
+
         const locations = await client.fetch(query);
         console.log(`> Found ${locations.length} locations.`);
 
         if (locations.length > 0) {
             locations.forEach(loc => {
-                const { lat, lng } = loc.location; 
+                const { lat, lng } = loc.location;
                 const fSlug = loc.faction?.slug?.current || 'default';
-                
+
                 const marker = L.marker([lat, lng], {
                     icon: createTacticalIcon(fSlug)
                 }).addTo(map);

@@ -3,29 +3,29 @@ import i18next from '../../lib/i18n.js';
 // 👇 SEO İMPORTU
 import { injectSchema } from '../../lib/seo.js';
 
-let mapInstance = null; 
+let mapInstance = null;
 
 const FACTION_THEMES = {
-    'ballantine-empire': { border: '#c5a059', fill: '#c5a059', glow: '#ffd700' }, 
-    'macpherson-clan':   { border: '#7f1d1d', fill: '#991b1b', glow: '#ef4444' }, 
-    'default':           { border: '#52525b', fill: '#3f3f46', glow: '#d4d4d8' }  
+    'ballantine-empire': { border: '#c5a059', fill: '#c5a059', glow: '#ffd700' },
+    'macpherson-clan': { border: '#7f1d1d', fill: '#991b1b', glow: '#ef4444' },
+    'default': { border: '#52525b', fill: '#3f3f46', glow: '#d4d4d8' }
 };
 
 async function loadGeoJSON(filePath) {
     try {
-        const cleanPath = filePath.replace('/public', ''); 
-        
+        const cleanPath = filePath.replace('/public', '');
+
         const response = await fetch(cleanPath);
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         return await response.json();
     } catch (error) {
         console.warn(`Map Layer Error (${filePath}):`, error);
-        return null; 
+        return null;
     }
 }
 
 const createTacticalIcon = (factionSlug, iconType = 'fa-map-marker-alt') => {
-    if (!window.L) return null;
+    if (!globalThis.L) return null;
     const theme = FACTION_THEMES[factionSlug] || FACTION_THEMES.default;
     const color = theme.border;
 
@@ -57,7 +57,7 @@ const addLocationMarkers = (map, locations) => {
         const lng = location.location?.lng || location.coordinates?.lng;
 
         if (!lat || !lng) return;
-        
+
         const factionSlug = location.faction?.slug?.current || 'default';
         const themeColor = (FACTION_THEMES[factionSlug] || FACTION_THEMES.default).border;
 
@@ -97,7 +97,7 @@ const addLocationMarkers = (map, locations) => {
                 </a>
             </div>
         `, {
-            className: 'leaflet-dark-popup' 
+            className: 'leaflet-dark-popup'
         });
     });
 };
@@ -112,13 +112,13 @@ const addFactionTerritories = async (map, factions) => {
             '/assets/maps/italy-border.geojson'
         ],
         'macpherson-clan': [
-            '/assets/maps/scotland-highlands.geojson' 
+            '/assets/maps/scotland-highlands.geojson'
         ],
     };
 
     for (const faction of factions) {
         const slug = faction.slug.current;
-        const filePaths = factionFileMap[slug]; 
+        const filePaths = factionFileMap[slug];
         if (!filePaths) continue;
 
         const theme = FACTION_THEMES[slug] || FACTION_THEMES.default;
@@ -128,8 +128,8 @@ const addFactionTerritories = async (map, factions) => {
             weight: 1,
             opacity: 0.8,
             fillColor: theme.fill,
-            fillOpacity: 0.15, 
-            dashArray: '5, 10', 
+            fillOpacity: 0.15,
+            dashArray: '5, 10',
             className: 'tactical-overlay-path'
         };
 
@@ -156,7 +156,7 @@ export async function displayLocations() {
             "@type": "Map",
             "name": "Global Surveillance Map | The Sins of the Fathers",
             "description": "Interactive map showing all faction territories and key locations in the TSOF universe.",
-            "url": window.location.href
+            "url": globalThis.location.href
         };
         injectSchema(schemaData);
     } catch (e) {
@@ -164,8 +164,8 @@ export async function displayLocations() {
     }
     // -----------------------------------------------------
 
-    if (!mapContainer) return; 
-    if (!window.L) {
+    if (!mapContainer) return;
+    if (!globalThis.L) {
         console.error("Leaflet Library Missing!");
         return;
     }
@@ -175,7 +175,7 @@ export async function displayLocations() {
         // destroyMap('map'); 
 
         const map = L.map('map', {
-            center: [40, -30], 
+            center: [40, -30],
             zoom: 3,
             zoomControl: false,
             attributionControl: false
@@ -190,19 +190,19 @@ export async function displayLocations() {
             maxZoom: 19
         }).addTo(map);
 
-        window.zoomToLocation = (lat, lng, zoom) => {
+        globalThis.zoomToLocation = (lat, lng, zoom) => {
             map.flyTo([lat, lng], zoom, { duration: 2.5 });
             updateHUD(`${i18next.t('locations.hud_coords_locked')}: ${lat} / ${lng}`);
         };
-        
-        window.resetMap = () => {
+
+        globalThis.resetMap = () => {
             map.flyTo([40, -30], 3, { duration: 2 });
             updateHUD(i18next.t('locations.hud_global_view'));
         };
 
         function updateHUD(text) {
             const hudDisplay = document.getElementById('location-name-display');
-            if(hudDisplay) {
+            if (hudDisplay) {
                 hudDisplay.textContent = text;
                 hudDisplay.classList.add('text-gold', 'animate-pulse');
                 setTimeout(() => hudDisplay.classList.remove('text-gold', 'animate-pulse'), 1000);
@@ -217,7 +217,7 @@ export async function displayLocations() {
             summary, 
             faction->{slug}
         }`;
-        
+
         const factionsQuery = `*[_type == "faction"]{ 
             name, 
             slug 
@@ -233,10 +233,10 @@ export async function displayLocations() {
 
         map.on('mousemove', (e) => {
             const display = document.getElementById('coordinates-display');
-            if(display) display.textContent = `${i18next.t('locations.hud_lat')}: ${e.latlng.lat.toFixed(4)} // ${i18next.t('locations.hud_lng')}: ${e.latlng.lng.toFixed(4)}`;
+            if (display) display.textContent = `${i18next.t('locations.hud_lat')}: ${e.latlng.lat.toFixed(4)} // ${i18next.t('locations.hud_lng')}: ${e.latlng.lng.toFixed(4)}`;
         });
 
-        if(loader) loader.classList.add('opacity-0', 'pointer-events-none');
+        if (loader) loader.classList.add('opacity-0', 'pointer-events-none');
 
     } catch (error) {
         console.error("System Failure (Map):", error);

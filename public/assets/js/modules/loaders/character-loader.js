@@ -150,6 +150,79 @@ const createAssetCard = (character) => {
 /* --------------------------------------------------------------------------
    MAIN LOGIC
    -------------------------------------------------------------------------- */
+/* --------------------------------------------------------------------------
+   HELPER FUNCTIONS (Cognitive Complexity Reduction)
+   -------------------------------------------------------------------------- */
+
+const injectCharacterListSchema = (characters) => {
+    try {
+        const itemList = characters.map((char, index) => ({
+            "@type": "ListItem",
+            "position": index + 1,
+            "item": {
+                "@type": "Person",
+                "name": char.name,
+                "jobTitle": char.title,
+                "image": char.image?.url,
+                "url": new URL(`character-detail.html?slug=${char.slug.current}`, globalThis.location.origin).href
+            }
+        }));
+
+        const schemaData = {
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            "name": "Personnel Database | The Sins of the Fathers",
+            "description": "Classified directory of all known operatives, assets, and targets.",
+            "mainEntity": {
+                "@type": "ItemList",
+                "itemListElement": itemList
+            }
+        };
+        injectSchema(schemaData);
+        console.log("> SEO Protocol: Character List Schema Injected.");
+    } catch (e) {
+        console.warn("Schema Error:", e);
+    }
+};
+
+const renderCharacterCards = (characters, containers) => {
+    if (containers.protagonists) containers.protagonists.innerHTML = '';
+    if (containers.main) containers.main.innerHTML = '';
+    if (containers.side) containers.side.innerHTML = '';
+
+    characters.forEach((character) => {
+        const lowerName = (character.name || '').toLowerCase();
+        const lowerAlias = character.alias ? character.alias.toLowerCase() : '';
+
+        const isRuaraidh = lowerName.includes('ruaraidh') || lowerAlias.includes('exile');
+        const isHavi = lowerName.includes('havi') || lowerAlias.includes('bastard');
+
+        if (isRuaraidh || isHavi) {
+            if (containers.protagonists) {
+                containers.protagonists.appendChild(createProtagonistCard(character));
+            }
+        }
+        else if (character.is_main) {
+            if (containers.main) {
+                containers.main.appendChild(createOperativeCard(character));
+            }
+        }
+        else if (containers.side) {
+            containers.side.appendChild(createAssetCard(character));
+        }
+    });
+
+    Object.keys(containers).forEach(key => {
+        const container = containers[key];
+        if (container && container.children.length === 0) {
+            container.innerHTML = `<p class="text-xs font-mono text-gray-600 col-span-full text-center">${i18next.t('characters_page.no_records_found')}</p>`;
+        }
+    });
+};
+
+/* --------------------------------------------------------------------------
+   MAIN LOGIC
+   -------------------------------------------------------------------------- */
 export async function displayCharacters() {
     const containers = {
         protagonists: document.getElementById('protagonists-gallery'),
@@ -173,81 +246,16 @@ export async function displayCharacters() {
             }, 
             is_main
         }`;
-        
+
         const characters = await client.fetch(query);
 
         if (characters && characters.length > 0) {
-            
-            // 👇 SEO / SCHEMA ENJEKSİYONU (ItemList)
-            try {
-                const itemList = characters.map((char, index) => ({
-                    "@type": "ListItem",
-                    "position": index + 1,
-                    "item": {
-                        "@type": "Person",
-                        "name": char.name,
-                        "jobTitle": char.title,
-                        "image": char.image?.url,
-                        "url": new URL(`character-detail.html?slug=${char.slug.current}`, window.location.origin).href
-                    }
-                }));
-
-                const schemaData = {
-                    "@context": "https://schema.org",
-                    "@type": "CollectionPage",
-                    "name": "Personnel Database | The Sins of the Fathers",
-                    "description": "Classified directory of all known operatives, assets, and targets.",
-                    "mainEntity": {
-                        "@type": "ItemList",
-                        "itemListElement": itemList
-                    }
-                };
-                injectSchema(schemaData);
-                console.log("> SEO Protocol: Character List Schema Injected.");
-            } catch (e) {
-                console.warn("Schema Error:", e);
-            }
-            // -----------------------------------------------------
-
-            if(containers.protagonists) containers.protagonists.innerHTML = '';
-            if(containers.main) containers.main.innerHTML = '';
-            if(containers.side) containers.side.innerHTML = '';
-
-            characters.forEach((character) => {
-                const lowerName = (character.name || '').toLowerCase();
-                const lowerAlias = character.alias ? character.alias.toLowerCase() : '';
-
-                const isRuaraidh = lowerName.includes('ruaraidh') || lowerAlias.includes('exile');
-                const isHavi = lowerName.includes('havi') || lowerAlias.includes('bastard');
-
-                if (isRuaraidh || isHavi) {
-                    if (containers.protagonists) {
-                        containers.protagonists.appendChild(createProtagonistCard(character));
-                    }
-                } 
-                else if (character.is_main) {
-                    if (containers.main) {
-                        containers.main.appendChild(createOperativeCard(character));
-                    }
-                } 
-                else {
-                    if (containers.side) {
-                        containers.side.appendChild(createAssetCard(character));
-                    }
-                }
-            });
-
-            Object.keys(containers).forEach(key => {
-                const container = containers[key];
-                if (container && container.children.length === 0) {
-                    container.innerHTML = `<p class="text-xs font-mono text-gray-600 col-span-full text-center">${i18next.t('characters_page.no_records_found')}</p>`;
-                }
-            });
-
-        } else {
-            if (containers.main) containers.main.innerHTML = '<p class="text-red-500 font-mono">DATABASE CONNECTION FAILED.</p>';
+            injectCharacterListSchema(characters);
+            renderCharacterCards(characters, containers);
+        } else if (containers.main) {
+            containers.main.innerHTML = '<p class="text-red-500 font-mono">DATABASE CONNECTION FAILED.</p>';
         }
-    } 
+    }
     catch (error) {
         console.error("Data Malfunction: ", error);
         if (containers.main) containers.main.innerHTML = '<p class="text-red-500 animate-pulse">CRITICAL ERROR: CANNOT RETRIEVE DOSSIERS.</p>';

@@ -28,19 +28,20 @@ const updateThreatDisplay = (level = 'neutral') => {
     threatEl.innerHTML = `<i class="fas ${icon} mr-2"></i> ${level}`;
 };
 
-const renderLocationIntel = (location) => {
-    document.title = `${location.name} // SURVEILLANCE FEED`;
+/* --------------------------------------------------------------------------
+   HELPER FUNCTIONS (Cognitive Complexity Reduction)
+   -------------------------------------------------------------------------- */
 
-    // 👇 SEO SCHEMA ENJEKSİYONU (BURAYA EKLENDİ)
+const injectLocationSeo = (location) => {
     try {
         const schemaData = {
             "@context": "https://schema.org",
             "@type": "Place",
             "name": location.name,
-            "description": location.description 
-                ? location.description.map(block => block.children?.map(child => child.text).join('')).join(' ').substring(0, 160) 
+            "description": location.description
+                ? location.description.map(block => block.children?.map(child => child.text).join('')).join(' ').substring(0, 160)
                 : "A key territory in The Sins of the Fathers universe.",
-            "url": window.location.href,
+            "url": globalThis.location.href,
             "image": location.mainImage?.asset?.url,
             "geo": (location.location) ? {
                 "@type": "GeoCoordinates",
@@ -57,27 +58,18 @@ const renderLocationIntel = (location) => {
     } catch (err) {
         console.warn("> SEO Protocol Warning: Failed to inject schema.", err);
     }
-    // -----------------------------------------------------
+};
 
-    if (location.mainImage && location.mainImage.asset) {
-        const url = urlFor(location.mainImage).width(1000).height(600).fit('crop').quality(75).url();
-        const blurHash = location.mainImage.asset.blurHash; 
-        
-        applyBlurToStaticImage('loc-image', url, blurHash);
-
-        const loader = document.getElementById('feed-loader');
-        if (loader) loader.style.display = 'none';
-    }
-
-    const setText = (id, text, fallbackKey) => { 
-        const el = document.getElementById(id); 
-        if (el) el.textContent = text || (fallbackKey ? i18next.t(fallbackKey) : ''); 
+const renderLocationInfo = (location) => {
+    const setText = (id, text, fallbackKey) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = text || (fallbackKey ? i18next.t(fallbackKey) : '');
     };
 
     setText('loc-title', location.name, 'location_detail_page.placeholder_unknown');
     setText('loc-faction', location.faction?.title, 'location_detail_page.tactical_unverified');
     setText('loc-status', location.status, 'location_detail_page.tactical_operational');
-    
+
     if (location.location) {
         setText('loc-coords', `${location.location.lat.toFixed(4)}° N, ${location.location.lng.toFixed(4)}° W`);
     } else {
@@ -88,42 +80,63 @@ const renderLocationIntel = (location) => {
 
     const descEl = document.getElementById('loc-description');
     if (descEl) {
-    descEl.innerHTML = location.description 
-        ? toHTML(location.description) 
-        : `<p class="animate-pulse">${i18next.t('location_detail_page.decrypting_history')}</p>`;
+        descEl.innerHTML = location.description
+            ? toHTML(location.description)
+            : `<p class="animate-pulse">${i18next.t('location_detail_page.decrypting_history')}</p>`;
     }
+};
 
+const renderLocationEvents = (location) => {
     const eventsList = document.getElementById('loc-events');
-    if (eventsList) {
-        let foundEvents = [];
-        
-        if (location.allEras) {
-            location.allEras.forEach(era => {
-                if (era.events) {
-                    const matches = era.events.filter(evt => 
-                        evt.relatedLocation && evt.relatedLocation._ref === location._id
-                    );
-                    foundEvents = [...foundEvents, ...matches];
-                }
-            });
-        }
+    if (!eventsList) return;
 
-        if (foundEvents.length > 0) {
-            eventsList.innerHTML = foundEvents.map(evt => `
-                <li class="border-l-2 border-white/10 pl-3 py-1 hover:border-gold transition-colors group cursor-default">
-                    <span class="block text-[9px] font-mono text-gray-500">${evt.date ? evt.date.split('-')[0] : 'Unknown'}</span>
-                    <span class="text-xs font-serif text-gray-300 group-hover:text-white">${evt.title_en || 'Redacted Event'}</span>
-                </li>
-            `).join('');
-        } else {
-            eventsList.innerHTML = `<li class="text-xs text-gray-600 italic">${i18next.t('location_detail_page.no_events_found')}</li>`;
-        }
+    let foundEvents = [];
+
+    if (location.allEras) {
+        location.allEras.forEach(era => {
+            if (era.events) {
+                const matches = era.events.filter(evt =>
+                    evt.relatedLocation && evt.relatedLocation._ref === location._id
+                );
+                foundEvents = [...foundEvents, ...matches];
+            }
+        });
     }
+
+    if (foundEvents.length > 0) {
+        eventsList.innerHTML = foundEvents.map(evt => `
+            <li class="border-l-2 border-white/10 pl-3 py-1 hover:border-gold transition-colors group cursor-default">
+                <span class="block text-[9px] font-mono text-gray-500">${evt.date ? evt.date.split('-')[0] : 'Unknown'}</span>
+                <span class="text-xs font-serif text-gray-300 group-hover:text-white">${evt.title_en || 'Redacted Event'}</span>
+            </li>
+        `).join('');
+    } else {
+        eventsList.innerHTML = `<li class="text-xs text-gray-600 italic">${i18next.t('location_detail_page.no_events_found')}</li>`;
+    }
+};
+
+const renderLocationIntel = (location) => {
+    document.title = `${location.name} // SURVEILLANCE FEED`;
+
+    injectLocationSeo(location);
+
+    if (location.mainImage && location.mainImage.asset) {
+        const url = urlFor(location.mainImage).width(1000).height(600).fit('crop').quality(75).url();
+        const blurHash = location.mainImage.asset.blurHash;
+
+        applyBlurToStaticImage('loc-image', url, blurHash);
+
+        const loader = document.getElementById('feed-loader');
+        if (loader) loader.style.display = 'none';
+    }
+
+    renderLocationInfo(location);
+    renderLocationEvents(location);
 };
 
 export async function loadLocationDetails() {
     const feedLoader = document.getElementById('feed-loader');
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(globalThis.location.search);
     const slug = params.get('slug');
 
     if (!slug) {
@@ -157,7 +170,7 @@ export async function loadLocationDetails() {
                 }
             }
         }`;
-        
+
         const result = await client.fetch(query, { slug });
 
         if (result) {
