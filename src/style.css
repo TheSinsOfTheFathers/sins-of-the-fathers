@@ -9,6 +9,7 @@ body {
   color: #d4d4d4;
   /* HTML'den gelen metin rengi */
   font-family: 'Lato', sans-serif;
+  font-display: swap;
 
   ::selection {
     background: #D4AF37;
@@ -134,6 +135,7 @@ html.lenis {
   font-size: 12px;
   fill: #a3a3a3;
   pointer-events: none;
+  font-display: swap;
 }
 
 .link {
@@ -257,6 +259,7 @@ html.lenis {
 .faction-card.old-world h3 {
   color: #b91c1c;
   font-family: 'Cinzel', serif;
+  font-display: swap;
 }
 
 .faction-card.old-world .stat-fill {
@@ -280,6 +283,7 @@ html.lenis {
   color: #c5a059;
   font-family: 'Cinzel', serif;
   letter-spacing: 0.1em;
+  font-display: swap;
 }
 
 .faction-card.new-world .stat-fill {
@@ -441,6 +445,7 @@ input:-webkit-autofill:active {
   color: #c5a059;
   margin-top: 2em;
   margin-bottom: 0.5em;
+  font-display: swap;
 }
 
 /* Typewriter Cursor Animation */
@@ -504,11 +509,12 @@ input:-webkit-autofill:active {
   /* Gold */
   font-family: 'Cinzel', serif;
   font-size: 1.25rem;
+  font-display: swap;
 }
 
 .legal-section p {
   margin-bottom: 1rem;
-  font-size: 0.95rem;
+  font-size: 1rem;
   line-height: 1.7;
   color: #d1d5db;
   /* Gray-300 */
@@ -544,6 +550,7 @@ input:-webkit-autofill:active {
   padding: 8px 0;
   font-family: 'Courier Prime', monospace;
   transition: all 0.3s ease;
+  font-display: swap;
 }
 
 .agent-input:focus {
@@ -617,11 +624,13 @@ input:-webkit-autofill:active {
   color: #c5a059 !important;
   /* GOLD */
   text-transform: uppercase;
+  font-display: swap;
 }
 
 .tl-text {
   font-family: 'Lato', sans-serif !important;
   color: #b0b0b0 !important;
+  font-display: swap;
 }
 
 .tl-timenav,

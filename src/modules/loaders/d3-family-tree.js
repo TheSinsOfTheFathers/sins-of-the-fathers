@@ -111,6 +111,7 @@ export function renderFamilyGraph(containerEl, { nodes = [], links = [] } = {}, 
         .attr('font-size', 8)
         .attr('fill', '#777')
         .attr('text-anchor', 'middle')
+        .attr('font-display', 'swap;')
         .text(d => d.label ? d.label.toUpperCase() : '');
 
     // --- NODES RENDER ---
@@ -177,7 +178,8 @@ export function renderFamilyGraph(containerEl, { nodes = [], links = [] } = {}, 
         .attr('fill', d => d.isMain ? '#c5a059' : '#888')
         .attr('font-size', d => d.isMain ? 10 : 8)
         .attr('font-weight', 'bold')
-        .attr('letter-spacing', '1px');
+        .attr('letter-spacing', '1px')
+        .attr('font-display', 'swap;');
 
 
     // --- SIMULATION ---

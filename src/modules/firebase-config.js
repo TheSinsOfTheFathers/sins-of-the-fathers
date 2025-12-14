@@ -37,7 +37,7 @@ try {
     analyticsInstance = getAnalytics(app);
     console.log(
         "%c[SYSTEM] TSOF Secure Link :: ESTABLISHED",
-        "color: #c5a059; background: #050505; padding: 4px; border-left: 2px solid #c5a0_59; font-family: monospace;"
+        "color: #c5a059; background: #050505; padding: 4px; border-left: 2px solid #c5a0_59; font-family: monospace; font-display: swap;"
     );
 } catch (error) {
     console.error(

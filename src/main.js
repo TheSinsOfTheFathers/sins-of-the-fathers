@@ -158,7 +158,7 @@ async function initializeHeavyModules() {
    -------------------------------------------------------------------------- */
 document.addEventListener('DOMContentLoaded', () => {
     
-    console.log("%c TSOF // SYSTEM ONLINE ", "color: #000; background: #c5a059; padding: 5px; font-weight: bold; font-family: monospace;");
+    console.log("%c TSOF // SYSTEM ONLINE ", "color: #000; background: #c5a059; padding: 5px; font-weight: bold; font-family: monospace; font-display: swap;");
     gsap.set("body", { autoAlpha: 0 });
 
     // HIZLI VE SENKRON İŞLEMLER
