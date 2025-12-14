@@ -203,8 +203,8 @@ export function initAuth() {
         showMessage(authMessage, 'Access Granted.', 'success');
         await signInWithEmailAndPassword(auth, email, password);
 
-        // Düzeltildi: /index.html (Mutlak yol)
-        setTimeout(() => globalThis.location.href = '/index.html', 800);
+        // Düzeltildi:/ (Mutlak yol)
+        setTimeout(() => globalThis.location.href = '/', 800);
       } catch (err) {
         showPopup('error', firebaseErrorToMessage(err));
         showMessage(authMessage, 'Access Denied.', 'error');
@@ -235,8 +235,8 @@ export function initAuth() {
 
       showMessage(authMessage, 'Biometrics confirmed.', 'success');
       
-      // Düzeltildi: /index.html (Mutlak yol)
-      setTimeout(() => globalThis.location.href = '/index.html', 800); 
+      // Düzeltildi:/ (Mutlak yol)
+      setTimeout(() => globalThis.location.href = '/', 800); 
     } catch (err) {
       showPopup('error', firebaseErrorToMessage(err));
       showMessage(authMessage, 'Signal Lost.', 'error');
@@ -335,8 +335,7 @@ export function initAuth() {
 
     signoutBtn.addEventListener('click', async () => {
       try { await signOut(auth); 
-        // Düzeltildi: /index.html (Mutlak yol)
-        globalThis.location.href = '/index.html'; 
+        globalThis.location.href = '/'; 
       }
       catch (err) { console.error(err); }
     });

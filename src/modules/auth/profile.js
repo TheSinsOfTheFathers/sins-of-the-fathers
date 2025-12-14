@@ -164,7 +164,7 @@ export async function loadProfilePage() {
                         await deleteDoc(userDocRef);
                         await deleteUser(user);
                         alert("Identity scorched. Redirecting...");
-                        globalThis.location.href = '/index.html';
+                        globalThis.location.href = /';
                     } catch (err) {
                         console.error(err);
                         alert("Error: Clearance insufficient. Re-login required.");
