@@ -26,34 +26,6 @@
       ],
       "cleanUrls": true,
       "trailingSlash": false
-    },
-    {
-      "target": "blog-site",
-      "public": "blog/dist/client",
-      "headers": [
-        {
-          "source": "**",
-          "headers": [
-            {
-              "key": "Cache-Control",
-              "value": "no-cache, no-store, must-revalidate"
-            }
-          ]
-        }
-      ],
-      "ignore": [
-        "firebase.json",
-        "**/.*",
-        "**/node_modules/**"
-      ],
-      "rewrites": [
-        {
-          "source": "**",
-          "function": "astroServer"
-        }
-      ],
-      "cleanUrls": true,
-      "trailingSlash": false
     }
   ],
   "storage": {
@@ -73,20 +45,6 @@
       ],
       "predeploy": [
         "npm --prefix \"$RESOURCE_DIR\" run lint",
-        "npm --prefix \"$RESOURCE_DIR\" run build"
-      ]
-    },
-    {
-      "source": "blog",
-      "codebase": "astro-blog", 
-      "runtime": "nodejs20",
-      "ignore": [
-        "node_modules",
-        ".git",
-        "dist/client",
-        ".astro"
-      ],
-      "predeploy": [
         "npm --prefix \"$RESOURCE_DIR\" run build"
       ]
     }
