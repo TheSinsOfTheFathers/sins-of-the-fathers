@@ -26,7 +26,7 @@ const createProtagonistCard = (character) => {
         <img src="${imageUrl}" alt="${character.name}" 
              class="main-image absolute inset-0 w-full h-full object-cover opacity-0 grayscale group-hover:grayscale-0 group-hover:scale-105 group-hover:opacity-100 transition-all duration-1000 ease-out z-10"
              loading="lazy">
-        <div class="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent z-20 pointer-events-none"></div>
+        <div class="absolute inset-0 bg-linear-to-t from-black via-black/60 to-transparent z-20 pointer-events-none"></div>
         <div class="absolute bottom-0 left-0 w-full p-8 z-30 pointer-events-none">
             <div class="h-px w-12 bg-gold mb-4 transition-all group-hover:w-full duration-700"></div>
             <p class="font-mono text-gold text-xs uppercase tracking-[0.2em] mb-1">${alias}</p>
@@ -61,7 +61,7 @@ const createOperativeCard = (character) => {
     const title = character.title || 'Associate';
 
     cardLink.innerHTML = `
-        <div class="relative aspect-[3/4] overflow-hidden border-b border-white/5 bg-gray-900">
+        <div class="relative aspect-3/4 overflow-hidden border-b border-white/5 bg-gray-900">
             <canvas class="blur-canvas absolute inset-0 w-full h-full object-cover z-0"></canvas>
             <img src="${imageUrl}" alt="${character.name}" 
                  class="main-image relative w-full h-full object-cover grayscale opacity-0 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500 z-10"
@@ -194,6 +194,14 @@ const renderCharacterCards = (characters, containers) => {
         if (container && container.children.length === 0) {
             container.innerHTML = `<p class="text-xs font-mono text-gray-600 col-span-full text-center">${i18next.t('characters_page.no_records_found')}</p>`;
         }
+    });
+
+    // GSAP Reveal Animation
+    gsap.to('.opacity-0', {
+        opacity: 1,
+        duration: 0.8,
+        stagger: 0.1,
+        ease: 'power2.out'
     });
 };
 
