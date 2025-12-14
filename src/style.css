@@ -38,6 +38,10 @@ body {
 /* =========================================
   Lenis (Smooth Scroll) Setup
   ========================================= */
+html {
+  scroll-padding-top: 80px;
+}
+
 html.lenis {
   height: auto;
 }
@@ -259,7 +263,7 @@ html.lenis {
   background-color: #7f1d1d;
 }
 
-/* Faction Card: The New Order (Ballantine) - Cold, Metallic */
+/* Faction Card: The New Order (Ravenwood) - Cold, Metallic */
 .faction-card.new-world {
   border: 1px solid #334155;
   border-top: 1px solid #c5a059;

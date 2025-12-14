@@ -11,18 +11,14 @@ export const updateContent = () => {
         const key = el.dataset.i18n;
         const options = {};
 
-        // Anahtara özel değişkenleri (interpolation) yönet
         if (key === 'footer.copyright') {
             options.year = new Date().getFullYear();
         }
 
-        // Çeviriyi al
         const translation = i18next.t(key, options);
 
-        // Eğer HTML içeriği varsa (örn: <b>Bold</b>) html olarak, yoksa text olarak bas
         el.innerHTML = translation;
 
-        // Eğer input ise placeholder'ı güncelle
         if (el.tagName === 'INPUT' && el.getAttribute('placeholder')) {
             el.setAttribute('placeholder', translation);
         }
@@ -36,9 +32,8 @@ export const updateContent = () => {
 export const changeLanguage = async (lng) => {
     await i18next.changeLanguage(lng);
     updateContent();
-    localStorage.setItem('i18nextLng', lng); // Tercihi hatırla
+    localStorage.setItem('i18nextLng', lng);
 
-    // Dil butonlarını güncelle (Aktif olanı parlat)
     document.querySelectorAll('.lang-btn').forEach(btn => {
         if (btn.dataset.lang === lng) {
             btn.classList.add('text-white', 'font-bold', 'underline');
@@ -56,38 +51,25 @@ export const changeLanguage = async (lng) => {
 export const initI18n = async () => {
     try {
         await i18next
-            .use(i18nextHttpBackend) // JSON dosyalarını yüklemek için
-            .use(i18nextBrowserLanguageDetector) // Tarayıcı dilini anlamak için
+            .use(i18nextHttpBackend)
+            .use(i18nextBrowserLanguageDetector) 
             .init({
                 fallbackLng: 'en',
-                debug: false, // Konsol kirliliğini önlemek için false yapabilirsin
+                debug: false,
                 backend: {
-                    // loadPath must be resolvable from the page (not the module file).
-                    // Compute a sensible base so it works both when serving project
-                    // root and when previewing `/public/index.html` (live-server).
-                    loadPath: (function () {
-                        const path = globalThis.location.pathname || '/';
-                        // If URL contains /public/ (live-server preview), use /public/locales
-                        if (path.indexOf('/public/') === 0 || path.includes('/public/')) {
-                            return '/public/locales/{{lng}}/translation.json';
-                        }
-                        // Otherwise assume locales are available under /locales at site root
-                        return '/locales/{{lng}}/translation.json';
-                    })(),
+                    loadPath: '/locales/{{lng}}/translation.json',
                 },
                 detection: {
                     order: ['querystring', 'localStorage', 'navigator'],
                     lookupQuerystring: 'lang',
                 },
                 interpolation: {
-                    escapeValue: false // Do not escape HTML values
+                    escapeValue: false
                 }
             });
 
-        // İlk yükleme
         updateContent();
 
-        // Mevcut dili dön (UI güncellemesi için)
         return i18next.language;
 
     } catch (err) {
@@ -95,5 +77,4 @@ export const initI18n = async () => {
     }
 };
 
-// i18next instance'ını dışarı açıyoruz (Gerekirse başka yerden erişmek için)
 export { default } from 'https://esm.sh/i18next@23.7.6';

@@ -39,7 +39,7 @@
     "privacy": "Gizlilik Protokolü",
     "terms": "Operasyon Şartları",
     "footer.copyright": "© {{year}} Babaların Günahları",
-    "copyright_slogan": "Ruaraidh Ballantine & Havi seni izliyor."
+    "copyright_slogan": "Roland Ravenwood & Havi seni izliyor."
   },
   "common_utils": {
     "ok": "Tamam",
@@ -109,12 +109,12 @@
   "timeline_page": {
     "meta_title": "Vakayiname | Babaların Günahları",
     "title": "<span class=\"text-gold\">Zaman Tüneli</span>",
-    "quote": "\"Ballantine ailesinin gücü, İskoçya'daki her büyük sosyal ve ekonomik travmadan kar sağlayarak büyüdü. Onlarınki bir soyluluk tarihi değil, nesiller boyu aktarılan acımasız bir kontrol felsefesidir.\"",
+    "quote": "\"Ravenwood ailesinin gücü, İskoçya'daki her büyük sosyal ve ekonomik travmadan kar sağlayarak büyüdü. Onlarınki bir soyluluk tarihi değil, nesiller boyu aktarılan acımasız bir kontrol felsefesidir.\"",
     "quote_source": "— Arşiv Kaydı #8821",
     "loader_text": "Tarihsel Olaylar Yeniden Oluşturuluyor..."
   },
   "timeline_loader": {
-    "title_headline": "<span class='font-serif text-white'>BALLANTINE <span class='text-gold'>VAKAYİNAMELERİ</span></span>",
+    "title_headline": "<span class='font-serif text-white'>Ravenwood <span class='text-gold'>VAKAYİNAMELERİ</span></span>",
     "title_text": "<p class='text-gray-400 font-mono'>Kan, ihanet ve imparatorluğun görsel bir kaydı.</p>",
     "title_media_caption": "Arşivler",
     "title_media_credit": "Sistem",
@@ -316,7 +316,7 @@
     "header_subtitle": "// PERSONEL KAYDI",
     "btn_terminate": "Sonlandır",
     "id_card_header": "Kimlik Doğrulama",
-    "id_card_sub": "Ballantine Ağ Erişimi",
+    "id_card_sub": "Ravenwood Ağ Erişimi",
     "photo_update": "Fotoğrafı Güncelle",
     "label_clearance": "YETKİ:",
     "label_status": "DURUM:",
@@ -333,7 +333,7 @@
     "faction_old_blood": "Eski Kan",
     "desc_old_blood": "Geleneğe sadık. Macpherson mirası.",
     "faction_new_order": "Yeni Düzen",
-    "desc_new_order": "Mimar'a sadık. Ballantine geleceği.",
+    "desc_new_order": "Mimar'a sadık. Ravenwood geleceği.",
     "btn_update": "Kayıtları Güncelle",
     "scanning": "Biyometrik Tarama..."
   },
@@ -348,7 +348,7 @@
     "sec1_desc1": "Bizde bir hesap oluşturduğunuzda, doğru, eksiksiz ve güncel bilgiler sağlamalısınız. Bunu yapmamanız, Şartların ihlali anlamına gelir ve hesabınızın derhal feshedilmesine neden olabilir.",
     "sec1_desc2": "Hizmete erişmek için kullandığınız şifrenin güvenliğini sağlamaktan siz sorumlusunuz. Şifrenizi herhangi bir üçüncü tarafa ifşa etmemeyi kabul edersiniz.",
     "sec2_title": "2. Fikri Mülkiyet (Miras)",
-    "sec2_desc1": "Hizmet ve orijinal içeriği (hikaye, karakterler, \"Ruaraidh Ballantine\", \"Havi\" isimleri, grup amblemleri, logolar ve etkileşimli zaman çizelgeleri dahil ancak bunlarla sınırlı olmamak üzere) <strong>The Sins of the Fathers</strong> yazarının ve yaratıcılarının münhasır mülküdür ve öyle kalacaktır. Hizmet, telif hakkı, ticari marka ve diğer yasalarla korunmaktadır.",
+    "sec2_desc1": "Hizmet ve orijinal içeriği (hikaye, karakterler, \"Roland Ravenwood\", \"Havi\" isimleri, grup amblemleri, logolar ve etkileşimli zaman çizelgeleri dahil ancak bunlarla sınırlı olmamak üzere) <strong>The Sins of the Fathers</strong> yazarının ve yaratıcılarının münhasır mülküdür ve öyle kalacaktır. Hizmet, telif hakkı, ticari marka ve diğer yasalarla korunmaktadır.",
     "sec2_desc2": "Açık izin olmaksızın bu içeriği çoğaltamaz, dağıtamaz veya bu içeriğe dayalı türev çalışmalar oluşturamazsınız.",
     "sec3_title": "3. Kullanıcı Davranışı (Angajman Kuralları)",
     "sec3_desc": "Hizmeti yasa dışı veya bu Şartlar tarafından yasaklanan herhangi bir amaç için kullanmamayı kabul edersiniz. Taciz, nefret söylemi veya Dijital Kale'nin güvenliğini tehlikeye atma girişimi, derhal yasaklanma (sürgün) ile sonuçlanacaktır.",
@@ -367,7 +367,7 @@
     "btn_abort": "İptal",
     "connection_severed": "Bağlantı Kesildi",
     "error_coords": "Hedef koordinatları geçersiz.",
-    "error_desc": "Aradığınız dosya ağır şekilde sansürlendi, güvenli bir kasaya taşındı veya Ballantine yönetimi tarafından \"tasfiye edildi\".",
+    "error_desc": "Aradığınız dosya ağır şekilde sansürlendi, güvenli bir kasaya taşındı veya Ravenwood yönetimi tarafından \"tasfiye edildi\".",
     "btn_return": "Operasyona Dön"
   },
   "family_graph": {
@@ -388,7 +388,7 @@
     "no_factions_found": "Veritabanında Aktif Grup Bulunamadı.",
     "error_connection": "KRİTİK HATA: BAĞLANTI KESİLDİ.",
     "meta_title": "Gruplar Veritabanı | The Sins of the Fathers",
-    "meta_desc": "Ballantine Ağındaki bilinen tüm organizasyonların ve sendikaların rehberi."
+    "meta_desc": "Ravenwood Ağındaki bilinen tüm organizasyonların ve sendikaların rehberi."
   },
   "locations": {
     "sector": "SEKTÖR",

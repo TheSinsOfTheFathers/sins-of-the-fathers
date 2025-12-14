@@ -133,7 +133,7 @@ export async function displayFactions() {
                     "@context": "https://schema.org",
                     "@type": "CollectionPage",
                     "name": i18next.t('factions.meta_title') || "Factions Database | TSOF",
-                    "description": i18next.t('factions.meta_desc') || "List of all organizations and syndicates in the Ballantine Network.",
+                    "description": i18next.t('factions.meta_desc') || "List of all organizations and syndicates in the Ravenwood Network.",
                     "mainEntity": {
                         "@type": "ItemList",
                         "itemListElement": itemList

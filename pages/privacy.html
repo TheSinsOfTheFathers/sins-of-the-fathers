@@ -39,8 +39,12 @@
     <!-- Internal Styles -->
     <link href="../src/style.css" rel="stylesheet">
 
-    <!-- External Scripts -->
+    <!-- Internal Scripts -->   
     <script src="../src/main.js" type="module"></script>
+
+    <!-- External Scripts -->
+    <!-- Howler.js for Audio Management -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
 
     <!-- Partytown Configuration -->
     <script>
@@ -68,13 +72,13 @@
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
             
             <!-- Brand -->
-            <a href="../index.html" class="text-xl md:text-2xl font-serif text-gold tracking-widest uppercase hover:text-white transition-colors">
+            <a href="./" class="text-xl md:text-2xl font-serif text-gold tracking-widest uppercase hover:text-white transition-colors">
                 TSOF <span class="hidden md:inline text-xs text-gray-600 ml-2 font-mono" data-i18n="privacy_page.header_code">// LEGAL_DOCS_01</span>
             </a>
             
             <!-- Desktop Controls -->
             <div class="flex items-center gap-4">
-                <a href="../index.html" class="hidden md:inline-block text-xs font-mono text-gray-500 hover:text-gold uppercase tracking-widest border-r border-white/10 pr-4 transition-colors">
+                <a href="./" class="hidden md:inline-block text-xs font-mono text-gray-500 hover:text-gold uppercase tracking-widest border-r border-white/10 pr-4 transition-colors">
                     <i class="fas fa-times mr-2"></i> <span data-i18n="privacy_page.close_file">Close File</span>
                 </a>
                 
@@ -99,13 +103,13 @@
 
     <!-- Mobile Menu Overlay -->
     <div id="mobile-menu" class="hidden fixed inset-0 z-40 bg-black/95 flex-col items-center justify-center space-y-8 transition-opacity duration-300 backdrop-blur-xl">
-        <a href="../index.html" class="text-lg text-red-500 font-serif hover:text-white border border-red-900 px-6 py-2 uppercase tracking-widest mb-4">
+        <a href="./" class="text-lg text-red-500 font-serif hover:text-white border border-red-900 px-6 py-2 uppercase tracking-widest mb-4">
             <i class="fas fa-times mr-2"></i> <span data-i18n="privacy_page.close_file">Close File</span>
         </a>
-        <a href="../index.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.home">Home</a>
+        <a href="./" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.home">Home</a>
         <a href="./characters.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.bloodline">Bloodline</a>
         <a href="./factions.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.factions">Factions</a>
-        <a href="https://shop.thesinsofthefathers.com" target="_blank" class="text-gold border-b border-gold" data-i18n="nav.merch"></a>
+        <a href="https://shop.thesinsofthefathers.com" class="hover:text-gold transition-colors" target="_blank" data-i18n="nav.merch"></a>
         <a href="./login.html" class="text-sm text-gray-400 hover:text-white mt-8 font-mono uppercase" data-i18n="auth.login">Login</a>
 
         <!-- Mobile Language -->
@@ -195,7 +199,7 @@
         </div>
 
         <p class="text-gray-600 text-xs uppercase tracking-widest">
-            <span data-i18n="footer.copyright_slogan">Ruaraidh Ballantine & Havi are watching.</span>
+            <span data-i18n="footer.copyright_slogan">Roland Ravenwood & Havi are watching.</span>
         </p>
     </footer>
 

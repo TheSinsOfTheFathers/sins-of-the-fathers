@@ -30,7 +30,7 @@ test.describe('TSOF - Kritik Özellikler', () => {
   test('D3.js (Soy Ağacı) grafiği çizilmeli', async ({ page }) => {
     // Test için bir karakter detay sayfasına gidiyoruz (Mock data gerekebilir)
     // Şimdilik genel yapıyı kontrol edelim
-    await page.goto('/pages/character-detail.html?id=ruaraidh'); 
+    await page.goto('/pages/character-detail.html?id=Roland'); 
 
     const graphContainer = page.locator('#family-graph');
     await expect(graphContainer).toBeVisible();

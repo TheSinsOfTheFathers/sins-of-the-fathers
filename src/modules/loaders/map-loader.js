@@ -1,24 +1,20 @@
 import { client } from '../../lib/sanityClient.js';
 import i18next from '../../lib/i18n.js';
-// 👇 SEO İMPORTU
 import { injectSchema } from '../../lib/seo.js';
-
-// 👇 1. GSAP IMPORT
 import gsap from 'gsap';
 
 let mapInstance = null;
 
 const FACTION_THEMES = {
-    'ballantine-empire': { border: '#c5a059', fill: '#c5a059', glow: '#ffd700' },
+    'Ravenwood-empire': { border: '#c5a059', fill: '#c5a059', glow: '#ffd700' },
     'macpherson-clan': { border: '#7f1d1d', fill: '#991b1b', glow: '#ef4444' },
     'default': { border: '#52525b', fill: '#3f3f46', glow: '#d4d4d8' }
 };
 
 async function loadGeoJSON(filePath) {
     try {
-        const cleanPath = filePath.replace('/public', '');
-
-        const response = await fetch(cleanPath);
+        const response = await fetch(filePath);
+        
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         return await response.json();
     } catch (error) {
@@ -33,7 +29,6 @@ const createTacticalIcon = (factionSlug, iconType = 'fa-map-marker-alt') => {
     const color = theme.border;
 
     return L.divIcon({
-        // GSAP ile seçmek için 'custom-tactical-icon' sınıfını kullanacağız
         className: 'custom-tactical-icon',
         html: `
             <div class='relative flex items-center justify-center w-8 h-8 group cursor-pointer'>
@@ -68,12 +63,10 @@ const addLocationMarkers = (map, locations) => {
         const icon = createTacticalIcon(factionSlug, 'fa-crosshairs');
         const marker = L.marker([lat, lng], { icon: icon }).addTo(map);
 
-        // Marker oluşturulduğu an GSAP ile gizleyelim (Sonra topluca açacağız)
         const el = marker.getElement();
         if (el) gsap.set(el, { scale: 0, opacity: 0 });
 
         marker.on('popupopen', function (e) {
-            // Popup açıldığında içindeki içeriğe animasyon
             const popupNode = this.getPopup().getElement();
             if (popupNode) {
                 const content = popupNode.querySelector('.leaflet-popup-content');
@@ -107,7 +100,7 @@ const addFactionTerritories = async (map, factions) => {
     if (!factions) return;
 
     const factionFileMap = {
-        'ballantine-empire': [
+        'Ravenwood-empire': [
             '/assets/maps/united-kingdom-border.geojson',
             '/assets/maps/california-border.geojson',
             '/assets/maps/italy-border.geojson'
@@ -137,20 +130,14 @@ const addFactionTerritories = async (map, factions) => {
         for (const path of filePaths) {
             const data = await loadGeoJSON(path);
             if (data) {
-                // GeoJSON katmanını ekle
                 const layer = L.geoJSON(data, { style: geoStyle }).addTo(map);
-
-                // GSAP ile SVG Path Animasyonu (Çizgi çizme efekti)
-                // Leaflet SVG kullandığı için path elementlerini seçebiliriz
-                // Not: Bu işlem biraz ağırdır, sadece masaüstünde yapmak mantıklı olabilir.
-                /* layer.eachLayer((l) => {
+                layer.eachLayer((l) => {
                     if(l._path) {
                         const length = l._path.getTotalLength();
                         gsap.set(l._path, { strokeDasharray: length, strokeDashoffset: length });
                         gsap.to(l._path, { strokeDashoffset: 0, duration: 2, ease: "power2.inOut" });
                     }
                 });
-                */
             }
         }
     }
@@ -163,10 +150,8 @@ export async function displayLocations() {
     const mapContainer = document.getElementById('map');
     const loader = document.getElementById('map-loader');
 
-    // Başlangıçta Map Container'ı gizle (FOUC Önleme)
     if (mapContainer) gsap.set(mapContainer, { opacity: 0, scale: 0.95 });
 
-    // SEO SCHEMA
     try {
         const schemaData = {
             "@context": "https://schema.org",
@@ -188,9 +173,6 @@ export async function displayLocations() {
     }
 
     try {
-        // Haritayı temizle
-        destroyMap('map');
-
         const map = L.map('map', {
             center: [40, -30],
             zoom: 3,
@@ -201,7 +183,6 @@ export async function displayLocations() {
 
         map.getPane('popupPane').style.zIndex = 800;
 
-        // Zoom kontrolü (Başlangıçta gizli)
         const zoomControl = L.control.zoom({ position: 'topright' }).addTo(map);
         const zoomNode = zoomControl.getContainer();
         if (zoomNode) gsap.set(zoomNode, { autoAlpha: 0, x: 50 });
@@ -251,7 +232,30 @@ export async function displayLocations() {
             if (display) display.textContent = `${i18next.t('locations.hud_lat')}: ${e.latlng.lat.toFixed(4)} // ${i18next.t('locations.hud_lng')}: ${e.latlng.lng.toFixed(4)}`;
         });
 
-        if (loader) loader.classList.add('opacity-0', 'pointer-events-none');
+        const tl = gsap.timeline();
+
+        if (loader) {
+             tl.to(loader, { autoAlpha: 0, duration: 0.5 });
+        }
+        tl.to(mapContainer, { opacity: 1, scale: 1, duration: 1.2, ease: "power2.inOut" }, "-=0.2");
+        
+        if (zoomNode) {
+            tl.to(zoomNode, { autoAlpha: 1, x: 0, duration: 0.5 }, "<");
+        }
+
+        const markerElements = document.querySelectorAll('.custom-tactical-icon');
+        if (markerElements.length > 0) {
+            tl.to(markerElements, {
+                scale: 1,
+                opacity: 1,
+                duration: 0.6,
+                stagger: {
+                    amount: 1.5,
+                    from: "random"
+                },
+                ease: "back.out(2)"
+            }, "-=1"); 
+        }
 
     } catch (error) {
         console.error("System Failure (Map):", error);

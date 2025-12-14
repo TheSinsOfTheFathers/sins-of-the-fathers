@@ -15,7 +15,7 @@ import i18next, { initI18n, changeLanguage } from './lib/i18n.js';
 import Lenis from '@studio-freight/lenis';
 
 // Modüller (Artık hepsi 'src' klasöründen geliyor)
-import initAuth from './/modules/auth/auth.js';
+import initAuth from './modules/auth/auth.js';
 import { initMobileMenu } from './modules/ui/mobile-menu.js';
 import { initAudioSystem } from './modules/ui/audio-manager.js';
 import { initCookieConsent } from './modules/ui/app-policy.js';
@@ -32,6 +32,20 @@ function raf(time) {
   requestAnimationFrame(raf);
 }
 requestAnimationFrame(raf);
+
+// Anchor links için smooth scroll düzeltmesi
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      lenis.scrollTo(target, {
+        offset: -80,
+        duration: 2
+      });
+    }
+  });
+});
 
 
 // Vite Modül Haritası (Dinamik importlar için)

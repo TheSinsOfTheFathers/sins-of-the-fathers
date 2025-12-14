@@ -1,78 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Google Tag Manager -->
+    <script type="text/partytown">
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-PVH59MXZ');
+    </script>
+    <!-- End Google Tag Manager -->
+
+    <!-- Meta Tags -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Dead End. The intelligence you are looking for has been scrubbed from the archives. Return to base.">
+    <meta name="description" content="Blood implies obligation. Explore the dark saga of Roland Ravenwood and Havi. A tale of crime, dynasty, and inevitable fate.">
+    <meta name="keywords" content="Sins of the Fathers, Ravenwood, Roland, Havi, Crime Saga, Noir, Dark Fiction">
+    <meta name="author" content="The Sins of the Fathers">
+    <meta name="theme-color" content="#050505">
+    <meta name="robots" content="index, follow">
+    <meta name="googlebot" content="index, follow">
+    
+    <!-- Title -->
     <title data-i18n="404_page.page_title">404 - Signal Lost | The Sins of the Fathers</title>
 
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Manifest -->
+    <link rel="manifest" href="./manifest.json">
+
+    <!-- Favicons -->
+    <link rel="icon" href="./assets/images/logo/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="./assets/images/logo/favicon.svg" type="image/svg+xml">
+    <link rel="icon" sizes="96x96" href="./assets/images/logo/favicon-96x96.png" type="image/png">
+    <link rel="shortcut icon" href="./assets/images/logo/favicon.ico" type="image/x-icon">
+
+    <!-- External Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Courier+Prime&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    
+    <!-- Internal Styles -->
+    <link rel="stylesheet" href="./src/style.css">
+
+    <!-- Internal Scripts -->
+    <script type="module" src="./src/main.js"></script>
+
+    <!-- External Scripts -->
+    <!-- Howler.js for Audio Management -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+
+    <!-- Partytown Configuration -->
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        'blood': '#4a0404',
-                        'gold': '#c5a059',
-                        'obsidian': '#050505',
-                        'charcoal': '#121212'
-                    },
-                    fontFamily: {
-                        serif: ['Cinzel', 'serif'],
-                        sans: ['Lato', 'sans-serif'],
-                        mono: ['Courier Prime', 'monospace']
-                    },
-                    animation: {
-                        'glitch': 'glitch 1s linear infinite',
-                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                    },
-                    keyframes: {
-                        glitch: {
-                            '2%, 64%': { transform: 'translate(2px,0) skew(0deg)' },
-                            '4%, 60%': { transform: 'translate(-2px,0) skew(0deg)' },
-                            '62%': { transform: 'translate(0,0) skew(5deg)' },
-                        }
-                    }
-                }
-            }
-        }
+        partytown = {
+            forward: ['dataLayer.push', 'gtag', 'fbq'], 
+            lib: '/~partytown/'
+        };
     </script>
     
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Courier+Prime&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-
-    <style>
-        body { background-color: #050505; color: #e5e5e5; }
-        .noise-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: 50;
-            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI1MDAiIGhlaWdodD0iNTAwIj48ZmlsdGVyIGlkPSJub2lzZSI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuNjUiIG51bU9jdGF2ZXM9IjMiIHN0aXRjaFRpbGVzPSJzdGl0Y2giLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCgjbm9pc2UpIiBvcGFjaXR5PSIwLjA1Ii8+PC9zdmc+');
-            opacity: 0.05;
-        }
-        .vignette {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 40;
-            background: radial-gradient(circle, rgba(0,0,0,0) 50%, rgba(0,0,0,1) 100%);
-        }
-        .glitch-text {
-            position: relative;
-        }
-        .glitch-text::before, .glitch-text::after {
-            content: attr(data-text);
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #050505;
-        }
-        .glitch-text::before {
-            left: 2px; text-shadow: -1px 0 red; clip: rect(24px, 550px, 90px, 0); animation: glitch 3s infinite linear alternate-reverse;
-        }
-        .glitch-text::after {
-            left: -2px; text-shadow: -1px 0 blue; clip: rect(85px, 550px, 140px, 0); animation: glitch 2s infinite linear alternate-reverse;
-        }
-
-        /* Hamburger Animation */
-        #hamburger-button span { transition: 0.3s; }
-        #hamburger-button.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 6px); }
-        #hamburger-button.active span:nth-child(2) { opacity: 0; }
-        #hamburger-button.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -6px); }
-    </style>
+    <!-- Partytown Script -->
+    <script type="module" src="src/modules/loaders/partytown-loader.js"></script>
 </head>
 
 <body class="flex flex-col min-h-screen font-sans selection:bg-red-900 selection:text-white">
@@ -82,13 +66,14 @@
 
     <header class="fixed top-0 w-full z-50 bg-obsidian/80 backdrop-blur-md border-b border-white/5">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="./index.html" class="text-xl md:text-2xl font-serif text-gold tracking-widest uppercase hover:text-white transition-colors">
+            <a href="/" class="text-xl md:text-2xl font-serif text-gold tracking-widest uppercase hover:text-white transition-colors">
                 TSOF <span class="text-gray-600 text-sm hidden md:inline ml-2" data-i18n="404_page.header_subtitle">// ARCHIVES</span>
             </a>
             
             <div class="flex items-center gap-4">
-                <a href="./index.html" class="text-xs uppercase tracking-widest text-gray-500 hover:text-gold transition-colors hidden md:flex items-center">
-                    <i class="fas fa-chevron-left mr-2"></i> <span data-i18n="404_page.btn_abort">Abort</span>
+                <a href="/" class="text-xs uppercase tracking-widest text-gray-500 hover:text-gold transition-colors hidden md:flex items-center">
+                    <i class="fas fa-chevron-left mr-2"></i> 
+                    <span data-i18n="404_page.btn_abort">Abort</span>
                 </a>
 
                 <div class="hidden md:flex gap-2 font-mono text-[10px]">
@@ -122,7 +107,7 @@
         </div>
     </div>
 
-    <main class="grow flex flex-col items-center justify-center container mx-auto px-6 relative z-10 text-center">
+    <main class="grow flex flex-col items-center justify-center container mx-auto px-6 pt-20 relative z-10 text-center">
         
         <div class="mb-6 opacity-80 text-red-900">
             <i class="fas fa-biohazard text-6xl animate-pulse-slow"></i>
@@ -141,14 +126,14 @@
                 <span class="text-red-800">> ERROR:</span> <span data-i18n="404_page.error_coords">Target coordinates invalid.</span>
             </p>
             <p data-i18n="404_page.error_desc">
-                The file you are looking for has been heavily redacted, moved to a secure vault, or "liquidated" by the Ballantine estate. 
+                The file you are looking for has been heavily redacted, moved to a secure vault, or "liquidated" by the Ravenwood estate. 
             </p>
             <p class="animate-pulse">
                 _tracing_origin_IP... [failed]
             </p>
         </div>
 
-        <a href="./index.html" class="group relative px-8 py-3 border border-gray-700 bg-transparent overflow-hidden inline-flex items-center text-gray-300 uppercase tracking-widest hover:border-gold hover:text-white transition-all">
+        <a href="/" class="group relative px-8 py-3 border border-gray-700 bg-transparent overflow-hidden inline-flex items-center text-gray-300 uppercase tracking-widest hover:border-gold hover:text-white transition-all">
             <span class="absolute inset-0 w-full h-full bg-white/5 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out"></span>
             <i class="fas fa-undo mr-3 text-xs"></i> <span data-i18n="404_page.btn_return">Return to Operations</span>
         </a>
@@ -171,7 +156,7 @@
 
         <p class="text-gray-600 text-xs uppercase tracking-widest">
             &copy; 2025 The Sins of the Fathers. <br>
-            <span data-i18n="footer.copyright_slogan">Ruaraidh Ballantine & Havi are watching.</span>
+            <span data-i18n="footer.copyright_slogan">Roland Ravenwood & Havi are watching.</span>
         </p>
     </footer>
 

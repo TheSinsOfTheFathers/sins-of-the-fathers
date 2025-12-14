@@ -39,7 +39,7 @@
     "privacy": "Privacy Protocol",
     "terms": "Terms of Operation",
     "footer.copyright": "© {{year}} The Sins of the Fathers",
-    "copyright_slogan": "Ruaraidh Ballantine & Havi are watching."
+    "copyright_slogan": "Roland Ravenwood & Havi are watching."
   },
   "common_utils": {
     "ok": "OK",
@@ -109,12 +109,12 @@
   "timeline_page": {
     "meta_title": "The Chronicle | The Sins of the Fathers",
     "title": "The <span class=\"text-gold\">Timeline</span>",
-    "quote": "\"The power of the Ballantine family grew by profiting from every major social and economic trauma in Scotland. Theirs is not a history of nobility, but of a ruthless philosophy of control passed down through generations.\"",
+    "quote": "\"The power of the Ravenwood family grew by profiting from every major social and economic trauma in Scotland. Theirs is not a history of nobility, but of a ruthless philosophy of control passed down through generations.\"",
     "quote_source": "— Archive Record #8821",
     "loader_text": "Reconstructing Historical Events..."
   },
   "timeline_loader": {
-    "title_headline": "<span class='font-serif text-white'>THE BALLANTINE <span class='text-gold'>CHRONICLES</span></span>",
+    "title_headline": "<span class='font-serif text-white'>THE Ravenwood <span class='text-gold'>CHRONICLES</span></span>",
     "title_text": "<p class='text-gray-400 font-mono'>A visual record of blood, betrayal, and empire.</p>",
     "title_media_caption": "Archives",
     "title_media_credit": "System",
@@ -316,7 +316,7 @@
     "header_subtitle": "// PERSONNEL FILE",
     "btn_terminate": "Terminate",
     "id_card_header": "Identification",
-    "id_card_sub": "Ballantine Network Access",
+    "id_card_sub": "Ravenwood Network Access",
     "photo_update": "Update Photo",
     "label_clearance": "CLEARANCE:",
     "label_status": "STATUS:",
@@ -333,7 +333,7 @@
     "faction_old_blood": "Old Blood",
     "desc_old_blood": "Loyal to tradition. The Macpherson legacy.",
     "faction_new_order": "New Order",
-    "desc_new_order": "Loyal to the Architect. The Ballantine future.",
+    "desc_new_order": "Loyal to the Architect. The Ravenwood future.",
     "btn_update": "Update Records",
     "scanning": "Scanning Biometrics..."
   },
@@ -348,7 +348,7 @@
     "sec1_desc1": "When you create an account with us, you must provide information that is accurate, complete, and current. Failure to do so constitutes a breach of the Terms, which may result in immediate termination of your account.",
     "sec1_desc2": "You are responsible for safeguarding the password that you use to access the Service. You agree not to disclose your password to any third party.",
     "sec2_title": "2. Intellectual Property (The Legacy)",
-    "sec2_desc1": "The Service and its original content (including but not limited to the story, characters, names \"Ruaraidh Ballantine\", \"Havi\", the faction emblems, logos, and interactive timelines) are and will remain the exclusive property of <strong>The Sins of the Fathers</strong> author and creators. The Service is protected by copyright, trademark, and other laws.",
+    "sec2_desc1": "The Service and its original content (including but not limited to the story, characters, names \"Roland Ravenwood\", \"Havi\", the faction emblems, logos, and interactive timelines) are and will remain the exclusive property of <strong>The Sins of the Fathers</strong> author and creators. The Service is protected by copyright, trademark, and other laws.",
     "sec2_desc2": "You may not reproduce, distribute, or create derivative works based on this content without explicit permission.",
     "sec3_title": "3. User Conduct (Rules of Engagement)",
     "sec3_desc": "You agree not to use the Service for any purpose that is unlawful or prohibited by these Terms. Harassment, hate speech, or any attempt to compromise the security of the Digital Fortress will result in an immediate ban (exile).",
@@ -367,7 +367,7 @@
     "btn_abort": "Abort",
     "connection_severed": "Connection Severed",
     "error_coords": "Target coordinates invalid.",
-    "error_desc": "The file you are looking for has been heavily redacted, moved to a secure vault, or \"liquidated\" by the Ballantine estate.",
+    "error_desc": "The file you are looking for has been heavily redacted, moved to a secure vault, or \"liquidated\" by the Ravenwood estate.",
     "btn_return": "Return to Operations"
   },
   "family_graph": {
@@ -388,7 +388,7 @@
     "no_factions_found": "No Active Factions Found in Database.",
     "error_connection": "CRITICAL ERROR: CONNECTION SEVERED.",
     "meta_title": "Factions Database | The Sins of the Fathers",
-    "meta_desc": "Directory of all known organizations and syndicates in the Ballantine Network."
+    "meta_desc": "Directory of all known organizations and syndicates in the Ravenwood Network."
   },
   "locations": {
     "sector": "SECTOR",

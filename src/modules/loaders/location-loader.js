@@ -1,14 +1,12 @@
 import { client } from '../../lib/sanityClient.js';
 import i18next from '../../lib/i18n.js';
 import { injectSchema } from '../../lib/seo.js';
-
-// 👇 1. GSAP IMPORT
 import gsap from 'gsap';
 
 let mapInstance = null;
 
 const FACTION_THEMES = {
-    'ballantine-empire': { border: '#c5a059', fill: '#c5a059' },
+    'Ravenwood-empire': { border: '#c5a059', fill: '#c5a059' },
     'macpherson-clan': { border: '#7f1d1d', fill: '#991b1b' },
     'default': { border: '#555555', fill: '#777777' }
 };
@@ -50,10 +48,9 @@ const createTacticalIcon = (slug) => {
 
 async function loadLayer(map, path, theme) {
     try {
-        const cleanPath = path.replace('/public', '');
-
-        const res = await fetch(cleanPath);
-        if (!res.ok) throw new Error(`404 Not Found: ${cleanPath}`);
+        const res = await fetch(path);
+        
+        if (!res.ok) throw new Error(`404 Not Found: ${path}`);
         const data = await res.json();
 
         L.geoJSON(data, {
@@ -80,10 +77,8 @@ export async function displayLocations() {
     const mapContainer = document.getElementById('map');
     const loader = document.getElementById('map-loader');
 
-    // Başlangıçta haritayı gizle (FOUC önleme)
     if (mapContainer) gsap.set(mapContainer, { opacity: 0, scale: 0.98 });
 
-    // SEO Schema
     try {
         const schemaData = {
             "@context": "https://schema.org",
@@ -115,7 +110,6 @@ export async function displayLocations() {
         });
         mapInstance = map;
 
-        // Zoom kontrolünü ekle ama henüz gösterme (Animation için)
         const zoomControl = L.control.zoom({ position: 'bottomright' }).addTo(map);
         const zoomContainer = zoomControl.getContainer();
         if (zoomContainer) gsap.set(zoomContainer, { autoAlpha: 0, x: 50 });
@@ -136,7 +130,7 @@ export async function displayLocations() {
         };
 
         const factionsData = {
-            'ballantine-empire': [
+            'Ravenwood-empire': [
                 'united-kingdom-border.geojson',
                 'california-border.geojson',
                 'italy-border.geojson',
@@ -147,12 +141,9 @@ export async function displayLocations() {
             ]
         };
 
-        // GeoJSON Layerlarını yükle
-        // Not: Bunlar asenkron yüklenir, harita açıldıktan sonra gelirler.
         for (const [slug, files] of Object.entries(factionsData)) {
             const theme = FACTION_THEMES[slug] || FACTION_THEMES.default;
             for (const file of files) {
-                // Vite'da public klasörü root kabul edilir, o yüzden path'i düzelttik
                 await loadLayer(map, `/assets/maps/${file}`, theme);
             }
         }
@@ -164,7 +155,7 @@ export async function displayLocations() {
         const locations = await client.fetch(query);
         console.log(`> Found ${locations.length} locations.`);
 
-        const markerElements = []; // Animasyon için marker DOM elementlerini toplayacağız
+        const markerElements = []; 
 
         if (locations.length > 0) {
             locations.forEach(loc => {
@@ -185,36 +176,29 @@ export async function displayLocations() {
                     </div>
                 `, { className: 'custom-popup-theme' });
 
-                // Leaflet marker elementini al (DOM elementi)
                 const el = marker.getElement();
                 if (el) {
                     markerElements.push(el);
-                    // Başlangıçta gizle (Stagger ile getireceğiz)
                     gsap.set(el, { scale: 0, opacity: 0 });
                 }
             });
         }
 
-        // Mouse Move Event
         map.on('mousemove', (e) => {
             const el = document.getElementById('coordinates-display');
             if (el) el.textContent = `${e.latlng.lat.toFixed(4)} | ${e.latlng.lng.toFixed(4)}`;
         });
 
-        // 👇 2. GSAP MASTER TIMELINE
-        // -----------------------------------------------------
         const tl = gsap.timeline();
 
-        // A. Loader'ı Kapat
         if (loader) {
             tl.to(loader, {
                 autoAlpha: 0,
                 duration: 0.5,
-                onComplete: () => loader.style.display = 'none' // Tamamen kaldır
+                onComplete: () => loader.style.display = 'none'
             });
         }
 
-        // B. Harita Konteynerini Aç (Zoom-out efekti ile)
         tl.to(mapContainer, {
             opacity: 1,
             scale: 1,
@@ -222,22 +206,20 @@ export async function displayLocations() {
             ease: "power2.inOut"
         }, "-=0.2");
 
-        // C. Zoom Kontrollerini Kaydırarak Getir
         if (zoomContainer) {
             tl.to(zoomContainer, { autoAlpha: 1, x: 0, duration: 0.5 }, "-=0.5");
         }
 
-        // D. Markerları "Pop" diye patlat (Stagger)
         if (markerElements.length > 0) {
             tl.to(markerElements, {
                 scale: 1,
                 opacity: 1,
                 duration: 0.6,
                 stagger: {
-                    amount: 1.5, // Toplam 1.5 saniye içinde hepsi gelecek (rastgelelik hissi verir)
-                    from: "random" // Rastgele sırayla gelsin, daha organik durur
+                    amount: 1.5,
+                    from: "random" 
                 },
-                ease: "back.out(2)" // Hafif yaylanma efekti (pop)
+                ease: "back.out(2)" 
             }, "-=0.5");
         }
 
@@ -245,7 +227,6 @@ export async function displayLocations() {
         console.error("Map Critical Error:", err);
         if (mapContainer) mapContainer.innerHTML = '<p class="text-center text-red-500 mt-10">MAP SYSTEM FAILURE</p>';
         if (loader) loader.style.display = 'none';
-        // Hata olsa bile container'ı göster
         gsap.to(mapContainer, { opacity: 1 });
     }
 }

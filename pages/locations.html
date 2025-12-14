@@ -42,8 +42,14 @@
     <!-- Internal Scripts -->
     <script src="../src/main.js" type="module" defer></script>
 
-    <!-- External Scripts -->
+    <!-- External Styles -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <!-- External Scripts -->
+    <!-- Howler.js for Audio Management -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+    
+    <!-- Leaflet.js for Interactive Maps -->
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <!-- Partytown Configuration -->
@@ -67,7 +73,7 @@
     <header class="absolute top-0 w-full z-50 bg-black/80 backdrop-blur border-b border-white/10 h-16 pointer-events-auto transition-all">
         <nav class="container mx-auto px-4 h-full flex justify-between items-center">
             <!-- Brand -->
-            <a href="../index.html" class="text-xl font-serif text-gold uppercase tracking-widest hover:text-white transition-colors">
+            <a href="./" class="text-xl font-serif text-gold uppercase tracking-widest hover:text-white transition-colors">
                 TSOF <span class="hidden md:inline text-xs text-gray-600 ml-2 font-mono" data-i18n="locations_page.header_subtitle">// GLOBAL INTEL</span>
             </a>
             
@@ -104,7 +110,7 @@
 
     <!-- MOBILE MENU OVERLAY (Z-Index 60) -->
     <div id="mobile-menu" class="hidden fixed inset-0 z-60 bg-black/95 flex-col items-center justify-center space-y-6 backdrop-blur-xl transition-opacity duration-300">
-        <a href="../index.html" class="text-xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.home">Home</a>
+        <a href="./" class="text-xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.home">Home</a>
         <a href="./characters.html" class="text-xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.bloodline">Bloodline</a>
         <a href="./factions.html" class="text-xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.factions">Factions</a>
         <a href="./merch.html" class="text-xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.merch">Merch</a>

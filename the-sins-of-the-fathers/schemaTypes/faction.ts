@@ -47,7 +47,7 @@ export default defineType({
         name: 'hq',
         title: 'Headquarters Location Name',
         type: 'string',
-        description: 'Örn: "The Docks, Glasgow" veya "Ballantine Tower, LA".',
+        description: 'Örn: "The Docks, Glasgow" veya "Ravenwood Tower, LA".',
         group: 'core'
     }),
     defineField({

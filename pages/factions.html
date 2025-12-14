@@ -15,7 +15,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Power Dynamics: Explore the warring factions of The Sins of the Fathers. From the blood-soaked traditions of the Old World to the calculated precision of the New Order.">
-    <meta name="keywords" content="TSOF, Factions, Macpherson, Ballantine, Crime Syndicate, Power Struggle, Lore">
+    <meta name="keywords" content="TSOF, Factions, Macpherson, Ravenwood, Crime Syndicate, Power Struggle, Lore">
     <meta name="author" content="The Sins of the Fathers">
     <meta name="theme-color" content="#050505">
     <meta name="robots" content="index, follow">
@@ -42,6 +42,10 @@
     <!-- Internal Scripts -->
     <script src="../src/main.js" type="module"></script>
 
+    <!-- External Scripts -->
+    <!-- Howler.js for Audio Management -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+    
     <!-- Partytown Configuration -->
     <script>
         partytown = {
@@ -66,7 +70,7 @@
     <header class="fixed top-0 w-full z-50 bg-obsidian/90 backdrop-blur-md border-b border-white/5 transition-all">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
             <!-- Brand -->
-            <a href="../index.html" class="text-xl md:text-3xl font-serif text-gold tracking-widest uppercase hover:text-white transition-colors">
+            <a href="./" class="text-xl md:text-3xl font-serif text-gold tracking-widest uppercase hover:text-white transition-colors">
                 TSOF <span class="hidden md:inline text-xs text-gray-600 ml-2 font-mono" data-i18n="factions_page.header_subtitle">// SECTOR ANALYSIS</span>
             </a>
             
@@ -76,7 +80,7 @@
                 <a href="./timeline.html" class="text-gray-400 hover:text-gold transition-colors" data-i18n="nav.history">History</a>
                 <a href="./factions.html" class="text-gold border-b border-gold" data-i18n="nav.factions">Factions</a>
                 <a href="./locations.html" class="text-gray-400 hover:text-gold transition-colors" data-i18n="nav.territories">Territories</a>
-                <a href="https://shop.thesinsofthefathers.com" target="_blank" class="text-gold border-b border-gold" data-i18n="nav.merch"></a>
+                <a href="https://shop.thesinsofthefathers.com" class="hover:text-gold transition-colors" target="_blank" data-i18n="nav.merch"></a>
                 
                 <!-- Auth Controls -->
                 <div class="border-l border-white/20 pl-8 ml-4 flex items-center gap-4" id="auth-controls">
@@ -113,7 +117,7 @@
         <a href="./timeline.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.history">History</a>
         <a href="./factions.html" class="text-2xl text-gold font-serif border-b border-gold pb-2 uppercase tracking-widest" data-i18n="nav.factions">Factions</a>
         <a href="./locations.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.territories">Territories</a>
-        <a href="https://shop.thesinsofthefathers.com" target="_blank" class="text-gold border-b border-gold" data-i18n="nav.merch"></a>
+        <a href="https://shop.thesinsofthefathers.com" class="hover:text-gold transition-colors" target="_blank" data-i18n="nav.merch"></a>
         <a href="./lore.html" class="text-xl text-gold font-serif hover:text-white uppercase tracking-widest" data-i18n="nav.archives">Archives</a>
         <a href="./login.html" class="text-sm text-gray-400 hover:text-white mt-8 font-mono uppercase" data-i18n="auth.login">Login</a>
 
@@ -175,7 +179,7 @@
         </div>
 
         <p class="text-gray-600 text-xs uppercase tracking-widest">
-            <span data-i18n="footer.copyright_slogan">Ruaraidh Ballantine & Havi are watching.</span>
+            <span data-i18n="footer.copyright_slogan">Roland Ravenwood & Havi are watching.</span>
         </p>
     </footer>
     

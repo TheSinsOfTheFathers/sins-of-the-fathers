@@ -14,7 +14,7 @@
     <!-- Meta Tags -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Restricted Archives: Searchable database of classified documents, audio logs, and historical records regarding the Ballantine and Macpherson bloodlines.">
+    <meta name="description" content="Restricted Archives: Searchable database of classified documents, audio logs, and historical records regarding the Ravenwood and Macpherson bloodlines.">
     <meta name="keywords" content="TSOF, Archives, Lore, Database, Classified, Documents, Audio Logs">
     <meta name="author" content="The Sins of the Fathers">
     <meta name="theme-color" content="#050505">
@@ -39,8 +39,12 @@
     <!-- Internal Styles -->
     <link href="../src/style.css" rel="stylesheet">
 
-    <!-- External Scripts -->
+    <!-- Internal Scripts -->
     <script src="../src/main.js" type="module"></script>
+
+    <!-- External Scripts -->
+    <!-- Howler.js for Audio Management -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
 
     <!-- Partytown Configuration -->
     <script>
@@ -66,7 +70,7 @@
     <header class="fixed top-0 w-full z-50 transition-all duration-300 bg-obsidian/90 backdrop-blur-md border-b border-white/5">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
             <!-- Brand -->
-            <a href="../index.html" class="nav-brand text-2xl md:text-3xl text-gold tracking-widest hover:text-white transition-colors uppercase font-serif">
+            <a href="./" class="nav-brand text-2xl md:text-3xl text-gold tracking-widest hover:text-white transition-colors uppercase font-serif">
                 TSOF <span class="hidden md:inline text-xs text-gray-600 ml-2 font-mono" data-i18n="lore_detail.header_reader">// ARCHIVES</span>
             </a>
 
@@ -76,7 +80,7 @@
                 <a href="./timeline.html" class="text-gray-400 hover:text-gold transition-colors" data-i18n="nav.history">History</a>
                 <a href="./factions.html" class="text-gray-400 hover:text-gold transition-colors" data-i18n="nav.factions">Factions</a>
                 <a href="./locations.html" class="text-gray-400 hover:text-gold transition-colors" data-i18n="nav.territories">Territories</a>
-                <a href="https://shop.thesinsofthefathers.com" target="_blank" class="text-gold border-b border-gold" data-i18n="nav.merch"></a>
+                <a href="https://shop.thesinsofthefathers.com" class="hover:text-gold transition-colors" target="_blank" data-i18n="nav.merch"></a>
                 
                 <!-- Auth Controls -->
                 <div class="border-l border-white/20 pl-8 ml-4 flex items-center gap-4" id="auth-controls">
@@ -110,12 +114,12 @@
 
     <!-- Mobile Menu Overlay -->
     <div id="mobile-menu" class="hidden fixed inset-0 z-40 bg-black/95 flex-col items-center justify-center space-y-8 transition-opacity duration-300 backdrop-blur-xl">
-        <a href="../index.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.home">Home</a>
+        <a href="./" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.home">Home</a>
         <a href="./characters.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.bloodline">The Bloodline</a>
         <a href="./timeline.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.history">History</a>
         <a href="./factions.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.factions">Factions</a>
         <a href="./locations.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.territories">Territories</a>
-        <a href="https://shop.thesinsofthefathers.com" target="_blank" class="text-gold border-b border-gold" data-i18n="nav.merch"></a>
+        <a href="https://shop.thesinsofthefathers.com" class="hover:text-gold transition-colors" target="_blank" data-i18n="nav.merch"></a>
         <a href="./login.html" class="text-sm text-gray-400 hover:text-white mt-8 font-mono uppercase" data-i18n="auth.login">Access Terminal</a>
 
         <!-- Mobile Language -->
@@ -199,7 +203,7 @@
 
         <p class="text-gray-600 text-xs uppercase tracking-widest">
             <span data-i18n="footer.copyright">© 2025 The Sins of the Fathers.</span> <br>
-            <span data-i18n="footer.copyright_slogan">Ruaraidh Ballantine & Havi are watching.</span>
+            <span data-i18n="footer.copyright_slogan">Roland Ravenwood & Havi are watching.</span>
         </p>
     </footer>
 

@@ -43,6 +43,8 @@
     <script src="../src/main.js" type="module" defer></script>
 
     <!-- External Scripts -->
+    <!-- Howler.js for Audio Management -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
 
     <!-- Google ReCaptcha -->
     <script src="https://www.google.com/recaptcha/api.js?render=6LeoRfYrAAAAANpaxG70cHRmK5ciRKf7sVt9Crnz" async defer></script>
@@ -76,7 +78,7 @@
     <header class="fixed top-0 w-full z-50 bg-obsidian/90 backdrop-blur-md border-b border-white/5 transition-all">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
             <!-- Brand -->
-            <a href="../index.html" class="text-xl md:text-2xl font-serif text-gold tracking-widest uppercase hover:text-white transition-colors">
+            <a href="./" class="text-xl md:text-2xl font-serif text-gold tracking-widest uppercase hover:text-white transition-colors">
                 TSOF <span class="hidden md:inline border-l border-white/20 pl-3 ml-3 text-xs text-gray-500 font-mono" data-i18n="login_page.header_subtitle">RESTRICTED AREA</span>
             </a>
             
@@ -89,7 +91,7 @@
                 </div>
 
                 <!-- Abort Button -->
-                <a href="../index.html" class="text-xs font-mono text-red-500/80 hover:text-red-500 uppercase tracking-widest border border-red-900/30 px-3 py-1 bg-red-900/10 hover:bg-red-900/20 transition-all">
+                <a href="./" class="text-xs font-mono text-red-500/80 hover:text-red-500 uppercase tracking-widest border border-red-900/30 px-3 py-1 bg-red-900/10 hover:bg-red-900/20 transition-all">
                     <i class="fas fa-times mr-2"></i> <span data-i18n="login_page.header_abort">ABORT</span>
                 </a>
                 
@@ -111,7 +113,7 @@
         <a href="./timeline.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.history">History</a>
         <a href="./factions.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.factions">Factions</a>
         <a href="./locations.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.territories">Territories</a>
-        <a href="https://shop.thesinsofthefathers.com" target="_blank" class="text-gold border-b border-gold" data-i18n="nav.merch"></a>
+        <a href="https://shop.thesinsofthefathers.com" class="hover:text-gold transition-colors" target="_blank" data-i18n="nav.merch"></a>
         <a href="./lore.html" class="text-xl text-gold font-serif hover:text-white border border-gold px-6 py-2 uppercase tracking-widest" data-i18n="nav.archives">Archives</a>
         
         <!-- Mobile Language -->
@@ -125,7 +127,7 @@
     <!-- Main Content Area -->
     <main class="w-full max-w-md mx-auto grow flex flex-col justify-center items-center relative z-10 px-6 pt-16 pb-48">
         
-        <div class="relative top-5 w-full backdrop-blur-sm rounded-sm border-t border-b border-white/5">
+        <div class="bottom-3 w-full backdrop-blur-sm rounded-sm border-t border-b border-white/5">
             
             <h1 class="text-3xl font-serif text-center text-gold mb-1 tracking-widest uppercase" data-i18n="login_page.system_access">System Access</h1>
             <p class="text-[10px] font-mono text-center text-gray-600 uppercase mb-8 tracking-widest" data-i18n="login_page.verify_identity">Verify Identity to proceed</p>
@@ -227,7 +229,7 @@
         </div>
 
         <p class="text-gray-600 text-xs uppercase tracking-widest">
-            <span data-i18n="footer.copyright_slogan">Ruaraidh Ballantine & Havi are watching.</span>
+            <span data-i18n="footer.copyright_slogan">Roland Ravenwood & Havi are watching.</span>
         </p>
     </footer>
 

@@ -171,10 +171,10 @@ const renderCharacterCards = (characters, containers) => {
         const lowerName = (character.name || '').toLowerCase();
         const lowerAlias = character.alias ? character.alias.toLowerCase() : '';
 
-        const isRuaraidh = lowerName.includes('ruaraidh') || lowerAlias.includes('exile');
+        const isRoland = lowerName.includes('Roland') || lowerAlias.includes('exile');
         const isHavi = lowerName.includes('havi') || lowerAlias.includes('bastard');
 
-        if (isRuaraidh || isHavi) {
+        if (isRoland || isHavi) {
             if (containers.protagonists) {
                 containers.protagonists.appendChild(createProtagonistCard(character));
             }

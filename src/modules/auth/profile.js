@@ -159,12 +159,12 @@ export async function loadProfilePage() {
         if (burnBtn && !burnBtn.dataset.listening) {
             burnBtn.dataset.listening = 'true';
             burnBtn.addEventListener('click', async () => {
-                if (confirm("WARNING: This action will permanently scrub your identity from the Ballantine Archives. This cannot be undone. Proceed?")) {
+                if (confirm("WARNING: This action will permanently scrub your identity from the Ravenwood Archives. This cannot be undone. Proceed?")) {
                     try {
                         await deleteDoc(userDocRef);
                         await deleteUser(user);
                         alert("Identity scorched. Redirecting...");
-                        globalThis.location.href = '/index.html';
+                        globalThis.location.href = '/';
                     } catch (err) {
                         console.error(err);
                         alert("Error: Clearance insufficient. Re-login required.");
