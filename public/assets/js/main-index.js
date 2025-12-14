@@ -19,11 +19,18 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 // --- GERİ SAYIM SAYACI ---
-const countdownDate = new Date("2026-01-01T00:00:00").getTime();
+const countdownDate = new Date("2026-01-01T00:00:00Z").getTime();
 
 const countdownFunction = setInterval(function () {
     const now = Date.now();
     const distance = countdownDate - now;
+
+    if (distance < 0) {
+        clearInterval(countdownFunction);
+        const countdownContainer = document.getElementById("countdown");
+        if (countdownContainer) countdownContainer.innerHTML = "<p class='text-2xl text-yellow-500 font-serif'>The story has begun.</p>";
+        return;
+    }
 
     const days = Math.floor(distance / (1000 * 60 * 60 * 24));
     const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -36,12 +43,6 @@ const countdownFunction = setInterval(function () {
         document.getElementById("hours").innerText = hours.toString().padStart(2, '0');
         document.getElementById("minutes").innerText = minutes.toString().padStart(2, '0');
         document.getElementById("seconds").innerText = seconds.toString().padStart(2, '0');
-    }
-
-    if (distance < 0) {
-        clearInterval(countdownFunction);
-        const countdownContainer = document.getElementById("countdown");
-        if (countdownContainer) countdownContainer.innerHTML = "<p class='text-2xl text-yellow-500 font-serif'>The story has begun.</p>";
     }
 }, 1000);
 
