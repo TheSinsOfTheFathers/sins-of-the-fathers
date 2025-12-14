@@ -1,0 +1,31 @@
+name: SonarCloud Analysis
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  sonarcloud:
+    name: SonarCloud Scan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # SonarCloud analizi için bu değer 0 olmalı (tüm geçmişi çeker)
+
+      - name: SonarCloud Scan
+        # DEĞİŞİKLİK: Eski 'sonarcloud-github-action' yerine güncel resmi action kullanıyoruz.
+        # Bu action, 'args' parametrelerini doğru şekilde işler.
+        uses: SonarSource/sonarqube-scan-action@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          # Proje bilgilerini buraya ekliyoruz
+          args: >
+            -Dsonar.organization=atlas-sudo
+            -Dsonar.projectKey=Atlas-sudo_sins-of-the-fathers
