@@ -29,9 +29,10 @@ const storage = getStorage(app);
 const googleProvider = new GoogleAuthProvider();
 const functionsInstance = getFunctions(app, "europe-west3");
 
-let analytics;
+let analyticsInstance = null;
+
 try {
-    analytics = getAnalytics(app);
+    analyticsInstance = getAnalytics(app);
     console.log(
         "%c[SYSTEM] TSOF Secure Link :: ESTABLISHED",
         "color: #c5a059; background: #050505; padding: 4px; border-left: 2px solid #c5a059; font-family: monospace;"
@@ -50,7 +51,7 @@ try {
 export {
     app,
     db,
-    analytics,
+    analyticsInstance as analytics,
     auth,
     functionsInstance as functions,
     googleProvider,
