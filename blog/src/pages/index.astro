@@ -1,0 +1,91 @@
+---
+import { sanityClient } from "sanity:client";
+import { urlFor } from "../lib/urlFor";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+export const prerender = false;
+
+const posts = await sanityClient.fetch(`*[_type == "post"] | order(publishedAt desc) {
+  title,
+  slug,
+  publishedAt,
+  excerpt,
+  mainImage,
+  authorName, 
+}`); 
+
+function formatDate(dateString) {
+  if (!dateString) return 'Undated Record';
+  return new Date(dateString).toLocaleDateString('en-US', {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
+---
+
+<BaseLayout title="TSOF Blog Archives">
+    
+    <div class="mb-12 text-center md:text-left">
+      <h1 class="text-4xl md:text-6xl font-serif text-white mb-2 tracking-wide drop-shadow-lg">
+        Intelligence <span class="text-[#c5a059] italic">Records</span>
+      </h1>
+      <p class="text-gray-500 font-mono text-sm border-l-2 border-[#c5a059] pl-4 inline-block">
+        Classified documents and operation notes.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {posts.length > 0 ? (
+          posts.map((post) => (
+            <article class="group bg-white/5 border border-white/10 hover:border-[#c5a059] transition-all duration-500 overflow-hidden flex flex-col hover:translate-y-1 shadow-lg hover:shadow-[#c5a059]/10">
+              
+              {post.mainImage ? (
+                <div class="relative h-56 overflow-hidden">
+                  <img
+                    src={urlFor(post.mainImage).width(600).height(400).url()}
+                    alt={post.title}
+                    class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 transform group-hover:scale-105"
+                  />
+                  <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-transparent to-transparent opacity-80"></div>
+                </div>
+              ) : (
+                <div class="h-56 bg-[#111] flex items-center justify-center border-b border-white/5">
+                    <span class="text-gray-700 font-serif text-4xl opacity-20">TSOF</span>
+                </div>
+              )}
+
+              <div class="p-6 flex-1 flex flex-col relative">
+                <div class="absolute top-0 left-6 w-12 h-[1px] bg-[#c5a059]"></div>
+
+                <div class="flex items-center gap-2 mb-3 text-[10px] font-mono uppercase text-[#c5a059] tracking-wider mt-2">
+                  <span>{formatDate(post.publishedAt)}</span>
+                  <span class="text-gray-700">|</span>
+                  <span>{post.authorName || 'Unknown Agent'}</span> 
+                </div>
+
+                <h2 class="text-2xl font-serif text-white mb-3 group-hover:text-[#c5a059] transition-colors leading-tight">
+                  <a href={`/post/${post.slug.current}`} class="hover:underline decoration-[#c5a059] underline-offset-4">
+                    {post.title}
+                  </a>
+                </h2>
+
+                <p class="text-sm text-gray-400 line-clamp-3 mb-6 flex-1 leading-relaxed font-sans font-light">
+                  {post.excerpt}
+                </p>
+
+                <a href={`/post/${post.slug.current}`} class="inline-flex items-center text-xs font-bold uppercase tracking-widest text-white border border-white/20 px-4 py-2 hover:bg-[#c5a059] hover:text-black hover:border-[#c5a059] transition-all self-start">
+                  ACCESS FILE &nbsp; <span class="text-[10px]">&rarr;</span>
+                </a>
+              </div>
+            </article>
+          ))
+        ) : (
+          <div class="col-span-full py-24 text-center border border-dashed border-white/10 rounded bg-white/5">
+            <p class="text-[#c5a059] font-mono text-xl mb-2">DATABASE EMPTY</p>
+            <p class="text-gray-500 text-sm">Create a new 'Post' via Sanity Studio.</p>
+          </div>
+        )}
+      </div>
+
+</BaseLayout>

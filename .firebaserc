@@ -1,5 +1,18 @@
 {
   "projects": {
     "default": "sins-of-the-fathers"
-  }
+  },
+  "targets": {
+    "sins-of-the-fathers": {
+      "hosting": {
+        "main-site": [
+          "sins-of-the-fathers"
+        ],
+        "blog-site": [
+          "blog-thesinsofthefathers"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }

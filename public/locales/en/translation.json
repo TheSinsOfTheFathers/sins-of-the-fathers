@@ -10,7 +10,8 @@
     "bloodline": "The Bloodline",
     "archives": "Archives",
     "characters": "Characters",
-    "map": "Map"
+    "map": "Map",
+    "merch": "Merch"
   },
   "common": {
     "loading": "Decrypting Data...",
@@ -19,9 +20,13 @@
     "read_more": "Read More"
   },
   "search": {
-    "placeholder": "Search logs, dossiers, keywords..."
-  }
-  ,"auth": {
+    "placeholder": "Search logs, dossiers, keywords...",
+    "label_query": "Database Query",
+    "filter_all": "All",
+    "filter_docs": "Docs",
+    "filter_audio": "Audio"
+  },
+  "auth": {
     "login": "Log In",
     "logout": "Log Out",
     "signup": "Sign Up"
@@ -33,7 +38,7 @@
   "footer": {
     "privacy": "Privacy Protocol",
     "terms": "Terms of Operation",
-    "copyright": "© {{year}} The Sins of the Fathers",
+    "footer.copyright": "© {{year}} The Sins of the Fathers",
     "copyright_slogan": "Ruaraidh Ballantine & Havi are watching."
   },
   "common_utils": {
@@ -235,6 +240,20 @@
     "link_login": "Access Terminal"
   },
   "lore_detail": {
+    "header_reader": "// READER",
+    "back_to_archives": "Back to Archives",
+    "metadata_title": "File Metadata",
+    "meta_origin": "ORIGIN",
+    "meta_date": "DATE",
+    "meta_author": "AUTHOR / SPEAKER",
+    "meta_clearance": "CLEARANCE",
+    "meta_confidential": "CONFIDENTIAL",
+    "tagged_entities": "Tagged Entities",
+    "fig_evidence": "FIG. A // EVIDENCE",
+    "audio_trans": "ENCRYPTED LOG",
+    "record_id": "Archived Record ID:",
+    "warning_text": "WARNING: Unauthorized distribution of this material is punishable by excommunication or termination.",
+    "stamp_verified": "VERIFIED",
     "unknown_source": "Anonymous Source",
     "undated": "Undated Record",
     "redacted": "REDACTED",
@@ -246,6 +265,21 @@
     "classified_tooltip": "Classified Info",
     "error_not_found": "ERROR 404: FILE NOT FOUND IN ARCHIVE",
     "error_system": "SYSTEM ERROR: CANNOT READ DATA STREAM"
+  },
+  "lore_loader": {
+    "accessing_archives": "Searching Archives...",
+    "unknown_source": "Unknown",
+    "content_pending": "Content parsing pending...",
+    "access_file": "Access File",
+    "encrypted_audio": "Encrypted audio log.",
+    "play_transmission": "Play Transmission",
+    "redacted": "REDACTED",
+    "classified": "Classified",
+    "clearance_required": "Clearance Required",
+    "no_date": "NO_DATE",
+    "no_records_query": "> NO RECORDS MATCH YOUR QUERY.",
+    "system_error_short": "SYSTEM ERROR",
+    "connection_failed_long": "Database connection failed. Try reloading terminal."
   },
   "privacy_page": {
     "page_title": "Privacy Protocol | The Sins of the Fathers",
@@ -369,18 +403,11 @@
   "archive_page": {
     "meta_title": "Classified Archives | The Sins of the Fathers"
   },
-  "lore_loader": {
-    "unknown_source": "Unknown",
-    "content_pending": "Content parsing pending...",
-    "access_file": "Access File",
-    "encrypted_audio": "Encrypted audio log.",
-    "play_transmission": "Play Transmission",
-    "redacted": "REDACTED",
-    "classified": "Classified",
-    "clearance_required": "Clearance Required",
-    "no_date": "NO_DATE",
-    "no_records_query": "> NO RECORDS MATCH YOUR QUERY.",
-    "system_error_short": "SYSTEM ERROR",
-    "connection_failed_long": "Database connection failed. Try reloading terminal."
+  "cookie_consent": {
+    "title": "SURVEILLANCE PROTOCOL",
+    "text": "This terminal uses tracking beacons (cookies) to improve operational efficiency and ensure session integrity.",
+    "accept": "AUTHORIZE",
+    "decline": "DECLINE",
+    "policy_link": "View Protocol"
   }
 }

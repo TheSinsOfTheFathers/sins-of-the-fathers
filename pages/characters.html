@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en"> 
+<head>
+    <!-- Google Tag Manager -->
+    <script type="text/partytown">
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-PVH59MXZ');
+    </script>
+    <!-- End Google Tag Manager -->
+     
+    <!-- Meta Tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="The Bloodline: Detailed profiles of the architects, operatives, and associates involved in the Ballantine & Havi saga.">
+    <meta name="keywords" content="TSOF, Characters, Ruaraidh Ballantine, Havi, Crime Saga, Noir, Profiles">
+    <meta name="author" content="The Sins of the Fathers">
+    <meta name="theme-color" content="#050505">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Title -->
+    <title>The Bloodline | TSOF Archives</title>
+
+    <!-- Manifest -->
+    <link rel="manifest" href="../manifest.json">
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="../assets/images/logo/favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="../assets/images/logo/favicon.svg">
+    <link rel="icon" type="image/png" sizes="96x96" href="../assets/images/logo/favicon-96x96.png">
+    <link rel="shortcut icon" href="../assets/images/logo/favicon.ico">
+
+    <!-- External Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Courier+Prime&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    
+    <!-- Internal Styles -->
+    <link rel="stylesheet" href="../src/style.css">
+
+    <!-- Internal Scripts -->
+    <script type="module" src="../src/main.js"></script>
+
+    <!-- Partytown Configuration -->
+    <script>
+        partytown = {
+            forward: ['dataLayer.push', 'gtag', 'fbq'], 
+            lib: '/~partytown/'
+        };
+    </script>
+    
+    <!-- Partytown Script -->
+    <script type="module" src="../src/modules/loaders/partytown-loader.js"></script>
+</head>
+<body class="flex flex-col min-h-screen selection:bg-gold selection:text-black">
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PVH59MXZ"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+    <!-- Visual Effects -->
+    <div class="noise-overlay"></div>
+    <div class="fixed inset-0 grid-bg pointer-events-none z-0 opacity-20"></div>
+
+    <!-- Header & Navigation -->
+    <header class="fixed top-0 w-full z-50 bg-obsidian/90 backdrop-blur-md border-b border-white/5 transition-all">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <!-- Brand -->
+            <a href="../index.html" class="text-xl md:text-3xl font-serif text-gold tracking-widest uppercase hover:text-white transition-colors">
+                TSOF
+            </a>
+            
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex items-center space-x-8 text-sm uppercase tracking-widest font-semibold">
+                <a href="./characters.html" class="text-gold border-b border-gold" data-i18n="nav.bloodline"></a>
+                <a href="./timeline.html" class="text-gray-400 hover:text-gold transition-colors" data-i18n="nav.history"></a>
+                <a href="./factions.html" class="text-gray-400 hover:text-gold transition-colors" data-i18n="nav.factions"></a>
+                <a href="./locations.html" class="text-gray-400 hover:text-gold transition-colors" data-i18n="nav.territories"></a>
+                <a href="./merch.html" class="text-gray-400 hover:text-gold transition-colors" data-i18n="nav.merch"></a>
+                
+                <!-- Auth Controls -->
+                <div class="border-l border-white/20 pl-8 ml-4 flex items-center gap-4" id="auth-controls">
+                    <a href="./lore.html" class="text-gold hover:text-white transition-colors flex items-center gap-2">
+                        <i class="fas fa-lock text-xs guest-lock"></i> <span data-i18n="nav.classified"></span>
+                    </a>
+                    <a href="./login.html" class="hover:text-gold transition-colors guest-only" id="auth-signin-link" data-i18n="auth.login"></a>
+                </div>
+            </div>
+
+            <!-- Mobile Controls -->
+            <div class="flex items-center gap-4 md:hidden">
+                <!-- Mobile Language (Optional placement, or keep inside menu) -->
+                
+                <!-- Hamburger Button -->
+                <div class="relative z-50">
+                    <button id="hamburger-button" class="text-gold focus:outline-none flex flex-col justify-center items-center w-8 h-8 space-y-1.5 group">
+                        <span class="block w-6 h-0.5 bg-gold transition-transform duration-300"></span>
+                        <span class="block w-6 h-0.5 bg-gold transition-opacity duration-300"></span>
+                        <span class="block w-6 h-0.5 bg-gold transition-transform duration-300"></span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Language Switcher (Desktop) -->
+            <div class="hidden md:flex gap-2 font-mono text-[10px]">
+                <button class="lang-btn hover:text-gold transition-colors" data-lang="en" onclick="window.changeAppLanguage('en')">EN</button>
+                <span class="text-gray-600">/</span>
+                <button class="lang-btn hover:text-gold transition-colors" data-lang="tr" onclick="window.changeAppLanguage('tr')">TR</button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="hidden fixed inset-0 z-40 bg-black/95 flex-col items-center justify-center space-y-8 transition-opacity duration-300 backdrop-blur-xl">
+        <a href="./characters.html" class="text-2xl text-gold font-serif border-b border-gold pb-2 uppercase tracking-widest" data-i18n="nav.bloodline">Bloodline</a>
+        <a href="./timeline.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.history">History</a>
+        <a href="./factions.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.factions">Factions</a>
+        <a href="./locations.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.territories">Territories</a>
+        <a href="https://shop.thesinsofthefathers.com" target="_blank" class="text-gold border-b border-gold" data-i18n="nav.merch"></a>
+        <a href="./lore.html" class="text-xl text-gold font-serif hover:text-white uppercase tracking-widest" data-i18n="nav.archives">Archives</a>
+        <a href="./login.html" class="text-sm text-gray-400 hover:text-white mt-8 font-mono uppercase" data-i18n="auth.login">Login</a>
+
+        <!-- Mobile Language -->
+        <div class="flex gap-4 font-mono text-sm mt-4">
+            <button class="lang-btn hover:text-gold transition-colors" data-lang="en" onclick="window.changeAppLanguage('en')">EN</button>
+            <span class="text-gray-600">/</span>
+            <button class="lang-btn hover:text-gold transition-colors" data-lang="tr" onclick="window.changeAppLanguage('tr')">TR</button>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="grow pt-28 pb-20 relative z-10">
+        
+        <!-- Page Title -->
+        <div class="container mx-auto px-6 mb-16 text-center">
+            <h1 class="text-5xl md:text-7xl font-serif text-white mb-4 tracking-wider uppercase drop-shadow-lg" data-i18n="characters_page.title">
+                The Bloodline
+            </h1>
+            <p class="font-mono text-sm text-gray-500 uppercase tracking-widest" data-i18n="characters_page.subtitle">
+                Dossier of Architects & Operatives
+            </p>
+        </div>
+
+        <!-- SECTION 1: PROTAGONISTS (Architects) -->
+        <section class="container mx-auto px-6 mb-24 relative">
+            <div class="flex items-center gap-4 mb-8">
+                <div class="h-px bg-gold w-12"></div>
+                <h2 class="text-2xl font-serif text-gold uppercase tracking-widest" data-i18n="characters_page.section_architects">Architects</h2>
+                <div class="h-px bg-white/10 grow"></div>
+            </div>
+
+            <!-- Dynamic Gallery -->
+            <div id="protagonists-gallery" class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-16">
+                <!-- Javascript will populate this -->
+            </div>
+        </section>
+
+        <!-- SECTION 2: MAIN CHARACTERS (Operatives) -->
+        <section class="container mx-auto px-6 mb-24">
+            <div class="flex items-center gap-4 mb-8">
+                <div class="h-px bg-gray-700 w-8"></div>
+                <h2 class="text-xl font-serif text-gray-400 uppercase tracking-widest" data-i18n="characters_page.section_operatives">Operatives</h2>
+                <div class="h-px bg-white/5 grow"></div>
+            </div>
+            
+            <!-- Dynamic Grid -->
+            <div id="main-characters-gallery" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Javascript will populate this -->
+            </div>
+        </section>
+
+        <!-- SECTION 3: SIDE CHARACTERS (Associates) -->
+        <section class="container mx-auto px-6 bg-white/5 p-8 border border-white/5 rounded-sm relative overflow-hidden">
+            <div class="absolute inset-0 grid-bg opacity-20 pointer-events-none"></div>
+
+            <h2 class="text-lg font-mono text-red-800 uppercase tracking-widest mb-6 border-b border-red-900/30 pb-2 relative z-10">
+                <i class="fas fa-network-wired mr-2"></i> <span data-i18n="characters_page.section_associates">Associates</span>
+            </h2>
+            
+            <div id="side-characters-gallery" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 relative z-10">
+                 <!-- Javascript will populate this -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-12 bg-obsidian border-t border-white/5 text-center relative z-10">
+        <p class="font-serif text-gold text-2xl mb-4">TSOF</p>
+        
+        <div class="flex justify-center space-x-6 mb-6">
+            <a href="https://x.com/sotfathersbook" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-gold transition-colors"><i class="fab fa-x-twitter fa-lg"></i></a>
+            <a href="https://www.instagram.com/sotfathersbook/" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-gold transition-colors"><i class="fab fa-instagram fa-lg"></i></a>
+            <a href="https://discord.gg/aDuzq7jKKn" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-gold transition-colors"><i class="fab fa-discord fa-lg"></i></a>
+            <a href="https://www.patreon.com/c/TheSinsoftheFathers" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-gold transition-colors"><i class="fab fa-patreon fa-lg"></i></a>
+        </div>
+
+        <div class="flex justify-center space-x-6 mb-6 text-[10px] font-mono uppercase text-gray-500">
+            <a href="./privacy.html" class="hover:text-gold transition-colors" data-i18n="footer.privacy">Privacy Protocol</a>
+            <span>|</span>
+            <a href="./terms.html" class="hover:text-gold transition-colors" data-i18n="footer.terms">Terms of Operation</a>
+        </div>
+
+        <p class="text-gray-600 text-xs uppercase tracking-widest">
+            <span data-i18n="footer.copyright_slogan">Ruaraidh Ballantine & Havi are watching.</span>
+        </p>
+    </footer>
+
+    <!-- Page Specific Script (i18n Title Update) -->
+    <script type="module">
+        import i18next from '../src/lib/i18n.js';
+        
+        const updateTitle = () => {
+            if(i18next.isInitialized) {
+                document.title = i18next.t('characters_page.meta_title') || document.title;
+            }
+        };
+
+        i18next.on('initialized', updateTitle);
+        i18next.on('languageChanged', updateTitle);
+        
+        // Fallback
+        if (i18next.isInitialized) updateTitle();
+    </script>
+</body>
+</html>
