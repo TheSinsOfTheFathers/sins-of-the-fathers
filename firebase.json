@@ -8,7 +8,7 @@
   "hosting": [
     {
       "target": "main-site",
-      "public": "dist",
+      "public": "public",
       "ignore": [
         "firebase.json",
         "**/.*",
