@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en"> 
+<head>
+    <!-- Google Tag Manager -->
+    <script type="text/partytown">
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-PVH59MXZ');
+    </script>
+    <!-- End Google Tag Manager -->
+     
+    <!-- Meta Tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Surveillance Feed: Real-time intelligence and historical data on key locations within the TSOF operational theater.">
+    <meta name="keywords" content="TSOF, Locations, Map, Surveillance, Territory, Crime Scene, Intel">
+    <meta name="author" content="The Sins of the Fathers">
+    <meta name="theme-color" content="#050505">
+    <meta name="robots" content="noindex, follow">
+    
+    <!-- Title -->
+    <title>Surveillance Feed | TSOF</title>
+
+    <!-- Manifest -->
+    <link rel="manifest" href="../manifest.json">
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="../assets/images/logo/favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="../assets/images/logo/favicon.svg">
+    <link rel="icon" type="image/png" sizes="96x96" href="../assets/images/logo/favicon-96x96.png">
+    <link rel="shortcut icon" href="../assets/images/logo/favicon.ico">
+
+    <!-- External Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Courier+Prime&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    
+    <!-- Internal Styles -->
+    <link href="../src/style.css" rel="stylesheet">
+
+    <!-- External Scripts (Leaflet) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Internal Scripts -->
+    <script src="../src/main.js" type="module"></script>
+
+    <!-- Partytown Configuration -->
+    <script>
+        partytown = {
+            forward: ['dataLayer.push', 'gtag', 'fbq'], 
+            lib: '/~partytown/'
+        };
+    </script>
+    
+    <!-- Partytown Script -->
+    <script type="module" src="../src/modules/loaders/partytown-loader.js"></script>
+</head>
+<body class="flex flex-col min-h-screen selection:bg-white selection:text-black">
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PVH59MXZ"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+    <!-- Visual Effects -->
+    <div class="noise-overlay"></div>
+
+    <!-- Header & Navigation (Detail View) -->
+    <header class="fixed top-0 w-full z-50 bg-obsidian/90 backdrop-blur-md border-b border-white/5 transition-all">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <!-- Brand -->
+            <a href="../index.html" class="text-xl md:text-2xl font-serif text-gold tracking-widest uppercase hover:text-white transition-colors">
+                TSOF <span class="hidden md:inline text-xs text-gray-600 ml-2 font-mono" data-i18n="location_detail_page.header_subtitle">// SURVEILLANCE FEED</span>
+            </a>
+            
+            <!-- Desktop Controls -->
+            <div class="hidden md:flex items-center space-x-6 text-xs uppercase tracking-widest font-semibold">
+                <a href="./locations.html" class="text-gray-500 hover:text-gold transition-colors flex items-center border-r border-white/10 pr-6">
+                    <i class="fas fa-arrow-left mr-2"></i> <span data-i18n="location_detail_page.return_to_map">Return to Map</span>
+                </a>
+                
+                <!-- Auth Controls -->
+                <div class="flex items-center gap-4" id="auth-controls">
+                    <a href="./login.html" class="text-gold/80 hover:text-white transition-colors guest-only" id="auth-signin-link" data-i18n="auth.login">Login</a>
+                </div>
+            </div>
+
+            <!-- Mobile Controls -->
+            <div class="flex items-center gap-4 md:hidden">
+                <div class="relative z-50">
+                    <button id="hamburger-button" class="text-gold focus:outline-none flex flex-col justify-center items-center w-8 h-8 space-y-1.5 group">
+                        <span class="block w-6 h-0.5 bg-gold transition-transform duration-300"></span>
+                        <span class="block w-6 h-0.5 bg-gold transition-opacity duration-300"></span>
+                        <span class="block w-6 h-0.5 bg-gold transition-transform duration-300"></span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Language Switcher (Desktop) -->
+            <div class="hidden md:flex gap-2 font-mono text-[10px]">
+                <button class="lang-btn hover:text-gold transition-colors" data-lang="en" onclick="window.changeAppLanguage('en')">EN</button>
+                <span class="text-gray-600">/</span>
+                <button class="lang-btn hover:text-gold transition-colors" data-lang="tr" onclick="window.changeAppLanguage('tr')">TR</button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="hidden fixed inset-0 z-40 bg-black/95 flex-col items-center justify-center space-y-8 transition-opacity duration-300 backdrop-blur-xl">
+        <a href="./locations.html" class="text-lg text-red-500 font-serif hover:text-white border border-red-900 px-6 py-2 uppercase tracking-widest mb-4">
+            <i class="fas fa-arrow-left mr-2"></i> <span data-i18n="location_detail_page.return_to_map">Return to Map</span>
+        </a>
+        <a href="../index.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.home">Home</a>
+        <a href="./timeline.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.history">History</a>
+        <a href="./characters.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.bloodline">Bloodline</a>
+        <a href="./factions.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.factions">Factions</a>
+        <a href="https://shop.thesinsofthefathers.com" target="_blank" class="text-gold border-b border-gold" data-i18n="nav.merch"></a>
+        <a href="./login.html" class="text-sm text-gray-400 hover:text-white mt-8 font-mono uppercase" data-i18n="auth.login">Login</a>
+        
+        <!-- Mobile Language -->
+        <div class="flex gap-4 font-mono text-sm mt-4">
+            <button class="lang-btn hover:text-gold transition-colors" data-lang="en" onclick="window.changeAppLanguage('en')">EN</button>
+            <span class="text-gray-600">/</span>
+            <button class="lang-btn hover:text-gold transition-colors" data-lang="tr" onclick="window.changeAppLanguage('tr')">TR</button>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="grow pt-24 pb-12 px-4 md:px-6 relative z-10">
+        
+        <div id="location-intel" class="container mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-3 gap-8 transition-opacity duration-1000">
+            
+            <!-- LEFT: THE FEED (VISUAL) -->
+            <div class="lg:col-span-2">
+                <!-- Surveillance Window -->
+                <div class="bg-black border border-white/10 relative shadow-2xl surveillance-feed aspect-video">
+                    <!-- Top HUD -->
+                    <div class="absolute top-4 left-4 right-4 z-20 flex justify-between items-start text-xs font-mono">
+                         <div class="text-white bg-black/50 px-2 py-1" data-i18n="location_detail_page.hud_cam_loading">CAM-04 // LOADING...</div>
+                         <div class="text-red-500 flex items-center bg-black/50 px-2 py-1"><div class="w-2 h-2 rounded-full bg-red-500 mr-2 animate-pulse"></div><span data-i18n="location_detail_page.hud_rec">REC</span></div>
+                    </div>
+
+                    <!-- THE IMAGE (Inject via JS) -->
+                    <img id="loc-image" src="" 
+                         alt="Location Surveillance" 
+                         class="w-full h-full object-cover grayscale opacity-60 contrast-125 hover:grayscale-0 transition-all duration-1000">
+                    
+                    <!-- Center Loader -->
+                    <div id="feed-loader" class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                         <div class="border border-white/30 p-4">
+                             <p class="font-mono text-xs text-white uppercase animate-blink" data-i18n="location_detail_page.hud_resolving_data">RESOLVING DATA STREAM...</p>
+                         </div>
+                    </div>
+
+                    <!-- Bottom HUD -->
+                    <div class="absolute bottom-4 left-4 z-20 font-mono text-xs text-gold/80" data-i18n="location_detail_page.hud_signal_strength">
+                        SIGNAL STRENGTH: 98%
+                    </div>
+                </div>
+
+                <!-- DESCRIPTION (LORE) -->
+                <div class="mt-8 border-l border-gold/30 pl-6 py-2">
+                    <h2 class="text-2xl font-serif text-white mb-4" data-i18n="location_detail_page.intel_briefing">Intel Briefing</h2>
+                    <div id="loc-description" class="prose prose-invert prose-p:text-gray-400 font-sans leading-relaxed text-justify max-w-none">
+                        <p class="animate-pulse" data-i18n="location_detail_page.decrypting_history">Decrypting historical archives...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RIGHT: THE DATA (METADATA) -->
+            <div class="lg:col-span-1 space-y-6">
+                
+                <!-- Main Title Box -->
+                <div class="bg-obsidian border border-white/10 p-6">
+                    <h4 class="font-mono text-[10px] text-gray-500 uppercase tracking-widest mb-1" data-i18n="location_detail_page.target_designation">Target Designation</h4>
+                    <h1 id="loc-title" class="text-3xl font-serif text-white uppercase wrap-break-words tracking-wide" data-i18n="location_detail_page.placeholder_unknown">
+                        UNKNOWN
+                    </h1>
+                </div>
+
+                <!-- Tactical Data -->
+                <div class="bg-white/5 border border-white/5 p-6 space-y-4">
+                    
+                    <div class="flex justify-between items-center border-b border-white/5 pb-2">
+                         <span class="text-xs font-mono text-gray-500" data-i18n="location_detail_page.tactical_control">Controlled By</span>
+                         <span id="loc-faction" class="text-xs font-mono text-gold uppercase tracking-wider" data-i18n="location_detail_page.tactical_unverified">UNVERIFIED</span>
+                    </div>
+
+                    <div class="flex justify-between items-center border-b border-white/5 pb-2">
+                         <span class="text-xs font-mono text-gray-500" data-i18n="location_detail_page.tactical_coordinates">Coordinates</span>
+                         <span id="loc-coords" class="text-xs font-mono text-white tracking-wider">--.--, --.--</span>
+                    </div>
+
+                    <div class="flex justify-between items-center border-b border-white/5 pb-2">
+                         <span class="text-xs font-mono text-gray-500" data-i18n="location_detail_page.tactical_threat">Threat Level</span>
+                         <span id="loc-threat" class="text-xs font-mono text-red-500 uppercase font-bold flex items-center">
+                             <i class="fas fa-exclamation-triangle mr-2"></i> <span data-i18n="location_detail_page.tactical_analyzing">ANALYZING</span>
+                         </span>
+                    </div>
+
+                     <div class="flex justify-between items-center pb-2">
+                         <span class="text-xs font-mono text-gray-500" data-i18n="location_detail_page.tactical_status">Surveillance Status</span>
+                         <span id="loc-status" class="text-xs font-mono text-green-500 uppercase" data-i18n="location_detail_page.tactical_operational">OPERATIONAL</span>
+                    </div>
+                </div>
+
+                <!-- Connected Events (Timeline Link) -->
+                <div class="bg-obsidian border border-white/10 p-6">
+                    <h4 class="font-mono text-[10px] text-gray-500 uppercase tracking-widest mb-4" data-i18n="location_detail_page.historical_events">Historical Events</h4>
+                    <ul id="loc-events" class="space-y-3">
+                        <li class="text-xs text-gray-600 italic" data-i18n="location_detail_page.no_events_found">No recorded events found in this sector.</li>
+                    </ul>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-12 bg-obsidian border-t border-white/5 text-center relative z-10">
+        <p class="font-serif text-gold text-2xl mb-4">TSOF</p>
+        
+        <div class="flex justify-center space-x-6 mb-6">
+            <a href="https://x.com/sotfathersbook" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-gold transition-colors"><i class="fab fa-x-twitter fa-lg"></i></a>
+            <a href="https://www.instagram.com/sotfathersbook/" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-gold transition-colors"><i class="fab fa-instagram fa-lg"></i></a>
+            <a href="https://discord.gg/aDuzq7jKKn" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-gold transition-colors"><i class="fab fa-discord fa-lg"></i></a>
+            <a href="https://www.patreon.com/c/TheSinsoftheFathers" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-gold transition-colors"><i class="fab fa-patreon fa-lg"></i></a>
+        </div>
+
+        <div class="flex justify-center space-x-6 mb-6 text-[10px] font-mono uppercase text-gray-500">
+            <a href="./privacy.html" class="hover:text-gold transition-colors" data-i18n="footer.privacy">Privacy Protocol</a>
+            <span>|</span>
+            <a href="./terms.html" class="hover:text-gold transition-colors" data-i18n="footer.terms">Terms of Operation</a>
+        </div>
+
+        <p class="text-gray-600 text-xs uppercase tracking-widest">
+            <span data-i18n="footer.copyright_slogan">Ruaraidh Ballantine & Havi are watching.</span>
+        </p>
+    </footer>
+
+    <!-- Page Specific Script (i18n Title Update) -->
+    <script type="module">
+        import i18next from '../src/lib/i18n.js';
+        
+        const updateTitle = () => {
+            if(i18next.isInitialized) {
+                document.title = i18next.t('location_detail_page.meta_title') || document.title;
+            }
+        };
+
+        i18next.on('initialized', updateTitle);
+        i18next.on('languageChanged', updateTitle);
+        
+        if (i18next.isInitialized) updateTitle();
+    </script>
+</body>
+</html>

@@ -3,5 +3,6 @@ import faction from "./faction";
 import timeline from "./timeline";
 import lore from "./lore";
 import location from "./location";
+import post from "./post";
 
-export const schemaTypes = [character, faction, timeline, lore, location];
+export const schemaTypes = [character, faction, timeline, lore, location, post];

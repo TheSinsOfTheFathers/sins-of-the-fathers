@@ -5,61 +5,59 @@
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
   },
-  "hosting": {
-    "public": "public",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
-    "rewrites": [
-      {
-        "source": "/pages/:filename",
-        "destination": "/pages/:filename.html"
-      },
-      {
-        "source": "/",
-        "destination": "/index.html"
-      }
-    ],
-    "cleanUrls": true,
-    "trailingSlash": false
-  },
+  "hosting": [
+    {
+      "target": "main-site",
+      "public": "public",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "/pages/:filename",
+          "destination": "/pages/:filename.html"
+        },
+        {
+          "source": "/",
+          "destination": "/index.html"
+        }
+      ],
+      "cleanUrls": true,
+      "trailingSlash": false
+    },
+    {
+      "target": "blog-site",
+      "public": "blog/dist/client",
+      "headers": [
+        {
+          "source": "**",
+          "headers": [
+            {
+              "key": "Cache-Control",
+              "value": "no-cache, no-store, must-revalidate"
+            }
+          ]
+        }
+      ],
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "function": "astroServer"
+        }
+      ],
+      "cleanUrls": true,
+      "trailingSlash": false
+    }
+  ],
   "storage": {
     "rules": "storage.rules"
-  },
-  "emulators": {
-    "functions": {
-      "port": 5001
-    },
-    "firestore": {
-      "port": 8080
-    },
-    "database": {
-      "port": 9000
-    },
-    "hosting": {
-      "port": 5000
-    },
-    "storage": {
-      "port": 9199
-    },
-    "ui": {
-      "enabled": true
-    },
-    "singleProjectMode": true,
-    "auth": {
-      "port": 9099
-    },
-    "pubsub": {
-      "port": 8085
-    },
-    "tasks": {
-      "port": 9499
-    }
-  },
-  "database": {
-    "rules": "database.rules.json"
   },
   "functions": [
     {
@@ -75,6 +73,20 @@
       ],
       "predeploy": [
         "npm --prefix \"$RESOURCE_DIR\" run lint",
+        "npm --prefix \"$RESOURCE_DIR\" run build"
+      ]
+    },
+    {
+      "source": "blog",
+      "codebase": "astro-blog", 
+      "runtime": "nodejs20",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "dist/client",
+        ".astro"
+      ],
+      "predeploy": [
         "npm --prefix \"$RESOURCE_DIR\" run build"
       ]
     }

@@ -1,20 +1,37 @@
 {
   "name": "sins-of-the-fathers-root",
   "version": "1.0.0",
-  "description": "The root package.json for The Sins of the Fathers project, including Sanity UI dependencies and CI/CD scripts.",
+  "description": "The root package.json for The Sins of the Fathers project.",
+  "type": "module",
   "scripts": {
-    "start:local": "npx http-server ./public",
-    "test": "echo \"No tests defined\"",
-    "build": "echo 'Frontend Build Success for CI' > build.log"
+    "partytown": "partytown copylib public/~partytown",
+    "dev": "npm run partytown && vite",
+    "build": "npm run partytown && node scripts/generate-sitemap.cjs && vite build",
+    "preview": "vite preview"
   },
   "dependencies": {
+    "@builder.io/partytown": "^0.10.3",
     "@sanity/color-input": "^4.0.6",
     "@sanity/vision": "^4.16.0",
+    "@sentry/browser": "^10.27.0",
+    "@studio-freight/lenis": "^1.0.42",
     "cytoscape": "^3.33.1",
     "cytoscape-dagre": "^2.5.0",
+    "d3": "^7.9.0",
+    "gsap": "^3.13.0",
+    "mermaid": "^11.12.1",
+    "resend": "^6.5.2",
     "sanity": "^4.16.0"
   },
   "devDependencies": {
-    "eslint": "^8.57.1"
+    "@playwright/test": "^1.57.0",
+    "@tailwindcss/postcss": "^4.1.17",
+    "@types/node": "^24.10.1",
+    "autoprefixer": "^10.4.22",
+    "eslint": "^8.57.1",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.17",
+    "vite": "^7.2.4",
+    "xmlbuilder": "^15.1.1"
   }
 }

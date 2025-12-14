@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en"> 
+<head>
+    <!-- Google Tag Manager -->
+    <script type="text/partytown">
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-PVH59MXZ');
+    </script>
+    <!-- End Google Tag Manager -->
+     
+    <!-- Meta Tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Operative Record: Manage your identity, allegiance, and clearance level within the TSOF network.">
+    <meta name="keywords" content="TSOF, Profile, Operative, Dashboard, Account, Settings">
+    <meta name="author" content="The Sins of the Fathers">
+    <meta name="theme-color" content="#050505">
+    <meta name="robots" content="noindex, nofollow">
+    
+    <!-- Title -->
+    <title data-i18n="profile_page.page_title">Operative Record | The Sins of the Fathers</title>
+
+    <!-- Manifest -->
+    <link rel="manifest" href="../manifest.json">
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="../assets/images/logo/favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="../assets/images/logo/favicon.svg">
+    <link rel="icon" type="image/png" sizes="96x96" href="../assets/images/logo/favicon-96x96.png">
+    <link rel="shortcut icon" href="../assets/images/logo/favicon.ico">
+
+    <!-- External Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Courier+Prime&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    
+    <!-- Internal Styles -->
+    <link href="../src/style.css" rel="stylesheet">
+
+    <!-- Internal Scripts -->
+    <script src="../src/main.js" type="module" defer></script>
+
+    <!-- Partytown Configuration -->
+    <script>
+        partytown = {
+            forward: ['dataLayer.push', 'gtag', 'fbq'], 
+            lib: '/~partytown/'
+        };
+    </script>
+    
+    <!-- Partytown Script -->
+    <script type="module" src="../src/modules/loaders/partytown-loader.js"></script>
+</head>
+<body class="flex flex-col min-h-screen selection:bg-gold selection:text-black">
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PVH59MXZ"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+    <!-- Visual Effects -->
+    <div class="noise-overlay"></div>
+
+    <!-- Header & Navigation -->
+    <header class="fixed top-0 w-full z-50 bg-obsidian/90 backdrop-blur-md border-b border-white/5 transition-all">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            
+            <!-- Brand -->
+            <a href="../index.html" class="text-xl md:text-2xl font-serif text-gold tracking-widest uppercase hover:text-white transition-colors">
+                TSOF <span class="hidden md:inline text-xs text-gray-600 ml-2 font-mono" data-i18n="profile_page.header_subtitle">// PERSONNEL FILE</span>
+            </a>
+            
+            <!-- Desktop Controls -->
+            <div class="flex items-center gap-4">
+                <!-- Language Switcher -->
+                <div class="hidden md:flex gap-2 font-mono text-[10px]">
+                    <button class="lang-btn hover:text-gold transition-colors" data-lang="en" onclick="window.changeAppLanguage('en')">EN</button>
+                    <span class="text-gray-600">/</span>
+                    <button class="lang-btn hover:text-gold transition-colors" data-lang="tr" onclick="window.changeAppLanguage('tr')">TR</button>
+                </div>
+
+                <!-- Terminate / Sign Out Button -->
+                <button id="auth-signout-btn" class="text-xs uppercase tracking-widest text-red-900 hover:text-red-500 transition-colors flex items-center border border-red-900/50 px-3 py-1 hover:border-red-500 hover:bg-red-900/10">
+                    <i class="fas fa-power-off mr-2"></i> <span data-i18n="profile_page.btn_terminate">Terminate</span>
+                </button>
+
+                <!-- Hamburger (Mobile) -->
+                <div class="md:hidden relative z-50">
+                    <button id="hamburger-button" class="text-gold focus:outline-none flex flex-col justify-between w-6 h-5 group">
+                        <span class="block w-full h-0.5 bg-gold transition-transform duration-300"></span>
+                        <span class="block w-full h-0.5 bg-gold transition-opacity duration-300"></span>
+                        <span class="block w-full h-0.5 bg-gold transition-transform duration-300"></span>
+                    </button>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="hidden fixed inset-0 z-40 bg-black/95 flex-col items-center justify-center space-y-8 transition-opacity duration-300 backdrop-blur-xl">
+        <a href="./characters.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.bloodline">The Bloodline</a>
+        <a href="./timeline.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.history">History</a>
+        <a href="./factions.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.factions">Factions</a>
+        <a href="./locations.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.territories">Territories</a>
+        <a href="https://shop.thesinsofthefathers.com" target="_blank" class="text-gold border-b border-gold" data-i18n="nav.merch"></a>
+        <a href="./lore.html" class="text-xl text-gold font-serif hover:text-white border border-gold px-6 py-2 uppercase tracking-widest" data-i18n="nav.archives">Archives</a>
+        
+        <!-- Mobile Language -->
+        <div class="flex gap-4 font-mono text-sm mt-4">
+            <button class="lang-btn hover:text-gold transition-colors" data-lang="en" onclick="window.changeAppLanguage('en')">EN</button>
+            <span class="text-gray-600">/</span>
+            <button class="lang-btn hover:text-gold transition-colors" data-lang="tr" onclick="window.changeAppLanguage('tr')">TR</button>
+        </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <main class="grow pt-24 pb-12 px-6">
+        <div id="profile-container" class="container mx-auto max-w-5xl">
+
+            <!-- Profile Content (Initially Hidden for Loading Effect) -->
+            <div id="profile-content" class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start opacity-0 transition-opacity duration-1000">
+
+                <!-- Sidebar: ID Card -->
+                <div class="lg:col-span-4 lg:sticky lg:top-32">
+                    <div class="bg-linear-to-br from-gray-900 to-black border border-white/10 p-6 shadow-2xl relative overflow-hidden group">
+                        <div class="absolute inset-0 bg-linear-to-tr from-transparent via-white/5 to-transparent transform -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                        
+                        <div class="flex justify-between items-start mb-6 border-b border-white/10 pb-4">
+                            <div>
+                                <h3 class="text-xs font-mono text-gold uppercase tracking-widest" data-i18n="profile_page.id_card_header">Identification</h3>
+                                <p class="text-[10px] text-gray-600 uppercase" data-i18n="profile_page.id_card_sub">Ballantine Network Access</p>
+                            </div>
+                            <i class="fas fa-sim-card text-gold/50 text-2xl rotate-90"></i>
+                        </div>
+
+                        <!-- Image Uploader -->
+                        <div class="relative w-32 h-32 mx-auto mb-6 cursor-pointer group/image">
+                             <input type="file" id="profile-photo-input" accept="image/*" class="hidden">
+                            
+                             <!-- Default Placeholder -->
+                            <img id="profile-image-preview" src="https://images.unsplash.com/photo-1531297461136-82lw.jpg?q=80&w=2688&auto=format&fit=crop" 
+                                 class="w-full h-full object-cover border-2 border-white/20 group-hover:border-gold grayscale group-hover:grayscale-0 transition-all duration-300 shadow-[0_0_20px_rgba(0,0,0,0.8)]" 
+                                 alt="Operative Photo">
+                            
+                            <div class="absolute inset-0 bg-black/60 opacity-0 group-hover/image:opacity-100 transition-opacity flex flex-col items-center justify-center pointer-events-none border-2 border-gold">
+                                <i class="fas fa-camera text-gold mb-1"></i>
+                                <span class="text-[8px] font-mono text-gold uppercase" data-i18n="profile_page.photo_update">Update Photo</span>
+                            </div>
+                            
+                            <!-- Corner Accents -->
+                            <div class="absolute -top-1 -left-1 w-2 h-2 border-t-2 border-l-2 border-gold opacity-50"></div>
+                            <div class="absolute -bottom-1 -right-1 w-2 h-2 border-b-2 border-r-2 border-gold opacity-50"></div>
+                        </div>
+
+                        <!-- ID Details -->
+                        <div class="space-y-3 font-mono text-xs">
+                             <div class="flex justify-between">
+                                 <span class="text-gray-500" data-i18n="profile_page.label_clearance">CLEARANCE:</span>
+                                 <span class="text-white">LEVEL 1</span>
+                             </div>
+                             <div class="flex justify-between">
+                                 <span class="text-gray-500" data-i18n="profile_page.label_status">STATUS:</span>
+                                 <span class="text-green-500 animate-pulse" data-i18n="profile_page.status_active">ACTIVE</span>
+                             </div>
+                             <div class="flex justify-between">
+                                 <span class="text-gray-500" data-i18n="profile_page.label_id">ID:</span>
+                                 <span class="text-gray-400">#829-XJ-92</span>
+                             </div>
+                        </div>
+                        
+                        <!-- Barcode Decorative -->
+                        <div class="mt-6 pt-4 border-t border-white/10 text-center">
+                             <div class="h-8 bg-[url('https://upload.wikimedia.org/wikipedia/commons/4/4b/Code_39_barcode.svg')] bg-cover bg-center opacity-40"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-6">
+                         <button class="text-[10px] text-red-900 hover:text-red-500 uppercase tracking-widest transition-colors" data-i18n="profile_page.btn_delete_account">
+                             > Burn Identity (Delete Account)
+                         </button>
+                    </div>
+                </div>
+
+                <!-- Main Form -->
+                <div class="lg:col-span-8">
+                    <form id="profile-form" class="bg-transparent space-y-12">
+                        
+                        <!-- Section 1: Data -->
+                        <div>
+                            <div class="flex items-center gap-4 mb-6">
+                                <h2 class="text-xl font-serif text-white uppercase tracking-widest" data-i18n="profile_page.section_operative_data">Operative Data</h2>
+                                <div class="h-px bg-white/10 grow"></div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <div>
+                                    <label class="block text-[10px] text-gray-500 font-mono uppercase mb-2" data-i18n="profile_page.label_codename">Codename / Alias</label>
+                                    <input type="text" id="display-name" class="agent-input" placeholder="Unknown Operative" data-i18n="[placeholder]profile_page.placeholder_codename" value="">
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-[10px] text-gray-500 font-mono uppercase mb-2" data-i18n="profile_page.label_email">Encrypted Frequency (Email)</label>
+                                    <input type="email" id="user-email" class="agent-input opacity-50 cursor-not-allowed" value="" readonly title="Contact Handler to change email">
+                                </div>
+                                
+                                <div class="md:col-span-2">
+                                     <label class="block text-[10px] text-gray-500 font-mono uppercase mb-2" data-i18n="profile_page.label_bio">Short Bio / Notes</label>
+                                     <textarea class="agent-input h-24 resize-none" placeholder="Enter service record..." data-i18n="[placeholder]profile_page.placeholder_bio"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Section 2: Allegiance -->
+                        <div>
+                            <div class="flex items-center gap-4 mb-6">
+                                <h2 class="text-xl font-serif text-white uppercase tracking-widest" data-i18n="profile_page.section_allegiance">Swear Allegiance</h2>
+                                <div class="h-px bg-white/10 grow"></div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <label class="cursor-pointer relative group">
+                                    <input type="radio" name="faction" value="macpherson" class="allegiance-radio hidden">
+                                    <div class="border border-white/10 p-4 transition-all duration-300 hover:border-red-900 group-hover:bg-red-900/5">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="font-serif text-white group-hover:text-red-500 transition-colors" data-i18n="profile_page.faction_old_blood">Old Blood</span>
+                                            <i class="fas fa-check text-gold opacity-0 transition-opacity check-icon"></i>
+                                        </div>
+                                        <p class="text-[10px] font-mono text-gray-500" data-i18n="profile_page.desc_old_blood">Loyal to tradition. The Macpherson legacy.</p>
+                                    </div>
+                                </label>
+
+                                <label class="cursor-pointer relative group">
+                                    <input type="radio" name="faction" value="ballantine" class="allegiance-radio hidden">
+                                    <div class="border border-white/10 p-4 transition-all duration-300 hover:border-gold group-hover:bg-gold/5">
+                                        <div class="flex items-center justify-between mb-2">
+                                            <span class="font-serif text-white group-hover:text-gold transition-colors" data-i18n="profile_page.faction_new_order">New Order</span>
+                                            <i class="fas fa-check text-gold opacity-0 transition-opacity check-icon"></i>
+                                        </div>
+                                        <p class="text-[10px] font-mono text-gray-500" data-i18n="profile_page.desc_new_order">Loyal to the Architect. The Ballantine future.</p>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="pt-6 border-t border-white/10 flex justify-end">
+                            <button type="submit" class="bg-gold text-black px-8 py-3 font-serif uppercase tracking-widest text-sm hover:bg-white transition-colors shadow-[0_0_15px_rgba(197,160,89,0.4)]" data-i18n="profile_page.btn_update">
+                                Update Records
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+
+            </div>
+            
+            <!-- Loading State -->
+            <div id="profile-loader" class="absolute inset-0 flex flex-col items-center justify-center z-10">
+                <i class="fas fa-fingerprint text-4xl text-gold mb-4 animate-pulse"></i>
+                <p class="font-mono text-gold text-xs uppercase tracking-widest" data-i18n="profile_page.scanning">Scanning Biometrics...</p>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="py-12 bg-obsidian border-t border-white/5 text-center relative z-10">
+        <p class="font-serif text-gold text-2xl mb-4">TSOF</p>
+        
+        <div class="flex justify-center space-x-6 mb-6">
+            <a href="https://x.com/sotfathersbook" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-gold transition-colors"><i class="fab fa-x-twitter fa-lg"></i></a>
+            <a href="https://www.instagram.com/sotfathersbook/" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-gold transition-colors"><i class="fab fa-instagram fa-lg"></i></a>
+            <a href="https://discord.gg/aDuzq7jKKn" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-gold transition-colors"><i class="fab fa-discord fa-lg"></i></a>
+            <a href="https://www.patreon.com/c/TheSinsoftheFathers" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-gold transition-colors"><i class="fab fa-patreon fa-lg"></i></a>
+        </div>
+
+        <div class="flex justify-center space-x-6 mb-6 text-[10px] font-mono uppercase text-gray-500">
+            <a href="./privacy.html" class="hover:text-gold transition-colors" data-i18n="footer.privacy">Privacy Protocol</a>
+            <span>|</span>
+            <a href="./terms.html" class="hover:text-gold transition-colors" data-i18n="footer.terms">Terms of Operation</a>
+        </div>
+
+        <p class="text-gray-600 text-xs uppercase tracking-widest">
+            <span data-i18n="footer.copyright_slogan">Ruaraidh Ballantine & Havi are watching.</span>
+        </p>
+    </footer>
+
+    <!-- Page Specific Script (Simple UI Interaction) -->
+    <script>
+        // Image Upload Preview Logic
+        document.addEventListener('DOMContentLoaded', () => {
+            const previewImage = document.getElementById('profile-image-preview');
+            const fileInput = document.getElementById('profile-photo-input');
+            const wrapper = previewImage?.parentElement;
+
+            if (wrapper && fileInput && previewImage) {
+                wrapper.addEventListener('click', () => {
+                    fileInput.click();
+                });
+
+                fileInput.addEventListener('change', function(e) {
+                    if (e.target.files && e.target.files[0]) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            previewImage.src = e.target.result;
+                        }
+                        reader.readAsDataURL(e.target.files[0]);
+                    }
+                });
+            }
+        });
+    </script>
+    
+    <!-- i18n Title Update -->
+    <script type="module">
+        import i18next from '../src/lib/i18n.js';
+        
+        const updateTitle = () => {
+            if(i18next.isInitialized) {
+                document.title = i18next.t('profile_page.page_title') || document.title;
+            }
+        };
+
+        i18next.on('initialized', updateTitle);
+        i18next.on('languageChanged', updateTitle);
+        
+        if (i18next.isInitialized) updateTitle();
+    </script>
+</body>
+</html>
