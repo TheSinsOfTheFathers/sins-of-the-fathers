@@ -6,7 +6,7 @@ import gsap from 'gsap';
 let mapInstance = null;
 
 const FACTION_THEMES = {
-    'ballantine-empire': { border: '#c5a059', fill: '#c5a059', glow: '#ffd700' },
+    'Ravenwood-empire': { border: '#c5a059', fill: '#c5a059', glow: '#ffd700' },
     'macpherson-clan': { border: '#7f1d1d', fill: '#991b1b', glow: '#ef4444' },
     'default': { border: '#52525b', fill: '#3f3f46', glow: '#d4d4d8' }
 };
@@ -100,7 +100,7 @@ const addFactionTerritories = async (map, factions) => {
     if (!factions) return;
 
     const factionFileMap = {
-        'ballantine-empire': [
+        'Ravenwood-empire': [
             '/assets/maps/united-kingdom-border.geojson',
             '/assets/maps/california-border.geojson',
             '/assets/maps/italy-border.geojson'
