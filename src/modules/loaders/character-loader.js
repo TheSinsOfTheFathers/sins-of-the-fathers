@@ -13,9 +13,9 @@ import gsap from 'gsap';
 const createProtagonistCard = (character) => {
     const cardLink = document.createElement('a');
     cardLink.href = `character-detail.html?slug=${character.slug.current}`;
-    
+
     // GSAP için 'opacity-0' ekledik
-    cardLink.className = 'group relative w-full h-[500px] overflow-hidden border border-white/10 bg-obsidian hover:border-gold transition-all duration-700 block shadow-2xl opacity-0'; 
+    cardLink.className = 'group relative w-full h-[500px] overflow-hidden border border-white/10 bg-obsidian hover:border-gold transition-all duration-700 block shadow-2xl opacity-0';
 
     const imageUrl = character.image?.url || 'https://placehold.co/600x800/0a0a0a/333333?text=CLASSIFIED';
     const blurHash = character.image?.blurHash;
@@ -52,7 +52,7 @@ const createProtagonistCard = (character) => {
 const createOperativeCard = (character) => {
     const cardLink = document.createElement('a');
     cardLink.href = `character-detail.html?slug=${character.slug.current}`;
-    
+
     // GSAP için 'opacity-0' ekledik
     cardLink.className = 'group block bg-white/5 border border-white/10 hover:border-white/40 hover:-translate-y-1 transition-all duration-300 shadow-lg opacity-0';
 
@@ -89,7 +89,7 @@ const createOperativeCard = (character) => {
 const createAssetCard = (character) => {
     const cardLink = document.createElement('a');
     cardLink.href = `character-detail.html?slug=${character.slug.current}`;
-    
+
     // GSAP için 'opacity-0' ekledik
     cardLink.className = 'group flex items-center space-x-4 p-3 border border-white/5 bg-black/40 hover:bg-white/5 hover:border-red-900/50 transition-all duration-300 opacity-0';
 
@@ -127,6 +127,79 @@ const createAssetCard = (character) => {
 /* --------------------------------------------------------------------------
    MAIN LOGIC
    -------------------------------------------------------------------------- */
+/* --------------------------------------------------------------------------
+   HELPER FUNCTIONS (Cognitive Complexity Reduction)
+   -------------------------------------------------------------------------- */
+
+const injectCharacterListSchema = (characters) => {
+    try {
+        const itemList = characters.map((char, index) => ({
+            "@type": "ListItem",
+            "position": index + 1,
+            "item": {
+                "@type": "Person",
+                "name": char.name,
+                "jobTitle": char.title,
+                "image": char.image?.url,
+                "url": new URL(`character-detail.html?slug=${char.slug.current}`, globalThis.location.origin).href
+            }
+        }));
+
+        const schemaData = {
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            "name": "Personnel Database | The Sins of the Fathers",
+            "description": "Classified directory of all known operatives, assets, and targets.",
+            "mainEntity": {
+                "@type": "ItemList",
+                "itemListElement": itemList
+            }
+        };
+        injectSchema(schemaData);
+        console.log("> SEO Protocol: Character List Schema Injected.");
+    } catch (e) {
+        console.warn("Schema Error:", e);
+    }
+};
+
+const renderCharacterCards = (characters, containers) => {
+    if (containers.protagonists) containers.protagonists.innerHTML = '';
+    if (containers.main) containers.main.innerHTML = '';
+    if (containers.side) containers.side.innerHTML = '';
+
+    characters.forEach((character) => {
+        const lowerName = (character.name || '').toLowerCase();
+        const lowerAlias = character.alias ? character.alias.toLowerCase() : '';
+
+        const isRuaraidh = lowerName.includes('ruaraidh') || lowerAlias.includes('exile');
+        const isHavi = lowerName.includes('havi') || lowerAlias.includes('bastard');
+
+        if (isRuaraidh || isHavi) {
+            if (containers.protagonists) {
+                containers.protagonists.appendChild(createProtagonistCard(character));
+            }
+        }
+        else if (character.is_main) {
+            if (containers.main) {
+                containers.main.appendChild(createOperativeCard(character));
+            }
+        }
+        else if (containers.side) {
+            containers.side.appendChild(createAssetCard(character));
+        }
+    });
+
+    Object.keys(containers).forEach(key => {
+        const container = containers[key];
+        if (container && container.children.length === 0) {
+            container.innerHTML = `<p class="text-xs font-mono text-gray-600 col-span-full text-center">${i18next.t('characters_page.no_records_found')}</p>`;
+        }
+    });
+};
+
+/* --------------------------------------------------------------------------
+   MAIN LOGIC
+   -------------------------------------------------------------------------- */
 export async function displayCharacters() {
     const containers = {
         protagonists: document.getElementById('protagonists-gallery'),
@@ -144,121 +217,16 @@ export async function displayCharacters() {
             "image": image.asset->{ url, "blurHash": metadata.blurHash }, 
             is_main
         }`;
-        
+
         const characters = await client.fetch(query);
 
         if (characters && characters.length > 0) {
-            
-            // SEO
-            try {
-                const itemList = characters.map((char, index) => ({
-                    "@type": "ListItem",
-                    "position": index + 1,
-                    "item": {
-                        "@type": "Person",
-                        "name": char.name,
-                        "jobTitle": char.title,
-                        "image": char.image?.url,
-                        "url": new URL(`character-detail.html?slug=${char.slug.current}`, window.location.origin).href
-                    }
-                }));
-
-                const schemaData = {
-                    "@context": "https://schema.org",
-                    "@type": "CollectionPage",
-                    "name": "Personnel Database | The Sins of the Fathers",
-                    "description": "Classified directory of all known operatives, assets, and targets.",
-                    "mainEntity": {
-                        "@type": "ItemList",
-                        "itemListElement": itemList
-                    }
-                };
-                injectSchema(schemaData);
-                console.log("> SEO Protocol: Character List Schema Injected.");
-            } catch (e) {
-                console.warn("Schema Error:", e);
-            }
-
-            // Temizlik
-            if(containers.protagonists) containers.protagonists.innerHTML = '';
-            if(containers.main) containers.main.innerHTML = '';
-            if(containers.side) containers.side.innerHTML = '';
-
-            // Kartları DOM'a Ekle
-            characters.forEach((character) => {
-                const lowerName = (character.name || '').toLowerCase();
-                const lowerAlias = character.alias ? character.alias.toLowerCase() : '';
-                const isRuaraidh = lowerName.includes('ruaraidh') || lowerAlias.includes('exile');
-                const isHavi = lowerName.includes('havi') || lowerAlias.includes('bastard');
-
-                if (isRuaraidh || isHavi) {
-                    if (containers.protagonists) containers.protagonists.appendChild(createProtagonistCard(character));
-                } 
-                else if (character.is_main) {
-                    if (containers.main) containers.main.appendChild(createOperativeCard(character));
-                } 
-                else {
-                    if (containers.side) containers.side.appendChild(createAssetCard(character));
-                }
-            });
-
-            // Boş durum kontrolü
-            Object.keys(containers).forEach(key => {
-                const container = containers[key];
-                if (container && container.children.length === 0) {
-                    container.innerHTML = `<p class="text-xs font-mono text-gray-600 col-span-full text-center">${i18next.t('characters_page.no_records_found')}</p>`;
-                }
-            });
-
-            // 👇 2. GSAP ANİMASYONLARI (Timeline ile Kesin Çözüm)
-            // ----------------------------------------------------------------
-            // ScrollTrigger kullanmadan, veriler yüklenir yüklenmez başlatıyoruz.
-            const tl = gsap.timeline();
-
-            // A. Başrol Karakterleri
-            if (containers.protagonists && containers.protagonists.children.length > 0) {
-                const protagonists = Array.from(containers.protagonists.children);
-                tl.to(protagonists, {
-                    opacity: 1,
-                    y: 0,
-                    startAt: { y: 100, opacity: 0 },
-                    duration: 1.2,
-                    stagger: 0.2, 
-                    ease: "power3.out"
-                });
-            }
-
-            // B. Ana Operatörler (Öncekilerle hafif çakışarak gelir)
-            if (containers.main && containers.main.children.length > 0) {
-                const operatives = Array.from(containers.main.children);
-                tl.to(operatives, {
-                    opacity: 1,
-                    y: 0,
-                    scale: 1,
-                    startAt: { y: 50, opacity: 0, scale: 0.95 },
-                    duration: 0.6,
-                    stagger: 0.1,
-                    ease: "back.out(1.2)"
-                }, "-=0.8"); 
-            }
-
-            // C. Yan Karakterler
-            if (containers.side && containers.side.children.length > 0) {
-                const assets = Array.from(containers.side.children);
-                tl.to(assets, {
-                    opacity: 1,
-                    x: 0,
-                    startAt: { x: -20, opacity: 0 },
-                    duration: 0.4,
-                    stagger: 0.05,
-                    ease: "power2.out"
-                }, "-=0.4");
-            }
-
-        } else {
-            if (containers.main) containers.main.innerHTML = '<p class="text-red-500 font-mono">DATABASE CONNECTION FAILED.</p>';
+            injectCharacterListSchema(characters);
+            renderCharacterCards(characters, containers);
+        } else if (containers.main) {
+            containers.main.innerHTML = '<p class="text-red-500 font-mono">DATABASE CONNECTION FAILED.</p>';
         }
-    } 
+    }
     catch (error) {
         console.error("Data Malfunction: ", error);
         if (containers.main) containers.main.innerHTML = '<p class="text-red-500 animate-pulse">CRITICAL ERROR: CANNOT RETRIEVE DOSSIERS.</p>';

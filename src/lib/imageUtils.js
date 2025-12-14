@@ -10,13 +10,13 @@ export const renderBlurHash = (canvas, hash) => {
 
     const width = 32;
     const height = 32;
-    
+
     try {
         const pixels = decode(hash, width, height);
-        
+
         canvas.width = width;
         canvas.height = height;
-        
+
         const ctx = canvas.getContext('2d');
         const imageData = ctx.createImageData(width, height);
         imageData.data.set(pixels);
@@ -30,7 +30,7 @@ export const renderBlurHash = (canvas, hash) => {
  * Resim yüklendiğinde çalışacak geçiş efekti
  */
 export const handleImageLoad = (imgElement, canvasElement) => {
-    imgElement.classList.remove('opacity-0'); 
+    imgElement.classList.remove('opacity-0');
     if (canvasElement) {
         setTimeout(() => {
             canvasElement.style.opacity = '0';
@@ -50,7 +50,7 @@ export const applyBlurToStaticImage = (imgId, imageUrl, blurHash) => {
 
     // 1. Resmi ata
     imgElement.src = imageUrl;
-    
+
     // Eğer blurHash yoksa direkt göster ve çık
     if (!blurHash) {
         imgElement.classList.remove('opacity-0');
@@ -75,14 +75,14 @@ export const applyBlurToStaticImage = (imgId, imageUrl, blurHash) => {
             canvas.id = `canvas-${imgId}`;
             // Canvas tam arkada durmalı
             canvas.className = 'absolute inset-0 w-full h-full object-cover z-0';
-            
+
             // Resmi canvas'ın önüne al (z-index yetmeyebilir, DOM sırası garantisi)
-            parent.insertBefore(canvas, imgElement);
+            imgElement.before(canvas);
         }
 
         // 4. Blur'u çiz
         renderBlurHash(canvas, blurHash);
-        
+
         // 5. Yükleme tamamlanınca geçiş yap
         const onImageLoad = () => handleImageLoad(imgElement, canvas);
 

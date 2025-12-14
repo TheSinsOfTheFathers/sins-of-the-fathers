@@ -13,7 +13,7 @@ export const injectSchema = (data) => {
     script.id = 'dynamic-schema';
     script.type = 'application/ld+json';
     script.text = JSON.stringify(data);
-    
+
     document.head.appendChild(script);
 };
 
@@ -32,7 +32,7 @@ export const generateCharacterSchema = (char) => {
             "name": char.faction?.title || "Unknown"
         },
         "jobTitle": char.role || "Operative",
-        "url": window.location.href
+        "url": globalThis.location.href
     };
 };
 
@@ -55,10 +55,10 @@ export const generateLoreSchema = (lore) => {
             "name": "The Sins of the Fathers Archive",
             "logo": {
                 "@type": "ImageObject",
-                "url": window.location.origin + "/assets/images/logo/logo.svg" // Logonun tam yolu
+                "url": globalThis.location.origin + "/assets/images/logo/logo.svg" // Logonun tam yolu
             }
         },
         "description": "Classified document retrieved from the archives.",
-        "url": window.location.href
+        "url": globalThis.location.href
     };
 };

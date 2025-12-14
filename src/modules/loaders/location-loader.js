@@ -25,8 +25,6 @@ const destroyMap = (id) => {
     }
     if (container) {
         container._leaflet_id = null;
-        // GSAP ile temizlerken kalan stilleri sıfırla
-        gsap.set(container, { clearProps: "all" });
     }
 };
 
@@ -34,7 +32,7 @@ const destroyMap = (id) => {
  * Taktiksel Marker İkonu Oluşturucu
  */
 const createTacticalIcon = (slug) => {
-    if (!window.L) return null;
+    if (!globalThis.L) return null;
     const color = (FACTION_THEMES[slug] || FACTION_THEMES.default).border;
 
     return L.divIcon({
@@ -58,7 +56,7 @@ async function loadLayer(map, path, theme) {
         if (!res.ok) throw new Error(`404 Not Found: ${cleanPath}`);
         const data = await res.json();
 
-        const layer = L.geoJSON(data, {
+        L.geoJSON(data, {
             style: {
                 color: theme.border,
                 weight: 1,
@@ -70,7 +68,11 @@ async function loadLayer(map, path, theme) {
         }).addTo(map);
 
     } catch (e) {
-        console.warn(`[Map Layer Missing] ${path}`, e);
+        if (e.message.includes('404')) {
+            console.warn(`[Map Layer Missing] ${path}`);
+        } else {
+            console.error("[Map Layer Error]", e);
+        }
     }
 }
 
@@ -88,7 +90,7 @@ export async function displayLocations() {
             "@type": "Map",
             "name": "Global Surveillance Map | The Sins of the Fathers",
             "description": "Interactive map showing all faction territories and key locations in the TSOF universe.",
-            "url": window.location.href
+            "url": globalThis.location.href
         };
         injectSchema(schemaData);
     } catch (e) {
@@ -96,7 +98,7 @@ export async function displayLocations() {
     }
 
     if (!mapContainer) return;
-    if (!window.L) {
+    if (!globalThis.L) {
         console.error("Leaflet Library Missing!");
         if (loader) loader.innerHTML = "<span class='text-red-500'>OFFLINE</span>";
         return;
@@ -122,13 +124,12 @@ export async function displayLocations() {
             maxZoom: 18
         }).addTo(map);
 
-        // Global Helper Functions
-        window.zoomToLocation = (lat, lng, z) => {
-            map.flyTo([lat, lng], z, { duration: 2.0 });
+        globalThis.zoomToLocation = (lat, lng, z) => {
+            map.flyTo([lat, lng], z, { duration: 2 });
             const display = document.getElementById('location-name-display');
             if (display) display.textContent = i18next.t('location_loader.sector_info', { lat: lat.toFixed(4), lng: lng.toFixed(4) });
         };
-        window.resetMap = () => {
+        globalThis.resetMap = () => {
             map.flyTo([40, -30], 3, { duration: 1.5 });
             const display = document.getElementById('location-name-display');
             if (display) display.textContent = i18next.t('location_loader.global_orbit');

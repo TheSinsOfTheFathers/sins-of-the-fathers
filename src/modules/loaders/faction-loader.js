@@ -15,11 +15,11 @@ gsap.registerPlugin(ScrollTrigger);
    -------------------------------------------------------------------------- */
 const createFactionCard = (faction) => {
     const isOldWorld = faction.type === 'syndicate';
-    
+
     const cardThemeClass = isOldWorld ? 'old-world' : 'new-world';
     const accentColor = faction.color?.hex || (isOldWorld ? '#b91c1c' : '#c5a059');
     const iconClass = isOldWorld ? 'fa-skull-crossbones' : 'fa-chess-king';
-    
+
     const leaderName = (faction.leader && faction.leader.name) ? faction.leader.name : i18next.t('factions.unknown');
 
     // ... (statsHTML kısmı aynı kalacak) ...
@@ -53,7 +53,7 @@ const createFactionCard = (faction) => {
 
     const cardLink = document.createElement('a');
     cardLink.href = `faction-detail.html?slug=${faction.slug}`;
-    
+
     cardLink.className = `faction-card gsap-faction-card opacity-0 ${cardThemeClass} p-8 relative group min-h-[400px] flex flex-col justify-between rounded-sm transition-transform duration-300 hover:-translate-y-1`;
 
     cardLink.innerHTML = `
@@ -87,7 +87,7 @@ const createFactionCard = (faction) => {
             <span class="border border-current px-2 py-0.5 rounded-[1px] hover:bg-white/5">${i18next.t('factions.view_intel')}</span>
         </div>
     `;
-    
+
     return cardLink;
 };
 
@@ -96,9 +96,9 @@ const createFactionCard = (faction) => {
    -------------------------------------------------------------------------- */
 export async function displayFactions() {
     const factionsGrid = document.getElementById('factions-grid');
-    const loader = document.getElementById('factions-loader'); 
+    const loader = document.getElementById('factions-loader');
 
-    if (!factionsGrid) return; 
+    if (!factionsGrid) return;
 
     try {
         console.log("> Accessing Faction Database...");
@@ -112,12 +112,12 @@ export async function displayFactions() {
             "hqLocation": hq,
             leader->{name}
         }`;
-        
+
         const factions = await client.fetch(query);
 
         if (factions && factions.length > 0) {
-            
-            // SEO / SCHEMA
+
+            // 👇 SEO / SCHEMA ENJEKSİYONU (ItemList)
             try {
                 const itemList = factions.map((faction, index) => ({
                     "@type": "ListItem",
@@ -125,7 +125,7 @@ export async function displayFactions() {
                     "item": {
                         "@type": "Organization",
                         "name": faction.title,
-                        "url": new URL(`faction-detail.html?slug=${faction.slug}`, window.location.origin).href
+                        "url": new URL(`faction-detail.html?slug=${faction.slug}`, globalThis.location.origin).href
                     }
                 }));
 
@@ -146,9 +146,9 @@ export async function displayFactions() {
             }
             // -----------------------------------------------------
 
-            if(loader) loader.style.display = 'none';
+            if (loader) loader.style.display = 'none';
             factionsGrid.innerHTML = '';
-            factionsGrid.classList.remove('opacity-0'); 
+            factionsGrid.classList.remove('opacity-0');
 
             factions.forEach((faction) => {
                 const card = createFactionCard(faction);
@@ -173,7 +173,7 @@ export async function displayFactions() {
             }
 
         } else {
-            if(loader) loader.style.display = 'none';
+            if (loader) loader.style.display = 'none';
             factionsGrid.innerHTML = `
                 <div class="col-span-full text-center py-20 border border-red-900/30 bg-red-900/10">
                     <i class="fas fa-ban text-3xl text-red-800 mb-4"></i>
@@ -182,7 +182,7 @@ export async function displayFactions() {
         }
     } catch (error) {
         console.error("Intel Retrieval Failed: ", error);
-        if(loader) loader.style.display = 'none';
+        if (loader) loader.style.display = 'none';
         factionsGrid.innerHTML = `<p class="text-red-500 text-center font-mono col-span-full">${i18next.t('factions.error_connection')}</p>`;
     }
 }

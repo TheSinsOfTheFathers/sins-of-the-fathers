@@ -1,14 +1,8 @@
 import { client } from '../../lib/sanityClient.js';
-import { renderBlurHash, handleImageLoad } from '../../lib/imageUtils.js'; 
-import i18next from '../../lib/i18n.js';
-import { injectSchema } from '../../lib/seo.js'; 
-
-// 👇 1. GSAP IMPORTLARI
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-// Plugin Kaydı
-gsap.registerPlugin(ScrollTrigger);
+import { renderBlurHash, handleImageLoad } from '../../lib/imageUtils.js';
+import i18next from '../../lib/i18n.js'; // i18next import
+// 👇 SEO İMPORTU EKLENDİ
+import { injectSchema } from '../../lib/seo.js';
 
 let allLoreData = [];
 
@@ -17,8 +11,8 @@ let allLoreData = [];
    -------------------------------------------------------------------------- */
 
 const createDocumentCard = (lore) => `
-    <div class="gsap-archive-card opacity-0 archive-card bg-[#e6e2d3] text-black p-6 rounded-sm shadow-lg relative overflow-hidden group h-fit break-inside-avoid">
-        <div class="absolute top-2 right-2 border border-red-900 text-red-900 text-[10px] font-bold px-2 py-0.5 transform rotate-12 opacity-70">DOC_${lore._createdAt ? lore._createdAt.slice(0,4) : '2025'}</div>
+    <div class="archive-card bg-[#e6e2d3] text-black p-6 rounded-sm shadow-lg relative overflow-hidden group h-fit break-inside-avoid">
+        <div class="absolute top-2 right-2 border border-red-900 text-red-900 text-[10px] font-bold px-2 py-0.5 transform rotate-12 opacity-70">DOC_${lore._createdAt.slice(0, 4)}</div>
         <h3 class="font-mono font-bold text-lg mb-2 uppercase underline decoration-red-800 decoration-2 tracking-tighter">
             <a href="lore-detail.html?slug=${lore.slug}" class="hover:text-red-900">${lore.title}</a>
         </h3>
@@ -80,9 +74,8 @@ const createImageCard = (lore) => {
     const dateStr = lore.date ? new Date(lore.date).toLocaleDateString(i18next.language) : i18next.t('lore_loader.no_date');
 
     const cardDiv = document.createElement('div');
-    // 👇 'gsap-archive-card' ve 'opacity-0' class'lara eklendi
-    cardDiv.className = 'gsap-archive-card opacity-0 archive-card bg-white p-3 shadow-lg h-fit break-inside-avoid hover:rotate-1 transition-transform duration-300';
-    
+    cardDiv.className = 'archive-card bg-white p-3 shadow-lg h-fit break-inside-avoid hover:rotate-1 transition-transform duration-300';
+
     cardDiv.innerHTML = `
         <a href="lore-detail.html?slug=${lore.slug}" class="block group">
             <div class="relative w-full aspect-video bg-gray-200 overflow-hidden border border-gray-300">
@@ -113,8 +106,10 @@ const createImageCard = (lore) => {
 
 const generateCard = (lore) => {
     if (lore.restricted) return createRestrictedCard(lore);
+
     const type = lore.loreType || 'document';
-    switch(type) {
+
+    switch (type) {
         case 'audio': return createAudioCard(lore);
         case 'image': return createImageCard(lore);
         default: return createDocumentCard(lore);
@@ -125,8 +120,7 @@ const renderGrid = (data) => {
     const container = document.getElementById('archive-grid');
     if (!container) return;
 
-    // Önceki kartları temizle
-    container.innerHTML = ''; 
+    container.innerHTML = '';
 
     if (data.length === 0) {
         container.innerHTML = `<div class="col-span-full text-center text-gray-500 font-mono py-12">${i18next.t('lore_loader.no_records_query')}</div>`;
@@ -141,25 +135,25 @@ const renderGrid = (data) => {
             container.appendChild(card);
         }
     });
+};
 
-    // 👇 2. GSAP ANİMASYONU (KARTLAR EKLENDİKTEN HEMEN SONRA)
-    // ----------------------------------------------------------------
-    // Eski animasyonları temizle (Memory Leak önleme)
-    ScrollTrigger.getAll().forEach(t => t.kill());
+const applyFilters = (searchTerm = '', filterType = 'all') => {
+    const lowerTerm = searchTerm.toLowerCase();
 
-    gsap.to(".gsap-archive-card", {
-        y: 0,
-        opacity: 1,
-        duration: 0.5,
-        stagger: 0.05, // Kartlar çok hızlı (0.05sn) sırayla gelsin
-        ease: "power2.out",
-        startAt: { y: 30, opacity: 0 }, // Başlangıç: 30px aşağıda ve gizli
-        scrollTrigger: {
-            trigger: container,
-            start: "top 90%",
-            toggleActions: "play none none none"
-        }
+    const filtered = allLoreData.filter(item => {
+        const matchesSearch =
+            (item.title || '').toLowerCase().includes(lowerTerm) ||
+            (item.summary || '').toLowerCase().includes(lowerTerm);
+
+        let matchesType = true;
+        if (filterType === 'documents') matchesType = item.loreType === 'document' || !item.loreType;
+        if (filterType === 'audio') matchesType = item.loreType === 'audio';
+        if (filterType === 'classified') matchesType = item.restricted === true;
+
+        return matchesSearch && matchesType;
     });
+
+    renderGrid(filtered);
 };
 
 /* --------------------------------------------------------------------------
@@ -168,11 +162,11 @@ const renderGrid = (data) => {
 export async function displayLoreList() {
     const container = document.getElementById('archive-grid');
     const loader = document.getElementById('archive-loader');
-    
+
     if (!container) return;
 
     const searchInput = document.getElementById('archive-search');
-    if(searchInput) searchInput.placeholder = i18next.t('search.placeholder');
+    if (searchInput) searchInput.placeholder = i18next.t('search.placeholder');
 
     // Başlangıçta Grid'i gizle (Loader görünürken)
     gsap.set(container, { autoAlpha: 0 });
@@ -199,7 +193,7 @@ export async function displayLoreList() {
             "date": date,
             source
         }`;
-        
+
         allLoreData = await client.fetch(query);
 
         // SEO Schema
@@ -212,7 +206,7 @@ export async function displayLoreList() {
                     "name": lore.title,
                     "description": lore.summary,
                     "datePublished": lore.date,
-                    "url": new URL(`lore-detail.html?slug=${lore.slug}`, window.location.origin).href
+                    "url": new URL(`lore-detail.html?slug=${lore.slug}`, globalThis.location.origin).href
                 }
             }));
 
@@ -233,7 +227,7 @@ export async function displayLoreList() {
 
         // Loader'ı kapat ve Grid'i göster
         if (loader) loader.style.display = 'none';
-        
+
         // Grid'i görünür yap (İçindeki kartlar henüz opacity-0)
         gsap.to(container, { autoAlpha: 1, duration: 0.3 });
 
@@ -242,40 +236,22 @@ export async function displayLoreList() {
 
     } catch (error) {
         console.error("Archive Corrupted:", error);
-        if(loader) loader.innerHTML = `<span class="text-red-500 font-mono">${i18next.t('lore_loader.system_error_short')}</span>`;
+        if (loader) loader.innerHTML = `<span class="text-red-500 font-mono">${i18next.t('lore_loader.system_error_short')}</span>`;
         container.innerHTML = `<p class="text-red-500 text-center col-span-full">${i18next.t('lore_loader.connection_failed_long')}</p>`;
         gsap.to(container, { autoAlpha: 1 });
     }
 }
 
 function setupSearchInterface() {
-    const searchInput = document.getElementById('archive-search'); 
-    const filterButtons = document.querySelectorAll('#archive-filters button'); 
-
-    const applyFilters = () => {
-        const term = searchInput ? searchInput.value.toLowerCase() : '';
-        const activeBtn = document.querySelector('#archive-filters button.border-gold');
-        const activeType = activeBtn ? activeBtn.getAttribute('data-filter') : 'all';
-
-        const filtered = allLoreData.filter(item => {
-            const matchesSearch = 
-                (item.title || '').toLowerCase().includes(term) || 
-                (item.summary || '').toLowerCase().includes(term);
-                
-            let matchesType = true;
-            if (activeType === 'text') matchesType = item.loreType === 'document' || !item.loreType;
-            if (activeType === 'audio') matchesType = item.loreType === 'audio';
-            if (activeType === 'classified') matchesType = item.restricted === true;
-
-            return matchesSearch && matchesType;
-        });
-
-        // Filtreleme yapıldığında yeniden render et (Otomatik animasyon çalışır)
-        renderGrid(filtered);
-    };
+    const searchInput = document.querySelector('input[placeholder*="Search"]');
+    const filterButtons = document.querySelectorAll('button.uppercase');
 
     if (searchInput) {
-        searchInput.addEventListener('input', applyFilters);
+        searchInput.addEventListener('input', (e) => {
+            const activeBtn = document.querySelector(String.raw`button.bg-gold\/10`);
+            const type = activeBtn ? mapBtnTextToType(activeBtn.textContent) : 'all';
+            applyFilters(e.target.value, type);
+        });
     }
 
     if (filterButtons) {
