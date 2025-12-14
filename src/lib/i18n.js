@@ -34,6 +34,8 @@ export const changeLanguage = async (lng) => {
     updateContent();
     localStorage.setItem('i18nextLng', lng);
 
+    document.documentElement.setAttribute('lang', lng); 
+
     document.querySelectorAll('.lang-btn').forEach(btn => {
         if (btn.dataset.lang === lng) {
             btn.classList.add('text-white', 'font-bold', 'underline');
