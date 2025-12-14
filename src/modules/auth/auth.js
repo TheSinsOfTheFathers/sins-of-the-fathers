@@ -176,7 +176,9 @@ export function initAuth() {
         }, { merge: true });
 
         showMessage(authMessage, 'Identity Verified. Redirecting...', 'success');
-        setTimeout(() => globalThis.location.href = './pages/profile.html', 1000);
+        
+        // Düzeltildi: /pages/profile.html (Mutlak yol)
+        setTimeout(() => globalThis.location.href = '/pages/profile.html', 1000); 
       } catch (err) {
         showPopup('error', firebaseErrorToMessage(err));
         showMessage(authMessage, 'Registration Failed.', 'error');
@@ -201,7 +203,8 @@ export function initAuth() {
         showMessage(authMessage, 'Access Granted.', 'success');
         await signInWithEmailAndPassword(auth, email, password);
 
-        setTimeout(() => globalThis.location.href = '../index.html', 800);
+        // Düzeltildi: /index.html (Mutlak yol)
+        setTimeout(() => globalThis.location.href = '/index.html', 800);
       } catch (err) {
         showPopup('error', firebaseErrorToMessage(err));
         showMessage(authMessage, 'Access Denied.', 'error');
@@ -231,7 +234,9 @@ export function initAuth() {
       }, { merge: true });
 
       showMessage(authMessage, 'Biometrics confirmed.', 'success');
-      setTimeout(() => globalThis.location.href = '/public/index.html', 800);
+      
+      // Düzeltildi: /index.html (Mutlak yol)
+      setTimeout(() => globalThis.location.href = '/index.html', 800); 
     } catch (err) {
       showPopup('error', firebaseErrorToMessage(err));
       showMessage(authMessage, 'Signal Lost.', 'error');
@@ -243,7 +248,7 @@ export function initAuth() {
 
 
   /* --------------------------------------------------------------------------
-     HEADER MENU & AUTH STATE (GÜNCELLENMİŞ VERSİYON)
+     HEADER MENU & AUTH STATE
      -------------------------------------------------------------------------- */
   onAuthStateChanged(auth, (user) => {
     const signinLink = document.getElementById('auth-signin-link');
@@ -288,33 +293,32 @@ export function initAuth() {
 
     menu.innerHTML = `
       <button id="user-menu-btn" class="flex items-center gap-2 group focus:outline-none">
-         <span class="hidden md:block text-[10px] font-mono text-gray-400 group-hover:text-gold tracking-widest uppercase">
-            ${i18next.t('agent_display', { name: user.displayName ? user.displayName.split(' ')[0] : 'Unknown' })}
-         </span>
-         <img class="w-8 h-8 rounded-sm object-cover border border-gray-700 group-hover:border-gold transition-colors" src="${avatarSrc}" alt="ID" />
+           <span class="hidden md:block text-[10px] font-mono text-gray-400 group-hover:text-gold tracking-widest uppercase">
+             ${i18next.t('agent_display', { name: user.displayName ? user.displayName.split(' ')[0] : 'Unknown' })}
+           </span>
+           <img class="w-8 h-8 rounded-sm object-cover border border-gray-700 group-hover:border-gold transition-colors" src="${avatarSrc}" alt="ID" />
       </button>
 
       <div id="user-dropdown" class="hidden absolute right-0 mt-4 w-56 bg-obsidian border border-gold/30 shadow-[0_0_20px_rgba(0,0,0,0.8)] z-50 backdrop-blur-xl">
-          <!-- Corner Decoration -->
-          <div class="absolute -top-1 -left-1 w-2 h-2 border-t border-l border-gold opacity-50"></div>
-          <div class="absolute -bottom-1 -right-1 w-2 h-2 border-b border-r border-gold opacity-50"></div>
-          
-          <div class="px-4 py-3 border-b border-white/5">
-             <p class="text-[10px] text-gray-500 font-mono uppercase tracking-widest">Current Identity</p>
-             <p class="text-xs text-gold truncate font-mono">${user.email}</p>
-          </div>
-          
-          <div class="py-1">
-            <a href="/public/pages/profile.html" class="block px-4 py-2 text-xs text-gray-300 hover:bg-white/5 hover:text-white font-serif uppercase tracking-wide transition-colors">
-                <i class="fas fa-id-card mr-2 text-gold/70"></i> Access File
-            </a>
-          </div>
+           <div class="absolute -top-1 -left-1 w-2 h-2 border-t border-l border-gold opacity-50"></div>
+           <div class="absolute -bottom-1 -right-1 w-2 h-2 border-b border-r border-gold opacity-50"></div>
+           
+           <div class="px-4 py-3 border-b border-white/5">
+                <p class="text-[10px] text-gray-500 font-mono uppercase tracking-widest">Current Identity</p>
+                <p class="text-xs text-gold truncate font-mono">${user.email}</p>
+           </div>
+           
+           <div class="py-1">
+             <a href="/pages/profile.html" class="block px-4 py-2 text-xs text-gray-300 hover:bg-white/5 hover:text-white font-serif uppercase tracking-wide transition-colors">
+                 <i class="fas fa-id-card mr-2 text-gold/70"></i> Access File
+             </a>
+           </div>
 
-          <div class="border-t border-white/10">
-            <button id="menu-signout-btn" class="w-full text-left px-4 py-3 text-xs text-red-800 hover:text-red-500 hover:bg-red-900/10 font-mono uppercase tracking-widest transition-colors">
-                <i class="fas fa-power-off mr-2"></i> Disconnect
-            </button>
-          </div>
+           <div class="border-t border-white/10">
+             <button id="menu-signout-btn" class="w-full text-left px-4 py-3 text-xs text-red-800 hover:text-red-500 hover:bg-red-900/10 font-mono uppercase tracking-widest transition-colors">
+                 <i class="fas fa-power-off mr-2"></i> Disconnect
+             </button>
+           </div>
       </div>
     `;
 
@@ -330,7 +334,10 @@ export function initAuth() {
     });
 
     signoutBtn.addEventListener('click', async () => {
-      try { await signOut(auth); globalThis.location.href = '/public/index.html'; }
+      try { await signOut(auth); 
+        // Düzeltildi: /index.html (Mutlak yol)
+        globalThis.location.href = '/index.html'; 
+      }
       catch (err) { console.error(err); }
     });
 
