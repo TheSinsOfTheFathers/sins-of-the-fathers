@@ -19,6 +19,8 @@ const firebaseConfig = {
     measurementId: "G-9H3782YN0N"
 };
 
+const RECAPTCHA_SITE_KEY = "6LeoRfYrAAAAAHd6SUPlvNfSRmVtuoMmraQOk_2P";
+
 /* --------------------------------------------------------------------------
    SYSTEM INITIALIZATION
    -------------------------------------------------------------------------- */
@@ -35,7 +37,7 @@ try {
     analyticsInstance = getAnalytics(app);
     console.log(
         "%c[SYSTEM] TSOF Secure Link :: ESTABLISHED",
-        "color: #c5a059; background: #050505; padding: 4px; border-left: 2px solid #c5a059; font-family: monospace;"
+        "color: #c5a059; background: #050505; padding: 4px; border-left: 2px solid #c5a0_59; font-family: monospace;"
     );
 } catch (error) {
     console.error(
@@ -55,5 +57,6 @@ export {
     auth,
     functionsInstance as functions,
     googleProvider,
-    storage
+    storage,
+    RECAPTCHA_SITE_KEY
 };
