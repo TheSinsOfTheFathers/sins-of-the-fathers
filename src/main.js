@@ -15,7 +15,7 @@ import i18next, { initI18n, changeLanguage } from './lib/i18n.js';
 import Lenis from '@studio-freight/lenis';
 
 // Modüller (Artık hepsi 'src' klasöründen geliyor)
-import initAuth from './/modules/auth/auth.js';
+import initAuth from './modules/auth/auth.js';
 import { initMobileMenu } from './modules/ui/mobile-menu.js';
 import { initAudioSystem } from './modules/ui/audio-manager.js';
 import { initCookieConsent } from './modules/ui/app-policy.js';
