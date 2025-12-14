@@ -1,6 +1,6 @@
 
 <div align="center">
-  <img src="https://firebasestorage.googleapis.com/v0/b/the-sins-of-the-fathers.appspot.com/o/the-sins-of-the-fathers-logo.png?alt=media&token=42002342-99d9-433b-8182-595353d2f2b3" alt="The Sins of The Fathers Logo" width="200"/>
+  <img src="https://firebasestorage.googleapis.com/v0/b/sins-of-the-fathers.firebasestorage.app/o/logo.png?alt=media&token=a7d1a0b9-5bba-45ee-9f19-e8f5770c0a84" alt="The Sins of The Fathers Logo" width="200"/>
 
   # The Sins of the Fathers | Digital Novel Experience Platform
 
