@@ -33,6 +33,20 @@ function raf(time) {
 }
 requestAnimationFrame(raf);
 
+// Anchor links için smooth scroll düzeltmesi
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      lenis.scrollTo(target, {
+        offset: -80,
+        duration: 2
+      });
+    }
+  });
+});
+
 
 // Vite Modül Haritası (Dinamik importlar için)
 const moduleMap = import.meta.glob([

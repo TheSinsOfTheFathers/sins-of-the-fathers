@@ -38,6 +38,10 @@ body {
 /* =========================================
   Lenis (Smooth Scroll) Setup
   ========================================= */
+html {
+  scroll-padding-top: 80px;
+}
+
 html.lenis {
   height: auto;
 }
