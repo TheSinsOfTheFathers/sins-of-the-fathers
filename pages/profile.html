@@ -145,12 +145,12 @@
 
                         <!-- Image Uploader -->
                         <div class="relative w-32 h-32 mx-auto mb-6 cursor-pointer group/image">
-                             <input type="file" id="profile-photo-input" accept="image/*" class="hidden">
+                             <input type="file" id="profile-photo-input" accept="image/*" class="hidden" aria-label="Upload Profile Photo">
                             
                              <!-- Default Placeholder -->
                             <img id="profile-image-preview" src="https://images.unsplash.com/photo-1531297461136-82lw.jpg?q=80&w=2688&auto=format&fit=crop" 
                                  class="w-full h-full object-cover border-2 border-white/20 group-hover:border-gold grayscale group-hover:grayscale-0 transition-all duration-300 shadow-[0_0_20px_rgba(0,0,0,0.8)]" 
-                                 alt="Operative Photo">
+                                 alt="Operative">
                             
                             <div class="absolute inset-0 bg-black/60 opacity-0 group-hover/image:opacity-100 transition-opacity flex flex-col items-center justify-center pointer-events-none border-2 border-gold">
                                 <i class="fas fa-camera text-gold mb-1"></i>
@@ -204,18 +204,18 @@
                             
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                                 <div>
-                                    <label class="block text-[10px] text-gray-200 font-mono uppercase mb-2" data-i18n="profile_page.label_codename">Codename / Alias</label>
+                                    <label for="display-name" class="block text-[10px] text-gray-500 font-mono uppercase mb-2" data-i18n="profile_page.label_codename">Codename / Alias</label>
                                     <input type="text" id="display-name" class="agent-input" placeholder="Unknown Operative" data-i18n="[placeholder]profile_page.placeholder_codename" value="">
                                 </div>
                                 
                                 <div>
-                                    <label class="block text-[10px] text-gray-200 font-mono uppercase mb-2" data-i18n="profile_page.label_email">Encrypted Frequency (Email)</label>
+                                    <label for="user-email" class="block text-[10px] text-gray-500 font-mono uppercase mb-2" data-i18n="profile_page.label_email">Encrypted Frequency (Email)</label>
                                     <input type="email" id="user-email" class="agent-input opacity-50 cursor-not-allowed" value="" readonly title="Contact Handler to change email">
                                 </div>
                                 
                                 <div class="md:col-span-2">
-                                     <label class="block text-[10px] text-gray-200 font-mono uppercase mb-2" data-i18n="profile_page.label_bio">Short Bio / Notes</label>
-                                     <textarea class="agent-input h-24 resize-none" placeholder="Enter service record..." data-i18n="[placeholder]profile_page.placeholder_bio"></textarea>
+                                     <label for="operative-bio" class="block text-[10px] text-gray-500 font-mono uppercase mb-2" data-i18n="profile_page.label_bio">Short Bio / Notes</label>
+                                     <textarea id="operative-bio" class="agent-input h-24 resize-none" placeholder="Enter service record..." data-i18n="[placeholder]profile_page.placeholder_bio"></textarea>
                                 </div>
                             </div>
                         </div>

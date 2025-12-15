@@ -1,12 +1,36 @@
 // --- IMPORTLAR (SÜRÜMLER EŞİTLENDİ - v10.12.2) ---
-import { db } from '../../../src/modules/firebase-config.js';
+// Firebase config'i doğrudan CDN'den yükle
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc, serverTimestamp, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+// Firebase Config (landing page için)
+const firebaseConfig = {
+    apiKey: "AIzaSyB7Xa5tZYVenPEkkjB0KVJDkoV7pQ7_QcQ",
+    authDomain: "thesinsofthefathers.com",
+    databaseURL: "https://sins-of-the-fathers-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "sins-of-the-fathers",
+    storageBucket: "sins-of-the-fathers.appspot.com",
+    messagingSenderId: "287213062167",
+    appId: "1:287213062167:web:1f863b4e96641570f5b452",
+    measurementId: "G-9H3782YN0N"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 // --- GERİ SAYIM SAYACI ---
-const countdownDate = new Date("2026-01-01T00:00:00").getTime();
+const countdownDate = new Date("2026-01-01T00:00:00Z").getTime();
 
 const countdownFunction = setInterval(function () {
     const now = Date.now();
     const distance = countdownDate - now;
+
+    if (distance < 0) {
+        clearInterval(countdownFunction);
+        const countdownContainer = document.getElementById("countdown");
+        if (countdownContainer) countdownContainer.innerHTML = "<p class='text-2xl text-yellow-500 font-serif'>The story has begun.</p>";
+        return;
+    }
 
     const days = Math.floor(distance / (1000 * 60 * 60 * 24));
     const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
@@ -19,12 +43,6 @@ const countdownFunction = setInterval(function () {
         document.getElementById("hours").innerText = hours.toString().padStart(2, '0');
         document.getElementById("minutes").innerText = minutes.toString().padStart(2, '0');
         document.getElementById("seconds").innerText = seconds.toString().padStart(2, '0');
-    }
-
-    if (distance < 0) {
-        clearInterval(countdownFunction);
-        const countdownContainer = document.getElementById("countdown");
-        if (countdownContainer) countdownContainer.innerHTML = "<p class='text-2xl text-yellow-500 font-serif'>The story has begun.</p>";
     }
 }, 1000);
 
@@ -84,7 +102,6 @@ if (subscribeForm) {
             }
         } catch (error) {
             console.error("Error managing subscription: ", error);
-            // Hata mesajını daha açıklayıcı yapalım
             if (error.code === 'permission-denied') {
                 subscribeMessage.textContent = 'Access Denied: Firewall blocking connection.';
             } else {

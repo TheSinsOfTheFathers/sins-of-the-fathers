@@ -99,7 +99,7 @@
             <!-- Mobile Controls -->
             <div class="flex items-center gap-4 md:hidden">
                 <div class="relative z-50">
-                    <button id="hamburger-button" class="text-gold focus:outline-none flex flex-col justify-center items-center w-8 h-8 space-y-1.5 group">
+                    <button id="hamburger-button" aria-label="Open main menu" class="text-gold focus:outline-none flex flex-col justify-center items-center w-8 h-8 space-y-1.5 group">
                         <span class="block w-6 h-0.5 bg-gold transition-transform duration-300"></span>
                         <span class="block w-6 h-0.5 bg-gold transition-opacity duration-300"></span>
                         <span class="block w-6 h-0.5 bg-gold transition-transform duration-300"></span>
@@ -125,7 +125,7 @@
         <a href="./timeline.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.history">History</a>
         <a href="./characters.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.bloodline">Bloodline</a>
         <a href="./factions.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.factions">Factions</a>
-        <a href="https://shop.thesinsofthefathers.com" class="hover:text-gold transition-colors" target="_blank" data-i18n="nav.merch"></a>
+        <a href="https://shop.thesinsofthefathers.com" class="hover:text-gold transition-colors" target="_blank" data-i18n="nav.merch">Merch</a>
         <a href="./login.html" class="text-sm text-gray-400 hover:text-white mt-8 font-mono uppercase" data-i18n="auth.login">Login</a>
         
         <!-- Mobile Language -->
@@ -233,10 +233,22 @@
         <p class="font-serif text-gold text-2xl mb-4">TSOF</p>
         
         <div class="flex justify-center space-x-6 mb-6">
-            <a href="https://x.com/sotfathersbook" target="_blank" rel="noopener noreferrer" class="text-gray-200 hover:text-gold transition-colors"><i class="fab fa-x-twitter fa-lg"></i></a>
-            <a href="https://www.instagram.com/sotfathersbook/" target="_blank" rel="noopener noreferrer" class="text-gray-200 hover:text-gold transition-colors"><i class="fab fa-instagram fa-lg"></i></a>
-            <a href="https://discord.gg/aDuzq7jKKn" target="_blank" rel="noopener noreferrer" class="text-gray-200 hover:text-gold transition-colors"><i class="fab fa-discord fa-lg"></i></a>
-            <a href="https://www.patreon.com/c/TheSinsoftheFathers" target="_blank" rel="noopener noreferrer" class="text-gray-200 hover:text-gold transition-colors"><i class="fab fa-patreon fa-lg"></i></a>
+            <a href="https://x.com/sotfathersbook" target="_blank" rel="noopener noreferrer" aria-label="Twitter" class="text-gray-500 hover:text-gold transition-colors">
+                <i class="fab fa-x-twitter fa-lg" aria-hidden="true"></i>
+                <span class="sr-only">Twitter</span>
+            </a>
+            <a href="https://www.instagram.com/sotfathersbook/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" class="text-gray-500 hover:text-gold transition-colors">
+                <i class="fab fa-instagram fa-lg" aria-hidden="true"></i>
+                <span class="sr-only">Instagram</span>
+            </a>
+            <a href="https://discord.gg/aDuzq7jKKn" target="_blank" rel="noopener noreferrer" aria-label="Discord" class="text-gray-500 hover:text-gold transition-colors">
+                <i class="fab fa-discord fa-lg" aria-hidden="true"></i>
+                <span class="sr-only">Discord</span>
+            </a>
+            <a href="https://www.patreon.com/c/TheSinsoftheFathers" target="_blank" rel="noopener noreferrer" aria-label="Patreon" class="text-gray-500 hover:text-gold transition-colors">
+                <i class="fab fa-patreon fa-lg" aria-hidden="true"></i>
+                <span class="sr-only">Patreon</span>
+            </a>
         </div>
 
         <div class="flex justify-center space-x-6 mb-6 text-[10px] font-mono uppercase text-gray-200">
