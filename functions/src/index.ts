@@ -1,13 +1,13 @@
 /* eslint-disable valid-jsdoc */
 /* eslint-disable require-jsdoc */
 /* eslint-disable max-len */
-import {onCall, HttpsError, CallableRequest} from "firebase-functions/v2/https";
-import {onDocumentCreated} from "firebase-functions/v2/firestore";
+import { onCall, HttpsError, CallableRequest } from "firebase-functions/v2/https";
+import { onDocumentCreated } from "firebase-functions/v2/firestore";
 import * as logger from "firebase-functions/logger";
 import * as admin from "firebase-admin";
-import axios, {AxiosResponse} from "axios";
-import {SecretManagerServiceClient} from "@google-cloud/secret-manager";
-import {Resend} from "resend";
+import axios, { AxiosResponse } from "axios";
+import { SecretManagerServiceClient } from "@google-cloud/secret-manager";
+import { Resend } from "resend";
 
 admin.initializeApp();
 
@@ -41,7 +41,7 @@ interface SubscriberData {
 
 async function getRecaptchaSecret(): Promise<string> {
   const SECRET_NAME = "projects/287213062167/secrets/RECAPTCHA_SECRET_KEY/versions/latest";
-  const [version] = await secretManagerClient.accessSecretVersion({name: SECRET_NAME});
+  const [version] = await secretManagerClient.accessSecretVersion({ name: SECRET_NAME });
 
   if (!version.payload?.data) {
     throw new Error("reCAPTCHA secret not found or empty.");
@@ -52,21 +52,21 @@ async function getRecaptchaSecret(): Promise<string> {
 /**
  * Common reCAPTCHA verification logic
  */
-async function verifyRecaptchaLogic(token: string): Promise<{isValid: boolean; score: number}> {
+async function verifyRecaptchaLogic(token: string): Promise<{ isValid: boolean; score: number }> {
   try {
     const secretKey = await getRecaptchaSecret();
     const verificationUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${token}`;
 
     const response: AxiosResponse<AssessmentResponseV3> = await axios.post(verificationUrl);
-    const {success, score} = response.data;
+    const { success, score } = response.data;
     const finalScore = score ?? 0;
 
     const isValid = success && finalScore >= 0.5;
 
-    return {isValid, score: finalScore};
+    return { isValid, score: finalScore };
   } catch (error) {
     logger.error("reCAPTCHA verification error:", error);
-    return {isValid: false, score: 0};
+    return { isValid: false, score: 0 };
   }
 }
 
@@ -116,7 +116,7 @@ export const verifyRecaptchaToken = onCall({
   region: REGION,
   cors: true,
 }, async (request: CallableRequest<RecaptchaVerificationData>) => {
-  const {token, action} = request.data;
+  const { token, action } = request.data;
   const uid = request.auth?.uid;
 
   if (!token || !action) {
@@ -131,13 +131,13 @@ export const verifyRecaptchaToken = onCall({
   }
 
   logger.info(`reCAPTCHA Success for User: ${uid || "Guest"} Action: ${action}`);
-  return {success: true, score: result.score};
+  return { success: true, score: result.score };
 });
 
 export const onNewSubscriber = onDocumentCreated({
   region: REGION,
   document: "subscribers/{subscriberId}",
-  secrets: ["resend-api-key"],
+  secrets: ["RESEND_API_KEY"],
 }, async (event) => {
   const snapshot = event.data;
   if (!snapshot) return;
@@ -150,17 +150,17 @@ export const onNewSubscriber = onDocumentCreated({
     return;
   }
 
-  const resendApiKey = process.env["resend-api-key"];
+  const resendApiKey = process.env["RESEND_API_KEY"];
 
   if (!resendApiKey) {
-    logger.error("resend-api-key is missing.");
+    logger.error("RESEND_API_KEY is missing.");
     return;
   }
 
   const resend = new Resend(resendApiKey);
 
   try {
-    const {data: emailData, error} = await resend.emails.send({
+    const { data: emailData, error } = await resend.emails.send({
       from: "The Sins of the Fathers <intel@thesinsofthefathers.com>",
       to: [email],
       subject: "Access Granted: Welcome to the Network",
