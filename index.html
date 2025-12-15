@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en"> 
 <head>
-    <!-- Google Tag Manager -->
     <script type="text/partytown">
         (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
         new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -9,9 +8,6 @@
         'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
         })(window,document,'script','dataLayer','GTM-PVH59MXZ');
     </script>
-    <!-- End Google Tag Manager -->
-
-    <!-- Meta Tags -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Blood implies obligation. Explore the dark saga of Roland Ravenwood and Havi. A tale of crime, dynasty, and inevitable fate.">
@@ -21,38 +17,31 @@
     <meta name="robots" content="index, follow">
     <meta name="googlebot" content="index, follow">
     
-    <!-- Title -->
     <title>The Sins of the Fathers</title>
 
-    <!-- Manifest -->
     <link rel="manifest" href="./manifest.json">
 
-    <!-- Favicons -->
     <link rel="icon" href="./assets/images/logo/favicon.ico" type="image/x-icon">
     <link rel="icon" href="./assets/images/logo/favicon.svg" type="image/svg+xml">
     <link rel="icon" sizes="96x96" href="./assets/images/logo/favicon-96x96.png" type="image/png">
     <link rel="shortcut icon" href="./assets/images/logo/favicon.ico" type="image/x-icon">
 
-    <!-- Preconnects for Performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com">
 
-    <!-- External Fonts -->
+    <link rel="preload" href="https://fonts.gstatic.com/s/cinzel/v26/8vIJ7ww63….woff2" as="font" type="font/woff2" crossorigin>
+
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Courier+Prime&display=swap">
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
     
-    <!-- Internal Styles -->
     <link rel="stylesheet" href="./src/style.css">
 
-    <!-- Internal Scripts -->
     <script type="module" src="./src/main.js"></script>
 
-    <!-- External Scripts -->
-    <!-- Howler.js for Audio Management -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
 
-    <!-- Partytown Configuration -->
     <script>
         partytown = {
             forward: ['dataLayer.push', 'gtag', 'fbq'], 
@@ -60,40 +49,30 @@
         };
     </script>
     
-    <!-- Partytown Script -->
     <script type="module" src="src/modules/loaders/partytown-loader.js"></script>
 </head>
 <body class="text-gray-300 antialiased overflow-x-hidden selection:bg-red-900 selection:text-white">
-    <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PVH59MXZ"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-    <!-- End Google Tag Manager (noscript) -->
-
-    <!-- Visual Effects -->
     <div class="noise-overlay"></div>
     <div class="vignette"></div>
     
-    <!-- Header & Navigation -->
     <header aria-label="Main navigation" class="fixed top-0 w-full z-50 transition-all duration-300 bg-obsidian/90 backdrop-blur-md border-b border-white/5">
         <nav aria-label="Primary navigation" class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <!-- Home Link -->
             <a href="/" aria-label="The Sins of the Fathers - Home" class="nav-brand text-2xl md:text-3xl text-gold tracking-widest hover:text-white transition-colors uppercase font-serif">
                 TSOF
             </a>
-            <!-- Navigation Links -->
             <div class="hidden md:flex items-center space-x-8 text-sm uppercase tracking-widest font-semibold">
                 <a href="./pages/characters.html" aria-label="Navigate to The Bloodline: Characters" class="hover:text-gold transition-colors" data-i18n="nav.bloodline"></a>
                 <a href="./pages/timeline.html" aria-label="Navigate to History: Timeline" class="hover:text-gold transition-colors" data-i18n="nav.history"></a>
                 <a href="./pages/factions.html" aria-label="Navigate to Factions" class="hover:text-gold transition-colors" data-i18n="nav.factions"></a>
                 <a href="./pages/locations.html" aria-label="Navigate to Territories: Locations" class="hover:text-gold transition-colors" data-i18n="nav.territories"></a>
                 <a href="https://shop.thesinsofthefathers.com" aria-label="Visit official merchandise shop" class="hover:text-gold transition-colors" target="_blank" data-i18n="nav.merch"></a>
-                <!-- Auth Controls and Lore Navigation -->
                 <div class="border-l border-white/20 pl-8 ml-4 flex items-center gap-4" id="auth-controls">
                     <a href="./pages/lore.html" aria-label="Access classified lore archive" class="text-gold hover:text-white transition-colors flex items-center gap-2"><i class="fas fa-lock text-xs guest-lock"></i> <span data-i18n="nav.classified"></span></a>
                     <a href="./pages/login.html" aria-label="Sign in to your account" class="hover:text-gold transition-colors guest-only" id="auth-signin-link" data-i18n="auth.login"></a>
                 </div>
             </div>
-            <!-- Mobile Menu-->
             <div class="md:hidden relative z-50">
                 <button id="hamburger-button" class="text-gold focus:outline-none flex flex-col justify-between w-6 h-5">
                     <span class="block w-full h-0.5 bg-gold"></span>
@@ -101,7 +80,6 @@
                     <span class="block w-full h-0.5 bg-gold"></span>
                 </button>
             </div>
-            <!-- Language Switcher -->
             <div class="hidden md:flex gap-2 font-mono text-[10px]">
                 <button class="lang-btn hover:text-gold transition-colors" data-lang="en" onclick="window.changeAppLanguage('en')">EN</button>
                 <span class="text-gray-600">/</span>
@@ -109,7 +87,6 @@
             </div>
         </nav>
     </header>
-    <!-- Mobile Navigation Menu -->
     <div id="mobile-menu" class="hidden fixed inset-0 z-40 bg-black/95 flex-col items-center justify-center space-y-8 transition-opacity duration-300 backdrop-blur-xl">
         <a href="./pages/characters.html" aria-label="Navigate to The Bloodline: Characters" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.bloodline"></a>
         <a href="./pages/timeline.html" aria-label="Navigate to History: Timeline" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.history"></a>
@@ -119,14 +96,12 @@
         <a href="./pages/lore.html" aria-label="Access classified lore archive" class="text-xl text-gold font-serif hover:text-white border border-gold px-6 py-2 uppercase tracking-widest" data-i18n="nav.archives"></a>
         <a href="./pages/login.html" aria-label="Sign in to your account" class="text-sm text-gray-400 hover:text-white mt-8 font-mono uppercase" data-i18n="auth.login"></a>
     </div>
-    <!-- Hero Section -->
     <section aria-label="Hero introduction" class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
         <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?q=80&w=2874&auto=format&fit=crop')] bg-cover bg-center opacity-20 grayscale"></div>
         <div class="relative z-10 container mx-auto px-4 text-center">
             <span class="text-gold/70 uppercase tracking-[0.3em] text-sm md:text-base mb-4 block animate-pulse" data-i18n="home_page.hero.connection_status"></span>
             <h1 class="text-5xl md:text-8xl font-serif text-white mb-6 tracking-wide drop-shadow-2xl" data-i18n="home_page.hero.main_title"></h1>
             <p class="text-xl md:text-2xl text-gray-400 font-light mb-12 italic tracking-wide" data-i18n="home_page.hero.subtitle"></p>
-            <!-- Call to Action Buttons -->
             <div class="flex flex-col md:flex-row gap-6 justify-center">
                 <a href="./pages/characters.html" class="group relative px-8 py-4 border border-gold/30 bg-transparent overflow-hidden inline-block">
                     <span class="absolute inset-0 w-full h-full bg-gold/10 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out"></span>
@@ -135,21 +110,17 @@
                 <a href="#acquisition" class="px-8 py-4 border border-white/10 text-gray-400 uppercase tracking-widest text-sm hover:border-white hover:text-white transition-all inline-block" data-i18n="home_page.hero.button_asset"></a>
             </div>
         </div>
-        <!-- Scroll Indicator -->
         <div class="absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce">
             <i class="fas fa-chevron-down text-gray-600"></i>
         </div>
     </section>
-    <!-- Acquisition Section -->
     <section id="acquisition" aria-label="Book acquisition options" class="py-24 bg-charcoal border-t border-white/5">
-        <!-- Section Content -->
         <div class="container mx-auto px-4 max-w-5xl">
             <div class="text-center mb-16">
                 <h2 class="text-3xl font-serif text-white mb-4" data-i18n="home_page.acquisition.title"></h2>
                 <div class="h-1 w-24 bg-red-900 mx-auto"></div>
                 <p class="mt-4 text-gray-200" data-i18n="home_page.acquisition.subtitle"></p>
             </div>
-            <!-- Acquisition Options Grid -->
             <div class="grid md:grid-cols-2 gap-8 md:gap-0 border border-white/10 bg-obsidian/50 relative">
                 <div class="hidden md:block absolute left-1/2 top-10 bottom-10 w-px bg-linear-to-b from-transparent via-white/10 to-transparent"></div>
                 <div class="p-10 flex flex-col justify-between group hover:bg-white/5 transition-colors duration-500">
@@ -175,7 +146,6 @@
                         </a>
                     </div>
                 </div>
-                <!-- Digital Platform Options -->
                 <div class="p-10 flex flex-col justify-between group hover:bg-white/5 transition-colors duration-500">
                     <div>
                         <div class="flex items-center gap-3 mb-4 text-gray-400">
@@ -198,11 +168,8 @@
             </div>
         </div>
     </section>
-    <!-- Footer -->
     <footer aria-label="Site footer" class="py-12 bg-obsidian border-t border-white/5 text-center relative z-10">
-        <!-- Footer Content -->
         <p class="font-serif text-gold text-2xl mb-4">TSOF</p>
-        <!-- Footer Links -->
         <div class="flex justify-center space-x-6 mb-6">
             <a href="https://x.com/sotfathersbook" aria-label="Follow us on X (Twitter)" target="_blank" rel="noopener noreferrer" class="text-gray-200 hover:text-gold transition-colors"><i class="fab fa-x-twitter fa-lg"></i></a>
             <a href="https://www.instagram.com/sotfathersbook/" aria-label="Follow us on Instagram" target="_blank" rel="noopener noreferrer" class="text-gray-200 hover:text-gold transition-colors"><i class="fab fa-instagram fa-lg"></i></a>
@@ -215,7 +182,6 @@
             <span>|</span>
             <a href="./pages/terms.html" aria-label="Read terms of operation" class="hover:text-gold transition-colors" data-i18n="footer.terms"></a>
         </div>
-        <!-- Copyright Info-->
         <p class="text-gray-600 text-xs uppercase tracking-widest">
             <span data-i18n="footer.copyright_slogan">Roland Ravenwood & Havi are watching.</span>
         </p>
