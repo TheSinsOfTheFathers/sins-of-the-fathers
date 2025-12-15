@@ -1,7 +1,5 @@
 // --- IMPORTLAR (SÜRÜMLER EŞİTLENDİ - v10.12.2) ---
-// db'yi firebase-config.js'den çekiyoruz. O dosyanın da temiz olduğundan emin olmalısın (aşağıda anlattım).
-import { db } from './modules/firebase-config.js';
-import { collection, addDoc, serverTimestamp, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { db } from '../../../src/modules/firebase-config.js';
 
 // --- GERİ SAYIM SAYACI ---
 const countdownDate = new Date("2026-01-01T00:00:00").getTime();

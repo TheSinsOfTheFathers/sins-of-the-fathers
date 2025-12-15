@@ -1,13 +1,14 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-analytics.js";
-import { getAuth, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFunctions } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js";
-import { getStorage } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+// --- IMPORTLAR ---
+import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore";
+import { getAnalytics } from "firebase/analytics";
+import { getAuth, GoogleAuthProvider } from "firebase/auth";
+import { getFunctions } from "firebase/functions";
+import { getStorage } from "firebase/storage";
 
 /* --------------------------------------------------------------------------
-   SECURITY CREDENTIALS
-   -------------------------------------------------------------------------- */
+    SECURITY CREDENTIALS
+    -------------------------------------------------------------------------- */
 const firebaseConfig = {
     apiKey: "AIzaSyB7Xa5tZYVenPEkkjB0KVJDkoV7pQ7_QcQ",
     authDomain: "thesinsofthefathers.com",
@@ -22,10 +23,11 @@ const firebaseConfig = {
 const RECAPTCHA_SITE_KEY = "6LeoRfYrAAAAAHd6SUPlvNfSRmVtuoMmraQOk_2P";
 
 /* --------------------------------------------------------------------------
-   SYSTEM INITIALIZATION
-   -------------------------------------------------------------------------- */
+    SYSTEM INITIALIZATION (Only initialize what is needed immediately)
+    -------------------------------------------------------------------------- */
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+
 const auth = getAuth(app);
 const storage = getStorage(app);
 const googleProvider = new GoogleAuthProvider();
@@ -48,8 +50,8 @@ try {
 }
 
 /* --------------------------------------------------------------------------
-   EXPORTS
-   -------------------------------------------------------------------------- */
+    EXPORTS
+    -------------------------------------------------------------------------- */
 export {
     app,
     db,
