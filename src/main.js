@@ -2,29 +2,25 @@
  * THE SINS OF THE FATHERS
  * Main Execution Protocol (v6.0 - Vite Standard Structure)
  * --------------------------------------------------------------
- * All modules now reside in the 'src' directory for proper Vite processing.
  * Heavy async operations are deferred to prevent main thread blocking,
  * ensuring immediate page interactivity and smooth scrolling.
+ * SENTRY importu dinamik hale getirildi.
  */
 
-// 1. IMPORTLAR
-import * as Sentry from "@sentry/browser";
+// 1. İMPORTLAR
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import i18next, { initI18n, changeLanguage } from './lib/i18n.js';
 import Lenis from '@studio-freight/lenis';
 
-// Modüller (Artık hepsi 'src' klasöründen geliyor)
+// Modüller
 import initAuth from './modules/auth/auth.js';
 import { initMobileMenu } from './modules/ui/mobile-menu.js';
 import { initAudioSystem } from './modules/ui/audio-manager.js';
 import { initCookieConsent } from './modules/ui/app-policy.js';
 
-// GSAP Ayarları
 gsap.registerPlugin(ScrollTrigger);
 
-// LENIS (AKICI KAYDIRMA) & GSAP SCROLLTRIGGER ENTEGRASYONU
-// En stabil yöntem olan bağımsız animasyon döngüsü kullanılıyor.
 const lenis = new Lenis();
 lenis.on('scroll', ScrollTrigger.update);
 function raf(time) {
@@ -33,7 +29,6 @@ function raf(time) {
 }
 requestAnimationFrame(raf);
 
-// Anchor links için smooth scroll düzeltmesi
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   anchor.addEventListener('click', function (e) {
     e.preventDefault();
@@ -48,32 +43,40 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 
-// Vite Modül Haritası (Dinamik importlar için)
 const moduleMap = import.meta.glob([
     './modules/loaders/*.js', 
     './modules/auth/*.js'
 ]);
 
 /* --------------------------------------------------------------------------
-   YARDIMCI: SENTRY BAŞLATICI
-   -------------------------------------------------------------------------- */
-function initMonitoringSystem() {
+    YARDIMCI: SENTRY BAŞLATICI (SENTRY ARTIK İÇERİDE DİNAMİK YÜKLENİYOR)
+    -------------------------------------------------------------------------- */
+async function initMonitoringSystem() {
     if (window.isMonitoringActive) return;
-    console.log(" > System: Security Protocols (Sentry) Activated.");
-    Sentry.init({
-        dsn: "https://9a12c94e774235b975e6820692f11ba4@o4510453482520576.ingest.de.sentry.io/4510453491105872",
-        integrations: [Sentry.browserTracingIntegration(), Sentry.replayIntegration()],
-        tracesSampleRate: 1.0, 
-        tracePropagationTargets: ["localhost", /^https:\/\/thesinsofthefathers\.com/],
-        replaysSessionSampleRate: 0.1, 
-        replaysOnErrorSampleRate: 1.0, 
-    });
-    window.isMonitoringActive = true;
+    
+    try {
+        const Sentry = await import("@sentry/browser");
+        
+        console.log(" > System: Security Protocols (Sentry) Activated.");
+        Sentry.init({
+            dsn: "https://9a12c94e774235b975e6820692f11ba4@o4510453482520576.ingest.de.sentry.io/4510453491105872",
+            integrations: [Sentry.browserTracingIntegration(), Sentry.replayIntegration()],
+            tracesSampleRate: 1.0, 
+            tracePropagationTargets: ["localhost", /^https:\/\/thesinsofthefathers\.com/],
+            replaysSessionSampleRate: 0.1, 
+            replaysOnErrorSampleRate: 1.0, 
+        });
+        window.isMonitoringActive = true;
+        window.SentryCaptureException = Sentry.captureException;
+        
+    } catch (error) {
+        console.error("Sentry Dynamic Import Failure:", error);
+    }
 }
 
 /* --------------------------------------------------------------------------
-   YARDIMCI: SAYFA ÇEVİRİSİ
-   -------------------------------------------------------------------------- */
+    YARDIMCI: SAYFA ÇEVİRİSİ
+    -------------------------------------------------------------------------- */
 function updatePageTranslations() {
     if (!i18next.isInitialized) return;
     document.querySelectorAll('[data-i18n]').forEach(el => {
@@ -90,8 +93,8 @@ function updatePageTranslations() {
 }
 
 /* --------------------------------------------------------------------------
-   ROUTER CONFIGURATION (Yollar düzeltildi)
-   -------------------------------------------------------------------------- */
+    ROUTER CONFIGURATION (Yollar düzeltildi)
+    -------------------------------------------------------------------------- */
 const ROUTER_CONFIGS = [
     { id: ['protagonists-gallery', 'main-characters-gallery'], log: " > Personnel Database Detected", modulePath: './modules/loaders/character-loader.js', loaderFn: 'displayCharacters' },
     { id: 'character-dossier', log: " > Dossier Decryption Started", modulePath: './modules/loaders/character-detail-loader.js', loaderFn: 'loadCharacterDetails' },
@@ -106,8 +109,8 @@ const ROUTER_CONFIGS = [
 ];
 
 /* --------------------------------------------------------------------------
-   AĞIR İŞLEMLERİ YAPAN FONKSİYON (Performans için)
-   -------------------------------------------------------------------------- */
+    AĞIR İŞLEMLERİ YAPAN FONKSİYON (Performans için)
+    -------------------------------------------------------------------------- */
 async function initializeHeavyModules() {
     try {
         const currentLang = await initI18n();
@@ -141,7 +144,7 @@ async function initializeHeavyModules() {
                     break; 
                 } catch (error) {
                     console.error(`ERROR: ${config.log}`, error);
-                    if (window.isMonitoringActive) Sentry.captureException(error, { tags: { module: config.modulePath } });
+                    if (window.isMonitoringActive && window.SentryCaptureException) window.SentryCaptureException(error, { tags: { module: config.modulePath } });
                 }
             }
         }
@@ -149,23 +152,23 @@ async function initializeHeavyModules() {
 
     } catch (error) {
         console.error(" ! Deferred System Failure:", error);
-        if (window.isMonitoringActive) Sentry.captureException(error);
+        if (window.isMonitoringActive && window.SentryCaptureException) window.SentryCaptureException(error);
     }
 }
 
 /* --------------------------------------------------------------------------
-   ANA ÇALIŞTIRMA PROTOKOLÜ (Hafifletilmiş)
-   -------------------------------------------------------------------------- */
+    ANA ÇALIŞTIRMA PROTOKOLÜ (Hafifletilmiş)
+    -------------------------------------------------------------------------- */
 document.addEventListener('DOMContentLoaded', () => {
     
     console.log("%c TSOF // SYSTEM ONLINE ", "color: #000; background: #c5a059; padding: 5px; font-weight: bold; font-family: monospace; font-display: swap;");
     gsap.set("body", { autoAlpha: 0 });
 
-    // HIZLI VE SENKRON İŞLEMLER
     if (localStorage.getItem('tsof_cookie_consent') === 'accepted') {
         initMonitoringSystem();
     }
     window.enableTrackingSystem = () => initMonitoringSystem();
+    
     window.changeAppLanguage = async (lang) => {
         try {
             await changeLanguage(lang);
@@ -180,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         } catch (e) {
             console.error("Language Switch Error:", e);
-            if (window.isMonitoringActive) Sentry.captureException(e);
+            if (window.isMonitoringActive && window.SentryCaptureException) window.SentryCaptureException(e);
         }
     };
 
@@ -188,13 +191,11 @@ document.addEventListener('DOMContentLoaded', () => {
     initAuth();
     initAudioSystem();
 
-    // SAYFAYI GÖRÜNÜR YAP
     gsap.to("body", { 
         autoAlpha: 1, 
         duration: 1.2, 
         ease: "power2.inOut" 
     });
 
-    // AĞIR İŞLEMLERİ ERTELE (Scroll gecikmesini önler)
     setTimeout(initializeHeavyModules, 100); 
 });
