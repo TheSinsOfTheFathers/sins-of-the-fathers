@@ -17,30 +17,19 @@ const SOUND_PATHS = {
 };
 
 /**
- * Sesleri yükle ve hazırla
+ * SADECE UI seslerini yükle (Düşük boyutlu ve preload: true)
  */
-const loadSounds = () => {
+const loadUISounds = () => {
     if (!Howl) {
         console.warn("Howler.js not found!");
         return;
     }
 
-    // UI Sesleri (Bunlar da kısıldı)
     uiSounds = {
         hover: new Howl({ src: [SOUND_PATHS.hover], volume: 0.03, preload: true }), 
-        click: new Howl({ src: [SOUND_PATHS.click], volume: 0.15, preload: true }), // %15
+        click: new Howl({ src: [SOUND_PATHS.click], volume: 0.15, preload: true }),
         denied: new Howl({ src: [SOUND_PATHS.denied], volume: 0.1, preload: true })
     };
-
-    // Ambiyans
-    ambienceSound = new Howl({
-        src: [SOUND_PATHS.ambience],
-        html5: false, 
-        loop: true,
-        volume: 0, 
-        autoplay: false,
-        pool: 5
-    });
 };
 
 export const playSfx = (key) => {
@@ -48,16 +37,27 @@ export const playSfx = (key) => {
     uiSounds[key].play();
 };
 
+/**
+ * Ambiyans sesini başlatır ve GEREKİRSE önce yükler.
+ */
 export const startAmbience = () => {
-    if (isMuted || !ambienceSound || ambienceSound.playing()) return;
+    if (!ambienceSound) {
+        ambienceSound = new Howl({
+            src: [SOUND_PATHS.ambience],
+            html5: false, 
+            loop: true,
+            volume: 0, 
+            autoplay: false,
+            pool: 5
+        });
+        console.log(" > Ambience Sound Object Created (3.9 MB file load initiated).");
+    }
+
+    if (isMuted || ambienceSound.playing()) return;
     
-    // Ses seviyesini garantiye al
     ambienceSound.volume(0);
     ambienceSound.play();
     
-    // 👇 RADİKAL DÜZELTME:
-    // Seviye: 0.005 (%0.5 - Binde beş). Neredeyse sessizlik.
-    // Süre: 10000ms (10 saniye). Çok çok yavaş girecek.
     ambienceSound.fade(0, 0.005, 10000); 
     
     console.log(" > Audio Protocol: Ambience Initiated (Level: 0.5% - Subliminal).");
@@ -71,7 +71,6 @@ export const toggleMute = () => {
 };
 
 const initGlobalListeners = () => {
-    
     document.addEventListener('click', () => {
         startAmbience();
     }, { once: true });
@@ -98,7 +97,7 @@ const initGlobalListeners = () => {
 };
 
 export const initAudioSystem = () => {
-    loadSounds();
+    loadUISounds(); 
     initGlobalListeners();
     
     if (isMuted) window.Howler.mute(true);

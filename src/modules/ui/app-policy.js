@@ -32,7 +32,7 @@ export const initCookieConsent = () => {
                         <button id="btn-accept-cookies" class="flex-1 bg-gold/10 border border-gold text-gold hover:bg-gold hover:text-black text-[10px] font-bold uppercase py-2 tracking-wider transition-all" data-i18n="cookie_consent.accept">
                             ${i18next.t('cookie_consent.accept')}
                         </button>
-                        <button id="btn-decline-cookies" class="flex-1 border border-white/20 text-gray-500 hover:text-white hover:border-white text-[10px] font-bold uppercase py-2 tracking-wider transition-all" data-i18n="cookie_consent.decline">
+                        <button id="btn-decline-cookies" class="flex-1 border border-white/20 text-gray-200 hover:text-white hover:border-white text-[10px] font-bold uppercase py-2 tracking-wider transition-all" data-i18n="cookie_consent.decline">
                             ${i18next.t('cookie_consent.decline')}
                         </button>
                     </div>

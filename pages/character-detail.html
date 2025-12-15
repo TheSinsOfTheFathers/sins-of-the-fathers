@@ -32,6 +32,11 @@
     <link rel="icon" href="../assets/images/logo/favicon.svg" type="image/svg+xml">
     <link rel="icon" sizes="96x96" href="../assets/images/logo/favicon-96x96.png" type="image/png">
     <link rel="shortcut icon" href="../assets/images/logo/favicon.ico" type="image/x-icon">
+    
+    <!-- Preconnects for Performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
 
     <!-- External Fonts -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Courier+Prime&display=swap">
@@ -70,10 +75,10 @@
     <div class="noise-overlay"></div>
 
     <!-- Header & Navigation -->
-    <header class="fixed top-0 w-full z-50 bg-obsidian/90 backdrop-blur-md border-b border-white/5 transition-all">
+    <header aria-label="Main navigation" class="fixed top-0 w-full z-50 bg-obsidian/90 backdrop-blur-md border-b border-white/5 transition-all">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
             <!-- Brand / Context -->
-            <a href="./" class="text-xl md:text-2xl font-serif text-gold tracking-widest uppercase hover:text-white transition-colors">
+            <a href="./" aria-label="The Sins of the Fathers - Home" class="text-xl md:text-2xl font-serif text-gold tracking-widest uppercase hover:text-white transition-colors">
                 TSOF <span class="hidden md:inline text-xs text-gray-600 ml-2 font-mono" data-i18n="character_detail_page.db_access_level">// DATABASE LEVEL 5</span>
             </a>
             
@@ -81,17 +86,17 @@
             <div class="flex items-center gap-4">
                 <div class="hidden md:flex items-center space-x-8 text-sm uppercase tracking-widest font-semibold">
                     <!-- Back Button -->
-                    <a href="./characters.html" class="text-xs text-gray-500 hover:text-gold transition-colors flex items-center mr-4 border-r border-white/10 pr-6">
+                    <a href="./characters.html" aria-label="Return to character gallery" class="text-xs text-gray-200 hover:text-gold transition-colors flex items-center mr-4 border-r border-white/10 pr-6">
                         <i class="fas fa-arrow-left mr-2"></i> <span data-i18n="character_detail_page.close_file">Close File</span>
                     </a>
                     <!-- Standard Links -->
-                    <a href="./timeline.html" class="text-gray-400 hover:text-gold transition-colors text-[10px]" data-i18n="nav.history">History</a>
-                    <a href="./factions.html" class="text-gray-400 hover:text-gold transition-colors text-[10px]" data-i18n="nav.factions">Factions</a>
-                    <a href="./merch.html" class="text-gray-400 hover:text-gold transition-colors text-[10px]" data-i18n="nav.merch">Merch</a>
+                    <a href="./timeline.html" aria-label="Navigate to History: Timeline" class="text-gray-400 hover:text-gold transition-colors text-[10px]" data-i18n="nav.history">History</a>
+                    <a href="./factions.html" aria-label="Navigate to Power Dynamics: Factions" class="text-gray-400 hover:text-gold transition-colors text-[10px]" data-i18n="nav.factions">Factions</a>
+                    <a href="./merch.html" aria-label="Visit the merchandise store" class="text-gray-400 hover:text-gold transition-colors text-[10px]" data-i18n="nav.merch">Merch</a>
                     
                     <!-- Auth Controls -->
                     <div class="border-l border-white/20 pl-6 ml-2 flex items-center gap-4" id="auth-controls">
-                        <a href="./login.html" class="text-[10px] text-gray-500 hover:text-gold transition-colors guest-only" id="auth-signin-link" data-i18n="auth.login">Login</a>
+                        <a href="./login.html" aria-label="Sign in to your account" class="text-[10px] text-gray-200 hover:text-gold transition-colors guest-only" id="auth-signin-link" data-i18n="auth.login">Login</a>
                     </div>
                 </div>
 
@@ -137,7 +142,7 @@
     </div>
 
     <!-- Main Content Area -->
-    <main class="grow pt-24 pb-12 px-4 md:px-0">
+    <main aria-label="Character details" class="grow pt-24 pb-12 px-4 md:px-0">
         
         <!-- Loading Screen (File Decryption Effect) -->
         <div id="file-loader" class="fixed inset-0 bg-obsidian z-40 flex flex-col items-center justify-center font-mono">
@@ -173,7 +178,7 @@
                     <div class="md:col-span-8 lg:col-span-9">
                         <div class="flex flex-col h-full justify-between">
                             <div>
-                                <h4 class="font-mono text-xs text-gray-500 mb-2 uppercase tracking-widest" data-i18n="character_detail_page.subject_name">Subject Name</h4>
+                                <h4 class="font-mono text-xs text-gray-200 mb-2 uppercase tracking-widest" data-i18n="character_detail_page.subject_name">Subject Name</h4>
                                 <h1 id="char-name" class="text-4xl md:text-5xl font-serif text-white mb-2 uppercase tracking-wide">
                                     Loading...
                                 </h1>
@@ -182,15 +187,15 @@
                                 <!-- Stats Grid -->
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm font-mono border-t border-white/10 pt-6">
                                     <div class="p-3 border border-white/5 bg-black/20">
-                                        <span class="text-gray-500 block text-xs uppercase mb-1" data-i18n="character_detail_page.affiliation">Affiliation</span>
+                                        <span class="text-gray-200 block text-xs uppercase mb-1" data-i18n="character_detail_page.affiliation">Affiliation</span>
                                         <span id="char-faction" class="text-white tracking-wider">Unverified</span>
                                     </div>
                                     <div class="p-3 border border-white/5 bg-black/20">
-                                        <span class="text-gray-500 block text-xs uppercase mb-1" data-i18n="character_detail_page.place_of_origin">Place of Origin</span>
+                                        <span class="text-gray-200 block text-xs uppercase mb-1" data-i18n="character_detail_page.place_of_origin">Place of Origin</span>
                                         <span id="char-location" class="text-white tracking-wider">Unknown</span>
                                     </div>
                                     <div class="p-3 border border-white/5 bg-black/20">
-                                        <span class="text-gray-500 block text-xs uppercase mb-1" data-i18n="character_detail_page.role_rank">Role / Rank</span>
+                                        <span class="text-gray-200 block text-xs uppercase mb-1" data-i18n="character_detail_page.role_rank">Role / Rank</span>
                                         <span id="char-role" class="text-white tracking-wider">TBD</span>
                                     </div>
                                 </div>
@@ -243,7 +248,7 @@
                         </div>
                         
                         <!-- Meta Data -->
-                        <div class="mt-4 p-2 bg-white/5 text-[10px] font-mono text-gray-500 border-l border-gold/50" data-i18n="character_detail_page.graph_meta">
+                        <div class="mt-4 p-2 bg-white/5 text-[10px] font-mono text-gray-200 border-l border-gold/50" data-i18n="character_detail_page.graph_meta">
                             CONFIDENCE INTERVAL: 94.2% <br>
                             SOURCE: SURVEILLANCE
                         </div>
@@ -254,17 +259,17 @@
     </main>
 
     <!-- Footer -->
-    <footer class="py-12 bg-obsidian border-t border-white/5 text-center relative z-10">
+    <footer aria-label="Site footer" class="py-12 bg-obsidian border-t border-white/5 text-center relative z-10">
         <p class="font-serif text-gold text-2xl mb-4">TSOF</p>
         
         <div class="flex justify-center space-x-6 mb-6">
-            <a href="https://x.com/sotfathersbook" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-gold transition-colors"><i class="fab fa-x-twitter fa-lg"></i></a>
-            <a href="https://www.instagram.com/sotfathersbook/" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-gold transition-colors"><i class="fab fa-instagram fa-lg"></i></a>
-            <a href="https://discord.gg/aDuzq7jKKn" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-gold transition-colors"><i class="fab fa-discord fa-lg"></i></a>
-            <a href="https://www.patreon.com/c/TheSinsoftheFathers" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-gold transition-colors"><i class="fab fa-patreon fa-lg"></i></a>
+            <a href="https://x.com/sotfathersbook" target="_blank" rel="noopener noreferrer" class="text-gray-200 hover:text-gold transition-colors"><i class="fab fa-x-twitter fa-lg"></i></a>
+            <a href="https://www.instagram.com/sotfathersbook/" target="_blank" rel="noopener noreferrer" class="text-gray-200 hover:text-gold transition-colors"><i class="fab fa-instagram fa-lg"></i></a>
+            <a href="https://discord.gg/aDuzq7jKKn" target="_blank" rel="noopener noreferrer" class="text-gray-200 hover:text-gold transition-colors"><i class="fab fa-discord fa-lg"></i></a>
+            <a href="https://www.patreon.com/c/TheSinsoftheFathers" target="_blank" rel="noopener noreferrer" class="text-gray-200 hover:text-gold transition-colors"><i class="fab fa-patreon fa-lg"></i></a>
         </div>
 
-        <div class="flex justify-center space-x-6 mb-6 text-[10px] font-mono uppercase text-gray-500">
+        <div class="flex justify-center space-x-6 mb-6 text-[10px] font-mono uppercase text-gray-200">
             <a href="./privacy.html" class="hover:text-gold transition-colors" data-i18n="footer.privacy">Privacy Protocol</a>
             <span>|</span>
             <a href="./terms.html" class="hover:text-gold transition-colors" data-i18n="footer.terms">Terms of Operation</a>

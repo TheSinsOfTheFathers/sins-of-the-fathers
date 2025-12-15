@@ -32,6 +32,11 @@
     <link rel="icon" type="image/png" sizes="96x96" href="../assets/images/logo/favicon-96x96.png">
     <link rel="shortcut icon" href="../assets/images/logo/favicon.ico">
 
+    <!-- Preconnects for Performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    
     <!-- External Fonts -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Courier+Prime&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
@@ -67,11 +72,11 @@
     <div class="noise-overlay"></div>
 
     <!-- Header & Navigation -->
-    <header class="fixed top-0 w-full z-50 bg-obsidian/90 backdrop-blur-md border-b border-white/5 transition-all">
+    <header aria-label="Main navigation" class="fixed top-0 w-full z-50 bg-obsidian/90 backdrop-blur-md border-b border-white/5 transition-all">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
             
             <!-- Brand -->
-            <a href="./" class="text-xl md:text-2xl font-serif text-gold tracking-widest uppercase hover:text-white transition-colors">
+            <a href="./" aria-label="The Sins of the Fathers - Home" class="text-xl md:text-2xl font-serif text-gold tracking-widest uppercase hover:text-white transition-colors">
                 TSOF <span class="hidden md:inline text-xs text-gray-600 ml-2 font-mono" data-i18n="profile_page.header_subtitle">// PERSONNEL FILE</span>
             </a>
             
@@ -103,12 +108,12 @@
 
     <!-- Mobile Menu Overlay -->
     <div id="mobile-menu" class="hidden fixed inset-0 z-40 bg-black/95 flex-col items-center justify-center space-y-8 transition-opacity duration-300 backdrop-blur-xl">
-        <a href="./characters.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.bloodline">The Bloodline</a>
-        <a href="./timeline.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.history">History</a>
-        <a href="./factions.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.factions">Factions</a>
-        <a href="./locations.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.territories">Territories</a>
-        <a href="https://shop.thesinsofthefathers.com" class="hover:text-gold transition-colors" target="_blank" data-i18n="nav.merch"></a>
-        <a href="./lore.html" class="text-xl text-gold font-serif hover:text-white border border-gold px-6 py-2 uppercase tracking-widest" data-i18n="nav.archives">Archives</a>
+        <a href="./characters.html" aria-label="Navigate to The Bloodline: Characters" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.bloodline">The Bloodline</a>
+        <a href="./timeline.html" aria-label="Navigate to History: Timeline" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.history">History</a>
+        <a href="./factions.html" aria-label="Navigate to Power Dynamics: Factions" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.factions">Factions</a>
+        <a href="./locations.html" aria-label="Navigate to Territories: Locations" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.territories">Territories</a>
+        <a href="https://shop.thesinsofthefathers.com" aria-label="Visit the merchandise store" class="hover:text-gold transition-colors" target="_blank" data-i18n="nav.merch"></a>
+        <a href="./lore.html" aria-label="Access classified lore archive" class="text-xl text-gold font-serif hover:text-white border border-gold px-6 py-2 uppercase tracking-widest" data-i18n="nav.archives">Archives</a>
         
         <!-- Mobile Language -->
         <div class="flex gap-4 font-mono text-sm mt-4">
@@ -119,7 +124,7 @@
     </div>
 
     <!-- Main Content Area -->
-    <main class="grow pt-24 pb-12 px-6">
+    <main aria-label="User profile" class="grow pt-24 pb-12 px-6">
         <div id="profile-container" class="container mx-auto max-w-5xl">
 
             <!-- Profile Content (Initially Hidden for Loading Effect) -->
@@ -160,15 +165,15 @@
                         <!-- ID Details -->
                         <div class="space-y-3 font-mono text-xs">
                              <div class="flex justify-between">
-                                 <span class="text-gray-500" data-i18n="profile_page.label_clearance">CLEARANCE:</span>
+                                 <span class="text-gray-200" data-i18n="profile_page.label_clearance">CLEARANCE:</span>
                                  <span class="text-white">LEVEL 1</span>
                              </div>
                              <div class="flex justify-between">
-                                 <span class="text-gray-500" data-i18n="profile_page.label_status">STATUS:</span>
+                                 <span class="text-gray-200" data-i18n="profile_page.label_status">STATUS:</span>
                                  <span class="text-green-500 animate-pulse" data-i18n="profile_page.status_active">ACTIVE</span>
                              </div>
                              <div class="flex justify-between">
-                                 <span class="text-gray-500" data-i18n="profile_page.label_id">ID:</span>
+                                 <span class="text-gray-200" data-i18n="profile_page.label_id">ID:</span>
                                  <span class="text-gray-400">#829-XJ-92</span>
                              </div>
                         </div>
@@ -230,7 +235,7 @@
                                             <span class="font-serif text-white group-hover:text-red-500 transition-colors" data-i18n="profile_page.faction_old_blood">Old Blood</span>
                                             <i class="fas fa-check text-gold opacity-0 transition-opacity check-icon"></i>
                                         </div>
-                                        <p class="text-[10px] font-mono text-gray-500" data-i18n="profile_page.desc_old_blood">Loyal to tradition. The Macpherson legacy.</p>
+                                        <p class="text-[10px] font-mono text-gray-200" data-i18n="profile_page.desc_old_blood">Loyal to tradition. The Macpherson legacy.</p>
                                     </div>
                                 </label>
 
@@ -241,7 +246,7 @@
                                             <span class="font-serif text-white group-hover:text-gold transition-colors" data-i18n="profile_page.faction_new_order">New Order</span>
                                             <i class="fas fa-check text-gold opacity-0 transition-opacity check-icon"></i>
                                         </div>
-                                        <p class="text-[10px] font-mono text-gray-500" data-i18n="profile_page.desc_new_order">Loyal to the Architect. The Ravenwood future.</p>
+                                        <p class="text-[10px] font-mono text-gray-200" data-i18n="profile_page.desc_new_order">Loyal to the Architect. The Ravenwood future.</p>
                                     </div>
                                 </label>
                             </div>
@@ -269,17 +274,17 @@
     </main>
 
     <!-- Footer -->
-    <footer class="py-12 bg-obsidian border-t border-white/5 text-center relative z-10">
+    <footer aria-label="Site footer" class="py-12 bg-obsidian border-t border-white/5 text-center relative z-10">
         <p class="font-serif text-gold text-2xl mb-4">TSOF</p>
         
         <div class="flex justify-center space-x-6 mb-6">
-            <a href="https://x.com/sotfathersbook" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-gold transition-colors"><i class="fab fa-x-twitter fa-lg"></i></a>
-            <a href="https://www.instagram.com/sotfathersbook/" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-gold transition-colors"><i class="fab fa-instagram fa-lg"></i></a>
-            <a href="https://discord.gg/aDuzq7jKKn" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-gold transition-colors"><i class="fab fa-discord fa-lg"></i></a>
-            <a href="https://www.patreon.com/c/TheSinsoftheFathers" target="_blank" rel="noopener noreferrer" class="text-gray-500 hover:text-gold transition-colors"><i class="fab fa-patreon fa-lg"></i></a>
+            <a href="https://x.com/sotfathersbook" target="_blank" rel="noopener noreferrer" class="text-gray-200 hover:text-gold transition-colors"><i class="fab fa-x-twitter fa-lg"></i></a>
+            <a href="https://www.instagram.com/sotfathersbook/" target="_blank" rel="noopener noreferrer" class="text-gray-200 hover:text-gold transition-colors"><i class="fab fa-instagram fa-lg"></i></a>
+            <a href="https://discord.gg/aDuzq7jKKn" target="_blank" rel="noopener noreferrer" class="text-gray-200 hover:text-gold transition-colors"><i class="fab fa-discord fa-lg"></i></a>
+            <a href="https://www.patreon.com/c/TheSinsoftheFathers" target="_blank" rel="noopener noreferrer" class="text-gray-200 hover:text-gold transition-colors"><i class="fab fa-patreon fa-lg"></i></a>
         </div>
 
-        <div class="flex justify-center space-x-6 mb-6 text-[10px] font-mono uppercase text-gray-500">
+        <div class="flex justify-center space-x-6 mb-6 text-[10px] font-mono uppercase text-gray-200">
             <a href="./privacy.html" class="hover:text-gold transition-colors" data-i18n="footer.privacy">Privacy Protocol</a>
             <span>|</span>
             <a href="./terms.html" class="hover:text-gold transition-colors" data-i18n="footer.terms">Terms of Operation</a>

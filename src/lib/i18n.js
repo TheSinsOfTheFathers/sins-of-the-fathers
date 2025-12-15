@@ -39,10 +39,10 @@ export const changeLanguage = async (lng) => {
     document.querySelectorAll('.lang-btn').forEach(btn => {
         if (btn.dataset.lang === lng) {
             btn.classList.add('text-white', 'font-bold', 'underline');
-            btn.classList.remove('text-gray-500');
+            btn.classList.remove('text-gray-200');
         } else {
             btn.classList.remove('text-white', 'font-bold', 'underline');
-            btn.classList.add('text-gray-500');
+            btn.classList.add('text-gray-200');
         }
     });
 };

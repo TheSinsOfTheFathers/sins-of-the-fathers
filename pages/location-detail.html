@@ -32,6 +32,11 @@
     <link rel="icon" type="image/png" sizes="96x96" href="../assets/images/logo/favicon-96x96.png">
     <link rel="shortcut icon" href="../assets/images/logo/favicon.ico">
 
+    <!-- Preconnects for Performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    
     <!-- External Fonts -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Courier+Prime&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
@@ -72,22 +77,22 @@
     <div class="noise-overlay"></div>
 
     <!-- Header & Navigation (Detail View) -->
-    <header class="fixed top-0 w-full z-50 bg-obsidian/90 backdrop-blur-md border-b border-white/5 transition-all">
+    <header aria-label="Main navigation" class="fixed top-0 w-full z-50 bg-obsidian/90 backdrop-blur-md border-b border-white/5 transition-all">
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
             <!-- Brand -->
-            <a href="./" class="text-xl md:text-2xl font-serif text-gold tracking-widest uppercase hover:text-white transition-colors">
+            <a href="./" aria-label="The Sins of the Fathers - Home" class="text-xl md:text-2xl font-serif text-gold tracking-widest uppercase hover:text-white transition-colors">
                 TSOF <span class="hidden md:inline text-xs text-gray-600 ml-2 font-mono" data-i18n="location_detail_page.header_subtitle">// SURVEILLANCE FEED</span>
             </a>
             
             <!-- Desktop Controls -->
             <div class="hidden md:flex items-center space-x-6 text-xs uppercase tracking-widest font-semibold">
-                <a href="./locations.html" class="text-gray-500 hover:text-gold transition-colors flex items-center border-r border-white/10 pr-6">
+                <a href="./locations.html" aria-label="Return to global map" class="text-gray-200 hover:text-gold transition-colors flex items-center border-r border-white/10 pr-6">
                     <i class="fas fa-arrow-left mr-2"></i> <span data-i18n="location_detail_page.return_to_map">Return to Map</span>
                 </a>
                 
                 <!-- Auth Controls -->
                 <div class="flex items-center gap-4" id="auth-controls">
-                    <a href="./login.html" class="text-gold/80 hover:text-white transition-colors guest-only" id="auth-signin-link" data-i18n="auth.login">Login</a>
+                    <a href="./login.html" aria-label="Sign in to your account" class="text-gold/80 hover:text-white transition-colors guest-only" id="auth-signin-link" data-i18n="auth.login">Login</a>
                 </div>
             </div>
 
@@ -132,7 +137,7 @@
     </div>
 
     <!-- Main Content Area -->
-    <main class="grow pt-24 pb-12 px-4 md:px-6 relative z-10">
+    <main aria-label="Location details" class="grow pt-24 pb-12 px-4 md:px-6 relative z-10">
         
         <div id="location-intel" class="container mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-3 gap-8 transition-opacity duration-1000">
             
@@ -178,7 +183,7 @@
                 
                 <!-- Main Title Box -->
                 <div class="bg-obsidian border border-white/10 p-6">
-                    <h4 class="font-mono text-[10px] text-gray-500 uppercase tracking-widest mb-1" data-i18n="location_detail_page.target_designation">Target Designation</h4>
+                    <h4 class="font-mono text-[10px] text-gray-200 uppercase tracking-widest mb-1" data-i18n="location_detail_page.target_designation">Target Designation</h4>
                     <h1 id="loc-title" class="text-3xl font-serif text-white uppercase wrap-break-words tracking-wide" data-i18n="location_detail_page.placeholder_unknown">
                         UNKNOWN
                     </h1>
@@ -188,31 +193,31 @@
                 <div class="bg-white/5 border border-white/5 p-6 space-y-4">
                     
                     <div class="flex justify-between items-center border-b border-white/5 pb-2">
-                         <span class="text-xs font-mono text-gray-500" data-i18n="location_detail_page.tactical_control">Controlled By</span>
+                         <span class="text-xs font-mono text-gray-200" data-i18n="location_detail_page.tactical_control">Controlled By</span>
                          <span id="loc-faction" class="text-xs font-mono text-gold uppercase tracking-wider" data-i18n="location_detail_page.tactical_unverified">UNVERIFIED</span>
                     </div>
 
                     <div class="flex justify-between items-center border-b border-white/5 pb-2">
-                         <span class="text-xs font-mono text-gray-500" data-i18n="location_detail_page.tactical_coordinates">Coordinates</span>
+                         <span class="text-xs font-mono text-gray-200" data-i18n="location_detail_page.tactical_coordinates">Coordinates</span>
                          <span id="loc-coords" class="text-xs font-mono text-white tracking-wider">--.--, --.--</span>
                     </div>
 
                     <div class="flex justify-between items-center border-b border-white/5 pb-2">
-                         <span class="text-xs font-mono text-gray-500" data-i18n="location_detail_page.tactical_threat">Threat Level</span>
+                         <span class="text-xs font-mono text-gray-200" data-i18n="location_detail_page.tactical_threat">Threat Level</span>
                          <span id="loc-threat" class="text-xs font-mono text-red-500 uppercase font-bold flex items-center">
                              <i class="fas fa-exclamation-triangle mr-2"></i> <span data-i18n="location_detail_page.tactical_analyzing">ANALYZING</span>
                          </span>
                     </div>
 
                      <div class="flex justify-between items-center pb-2">
-                         <span class="text-xs font-mono text-gray-500" data-i18n="location_detail_page.tactical_status">Surveillance Status</span>
+                         <span class="text-xs font-mono text-gray-200" data-i18n="location_detail_page.tactical_status">Surveillance Status</span>
                          <span id="loc-status" class="text-xs font-mono text-green-500 uppercase" data-i18n="location_detail_page.tactical_operational">OPERATIONAL</span>
                     </div>
                 </div>
 
                 <!-- Connected Events (Timeline Link) -->
                 <div class="bg-obsidian border border-white/10 p-6">
-                    <h4 class="font-mono text-[10px] text-gray-500 uppercase tracking-widest mb-4" data-i18n="location_detail_page.historical_events">Historical Events</h4>
+                    <h4 class="font-mono text-[10px] text-gray-200 uppercase tracking-widest mb-4" data-i18n="location_detail_page.historical_events">Historical Events</h4>
                     <ul id="loc-events" class="space-y-3">
                         <li class="text-xs text-gray-600 italic" data-i18n="location_detail_page.no_events_found">No recorded events found in this sector.</li>
                     </ul>
@@ -224,7 +229,7 @@
     </main>
 
     <!-- Footer -->
-    <footer class="py-12 bg-obsidian border-t border-white/5 text-center relative z-10">
+    <footer aria-label="Site footer" class="py-12 bg-obsidian border-t border-white/5 text-center relative z-10">
         <p class="font-serif text-gold text-2xl mb-4">TSOF</p>
         
         <div class="flex justify-center space-x-6 mb-6">
@@ -246,7 +251,7 @@
             </a>
         </div>
 
-        <div class="flex justify-center space-x-6 mb-6 text-[10px] font-mono uppercase text-gray-500">
+        <div class="flex justify-center space-x-6 mb-6 text-[10px] font-mono uppercase text-gray-200">
             <a href="./privacy.html" class="hover:text-gold transition-colors" data-i18n="footer.privacy">Privacy Protocol</a>
             <span>|</span>
             <a href="./terms.html" class="hover:text-gold transition-colors" data-i18n="footer.terms">Terms of Operation</a>

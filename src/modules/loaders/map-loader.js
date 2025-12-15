@@ -6,8 +6,9 @@ import gsap from 'gsap';
 let mapInstance = null;
 
 const FACTION_THEMES = {
-    'Ravenwood-empire': { border: '#c5a059', fill: '#c5a059', glow: '#ffd700' },
+    'ravenwood-empire': { border: '#c5a059', fill: '#c5a059', glow: '#ffd700' },
     'macpherson-clan': { border: '#7f1d1d', fill: '#991b1b', glow: '#ef4444' },
+    'cagliari-family': { border: '#155e75', fill: '#0e7490', glow: '#38bdf8' },
     'default': { border: '#52525b', fill: '#3f3f46', glow: '#d4d4d8' }
 };
 
@@ -108,6 +109,9 @@ const addFactionTerritories = async (map, factions) => {
         'macpherson-clan': [
             '/assets/maps/scotland-highlands.geojson'
         ],
+        'cagliari-family': [
+            '/assets/maps/corsica-border.geojson',
+        ]
     };
 
     for (const faction of factions) {

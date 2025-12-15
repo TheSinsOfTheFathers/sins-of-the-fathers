@@ -78,7 +78,7 @@ const getNoirEmailTemplate = (title: string, message: string, ctaLink?: string, 
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <style>
-        body { margin: 0; padding: 0; background-color: #050505; color: #d4d4d4; font-family: 'Courier New', Courier, monospace; }
+        body { margin: 0; padding: 0; background-color: #050505; color: #d4d4d4; font-family: 'Courier New', Courier, monospace; font-display: swap; }
         .container { max-width: 600px; margin: 0 auto; background-color: #0a0a0a; border: 1px solid #c5a059; }
         .header { background-color: #080808; padding: 20px; text-align: center; border-bottom: 1px solid #333; }
         .logo { color: #c5a059; font-size: 20px; font-weight: bold; text-decoration: none; letter-spacing: 4px; }

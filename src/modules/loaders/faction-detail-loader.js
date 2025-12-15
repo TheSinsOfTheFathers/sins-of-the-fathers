@@ -141,7 +141,7 @@ const renderFactionInfo = (els, faction) => {
             high: { text: 'HIGH', bars: 4, color: 'text-orange-500', barColor: 'bg-orange-500' },
             critical: { text: 'CRITICAL', bars: 5, color: 'text-gold', barColor: 'bg-gold' },
             extreme: { text: 'EXTREME', bars: 6, color: 'text-red-500', barColor: 'bg-red-500' },
-            unknown: { text: i18next.t('faction_detail_loader.threat_analyzing'), bars: 0, color: 'text-gray-500', barColor: 'bg-gray-800' }
+            unknown: { text: i18next.t('faction_detail_loader.threat_analyzing'), bars: 0, color: 'text-gray-200', barColor: 'bg-gray-800' }
         };
 
         const config = levels[threatLevel] || levels.unknown;
@@ -174,7 +174,7 @@ const renderFactionDescription = (els, faction) => {
             }
         });
     } else {
-        els.description.innerHTML = `<p class="text-gray-500 italic font-mono">${i18next.t('faction_detail_loader.no_records_available')}</p>`;
+        els.description.innerHTML = `<p class="text-gray-200 italic font-mono">${i18next.t('faction_detail_loader.no_records_available')}</p>`;
     }
 };
 
@@ -191,7 +191,7 @@ const renderFactionRoster = (els, faction) => {
                     </div>
                     <div>
                         <h4 class="font-serif text-gray-200 leading-tight group-hover:text-white text-sm">${member.name}</h4>
-                        <p class="text-[9px] text-gray-500 font-mono uppercase tracking-wider group-hover:text-[var(--theme-color)]">${member.role || 'Member'}</p>
+                        <p class="text-[9px] text-gray-200 font-mono uppercase tracking-wider group-hover:text-[var(--theme-color)]">${member.role || 'Member'}</p>
                     </div>
                 </a>`;
         }).join('');
@@ -207,7 +207,7 @@ const renderFactionRelations = (els, faction) => {
     if (headerEl) headerEl.textContent = i18next.t('faction_detail_loader.foreign_relations');
     if (faction.relations && faction.relations.length > 0) {
         els.relations.innerHTML = faction.relations.map(rel => {
-            let statusColor = 'text-gray-500';
+            let statusColor = 'text-gray-200';
             let icon = 'fa-minus';
 
             if (rel.status === 'hostile') { statusColor = 'text-red-500'; icon = 'fa-times'; }

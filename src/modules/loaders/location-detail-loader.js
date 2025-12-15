@@ -47,7 +47,7 @@ const updateThreatDisplay = (level = 'neutral') => {
     if (!threatEl) return;
 
     const normalized = level.toLowerCase();
-    let colorClass = 'text-gray-500';
+    let colorClass = 'text-gray-200';
     let icon = 'fa-minus-circle';
 
     // Renk sınıfları
@@ -152,7 +152,7 @@ const renderLocationIntel = (location) => {
         if (foundEvents.length > 0) {
             els.events.innerHTML = foundEvents.map(evt => `
                 <li class="gsap-event-item opacity-0 border-l-2 border-white/10 pl-3 py-1 hover:border-gold transition-colors group cursor-default">
-                    <span class="block text-[9px] font-mono text-gray-500">${evt.date ? evt.date.split('-')[0] : 'Unknown'}</span>
+                    <span class="block text-[9px] font-mono text-gray-200">${evt.date ? evt.date.split('-')[0] : 'Unknown'}</span>
                     <span class="text-xs font-serif text-gray-300 group-hover:text-white">${evt.title_en || 'Redacted Event'}</span>
                 </li>
             `).join('');

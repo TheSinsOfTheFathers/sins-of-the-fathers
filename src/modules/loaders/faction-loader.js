@@ -25,26 +25,26 @@ const createFactionCard = (faction) => {
     // ... (statsHTML kısmı aynı kalacak) ...
     const statsHTML = isOldWorld ? `
         <div>
-            <div class="flex justify-between text-[10px] font-mono text-gray-500 mb-1">
+            <div class="flex justify-between text-[10px] font-mono text-gray-200 mb-1">
                 <span>${i18next.t('factions.stat_brutality')}</span> <span>95%</span>
             </div>
             <div class="w-full h-1 bg-gray-900"><div class="h-1 bg-red-800 w-[95%] shadow-[0_0_5px_red]"></div></div>
         </div>
         <div>
-            <div class="flex justify-between text-[10px] font-mono text-gray-500 mb-1">
+            <div class="flex justify-between text-[10px] font-mono text-gray-200 mb-1">
                 <span>${i18next.t('factions.stat_chaos')}</span> <span>80%</span>
             </div>
             <div class="w-full h-1 bg-gray-900"><div class="h-1 bg-red-800 w-[80%]"></div></div>
         </div>
     ` : `
         <div>
-            <div class="flex justify-between text-[10px] font-mono text-gray-500 mb-1">
+            <div class="flex justify-between text-[10px] font-mono text-gray-200 mb-1">
                 <span>${i18next.t('factions.stat_influence')}</span> <span>98%</span>
             </div>
             <div class="w-full h-1 bg-gray-900"><div class="h-1 bg-gold w-[98%] shadow-[0_0_5px_gold]"></div></div>
         </div>
         <div>
-            <div class="flex justify-between text-[10px] font-mono text-gray-500 mb-1">
+            <div class="flex justify-between text-[10px] font-mono text-gray-200 mb-1">
                 <span>${i18next.t('factions.stat_resources')}</span> <span>100%</span>
             </div>
             <div class="w-full h-1 bg-gray-900"><div class="h-1 bg-gold w-100%"></div></div>
