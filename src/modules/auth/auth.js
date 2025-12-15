@@ -18,7 +18,7 @@ function showMessage(target, msg, type = 'info') {
   target.textContent = `> ${msg}`;
   if (type === 'error') target.className = 'text-red-500 font-mono text-xs animate-pulse';
   else if (type === 'success') target.className = 'text-gold font-mono text-xs';
-  else target.className = 'text-gray-500 font-mono text-xs';
+  else target.className = 'text-gray-200 font-mono text-xs';
 }
 
 function ensureToastContainer() {
@@ -304,7 +304,7 @@ export function initAuth() {
            <div class="absolute -bottom-1 -right-1 w-2 h-2 border-b border-r border-gold opacity-50"></div>
            
            <div class="px-4 py-3 border-b border-white/5">
-                <p class="text-[10px] text-gray-500 font-mono uppercase tracking-widest">Current Identity</p>
+                <p class="text-[10px] text-gray-200 font-mono uppercase tracking-widest">Current Identity</p>
                 <p class="text-xs text-gold truncate font-mono">${user.email}</p>
            </div>
            

@@ -70,7 +70,7 @@ const createOperativeCard = (character) => {
         </div>
         <div class="p-5">
             <h3 class="font-serif text-xl text-white mb-1 group-hover:text-gold transition-colors">${character.name}</h3>
-            <p class="font-mono text-xs text-gray-500 uppercase tracking-widest">${title}</p>
+            <p class="font-mono text-xs text-gray-200 uppercase tracking-widest">${title}</p>
         </div>
     `;
 

@@ -118,7 +118,7 @@ async function initializeHeavyModules() {
         const activeBtn = document.querySelector(`.lang-btn[data-lang="${currentLang.substring(0,2)}"]`);
         if (activeBtn) {
             activeBtn.classList.add('text-white', 'font-bold', 'underline');
-            activeBtn.classList.remove('text-gray-500');
+            activeBtn.classList.remove('text-gray-200');
         }
 
         let pageModuleLoaded = false;
@@ -172,10 +172,10 @@ document.addEventListener('DOMContentLoaded', () => {
             updatePageTranslations();
             document.querySelectorAll('.lang-btn').forEach(btn => {
                 btn.classList.remove('text-white', 'font-bold', 'underline');
-                btn.classList.add('text-gray-500');
+                btn.classList.add('text-gray-200');
                 if(btn.dataset.lang === lang) {
                     btn.classList.add('text-white', 'font-bold', 'underline');
-                    btn.classList.remove('text-gray-500');
+                    btn.classList.remove('text-gray-200');
                 }
             });
         } catch (e) {

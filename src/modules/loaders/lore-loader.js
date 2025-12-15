@@ -123,7 +123,7 @@ const renderGrid = (data) => {
     container.innerHTML = '';
 
     if (data.length === 0) {
-        container.innerHTML = `<div class="col-span-full text-center text-gray-500 font-mono py-12">${i18next.t('lore_loader.no_records_query')}</div>`;
+        container.innerHTML = `<div class="col-span-full text-center text-gray-200 font-mono py-12">${i18next.t('lore_loader.no_records_query')}</div>`;
         return;
     }
 
@@ -259,10 +259,10 @@ function setupSearchInterface() {
             btn.addEventListener('click', (e) => {
                 filterButtons.forEach(b => {
                     b.classList.remove('bg-gold/10', 'text-gold', 'font-bold', 'border-gold');
-                    b.classList.add('text-gray-500', 'border-gray-700');
+                    b.classList.add('text-gray-200', 'border-gray-700');
                 });
                 const clickedBtn = e.target.closest('button');
-                clickedBtn.classList.remove('text-gray-500', 'border-gray-700');
+                clickedBtn.classList.remove('text-gray-200', 'border-gray-700');
                 clickedBtn.classList.add('bg-gold/10', 'text-gold', 'font-bold', 'border-gold');
 
                 applyFilters();
