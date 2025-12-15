@@ -75,22 +75,22 @@
     <!-- End Google Tag Manager (noscript) -->
 
     <!-- HEADER (Z-Index 50 -> Top Layer) -->
-    <header class="absolute top-0 w-full z-50 bg-black/80 backdrop-blur border-b border-white/10 h-16 pointer-events-auto transition-all">
+    <header aria-label="Main navigation" class="absolute top-0 w-full z-50 bg-black/80 backdrop-blur border-b border-white/10 h-16 pointer-events-auto transition-all">
         <nav class="container mx-auto px-4 h-full flex justify-between items-center">
             <!-- Brand -->
-            <a href="./" class="text-xl font-serif text-gold uppercase tracking-widest hover:text-white transition-colors">
+            <a href="./" aria-label="The Sins of the Fathers - Home" class="text-xl font-serif text-gold uppercase tracking-widest hover:text-white transition-colors">
                 TSOF <span class="hidden md:inline text-xs text-gray-600 ml-2 font-mono" data-i18n="locations_page.header_subtitle">// GLOBAL INTEL</span>
             </a>
             
             <!-- Desktop Nav -->
             <div class="hidden md:flex items-center space-x-6">
-                <a href="./factions.html" class="text-xs text-gray-200 hover:text-gold uppercase tracking-widest flex items-center border-r border-white/10 pr-4 transition-colors">
+                <a href="./factions.html" aria-label="Close map and return to factions" class="text-xs text-gray-200 hover:text-gold uppercase tracking-widest flex items-center border-r border-white/10 pr-4 transition-colors">
                     <i class="fas fa-times mr-2"></i> <span data-i18n="locations_page.close_map">Close Map</span>
                 </a>
                 
                 <!-- Auth Controls -->
                 <div class="flex gap-4" id="auth-controls">
-                    <a href="./login.html" class="text-[10px] text-gold hover:text-white uppercase border border-gold/30 px-3 py-1 guest-only transition-colors" data-i18n="auth.login">Login</a>
+                    <a href="./login.html" aria-label="Sign in to your account" class="text-[10px] text-gold hover:text-white uppercase border border-gold/30 px-3 py-1 guest-only transition-colors" data-i18n="auth.login">Login</a>
                 </div>
             </div>
 
