@@ -10,6 +10,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Explore the intricate world of 'Sins of the Fathers'.">
     <title>The Sins of the Fathers - Access Terminal</title>
+    
+    <!-- LCP Optimizasyonu: Preload (İsteğe bağlı, tarayıcı zaten picture tag'i hızlı çözer) -->
+    <!-- <link rel="preload" ... bu kısmı picture etiketi kullandığımız için kaldırabiliriz veya sadece desktop için bırakabiliriz -->
+
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
     tailwind.config = {
@@ -36,19 +40,34 @@
 
 <style>
     :root { --color-primary: #c5a059; --color-secondary: #8a6e3e; }
+    
     body {
-        background-color: #050505; /* Fallback color */
-        background-image: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url('./assets/images/bg/raven-bg-min.webp');
-        background-size: cover;
-        background-position: center center;
-        background-attachment: fixed;
-        animation: slowZoom 40s infinite alternate ease-in-out;
+        background-color: #050505;
         color: #d1d5db;
         font-family: 'Lato', sans-serif;
         overflow-x: hidden;
         font-display: swap;
     }
-    @keyframes slowZoom { from { background-size: 100% auto; } to { background-size: 110% auto; } }
+
+    /* Arkaplan Stilleri */
+    #bg-image {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* Resmi ekrana yayar */
+        z-index: -1;
+        filter: brightness(0.4); 
+        animation: slowZoom 40s infinite alternate ease-in-out;
+        will-change: transform;
+    }
+
+    @keyframes slowZoom { 
+        from { transform: scale(1); } 
+        to { transform: scale(1.1); } 
+    }
+
     #particles-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
     main { position: relative; z-index: 2; }
     .title-glow {
@@ -65,6 +84,16 @@
 </head>
 <body class="antialiased flex flex-col min-h-screen">
 <noscript><iframe title="GTM" src="https://www.googletagmanager.com/ns.html?id=GTM-PVH59MXZ" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
+<picture>
+    <source media="(max-width: 768px)" srcset="./assets/images/bg/raven-bg-mobile.webp">
+    
+    <img 
+        id="bg-image" 
+        src="./assets/images/bg/raven-bg-min.webp" 
+        alt="Dark Raven Background"
+    >
+</picture>
 
 <div id="particles-container"></div>
 
