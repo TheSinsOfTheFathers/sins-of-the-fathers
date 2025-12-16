@@ -16,7 +16,7 @@ module.exports = {
   parserOptions: {
     project: ["tsconfig.json"],
     sourceType: "module",
-    createDefaultProgram: true, 
+    createDefaultProgram: true,
   },
   ignorePatterns: [
     "/lib/**/*",
@@ -31,6 +31,10 @@ module.exports = {
     "quotes": ["error", "double"],
     "import/no-unresolved": 0,
     "indent": ["error", 2],
-    "linebreak-style": 0, 
+    "linebreak-style": 0,
+    "object-curly-spacing": "off",
+    "max-len": "off",
+    "valid-jsdoc": "off",
+    "require-jsdoc": "off"
   },
 };
