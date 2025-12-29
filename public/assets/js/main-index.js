@@ -19,7 +19,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 // --- GERİ SAYIM SAYACI ---
-const countdownDate = new Date("2026-01-01T00:00:00Z").getTime();
+const countdownDate = new Date("2026-01-25T00:00:00Z").getTime();
 
 const countdownFunction = setInterval(function () {
     const now = Date.now();
