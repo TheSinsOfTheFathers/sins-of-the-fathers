@@ -20,7 +20,7 @@ const firebaseConfig = {
     measurementId: "G-9H3782YN0N"
 };
 
-const RECAPTCHA_SITE_KEY = "6LeoRfYrAAAAAHd6SUPlvNfSRmVtuoMmraQOk_2P";
+const RECAPTCHA_SITE_KEY = "6LeoRfYrAAAAANpaxG70cHRmK5ciRKf7sVt9Crnz";
 
 /* --------------------------------------------------------------------------
     SYSTEM INITIALIZATION (Only initialize what is needed immediately)

@@ -1,13 +1,13 @@
 import { auth, googleProvider, RECAPTCHA_SITE_KEY, functions, db } from '../firebase-config.js';
-import { httpsCallable } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js';
+import { httpsCallable } from 'firebase/functions';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
   onAuthStateChanged
-} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import { doc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+} from 'firebase/auth';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import i18next from '../../lib/i18n.js';
 
 /* --------------------------------------------------------------------------
@@ -138,11 +138,17 @@ export function initAuth() {
       if (isRegister) {
         loginForm.classList.add('hidden');
         registerForm.classList.remove('hidden');
-        if (title) title.innerHTML = i18next.t('login_page.dynamic_title_register');
+        if (title) {
+          title.innerHTML = i18next.t('login_page.dynamic_title_register');
+          title.setAttribute('data-i18n', 'login_page.dynamic_title_register');
+        }
       } else {
         registerForm.classList.add('hidden');
         loginForm.classList.remove('hidden');
-        if (title) title.innerHTML = i18next.t('login_page.dynamic_title_login');
+        if (title) {
+          title.innerHTML = i18next.t('login_page.dynamic_title_login');
+          title.setAttribute('data-i18n', 'login_page.dynamic_title_login');
+        }
       }
     };
 
@@ -160,9 +166,14 @@ export function initAuth() {
       showMessage(authMessage, 'Initiating vetting protocol...', 'info');
 
       try {
-        const signupToken = await getRecaptchaToken('signup');
-        const verifyRecaptchaToken = httpsCallable(functions, 'verifyRecaptchaToken');
-        await verifyRecaptchaToken({ token: signupToken, action: 'signup' });
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+          console.warn('Localhost detected: Bypassing ReCAPTCHA.');
+          showMessage(authMessage, 'Localhost: Bypassing Security...', 'info');
+        } else {
+          const signupToken = await getRecaptchaToken('signup');
+          const verifyRecaptchaToken = httpsCallable(functions, 'verifyRecaptchaToken');
+          await verifyRecaptchaToken({ token: signupToken, action: 'signup' });
+        }
 
         showMessage(authMessage, 'Creating dossier...', 'info');
         const userCred = await createUserWithEmailAndPassword(auth, email, password);
@@ -176,9 +187,9 @@ export function initAuth() {
         }, { merge: true });
 
         showMessage(authMessage, 'Identity Verified. Redirecting...', 'success');
-        
+
         // Düzeltildi: /pages/profile.html (Mutlak yol)
-        setTimeout(() => globalThis.location.href = '/pages/profile.html', 1000); 
+        setTimeout(() => globalThis.location.href = '/pages/profile.html', 1000);
       } catch (err) {
         showPopup('error', firebaseErrorToMessage(err));
         showMessage(authMessage, 'Registration Failed.', 'error');
@@ -196,9 +207,14 @@ export function initAuth() {
       showMessage(authMessage, 'Decrypting credentials...', 'info');
 
       try {
-        const loginToken = await getRecaptchaToken('login');
-        const verifyRecaptchaToken = httpsCallable(functions, 'verifyRecaptchaToken');
-        await verifyRecaptchaToken({ token: loginToken, action: 'login' });
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+          console.warn('Localhost detected: Bypassing ReCAPTCHA.');
+          showMessage(authMessage, 'Localhost: Bypassing Security...', 'info');
+        } else {
+          const loginToken = await getRecaptchaToken('login');
+          const verifyRecaptchaToken = httpsCallable(functions, 'verifyRecaptchaToken');
+          await verifyRecaptchaToken({ token: loginToken, action: 'login' });
+        }
 
         showMessage(authMessage, 'Access Granted.', 'success');
         await signInWithEmailAndPassword(auth, email, password);
@@ -218,9 +234,14 @@ export function initAuth() {
     showMessage(authMessage, 'Contacting Google satellites...', 'info');
 
     try {
-      const googleToken = await getRecaptchaToken('google_signin');
-      const verifyRecaptchaToken = httpsCallable(functions, 'verifyRecaptchaToken');
-      await verifyRecaptchaToken({ token: googleToken, action: 'google_signin' });
+      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        console.warn('Localhost detected: Bypassing ReCAPTCHA.');
+        showMessage(authMessage, 'Localhost: Bypassing Security...', 'info');
+      } else {
+        const googleToken = await getRecaptchaToken('google_signin');
+        const verifyRecaptchaToken = httpsCallable(functions, 'verifyRecaptchaToken');
+        await verifyRecaptchaToken({ token: googleToken, action: 'google_signin' });
+      }
 
       const result = await signInWithPopup(auth, googleProvider);
       const u = result.user;
@@ -234,9 +255,9 @@ export function initAuth() {
       }, { merge: true });
 
       showMessage(authMessage, 'Biometrics confirmed.', 'success');
-      
+
       // Düzeltildi:/ (Mutlak yol)
-      setTimeout(() => globalThis.location.href = '/', 800); 
+      setTimeout(() => globalThis.location.href = '/', 800);
     } catch (err) {
       showPopup('error', firebaseErrorToMessage(err));
       showMessage(authMessage, 'Signal Lost.', 'error');
@@ -334,8 +355,9 @@ export function initAuth() {
     });
 
     signoutBtn.addEventListener('click', async () => {
-      try { await signOut(auth); 
-        globalThis.location.href = '/'; 
+      try {
+        await signOut(auth);
+        globalThis.location.href = '/';
       }
       catch (err) { console.error(err); }
     });

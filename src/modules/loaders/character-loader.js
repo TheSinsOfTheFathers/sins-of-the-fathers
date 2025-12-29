@@ -168,13 +168,8 @@ const renderCharacterCards = (characters, containers) => {
     if (containers.side) containers.side.innerHTML = '';
 
     characters.forEach((character) => {
-        const lowerName = (character.name || '').toLowerCase();
-        const lowerAlias = character.alias ? character.alias.toLowerCase() : '';
-
-        const isRoland = lowerName.includes('Roland') || lowerAlias.includes('exile');
-        const isHavi = lowerName.includes('havi') || lowerAlias.includes('bastard');
-
-        if (isRoland || isHavi) {
+        // Hardcoded Roland/Havi checks removed. Now using Schema field 'is_architect'.
+        if (character.is_architect) {
             if (containers.protagonists) {
                 containers.protagonists.appendChild(createProtagonistCard(character));
             }
@@ -223,7 +218,8 @@ export async function displayCharacters() {
         const query = `*[_type == "character"] | order(name asc) {
             name, title, alias, slug, 
             "image": image.asset->{ url, "blurHash": metadata.blurHash }, 
-            is_main
+            is_main,
+            is_architect
         }`;
 
         const characters = await client.fetch(query);

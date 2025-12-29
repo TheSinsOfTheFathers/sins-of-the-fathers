@@ -3,6 +3,7 @@ import { renderBlurHash, handleImageLoad } from '../../lib/imageUtils.js';
 import i18next from '../../lib/i18n.js'; // i18next import
 // 👇 SEO İMPORTU EKLENDİ
 import { injectSchema } from '../../lib/seo.js';
+import gsap from 'gsap';
 
 let allLoreData = [];
 

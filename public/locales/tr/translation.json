@@ -237,7 +237,9 @@
     "divider_external": "Harici Protokol",
     "btn_google_join": "Google ile Katıl",
     "text_already_registered": "Kimlik doğrulandı mı?",
-    "link_login": "Terminale Eriş"
+    "link_login": "Terminale Eriş",
+    "dynamic_title_register": "Kayıt Protokolü",
+    "dynamic_title_login": "Sistem Erişimi"
   },
   "lore_detail": {
     "header_reader": "// OKUYUCU",

@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "partytown": "partytown copylib public/~partytown",
-    "dev": "npm run partytown && vite",
+    "dev": "npm run partytown && vite --port 5173 --strictPort",
     "build": "npm run partytown && node scripts/generate-sitemap.cjs && vite build",
     "preview": "vite preview"
   },

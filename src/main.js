@@ -24,27 +24,27 @@ gsap.registerPlugin(ScrollTrigger);
 const lenis = new Lenis();
 lenis.on('scroll', ScrollTrigger.update);
 function raf(time) {
-  lenis.raf(time);
-  requestAnimationFrame(raf);
+    lenis.raf(time);
+    requestAnimationFrame(raf);
 }
 requestAnimationFrame(raf);
 
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-  anchor.addEventListener('click', function (e) {
-    e.preventDefault();
-    const target = document.querySelector(this.getAttribute('href'));
-    if (target) {
-      lenis.scrollTo(target, {
-        offset: -80,
-        duration: 2
-      });
-    }
-  });
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            lenis.scrollTo(target, {
+                offset: -80,
+                duration: 2
+            });
+        }
+    });
 });
 
 
 const moduleMap = import.meta.glob([
-    './modules/loaders/*.js', 
+    './modules/loaders/*.js',
     './modules/auth/*.js'
 ]);
 
@@ -53,22 +53,22 @@ const moduleMap = import.meta.glob([
     -------------------------------------------------------------------------- */
 async function initMonitoringSystem() {
     if (window.isMonitoringActive) return;
-    
+
     try {
         const Sentry = await import("@sentry/browser");
-        
+
         console.log(" > System: Security Protocols (Sentry) Activated.");
         Sentry.init({
             dsn: "https://9a12c94e774235b975e6820692f11ba4@o4510453482520576.ingest.de.sentry.io/4510453491105872",
             integrations: [Sentry.browserTracingIntegration(), Sentry.replayIntegration()],
-            tracesSampleRate: 1.0, 
+            tracesSampleRate: 1.0,
             tracePropagationTargets: ["localhost", /^https:\/\/thesinsofthefathers\.com/],
-            replaysSessionSampleRate: 0.1, 
-            replaysOnErrorSampleRate: 1.0, 
+            replaysSessionSampleRate: 0.1,
+            replaysOnErrorSampleRate: 1.0,
         });
         window.isMonitoringActive = true;
         window.SentryCaptureException = Sentry.captureException;
-        
+
     } catch (error) {
         console.error("Sentry Dynamic Import Failure:", error);
     }
@@ -85,7 +85,7 @@ function updatePageTranslations() {
         if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
             el.placeholder = translation;
         } else {
-            el.innerHTML = translation; 
+            el.innerHTML = translation;
         }
     });
     const titleKey = document.body.getAttribute('data-page-title-key');
@@ -101,7 +101,7 @@ const ROUTER_CONFIGS = [
     { id: 'factions-grid', log: " > Tactical Overview Initialized", modulePath: './modules/loaders/faction-loader.js', loaderFn: 'displayFactions' },
     { id: 'faction-title', log: " > Faction Intel Access Requested", modulePath: './modules/loaders/faction-detail-loader.js', loaderFn: 'loadFactionDetails' },
     { id: 'timeline-embed', log: " > Constructing Chronology", modulePath: './modules/loaders/timeline-loader.js', loaderFn: 'displayTimeline' },
-    { id: 'map', log: " > Satellite Uplink Establishing...", modulePath: './modules/loaders/location-loader.js', loaderFn: 'displayLocations' },
+    { id: 'map', log: " > Satellite Uplink Establishing...", modulePath: './modules/loaders/map-loader.js', loaderFn: 'displayLocations' },
     { id: 'location-intel', log: " > Focusing Drone Feed", modulePath: './modules/loaders/location-detail-loader.js', loaderFn: 'loadLocationDetails' },
     { id: 'archive-grid', log: " > Archive Access Granted", modulePath: './modules/loaders/lore-loader.js', loaderFn: 'displayLoreList' },
     { id: 'evidence-container', log: " > Examining Evidence", modulePath: './modules/loaders/lore-detail-loader.js', loaderFn: 'loadLoreDetails' },
@@ -118,7 +118,7 @@ async function initializeHeavyModules() {
         updatePageTranslations();
         initCookieConsent();
 
-        const activeBtn = document.querySelector(`.lang-btn[data-lang="${currentLang.substring(0,2)}"]`);
+        const activeBtn = document.querySelector(`.lang-btn[data-lang="${currentLang.substring(0, 2)}"]`);
         if (activeBtn) {
             activeBtn.classList.add('text-white', 'font-bold', 'underline');
             activeBtn.classList.remove('text-gray-200');
@@ -134,14 +134,14 @@ async function initializeHeavyModules() {
                     const loaderImporter = moduleMap[config.modulePath];
                     if (!loaderImporter) {
                         console.error(`ERROR: Module path missing: ${config.modulePath}`);
-                        continue; 
+                        continue;
                     }
                     const module = await loaderImporter();
                     if (module[config.loaderFn]) {
                         await module[config.loaderFn]();
                         pageModuleLoaded = true;
-                    } 
-                    break; 
+                    }
+                    break;
                 } catch (error) {
                     console.error(`ERROR: ${config.log}`, error);
                     if (window.isMonitoringActive && window.SentryCaptureException) window.SentryCaptureException(error, { tags: { module: config.modulePath } });
@@ -160,7 +160,7 @@ async function initializeHeavyModules() {
     ANA ÇALIŞTIRMA PROTOKOLÜ (Hafifletilmiş)
     -------------------------------------------------------------------------- */
 document.addEventListener('DOMContentLoaded', () => {
-    
+
     console.log("%c TSOF // SYSTEM ONLINE ", "color: #000; background: #c5a059; padding: 5px; font-weight: bold; font-family: monospace; font-display: swap;");
     gsap.set("body", { autoAlpha: 0 });
 
@@ -168,7 +168,7 @@ document.addEventListener('DOMContentLoaded', () => {
         initMonitoringSystem();
     }
     window.enableTrackingSystem = () => initMonitoringSystem();
-    
+
     window.changeAppLanguage = async (lang) => {
         try {
             await changeLanguage(lang);
@@ -176,7 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.querySelectorAll('.lang-btn').forEach(btn => {
                 btn.classList.remove('text-white', 'font-bold', 'underline');
                 btn.classList.add('text-gray-200');
-                if(btn.dataset.lang === lang) {
+                if (btn.dataset.lang === lang) {
                     btn.classList.add('text-white', 'font-bold', 'underline');
                     btn.classList.remove('text-gray-200');
                 }
@@ -191,11 +191,11 @@ document.addEventListener('DOMContentLoaded', () => {
     initAuth();
     initAudioSystem();
 
-    gsap.to("body", { 
-        autoAlpha: 1, 
-        duration: 1.2, 
-        ease: "power2.inOut" 
+    gsap.to("body", {
+        autoAlpha: 1,
+        duration: 1.2,
+        ease: "power2.inOut"
     });
 
-    setTimeout(initializeHeavyModules, 100); 
+    setTimeout(initializeHeavyModules, 100);
 });

@@ -8,19 +8,39 @@ import i18nextBrowserLanguageDetector from 'https://esm.sh/i18next-browser-langu
  */
 export const updateContent = () => {
     document.querySelectorAll('[data-i18n]').forEach(el => {
-        const key = el.dataset.i18n;
+        let key = el.dataset.i18n;
         const options = {};
 
+        // Handle specific keys with dynamic options
         if (key === 'footer.copyright') {
             options.year = new Date().getFullYear();
         }
 
+        // Check for attribute targeting syntax: [placeholder]key
+        let targetAttr = 'innerHTML';
+        if (key.startsWith('[')) {
+            const match = key.match(/^\[([^\]]+)\](.+)$/);
+            if (match) {
+                targetAttr = match[1];
+                key = match[2];
+            }
+        }
+
         const translation = i18next.t(key, options);
 
-        el.innerHTML = translation;
-
-        if (el.tagName === 'INPUT' && el.getAttribute('placeholder')) {
-            el.setAttribute('placeholder', translation);
+        if (targetAttr === 'innerHTML') {
+            if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                // For inputs without specific targeting, generic fallback might be placeholder or value
+                if (el.hasAttribute('placeholder')) {
+                    el.setAttribute('placeholder', translation);
+                } else {
+                    el.value = translation;
+                }
+            } else {
+                el.innerHTML = translation;
+            }
+        } else {
+            el.setAttribute(targetAttr, translation);
         }
     });
 };
@@ -34,7 +54,7 @@ export const changeLanguage = async (lng) => {
     updateContent();
     localStorage.setItem('i18nextLng', lng);
 
-    document.documentElement.setAttribute('lang', lng); 
+    document.documentElement.setAttribute('lang', lng);
 
     document.querySelectorAll('.lang-btn').forEach(btn => {
         if (btn.dataset.lang === lng) {
@@ -54,7 +74,7 @@ export const initI18n = async () => {
     try {
         await i18next
             .use(i18nextHttpBackend)
-            .use(i18nextBrowserLanguageDetector) 
+            .use(i18nextBrowserLanguageDetector)
             .init({
                 fallbackLng: 'en',
                 debug: false,
