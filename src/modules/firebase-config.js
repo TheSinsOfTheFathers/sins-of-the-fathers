@@ -11,7 +11,7 @@ import { getStorage } from "firebase/storage";
     -------------------------------------------------------------------------- */
 const firebaseConfig = {
     apiKey: "AIzaSyB7Xa5tZYVenPEkkjB0KVJDkoV7pQ7_QcQ",
-    authDomain: "thesinsofthefathers.com",
+    authDomain: "sins-of-the-fathers.firebaseapp.com",
     databaseURL: "https://sins-of-the-fathers-default-rtdb.europe-west1.firebasedatabase.app",
     projectId: "sins-of-the-fathers",
     storageBucket: "sins-of-the-fathers.appspot.com",
@@ -20,7 +20,7 @@ const firebaseConfig = {
     measurementId: "G-9H3782YN0N"
 };
 
-const RECAPTCHA_SITE_KEY = "6LeoRfYrAAAAAHd6SUPlvNfSRmVtuoMmraQOk_2P";
+const RECAPTCHA_SITE_KEY = "6LeoRfYrAAAAANpaxG70cHRmK5ciRKf7sVt9Crnz";
 
 /* --------------------------------------------------------------------------
     SYSTEM INITIALIZATION (Only initialize what is needed immediately)

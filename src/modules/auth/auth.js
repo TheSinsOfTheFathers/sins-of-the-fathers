@@ -1,13 +1,13 @@
 import { auth, googleProvider, RECAPTCHA_SITE_KEY, functions, db } from '../firebase-config.js';
-import { httpsCallable } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js';
+import { httpsCallable } from 'firebase/functions';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   signInWithPopup,
   signOut,
   onAuthStateChanged
-} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import { doc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+} from 'firebase/auth';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import i18next from '../../lib/i18n.js';
 
 /* --------------------------------------------------------------------------
@@ -176,9 +176,9 @@ export function initAuth() {
         }, { merge: true });
 
         showMessage(authMessage, 'Identity Verified. Redirecting...', 'success');
-        
+
         // Düzeltildi: /pages/profile.html (Mutlak yol)
-        setTimeout(() => globalThis.location.href = '/pages/profile.html', 1000); 
+        setTimeout(() => globalThis.location.href = '/pages/profile.html', 1000);
       } catch (err) {
         showPopup('error', firebaseErrorToMessage(err));
         showMessage(authMessage, 'Registration Failed.', 'error');
@@ -234,9 +234,9 @@ export function initAuth() {
       }, { merge: true });
 
       showMessage(authMessage, 'Biometrics confirmed.', 'success');
-      
+
       // Düzeltildi:/ (Mutlak yol)
-      setTimeout(() => globalThis.location.href = '/', 800); 
+      setTimeout(() => globalThis.location.href = '/', 800);
     } catch (err) {
       showPopup('error', firebaseErrorToMessage(err));
       showMessage(authMessage, 'Signal Lost.', 'error');
@@ -334,8 +334,9 @@ export function initAuth() {
     });
 
     signoutBtn.addEventListener('click', async () => {
-      try { await signOut(auth); 
-        globalThis.location.href = '/'; 
+      try {
+        await signOut(auth);
+        globalThis.location.href = '/';
       }
       catch (err) { console.error(err); }
     });
