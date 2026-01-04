@@ -2,6 +2,7 @@ import { client } from '../../lib/sanityClient.js';
 import i18next from '../../lib/i18n.js';
 import { injectSchema } from '../../lib/seo.js';
 import gsap from 'gsap';
+import { NoirEffects } from '../ui/noir-effects.js';
 
 let mapInstance = null;
 
@@ -16,8 +17,8 @@ const FACTION_THEMES = {
 /**
  * Harita Temizleyici (Anti-Initialized Error)
  */
-const destroyMap = (id) => {
-    const container = document.getElementById(id);
+const destroyMap = (containerOrId) => {
+    const container = typeof containerOrId === 'string' ? document.getElementById(containerOrId) : containerOrId;
     if (mapInstance) {
         mapInstance.off();
         mapInstance.remove();
@@ -77,9 +78,9 @@ async function loadLayer(map, path, theme) {
     }
 }
 
-export async function displayLocations() {
-    const mapContainer = document.getElementById('map');
-    const loader = document.getElementById('map-loader');
+export default async function (container, props) {
+    const mapContainer = container;
+    const loader = document.getElementById('map-loader'); // Loader might be external overlay
 
     if (mapContainer) gsap.set(mapContainer, { opacity: 0, scale: 0.98 });
 
@@ -104,9 +105,9 @@ export async function displayLocations() {
     }
 
     try {
-        destroyMap('map');
+        destroyMap(mapContainer);
 
-        const map = L.map('map', {
+        const map = L.map(mapContainer, {
             center: [40, -30],
             zoom: 3,
             zoomControl: false,
@@ -219,16 +220,7 @@ export async function displayLocations() {
         }
 
         if (markerElements.length > 0) {
-            tl.to(markerElements, {
-                scale: 1,
-                opacity: 1,
-                duration: 0.6,
-                stagger: {
-                    amount: 1.5,
-                    from: "random"
-                },
-                ease: "back.out(2)"
-            }, "-=0.5");
+            NoirEffects.staggerScaleReveal(markerElements);
         }
 
     } catch (err) {

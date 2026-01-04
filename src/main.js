@@ -93,62 +93,59 @@ function updatePageTranslations() {
 }
 
 /* --------------------------------------------------------------------------
-    ROUTER CONFIGURATION (Yollar düzeltildi)
-    -------------------------------------------------------------------------- */
-const ROUTER_CONFIGS = [
-    { id: ['protagonists-gallery', 'main-characters-gallery'], log: " > Personnel Database Detected", modulePath: './modules/loaders/character-loader.js', loaderFn: 'displayCharacters' },
-    { id: 'character-dossier', log: " > Dossier Decryption Started", modulePath: './modules/loaders/character-detail-loader.js', loaderFn: 'loadCharacterDetails' },
-    { id: 'factions-grid', log: " > Tactical Overview Initialized", modulePath: './modules/loaders/faction-loader.js', loaderFn: 'displayFactions' },
-    { id: 'faction-title', log: " > Faction Intel Access Requested", modulePath: './modules/loaders/faction-detail-loader.js', loaderFn: 'loadFactionDetails' },
-    { id: 'timeline-embed', log: " > Constructing Chronology", modulePath: './modules/loaders/timeline-loader.js', loaderFn: 'displayTimeline' },
-    { id: 'map', log: " > Satellite Uplink Establishing...", modulePath: './modules/loaders/map-loader.js', loaderFn: 'displayLocations' },
-    { id: 'location-intel', log: " > Focusing Drone Feed", modulePath: './modules/loaders/location-detail-loader.js', loaderFn: 'loadLocationDetails' },
-    { id: 'archive-grid', log: " > Archive Access Granted", modulePath: './modules/loaders/lore-loader.js', loaderFn: 'displayLoreList' },
-    { id: 'evidence-container', log: " > Examining Evidence", modulePath: './modules/loaders/lore-detail-loader.js', loaderFn: 'loadLoreDetails' },
-    { id: 'profile-content', log: " > Verifying Biometrics", modulePath: './modules/auth/profile.js', loaderFn: 'loadProfilePage' }
-];
-
-/* --------------------------------------------------------------------------
     AĞIR İŞLEMLERİ YAPAN FONKSİYON (Performans için)
     -------------------------------------------------------------------------- */
 async function initializeHeavyModules() {
     try {
-        const currentLang = await initI18n();
-        console.log(` > Language Protocol: LOADED [${currentLang.toUpperCase()}]`);
-        updatePageTranslations();
-        initCookieConsent();
+        // ----------------------------------------------------------------
+        // YENİ: ATTRIBUTE TABANLI OTOMATİK YÜKLEYİCİ (data-module)
+        // ----------------------------------------------------------------
+        const dynamicModules = document.querySelectorAll('[data-module]');
 
-        const activeBtn = document.querySelector(`.lang-btn[data-lang="${currentLang.substring(0, 2)}"]`);
-        if (activeBtn) {
-            activeBtn.classList.add('text-white', 'font-bold', 'underline');
-            activeBtn.classList.remove('text-gray-200');
-        }
+        if (dynamicModules.length > 0) {
+            console.log(` > Auto-Loader: Found ${dynamicModules.length} dynamic modules.`);
 
-        let pageModuleLoaded = false;
-        for (const config of ROUTER_CONFIGS) {
-            const idsToCheck = Array.isArray(config.id) ? config.id : [config.id];
-            const isPageActive = idsToCheck.some(id => document.getElementById(id));
-            if (isPageActive) {
-                console.log(config.log);
-                try {
-                    const loaderImporter = moduleMap[config.modulePath];
-                    if (!loaderImporter) {
-                        console.error(`ERROR: Module path missing: ${config.modulePath}`);
-                        continue;
+            for (const el of dynamicModules) {
+                const rawPath = el.dataset.module;
+                const fnName = el.dataset.function || 'default';
+
+                // Props parsing (JSON safely)
+                let props = {};
+                if (el.dataset.props) {
+                    try { props = JSON.parse(el.dataset.props); }
+                    catch (e) { console.warn("Invalid data-props JSON:", e); }
+                }
+
+                // Path resolution (Mapping friendly)
+                // Eğer tam yol verilmediyse, ./modules/loaders/ içinde ara
+                let targetPath = rawPath;
+                if (!moduleMap[targetPath]) {
+                    const potentialPath = `./modules/loaders/${rawPath}`;
+                    if (moduleMap[potentialPath]) targetPath = potentialPath;
+                }
+
+                if (moduleMap[targetPath]) {
+                    try {
+                        const module = await moduleMap[targetPath]();
+                        if (typeof module[fnName] === 'function') {
+                            console.log(` > Executing Module: ${rawPath} -> ${fnName}`);
+                            await module[fnName](el, props); // Pass container (el) and props
+                        } else {
+                            console.error(`Module method not found: ${fnName} in ${targetPath}`);
+                        }
+                    } catch (err) {
+                        console.error(`Dynamic Module Failed: ${targetPath}`, err);
+                        if (window.isMonitoringActive && window.SentryCaptureException) {
+                            window.SentryCaptureException(err, { tags: { module: targetPath } });
+                        }
                     }
-                    const module = await loaderImporter();
-                    if (module[config.loaderFn]) {
-                        await module[config.loaderFn]();
-                        pageModuleLoaded = true;
-                    }
-                    break;
-                } catch (error) {
-                    console.error(`ERROR: ${config.log}`, error);
-                    if (window.isMonitoringActive && window.SentryCaptureException) window.SentryCaptureException(error, { tags: { module: config.modulePath } });
+                } else {
+                    console.warn(`Module not found in map: ${rawPath}`);
                 }
             }
+        } else {
+            console.log(" > Standby Mode: No dynamic modules detected.");
         }
-        if (!pageModuleLoaded) console.log(" > Standby Mode: Static Page Active.");
 
     } catch (error) {
         console.error(" ! Deferred System Failure:", error);
@@ -159,7 +156,7 @@ async function initializeHeavyModules() {
 /* --------------------------------------------------------------------------
     ANA ÇALIŞTIRMA PROTOKOLÜ (Hafifletilmiş)
     -------------------------------------------------------------------------- */
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => { // Made async to await initI18n
 
     console.log("%c TSOF // SYSTEM ONLINE ", "color: #000; background: #c5a059; padding: 5px; font-weight: bold; font-family: monospace; font-display: swap;");
     gsap.set("body", { autoAlpha: 0 });
@@ -168,6 +165,18 @@ document.addEventListener('DOMContentLoaded', () => {
         initMonitoringSystem();
     }
     window.enableTrackingSystem = () => initMonitoringSystem();
+
+    // Language and Cookie Consent initialization moved here
+    const currentLang = await initI18n();
+    console.log(` > Language Protocol: LOADED [${currentLang.toUpperCase()}]`);
+    updatePageTranslations();
+    initCookieConsent();
+
+    const activeBtn = document.querySelector(`.lang-btn[data-lang="${currentLang.substring(0, 2)}"]`);
+    if (activeBtn) {
+        activeBtn.classList.add('text-white', 'font-bold', 'underline');
+        activeBtn.classList.remove('text-gray-200');
+    }
 
     window.changeAppLanguage = async (lang) => {
         try {

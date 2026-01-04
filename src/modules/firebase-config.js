@@ -9,12 +9,14 @@ import { getStorage } from "firebase/storage";
 /* --------------------------------------------------------------------------
     SECURITY CREDENTIALS
     -------------------------------------------------------------------------- */
+const isLocal = globalThis.location.hostname === 'localhost' || globalThis.location.hostname === '127.0.0.1';
+
 const firebaseConfig = {
     apiKey: "AIzaSyB7Xa5tZYVenPEkkjB0KVJDkoV7pQ7_QcQ",
-    authDomain: "thesinsofthefathers.com",
+    authDomain: isLocal ? "sins-of-the-fathers.firebaseapp.com" : "thesinsofthefathers.com",
     databaseURL: "https://sins-of-the-fathers-default-rtdb.europe-west1.firebasedatabase.app",
     projectId: "sins-of-the-fathers",
-    storageBucket: "sins-of-the-fathers.appspot.com",
+    storageBucket: "sins-of-the-fathers.firebasestorage.app",
     messagingSenderId: "287213062167",
     appId: "1:287213062167:web:1f863b4e96641570f5b452",
     measurementId: "G-9H3782YN0N"

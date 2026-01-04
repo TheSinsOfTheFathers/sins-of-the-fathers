@@ -1,14 +1,11 @@
+import DOMPurify from 'dompurify';
+
 import { client } from '../../lib/sanityClient.js';
 import i18next from '../../lib/i18n.js';
-// 👇 SEO İMPORTU
 import { injectSchema } from '../../lib/seo.js';
 
 // 👇 1. GSAP IMPORTLARI
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-// Plugin'i kaydet
-gsap.registerPlugin(ScrollTrigger);
+import { NoirEffects } from '../ui/noir-effects.js';
 
 /* --------------------------------------------------------------------------
    CARD BUILDER LOGIC
@@ -56,7 +53,7 @@ const createFactionCard = (faction) => {
 
     cardLink.className = `faction-card gsap-faction-card opacity-0 ${cardThemeClass} p-8 relative group min-h-[400px] flex flex-col justify-between rounded-sm transition-transform duration-300 hover:-translate-y-1`;
 
-    cardLink.innerHTML = `
+    cardLink.innerHTML = DOMPurify.sanitize(`
         <div class="absolute -right-6 -top-6 text-[10rem] opacity-5 pointer-events-none select-none" style="color: ${accentColor}">
             <i class="fas ${iconClass}"></i>
         </div>
@@ -86,7 +83,7 @@ const createFactionCard = (faction) => {
             <span><i class="fas fa-user-tie mr-2"></i>${leaderName.toUpperCase()}</span>
             <span class="border border-current px-2 py-0.5 rounded-[1px] hover:bg-white/5">${i18next.t('factions.view_intel')}</span>
         </div>
-    `;
+    `);
 
     return cardLink;
 };
@@ -94,9 +91,9 @@ const createFactionCard = (faction) => {
 /* --------------------------------------------------------------------------
    MAIN EXECUTION
    -------------------------------------------------------------------------- */
-export async function displayFactions() {
-    const factionsGrid = document.getElementById('factions-grid');
-    const loader = document.getElementById('factions-loader');
+export default async function (container, props) {
+    const factionsGrid = container.querySelector('#factions-grid');
+    const loader = container.querySelector('#factions-loader');
 
     if (!factionsGrid) return;
 
@@ -155,21 +152,10 @@ export async function displayFactions() {
                 factionsGrid.appendChild(card);
             });
 
-            // 👇 2. GSAP ANİMASYONU (KARTLAR EKLENDİKTEN SONRA)
+            // 👇 2. NOIR MOTION PROTOCOL
             // ----------------------------------------------------------------
             if (factionsGrid.children.length > 0) {
-                gsap.to(".gsap-faction-card", {
-                    y: 0,
-                    opacity: 1,
-                    duration: 0.8,
-                    stagger: 0.15, // Kartlar 0.15sn arayla gelsin (Domino etkisi)
-                    startAt: { y: 50, opacity: 0 }, // Başlangıçta 50px aşağıda ve görünmez olsun
-                    ease: "power2.out",
-                    scrollTrigger: {
-                        trigger: factionsGrid,
-                        start: "top 85%", // Grid ekranın %85'ine gelince başla
-                    }
-                });
+                NoirEffects.revealCard(".gsap-faction-card", 0.15);
             }
 
         } else {

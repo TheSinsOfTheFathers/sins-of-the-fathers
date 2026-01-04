@@ -1,3 +1,5 @@
+import DOMPurify from 'dompurify';
+
 import { client } from '../../lib/sanityClient.js';
 import { renderBlurHash, handleImageLoad } from '../../lib/imageUtils.js';
 import i18next from '../../lib/i18n.js';
@@ -5,6 +7,7 @@ import { injectSchema } from '../../lib/seo.js';
 
 // 👇 1. GSAP IMPORT
 import gsap from 'gsap';
+import { NoirEffects } from '../ui/noir-effects.js';
 
 /* --------------------------------------------------------------------------
    CARD TEMPLATES (NOIR STYLE)
@@ -21,7 +24,7 @@ const createProtagonistCard = (character) => {
     const blurHash = character.image?.blurHash;
     const alias = character.alias || 'The Architect';
 
-    cardLink.innerHTML = `
+    cardLink.innerHTML = DOMPurify.sanitize(`
         <canvas class="blur-canvas absolute inset-0 w-full h-full object-cover z-0"></canvas>
         <img src="${imageUrl}" alt="${character.name}" 
              class="main-image absolute inset-0 w-full h-full object-cover opacity-0 grayscale group-hover:grayscale-0 group-hover:scale-105 group-hover:opacity-100 transition-all duration-1000 ease-out z-10"
@@ -35,7 +38,7 @@ const createProtagonistCard = (character) => {
         <div class="absolute top-4 right-4 text-xs font-mono text-white/30 border border-white/20 px-2 py-1 group-hover:text-gold group-hover:border-gold transition-colors z-30">
              TARGET_ALPHA
         </div>
-    `;
+    `);
 
     const canvas = cardLink.querySelector('.blur-canvas');
     const img = cardLink.querySelector('.main-image');
@@ -60,7 +63,7 @@ const createOperativeCard = (character) => {
     const blurHash = character.image?.blurHash;
     const title = character.title || 'Associate';
 
-    cardLink.innerHTML = `
+    cardLink.innerHTML = DOMPurify.sanitize(`
         <div class="relative aspect-3/4 overflow-hidden border-b border-white/5 bg-gray-900">
             <canvas class="blur-canvas absolute inset-0 w-full h-full object-cover z-0"></canvas>
             <img src="${imageUrl}" alt="${character.name}" 
@@ -72,7 +75,7 @@ const createOperativeCard = (character) => {
             <h3 class="font-serif text-xl text-white mb-1 group-hover:text-gold transition-colors">${character.name}</h3>
             <p class="font-mono text-xs text-gray-200 uppercase tracking-widest">${title}</p>
         </div>
-    `;
+    `);
 
     const canvas = cardLink.querySelector('.blur-canvas');
     const img = cardLink.querySelector('.main-image');
@@ -97,7 +100,7 @@ const createAssetCard = (character) => {
     const blurHash = character.image?.blurHash;
     const title = character.title || 'Known Asset';
 
-    cardLink.innerHTML = `
+    cardLink.innerHTML = DOMPurify.sanitize(`
         <div class="relative w-12 h-12 overflow-hidden rounded-sm border border-gray-700 group-hover:border-red-800 shrink-0 bg-gray-800">
             <canvas class="blur-canvas absolute inset-0 w-full h-full object-cover z-0"></canvas>
             <img src="${imageUrl}" 
@@ -109,7 +112,7 @@ const createAssetCard = (character) => {
             <h4 class="font-mono text-sm text-gray-300 group-hover:text-white uppercase tracking-wide truncate">${character.name}</h4>
             <p class="text-[10px] text-gray-600 group-hover:text-red-500 transition-colors font-mono truncate">${title}</p>
         </div>
-    `;
+    `);
 
     const canvas = cardLink.querySelector('.blur-canvas');
     const img = cardLink.querySelector('.main-image');
@@ -191,23 +194,18 @@ const renderCharacterCards = (characters, containers) => {
         }
     });
 
-    // GSAP Reveal Animation
-    gsap.to('.opacity-0', {
-        opacity: 1,
-        duration: 0.8,
-        stagger: 0.1,
-        ease: 'power2.out'
-    });
+    // Noir Motion Protocol: Reveal Cards
+    NoirEffects.revealCard('.opacity-0', 0.1);
 };
 
 /* --------------------------------------------------------------------------
    MAIN LOGIC
    -------------------------------------------------------------------------- */
-export async function displayCharacters() {
+export default async function (container, props) {
     const containers = {
-        protagonists: document.getElementById('protagonists-gallery'),
-        main: document.getElementById('main-characters-gallery'),
-        side: document.getElementById('side-characters-gallery')
+        protagonists: container.querySelector('#protagonists-gallery'),
+        main: container.querySelector('#main-characters-gallery'),
+        side: container.querySelector('#side-characters-gallery')
     };
 
     if (!containers.main && !containers.protagonists) return;

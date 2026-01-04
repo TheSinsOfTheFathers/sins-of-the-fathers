@@ -78,20 +78,20 @@
     <header aria-label="Main navigation" class="absolute top-0 w-full z-50 bg-black/80 backdrop-blur border-b border-white/10 h-16 pointer-events-auto transition-all">
         <nav class="container mx-auto px-4 h-full flex justify-between items-center relative">
             <!-- Brand -->
-            <a href="./" aria-label="The Sins of the Fathers - Home" class="text-xl font-serif text-gold uppercase tracking-widest hover:text-white transition-colors z-20 relative">
+            <a href="/" aria-label="The Sins of the Fathers - Home" class="text-xl font-serif text-gold uppercase tracking-widest hover:text-white transition-colors z-20 relative">
                 TSOF <span class="hidden md:inline text-xs text-gray-600 ml-2 font-mono" data-i18n="locations_page.header_subtitle">// GLOBAL INTEL</span>
             </a>
             
             <!-- Desktop Nav (Absolute Center) -->
             <div class="hidden md:flex absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 items-center space-x-6">
-                <a href="./factions.html" class="text-xs text-gray-500 hover:text-gold uppercase tracking-widest flex items-center border-r border-white/10 pr-4 transition-colors">
+                <a href="/pages/factions.html" class="text-xs text-gray-500 hover:text-gold uppercase tracking-widest flex items-center border-r border-white/10 pr-4 transition-colors">
                     <i class="fas fa-times mr-2" aria-hidden="true"></i> <span data-i18n="locations_page.close_map">Close Map</span>
                     <span class="sr-only">Close Map</span>
                 </a>
                 
                 <!-- Auth Controls -->
                 <div class="flex gap-4" id="auth-controls">
-                    <a href="./login.html" aria-label="Sign in to your account" class="text-[10px] text-gold hover:text-white uppercase border border-gold/30 px-3 py-1 guest-only transition-colors" data-i18n="auth.login">Login</a>
+                    <a href="/pages/login.html" aria-label="Sign in to your account" class="text-[10px] text-gold hover:text-white uppercase border border-gold/30 px-3 py-1 guest-only transition-colors" data-i18n="auth.login">Login</a>
                 </div>
             </div>
 
@@ -115,11 +115,11 @@
 
     <!-- MOBILE MENU OVERLAY (Z-Index 60) -->
     <div id="mobile-menu" class="hidden fixed inset-0 z-60 bg-black/95 flex-col items-center justify-center space-y-6 backdrop-blur-xl transition-opacity duration-300">
-        <a href="./" class="text-xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.home">Home</a>
-        <a href="./characters.html" class="text-xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.bloodline">Bloodline</a>
-        <a href="./factions.html" class="text-xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.factions">Factions</a>
+        <a href="/" class="text-xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.home">Home</a>
+        <a href="/pages/characters.html" class="text-xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.bloodline">Bloodline</a>
+        <a href="/pages/factions.html" class="text-xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.factions">Factions</a>
         <a href="./merch.html" class="text-xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.merch">Merch</a>
-        <a href="./login.html" class="text-sm text-gold border border-gold px-4 py-2 font-mono uppercase" data-i18n="auth.login">Login</a>
+        <a href="/pages/login.html" class="text-sm text-gold border border-gold px-4 py-2 font-mono uppercase" data-i18n="auth.login">Login</a>
         
         <!-- Mobile Language -->
         <div class="flex gap-4 font-mono text-sm mt-4">
@@ -177,7 +177,7 @@
     <!-- The container itself allows clicks (pointer-events-auto default) -->
     <div class="absolute inset-0 pt-16 z-0">
         <!-- Map Div -->
-        <div id="map" role="application" aria-label="Interactive map" class="w-full h-full bg-neutral-900 outline-none"></div>
+        <div id="map" class="w-full h-full opacity-0 transition-opacity duration-1000 scale-95 origin-center z-0" data-module="map-loader.js"></div>
         
         <!-- Grid Overlay (Non-interactive) -->
         <div class="absolute inset-0 map-grid pointer-events-none opacity-30 z-1"></div>

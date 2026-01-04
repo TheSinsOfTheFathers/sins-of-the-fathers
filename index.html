@@ -66,14 +66,14 @@
             
             <!-- Desktop Menu (Absolute Center) -->
             <div class="hidden md:flex absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 items-center space-x-6 xl:space-x-8 text-xs xl:text-sm uppercase tracking-widest font-semibold whitespace-nowrap">
-                <a href="./pages/characters.html" aria-label="Navigate to The Bloodline: Characters" class="hover:text-gold transition-colors" data-i18n="nav.bloodline">THE BLOODLINE</a>
-                <a href="./pages/timeline.html" aria-label="Navigate to History: Timeline" class="hover:text-gold transition-colors" data-i18n="nav.history">HISTORY</a>
-                <a href="./pages/factions.html" aria-label="Navigate to Factions" class="hover:text-gold transition-colors" data-i18n="nav.factions">FACTIONS</a>
-                <a href="./pages/locations.html" aria-label="Navigate to Territories: Locations" class="hover:text-gold transition-colors" data-i18n="nav.territories">TERRITORIES</a>
+                <a href="/pages/characters.html" aria-label="Navigate to The Bloodline: Characters" class="hover:text-gold transition-colors" data-i18n="nav.bloodline">THE BLOODLINE</a>
+                <a href="/pages/timeline.html" aria-label="Navigate to History: Timeline" class="hover:text-gold transition-colors" data-i18n="nav.history">HISTORY</a>
+                <a href="/pages/factions.html" aria-label="Navigate to Factions" class="hover:text-gold transition-colors" data-i18n="nav.factions">FACTIONS</a>
+                <a href="/pages/locations.html" aria-label="Navigate to Territories: Locations" class="hover:text-gold transition-colors" data-i18n="nav.territories">TERRITORIES</a>
                 <a href="https://shop.thesinsofthefathers.com" aria-label="Visit official merchandise shop" class="hover:text-gold transition-colors" target="_blank" data-i18n="nav.merch">MERCH</a>
                 <div class="border-l border-white/20 pl-6 ml-4 flex items-center gap-4" id="auth-controls">
-                    <a href="./pages/lore.html" aria-label="Access classified lore archive" class="text-gold hover:text-white transition-colors flex items-center gap-2"><i class="fas fa-lock text-xs guest-lock"></i> <span data-i18n="nav.classified">Classified</span></a>
-                    <a href="./pages/login.html" aria-label="Sign in to your account" class="hover:text-gold transition-colors guest-only" id="auth-signin-link" data-i18n="auth.login">LOGIN</a>
+                    <a href="/pages/lore.html" id="nav-link-classified" aria-label="Access classified lore archive" class="text-gold hover:text-white transition-colors flex items-center gap-2"><i class="fas fa-lock text-xs guest-lock"></i> <span data-i18n="nav.classified">Classified</span></a>
+                    <a href="/pages/login.html" aria-label="Sign in to your account" class="hover:text-gold transition-colors guest-only" id="auth-signin-link" data-i18n="auth.login">LOGIN</a>
                 </div>
             </div>
 
@@ -95,13 +95,13 @@
         </nav>
     </header>
     <div id="mobile-menu" class="hidden fixed inset-0 z-40 bg-black/95 flex-col items-center justify-center space-y-8 transition-opacity duration-300 backdrop-blur-xl">
-        <a href="./pages/characters.html" aria-label="Navigate to The Bloodline: Characters" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.bloodline"></a>
-        <a href="./pages/timeline.html" aria-label="Navigate to History: Timeline" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.history"></a>
-        <a href="./pages/factions.html" aria-label="Navigate to Factions" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.factions"></a>
-        <a href="./pages/locations.html" aria-label="Navigate to Territories: Locations" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.territories"></a>
+        <a href="/pages/characters.html" aria-label="Navigate to The Bloodline: Characters" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.bloodline"></a>
+        <a href="/pages/timeline.html" aria-label="Navigate to History: Timeline" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.history"></a>
+        <a href="/pages/factions.html" aria-label="Navigate to Factions" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.factions"></a>
+        <a href="/pages/locations.html" aria-label="Navigate to Territories: Locations" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.territories"></a>
         <a href="./pages/merch.html" aria-label="Visit merchandise" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.merch"></a>
-        <a href="./pages/lore.html" aria-label="Access classified lore archive" class="text-xl text-gold font-serif hover:text-white border border-gold px-6 py-2 uppercase tracking-widest" data-i18n="nav.archives"></a>
-        <a href="./pages/login.html" aria-label="Sign in to your account" class="text-sm text-gray-400 hover:text-white mt-8 font-mono uppercase" data-i18n="auth.login"></a>
+        <a href="/pages/lore.html" aria-label="Access classified lore archive" class="text-xl text-gold font-serif hover:text-white border border-gold px-6 py-2 uppercase tracking-widest" data-i18n="nav.archives"></a>
+        <a href="/pages/login.html" aria-label="Sign in to your account" class="text-sm text-gray-400 hover:text-white mt-8 font-mono uppercase" data-i18n="auth.login"></a>
     </div>
     <section aria-label="Hero introduction" class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
         <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?q=80&w=1920=format&fit=crop')] bg-cover bg-center opacity-20 grayscale"></div>
@@ -110,7 +110,7 @@
             <h1 class="text-5xl md:text-8xl font-serif text-white mb-6 tracking-wide drop-shadow-2xl" data-i18n="home_page.hero.main_title"></h1>
             <p class="text-xl md:text-2xl text-gray-400 font-light mb-12 italic tracking-wide" data-i18n="home_page.hero.subtitle"></p>
             <div class="flex flex-col md:flex-row gap-6 justify-center">
-                <a href="./pages/characters.html" class="group relative px-8 py-4 border border-gold/30 bg-transparent overflow-hidden inline-block">
+                <a href="/pages/characters.html" class="group relative px-8 py-4 border border-gold/30 bg-transparent overflow-hidden inline-block">
                     <span class="absolute inset-0 w-full h-full bg-gold/10 transform -translate-x-full group-hover:translate-x-0 transition-transform duration-500 ease-out"></span>
                     <span class="relative text-gold uppercase tracking-widest font-semibold group-hover:text-white transition-colors" data-i18n="home_page.hero.button_archive"></span>
                 </a>
