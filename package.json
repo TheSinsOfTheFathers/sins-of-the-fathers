@@ -11,7 +11,9 @@
   },
   "dependencies": {
     "@builder.io/partytown": "^0.10.3",
+    "@sanity/client": "^7.14.0",
     "@sanity/color-input": "^4.0.6",
+    "@sanity/image-url": "^2.0.2",
     "@sanity/vision": "^4.16.0",
     "@sentry/browser": "^10.27.0",
     "@studio-freight/lenis": "^1.0.42",
