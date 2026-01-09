@@ -1,5 +1,5 @@
 ---
-import { sanityClient } from "sanity:client";
+import { createClient } from "@sanity/client";
 import { urlFor } from "../lib/urlFor";
 import BaseLayout from "../layouts/BaseLayout.astro";
 
@@ -14,7 +14,14 @@ interface Post {
 
 export const prerender = false;
 
-const posts: Post[] = await sanityClient.fetch(`*[_type == "post"] | order(publishedAt desc) {
+const client = createClient({
+  projectId: "8cfeoaz2", 
+  dataset: "production",         
+  useCdn: true,                  
+  apiVersion: "2023-05-03",      
+});
+
+const posts: Post[] = await client.fetch(`*[_type == "post"] | order(publishedAt desc) {
   title,
   slug,
   publishedAt,
@@ -34,7 +41,6 @@ function formatDate(dateString: string | null) {
 ---
 
 <BaseLayout title="TSOF Blog Archives">
-    
     <div class="mb-12 text-center md:text-left">
       <h1 class="text-4xl md:text-6xl font-serif text-white mb-2 tracking-wide drop-shadow-lg">
         Intelligence <span class="text-[#c5a059] italic">Records</span>

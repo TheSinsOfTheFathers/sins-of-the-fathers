@@ -1,4 +1,4 @@
-import { sanityClient } from "sanity:client"; // 👈 Değişen kısım
+import { sanityClient } from "@sanity/client";
 import imageUrlBuilder from "@sanity/image-url";
 
 export const imageBuilder = imageUrlBuilder(sanityClient);
