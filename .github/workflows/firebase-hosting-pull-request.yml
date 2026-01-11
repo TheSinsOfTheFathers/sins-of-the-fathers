@@ -12,25 +12,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # 1. Node.js Kurulumu (EKLENDİ)
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
 
-      # 2. Bağımlılıkları Yükle (EKLENDİ)
       - name: Install Dependencies
         run: npm ci
 
-      # 3. Projeyi İnşa Et / Build Al (EKLENDİ)
-      # Bu adım 'dist' klasörünü GitHub sunucusunda sıfırdan oluşturur.
       - name: Build Project
         run: npm run build
 
-      # 4. Firebase'e Yükle
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
-          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }} # Secret isminin doğru olduğundan emin ol
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           channelId: live
           projectId: sins-of-the-fathers

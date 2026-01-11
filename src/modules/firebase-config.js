@@ -28,7 +28,6 @@ const firebaseConfig = {
 };
 
 const RECAPTCHA_SITE_KEY = "6LeoRfYrAAAAANpaxG70cHRmK5ciRKf7sVt9Crnz";
-const RECAPTCHA_SITE_KEY = "6LeoRfYrAAAAANpaxG70cHRmK5ciRKf7sVt9Crnz";
 
 /* --------------------------------------------------------------------------
     SYSTEM INITIALIZATION (Only initialize what is needed immediately)
