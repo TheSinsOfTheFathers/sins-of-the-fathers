@@ -63,4 +63,4 @@ jobs:
           # Sondaki virgülü temizleyip testi başlatıyoruz
           lhci autorun --urls ${URL_LIST%,}
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.GITHUB_TOKEN }}
