@@ -6,7 +6,7 @@
   "scripts": {
     "partytown": "partytown copylib public/~partytown",
     "dev": "npm run partytown && vite --port 5173 --strictPort",
-    "build": "npm run partytown && node scripts/generate-sitemap.cjs && vite build && npm --prefix blog run build",
+    "build": "npm run partytown && node scripts/generate-sitemap.cjs && vite build",
     "preview": "vite preview"
   },
   "dependencies": {
