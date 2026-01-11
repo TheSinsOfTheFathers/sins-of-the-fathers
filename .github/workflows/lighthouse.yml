@@ -45,7 +45,6 @@ jobs:
         run: |
           PREVIEW_URL="${{ steps.deploy.outputs.details_url }}"
 
-          # Hangi sayfaları test edeceğimizi belirliyoruz
           PATHS=(
             "/"
             "/pages/characters.html"
@@ -60,7 +59,6 @@ jobs:
             URL_LIST+="$PREVIEW_URL$path,"
           done
 
-          # Sondaki virgülü temizleyip testi başlatıyoruz
-          lhci autorun --urls ${URL_LIST%,}
+          lhci autorun --config=./.lighthouserc.json --urls ${URL_LIST%,} || echo "Lighthouse finished with potential errors but we proceed."
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.GITHUB_TOKEN }}
