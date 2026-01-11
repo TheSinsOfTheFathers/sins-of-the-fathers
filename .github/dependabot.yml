@@ -1,23 +1,22 @@
 version: 2
 updates:
-  # 1. Ana Proje Bağımlılıkları (NPM)
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
       interval: "weekly"
-      # DÜZELTME: time ve timezone artık schedule'ın altında girintili
       time: "06:00"
       timezone: "Europe/Istanbul"
     open-pull-requests-limit: 10
+    target-branch: "dev"
 
-  # 2. GitHub Actions (CI/CD)
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "monthly"
-    
-  # 3. Firebase Functions
+    target-branch: "dev"
+
   - package-ecosystem: "npm"
     directory: "/functions"
     schedule:
       interval: "weekly"
+    target-branch: "dev"
