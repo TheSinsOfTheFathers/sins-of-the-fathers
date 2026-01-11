@@ -25,18 +25,7 @@
     },
     {
       "target": "blog-site",
-      "public": "blog/dist",
-      "headers": [
-        {
-          "source": "**",
-          "headers": [
-            {
-              "key": "Cache-Control",
-              "value": "no-cache, no-store, must-revalidate"
-            }
-          ]
-        }
-      ],
+      "public": "blog/dist/client",
       "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
       "rewrites": [
         {
@@ -44,6 +33,7 @@
           "function": "astroServer"
         }
       ],
+      "predeploy": ["npm --prefix blog ci && npm --prefix blog run build"],
       "cleanUrls": true,
       "trailingSlash": false
     }
