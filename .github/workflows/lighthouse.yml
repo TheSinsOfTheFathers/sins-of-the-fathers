@@ -4,6 +4,11 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
 
+permissions:
+  checks: write
+  contents: read
+  pull-requests: write
+
 jobs:
   build_deploy_and_audit:
     runs-on: ubuntu-latest
@@ -16,8 +21,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
+
       - name: Install Dependencies
         run: npm ci
+
       - name: Build Project
         run: npm run build
 
@@ -38,6 +45,7 @@ jobs:
         run: |
           PREVIEW_URL="${{ steps.deploy.outputs.details_url }}"
 
+          # Hangi sayfaları test edeceğimizi belirliyoruz
           PATHS=(
             "/"
             "/pages/characters.html"
@@ -52,6 +60,7 @@ jobs:
             URL_LIST+="$PREVIEW_URL$path,"
           done
 
+          # Sondaki virgülü temizleyip testi başlatıyoruz
           lhci autorun --urls ${URL_LIST%,}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
