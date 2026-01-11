@@ -237,7 +237,9 @@
     "divider_external": "External Protocol",
     "btn_google_join": "Join via Google",
     "text_already_registered": "Identity confirmed?",
-    "link_login": "Access Terminal"
+    "link_login": "Access Terminal",
+    "dynamic_title_register": "Registration Protocol",
+    "dynamic_title_login": "System Access"
   },
   "lore_detail": {
     "header_reader": "// READER",

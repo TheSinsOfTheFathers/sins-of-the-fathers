@@ -1,11 +1,12 @@
+import DOMPurify from 'dompurify';
+
 import { client } from '../../lib/sanityClient.js';
 import { applyBlurToStaticImage } from '../../lib/imageUtils.js';
 import i18next from '../../lib/i18n.js';
 // 👇 SEO / SCHEMA İMPORTU
 import { injectSchema, generateCharacterSchema } from '../../lib/seo.js';
 
-// 👇 1. GSAP IMPORT
-import gsap from 'gsap';
+
 
 /* --------------------------------------------------------------------------
    HELPER FUNCTIONS (Cognitive Complexity Reduction)
@@ -57,9 +58,9 @@ const updateTextFields = (els, character) => {
     if (els.role) els.role.textContent = character.role || character.title || 'Operative';
 
     if (els.bio) {
-        els.bio.innerHTML = character.description
+        els.bio.innerHTML = DOMPurify.sanitize(character.description
             ? character.description.split('\n').map(p => `<p>${p}</p>`).join('')
-            : `<p class='text-red-500'>${i18next.t('character_detail_page.bio_error')}</p>`;
+            : `<p class='text-red-500'>${i18next.t('character_detail_page.bio_error')}</p>`);
     }
 
     if (els.quote) els.quote.textContent = character.quote ? `"${character.quote}"` : "...";
@@ -87,8 +88,8 @@ const injectCharacterSeo = (character, imgUrl) => {
 /**
  * Renders the family network graph using D3
  */
-const renderFamilyNetworkGraph = async (character) => {
-    const familyContainer = document.getElementById('family-graph');
+const renderFamilyNetworkGraph = async (character, container) => {
+    const familyContainer = container.querySelector('#family-graph');
     if (!familyContainer) return;
 
     const loadingEl = familyContainer.querySelector('.d3-loading');
@@ -192,19 +193,19 @@ const renderFamilyNetworkGraph = async (character) => {
  * KARAKTER DETAYLARINI GÖRSELLEŞTİRİR
  * HTML Sayfasındaki ID'lere Sanity verilerini enjekte eder.
  */
-const renderCharacterDetails = async (character) => {
+const renderCharacterDetails = async (character, container) => {
     const els = {
-        loader: document.getElementById('file-loader'),
-        dossier: document.getElementById('character-dossier'),
-        image: document.getElementById('char-image'),
-        statusBadge: document.getElementById('char-status'),
-        name: document.getElementById('char-name'),
-        alias: document.getElementById('char-alias'),
-        faction: document.getElementById('char-faction'),
-        location: document.getElementById('char-location'),
-        role: document.getElementById('char-role'),
-        bio: document.getElementById('char-bio'),
-        quote: document.getElementById('char-quote'),
+        loader: container.querySelector('#file-loader'),
+        dossier: container.querySelector('#character-dossier'),
+        image: container.querySelector('#char-image'),
+        statusBadge: container.querySelector('#char-status'),
+        name: container.querySelector('#char-name'),
+        alias: container.querySelector('#char-alias'),
+        faction: container.querySelector('#char-faction'),
+        location: container.querySelector('#char-location'),
+        role: container.querySelector('#char-role'),
+        bio: container.querySelector('#char-bio'),
+        quote: container.querySelector('#char-quote'),
         title: document.title
     };
 
@@ -227,13 +228,13 @@ const renderCharacterDetails = async (character) => {
     /* ------------------------------------------------------
        3. NETWORK (AİLE AĞACI) - D3 LOGIC
     ------------------------------------------------------ */
-    await renderFamilyNetworkGraph(character);
+    await renderFamilyNetworkGraph(character, container);
 };
 
 /**
  * SAYFA YÜKLENDİĞİNDE ÇALIŞAN ANA FONKSİYON
  */
-export const loadCharacterDetails = async () => {
+export default async function (container, props) {
     const params = new URLSearchParams(globalThis.location.search);
     const characterSlug = params.get('slug');
 
@@ -276,9 +277,9 @@ export const loadCharacterDetails = async () => {
 
         if (character) {
             console.log("> Access Granted. Rendering file.");
-            await renderCharacterDetails(character);
+            await renderCharacterDetails(character, container);
         } else {
-            document.body.innerHTML = `
+            container.innerHTML = `
                 <div class="flex h-screen items-center justify-center bg-black text-red-600 font-mono">
                    ERROR 404: Subject not found in archives.
                 </div>`;

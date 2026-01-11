@@ -1,5 +1,5 @@
 ---
-import { sanityClient } from "sanity:client";
+import { createClient } from "@sanity/client";
 import { urlFor } from "../../lib/urlFor";
 import { PortableText } from "astro-portabletext";
 import BaseLayout from "../../layouts/BaseLayout.astro";
@@ -7,7 +7,15 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 export const prerender = false; 
 
 const { slug } = Astro.params;
-const post = await sanityClient.fetch(`*[_type == "post" && slug.current == $slug][0]{
+
+const client = createClient({
+  projectId: "8cfeoaz2", 
+  dataset: "production",
+  useCdn: true,
+  apiVersion: "2023-05-03",
+});
+
+const post = await client.fetch(`*[_type == "post" && slug.current == $slug][0]{
   title,
   publishedAt,
   mainImage,
@@ -17,7 +25,8 @@ const post = await sanityClient.fetch(`*[_type == "post" && slug.current == $slu
 
 if (!post) return Astro.redirect("/404");
 
-function formatDate(dateString) {
+// 3. DÜZELTME: TypeScript hatası için ': string' tipini ekledik.
+function formatDate(dateString: string) {
   if (!dateString) return 'Undated Record';
   return new Date(dateString).toLocaleDateString('en-US', { 
     year: "numeric", month: "long", day: "numeric"
@@ -46,7 +55,8 @@ function formatDate(dateString) {
             alt={post.title}
             class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000"
           />
-          <div class="absolute inset-0 shadow-inner bg-gradient-to-t from-[#050505] to-transparent opacity-60"></div>
+          {/* 4. DÜZELTME: bg-gradient-to-t -> bg-linear-to-t */}
+          <div class="absolute inset-0 shadow-inner bg-linear-to-t from-[#050505] to-transparent opacity-60"></div>
         </div>
       )}
 

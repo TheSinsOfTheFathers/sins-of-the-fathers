@@ -3,8 +3,7 @@ import i18next from '../../lib/i18n.js';
 // 👇 SEO İMPORTU
 import { injectSchema } from '../../lib/seo.js';
 
-// 👇 1. GSAP IMPORT
-import gsap from 'gsap';
+
 
 /**
  * Veri Dönüştürücü: Sanity -> TimelineJS Formatı
@@ -137,10 +136,14 @@ const initializeTimeline = (embedId, timelineData, lang, loaderEl) => {
     }
 };
 
-export async function displayTimeline() {
-    const embedId = 'timeline-embed';
-    const embedEl = document.getElementById(embedId);
-    const loaderEl = document.getElementById('timeline-loading');
+export default async function (container, props) {
+    const embedId = container.id || 'timeline-embed';
+    const embedEl = container;
+    // Assuming loader is siblings or global, but let's try to find it in doc if not in container.
+    // However, if the module is the embed element, likely the loader is separate.
+    let loaderEl = document.getElementById('timeline-loading');
+    // If loader is inside container (unlikely for TimelineJS which replaces content), try container.
+    if (!loaderEl) loaderEl = container.querySelector('#timeline-loading');
     const lang = i18next.language.startsWith('tr') ? 'tr' : 'en';
 
     if (!embedEl) return;

@@ -7,43 +7,10 @@ import { injectSchema } from '../../lib/seo.js';
 
 // 👇 1. GSAP IMPORT
 import gsap from 'gsap';
+import { NoirEffects } from '../ui/noir-effects.js';
 
-/* --------------------------------------------------------------------------
-   HELPER: SCRAMBLE TEXT EFFECT (Matrix Tarzı Yazı Efekti)
-   GSAP TextPlugin kullanmadan manuel çözüm.
-   -------------------------------------------------------------------------- */
-const animateScramble = (element, finalText, duration = 1) => {
-    if (!element) return;
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&";
-    const originalText = finalText || element.textContent;
-    const length = originalText.length;
-
-    let obj = { value: 0 };
-
-    gsap.to(obj, {
-        value: 1,
-        duration: duration,
-        ease: "none",
-        onUpdate: () => {
-            const progress = Math.floor(obj.value * length);
-            let result = "";
-            for (let i = 0; i < length; i++) {
-                if (i < progress) {
-                    result += originalText[i];
-                } else {
-                    result += chars[Math.floor(Math.random() * chars.length)];
-                }
-            }
-            element.textContent = result;
-        },
-        onComplete: () => {
-            element.textContent = originalText; // Garantilemek için
-        }
-    });
-};
-
-const updateThreatDisplay = (level = 'neutral') => {
-    const threatEl = document.getElementById('loc-threat');
+const updateThreatDisplay = (level = 'neutral', container) => {
+    const threatEl = container ? container.querySelector('#loc-threat') : document.getElementById('loc-threat');
     if (!threatEl) return;
 
     const normalized = level.toLowerCase();
@@ -71,19 +38,19 @@ const updateThreatDisplay = (level = 'neutral') => {
     }
 };
 
-const renderLocationIntel = (location) => {
+const renderLocationIntel = (location, container) => {
     document.title = `${location.name} // SURVEILLANCE FEED`;
 
     const els = {
-        container: document.getElementById('location-intel'), // Ana kapsayıcı (varsa)
-        image: document.getElementById('loc-image'),
-        title: document.getElementById('loc-title'),
-        faction: document.getElementById('loc-faction'),
-        status: document.getElementById('loc-status'),
-        coords: document.getElementById('loc-coords'),
-        threat: document.getElementById('loc-threat'),
-        desc: document.getElementById('loc-description'),
-        events: document.getElementById('loc-events')
+        container: container.querySelector('#location-intel'), // Ana kapsayıcı (varsa)
+        image: container.querySelector('#loc-image'),
+        title: container.querySelector('#loc-title'),
+        faction: container.querySelector('#loc-faction'),
+        status: container.querySelector('#loc-status'),
+        coords: container.querySelector('#loc-coords'),
+        threat: container.querySelector('#loc-threat'),
+        desc: container.querySelector('#loc-description'),
+        events: container.querySelector('#loc-events')
     };
 
     // SEO SCHEMA
@@ -116,7 +83,7 @@ const renderLocationIntel = (location) => {
     }
 
     const setText = (id, text, fallbackKey) => {
-        const el = document.getElementById(id);
+        const el = container.querySelector('#' + id);
         if (el) el.textContent = text || (fallbackKey ? i18next.t(fallbackKey) : '');
     };
 
@@ -130,7 +97,7 @@ const renderLocationIntel = (location) => {
         setText('loc-coords', '--.--, --.--');
     }
 
-    updateThreatDisplay(location.securityLevel || i18next.t('location_detail_page.tactical_analyzing'));
+    updateThreatDisplay(location.securityLevel || i18next.t('location_detail_page.tactical_analyzing'), container);
 
     if (els.desc) {
         els.desc.innerHTML = location.description
@@ -164,8 +131,8 @@ const renderLocationIntel = (location) => {
     // 👇 2. GSAP TIMELINE (SİNEMATİK AÇILIŞ)
     // --------------------------------------------------------------------
     const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
-    const loader = document.getElementById('feed-loader');
-    const mainContent = document.getElementById('location-content'); // HTML'de ana kapsayıcı ID'si
+    const loader = container.querySelector('#feed-loader');
+    const mainContent = container.querySelector('#location-content'); // HTML'de ana kapsayıcı ID'si
 
     // A. Loader'ı Kapat & İçeriği Aç
     if (loader) tl.to(loader, { autoAlpha: 0, duration: 0.5 });
@@ -173,17 +140,12 @@ const renderLocationIntel = (location) => {
 
     // B. Resmi "Uydu Bağlantısı" gibi getir (Bulanıktan netliğe, scale down)
     if (els.image) {
-        tl.from(els.image, {
-            scale: 1.1,
-            filter: "grayscale(100%) blur(10px)",
-            duration: 1.5,
-            ease: "circ.out"
-        }, "-=0.2");
+        tl.add(NoirEffects.revealImage(els.image), "-=0.2");
     }
 
     // C. Başlığı "Matrix/Decoder" efektiyle yaz
     if (els.title) {
-        tl.add(() => animateScramble(els.title, location.name, 0.8), "-=1.0");
+        tl.add(() => NoirEffects.scrambleText(els.title, location.name, 0.8), "-=1.0");
         tl.from(els.title, { opacity: 0, duration: 0.1 }, "-=0.8"); // Scramble başlarken görünür yap
     }
 
@@ -198,30 +160,20 @@ const renderLocationIntel = (location) => {
 
     // E. Açıklama metni alttan yukarı
     if (els.desc) {
-        tl.from(els.desc, {
-            opacity: 0,
-            y: 20,
-            duration: 0.8
-        }, "-=0.3");
+        tl.add(NoirEffects.revealCard(els.desc), "-=0.3");
     }
 
     // F. Olaylar Listesi (Events) tek tek dökülsün
-    const eventItems = document.querySelectorAll('.gsap-event-item');
+    const eventItems = container.querySelectorAll('.gsap-event-item');
     if (eventItems.length > 0) {
-        tl.to(eventItems, {
-            opacity: 1,
-            x: 0,
-            startAt: { x: -10 },
-            duration: 0.4,
-            stagger: 0.05
-        }, "-=0.5");
+        tl.add(NoirEffects.staggerList(eventItems), "-=0.5");
     }
 };
 
-export async function loadLocationDetails() {
-    const feedLoader = document.getElementById('feed-loader');
-    const mainContent = document.getElementById('location-content');
-    const container = mainContent || document.querySelector('main');
+export default async function (container, props) {
+    const feedLoader = container.querySelector('#feed-loader');
+    const mainContent = container.querySelector('#location-content');
+    // const container = mainContent || document.querySelector('main'); // Already passed as arg
     const params = new URLSearchParams(window.location.search);
     const slug = params.get('slug');
 
@@ -246,7 +198,7 @@ export async function loadLocationDetails() {
         const result = await client.fetch(query, { slug });
 
         if (result) {
-            renderLocationIntel(result);
+            renderLocationIntel(result, container);
         } else {
             if (feedLoader) feedLoader.innerHTML = `<p class="text-red-500 font-mono">${i18next.t('location_detail_loader.error_not_found')}</p>`;
             document.getElementById('loc-title').textContent = "404";

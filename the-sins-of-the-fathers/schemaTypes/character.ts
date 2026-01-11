@@ -1,14 +1,14 @@
-import {defineField, defineType} from 'sanity'
+import { defineField, defineType } from 'sanity'
 
 export default defineType({
   name: 'character',
   title: 'Karakter',
   type: 'document',
   groups: [
-    {name: 'identity', title: 'Identity & Stats'},
-    {name: 'media', title: 'Visuals'},
-    {name: 'biography', title: 'Biography & Lore'},
-    {name: 'network', title: 'Connections (Graph)'},
+    { name: 'identity', title: 'Identity & Stats' },
+    { name: 'media', title: 'Visuals' },
+    { name: 'biography', title: 'Biography & Lore' },
+    { name: 'network', title: 'Connections (Graph)' },
   ],
   fields: [
     defineField({
@@ -47,11 +47,11 @@ export default defineType({
       description: 'Karakterin güncel durumu (Arayüzde renkli rozet olarak görünür).',
       options: {
         list: [
-          {title: 'Active', value: 'Active'},
-          {title: 'Deceased', value: 'Deceased'},
-          {title: 'MIA (Missing)', value: 'MIA'},
-          {title: 'Incarcerated', value: 'Incarcerated'},
-          {title: 'Unknown', value: 'Unknown'},
+          { title: 'Active', value: 'Active' },
+          { title: 'Deceased', value: 'Deceased' },
+          { title: 'MIA (Missing)', value: 'MIA' },
+          { title: 'Incarcerated', value: 'Incarcerated' },
+          { title: 'Unknown', value: 'Unknown' },
         ],
         layout: 'radio'
       },
@@ -62,7 +62,7 @@ export default defineType({
       name: 'faction',
       title: 'Allegiance (Faction)',
       type: 'reference',
-      to: [{type: 'faction'}],
+      to: [{ type: 'faction' }],
       description: 'Karakter hangi hizi/gruba bağlı?',
       group: 'identity',
     }),
@@ -74,12 +74,20 @@ export default defineType({
       group: 'identity',
     }),
     defineField({
-        name: 'is_main',
-        title: 'Main Character?',
-        type: 'boolean',
-        initialValue: false,
-        description: 'İşaretlenirse karakter listesinde "Hero Card" veya "Mugshot" olarak öne çıkar.',
-        group: 'identity',
+      name: 'is_architect',
+      title: 'Is Architect? (Protagonist)',
+      type: 'boolean',
+      initialValue: false,
+      description: 'İşaretlenirse en üstteki "Mimar" galerisinde dev kart olarak görünür (Roland/Havi gibi).',
+      group: 'identity',
+    }),
+    defineField({
+      name: 'is_main',
+      title: 'Key Operative?',
+      type: 'boolean',
+      initialValue: false,
+      description: 'İşaretlenirse "Kilit Ajanlar" listesinde görünür.',
+      group: 'identity',
     }),
 
     defineField({
@@ -107,10 +115,10 @@ export default defineType({
       group: 'biography',
     }),
     defineField({
-      name: 'story', 
+      name: 'story',
       title: 'Full Biography (Portable Text)',
       type: 'array',
-      of: [{type: 'block'}],
+      of: [{ type: 'block' }],
       group: 'biography',
     }),
 
@@ -126,63 +134,63 @@ export default defineType({
           {
             name: 'character',
             type: 'reference',
-            to: [{type: 'character'}]
+            to: [{ type: 'character' }]
           },
           {
-            name: 'status', 
-            title: 'Relation Type', 
+            name: 'status',
+            title: 'Relation Type',
             type: 'string',
-            description: 'Örn: Rival, Ally, Informant' 
+            description: 'Örn: Rival, Ally, Informant'
           }
         ],
         preview: {
-            select: {
-                title: 'character.name',
-                subtitle: 'status',
-                media: 'character.image'
-            }
+          select: {
+            title: 'character.name',
+            subtitle: 'status',
+            media: 'character.image'
+          }
         }
       }]
     }),
     defineField({
-        name: 'family',
-        title: 'Bloodline (Family Tree)',
-        type: 'array',
-        group: 'network',
-        description: 'Kan bağları. D3 Grafiğinde ALTIN çizgi olur.',
-        of: [{
-            type: 'object',
-            fields: [
-                {
-                    name: 'character',
-                    title: 'Relative',
-                    type: 'reference',
-                    to: [{type: 'character'}]
-                },
-                {
-                    name: 'relation',
-                    title: 'Kinship',
-                    type: 'string',
-                    options: {
-                      list: ['Father', 'Mother', 'Son', 'Daughter', 'Brother', 'Sister', 'Uncle', 'Spouse']
-                    }
-                }
-            ],
-            preview: {
-                select: {
-                    title: 'character.name',
-                    subtitle: 'relation',
-                    media: 'character.image'
-                }
+      name: 'family',
+      title: 'Bloodline (Family Tree)',
+      type: 'array',
+      group: 'network',
+      description: 'Kan bağları. D3 Grafiğinde ALTIN çizgi olur.',
+      of: [{
+        type: 'object',
+        fields: [
+          {
+            name: 'character',
+            title: 'Relative',
+            type: 'reference',
+            to: [{ type: 'character' }]
+          },
+          {
+            name: 'relation',
+            title: 'Kinship',
+            type: 'string',
+            options: {
+              list: ['Father', 'Mother', 'Son', 'Daughter', 'Brother', 'Sister', 'Uncle', 'Spouse']
             }
-        }]
+          }
+        ],
+        preview: {
+          select: {
+            title: 'character.name',
+            subtitle: 'relation',
+            media: 'character.image'
+          }
+        }
+      }]
     }),
     defineField({
       name: 'familyTree',
       title: 'Legacy Family Tree Data (Mermaid)',
       type: 'text',
       rows: 5,
-      hidden: true, 
+      hidden: true,
       group: 'network',
     })
   ],

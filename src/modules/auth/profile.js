@@ -1,7 +1,7 @@
 import { auth, db, storage } from '../firebase-config.js';
-import { onAuthStateChanged, updateProfile, deleteUser } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import { doc, getDoc, setDoc, deleteDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-import { ref as storageRef, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js';
+import { onAuthStateChanged, updateProfile, deleteUser } from 'firebase/auth';
+import { doc, getDoc, setDoc, deleteDoc, serverTimestamp } from 'firebase/firestore';
+import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 /* --------------------------------------------------------------------------
    HELPER: Visual Feedback (Noir Style)
@@ -27,41 +27,19 @@ function updateButtonStatus(btn, text, status = 'default') {
     }
 }
 
-/**
- * Populates form fields with user data to reduce cognitive complexity
- */
-function populateFormFields(user, userData, elements) {
-    const { emailInput, nameInput, bioInput, factionInputs, idCardImage } = elements;
 
-    if (emailInput) emailInput.value = user.email;
-    if (nameInput) nameInput.value = user.displayName || userData.displayName || '';
-    if (bioInput && userData.bio) bioInput.value = userData.bio;
 
-    const currentPhoto = user.photoURL || userData.photoURL;
-    if (currentPhoto && idCardImage) {
-        idCardImage.src = currentPhoto;
-    }
-
-    if (userData.faction) {
-        factionInputs.forEach(radio => {
-            if (radio.value === userData.faction) radio.checked = true;
-        });
-    }
-}
-
-export async function loadProfilePage() {
-    const container = document.getElementById('profile-content');
+export default async function (container, props) {
+    // container is passed in.
     const loader = document.getElementById('profile-loader');
 
-    const nameInput = document.getElementById('display-name');
-    const emailInput = document.getElementById('user-email');
-    const bioInput = document.querySelector('textarea');
-    const factionInputs = document.querySelectorAll('input[name="faction"]');
-    const form = document.getElementById('profile-form');
+    const nameInput = container.querySelector('#display-name');
+    const emailInput = container.querySelector('#user-email');
+    const form = container.querySelector('#profile-form');
     const submitBtn = form ? form.querySelector('button[type="submit"]') : null;
 
-    const idCardImage = document.getElementById('profile-image-preview');
-    const fileInput = document.getElementById('profile-photo-input');
+    const idCardImage = container.querySelector('#profile-image-preview');
+    const fileInput = container.querySelector('#profile-photo-input');
 
     if (!container) return;
 
@@ -82,13 +60,24 @@ export async function loadProfilePage() {
             console.error('Failed to decrypt user profile', err);
         }
 
-        populateFormFields(user, userData, { emailInput, nameInput, bioInput, factionInputs, idCardImage });
+        // --- POPULATE FIELDS ---
+        if (emailInput) emailInput.value = user.email;
+        if (nameInput) nameInput.value = user.displayName || userData.displayName || '';
+
+        const currentPhoto = user.photoURL || userData.photoURL;
+        if (currentPhoto && idCardImage) {
+            idCardImage.src = currentPhoto;
+        }
+        // -----------------------
 
         if (loader) {
             setTimeout(() => {
                 loader.classList.add('opacity-0', 'pointer-events-none');
                 container.classList.remove('opacity-0');
             }, 600);
+        } else {
+            // Fallback if loader is missing
+            container.classList.remove('opacity-0');
         }
 
         /* --------------------------------------------------------------------------
@@ -114,10 +103,6 @@ export async function loadProfilePage() {
                 updateButtonStatus(submitBtn, 'ENCRYPTING DATA...', 'loading');
 
                 const newName = nameInput.value.trim();
-                const newBio = bioInput ? bioInput.value.trim() : '';
-                let selectedFaction = null;
-                factionInputs.forEach(r => { if (r.checked) selectedFaction = r.value; });
-
                 const file = fileInput && fileInput.files[0];
 
                 try {
@@ -136,8 +121,6 @@ export async function loadProfilePage() {
                     await setDoc(userDocRef, {
                         displayName: newName,
                         photoURL: photoURL,
-                        bio: newBio,
-                        faction: selectedFaction || 'neutral',
                         updatedAt: serverTimestamp(),
                     }, { merge: true });
 
@@ -153,27 +136,6 @@ export async function loadProfilePage() {
                 }
             });
         }
-
-        const burnBtn = document.querySelector(String.raw`.lg\:col-span-4 button`);
-
-        if (burnBtn && !burnBtn.dataset.listening) {
-            burnBtn.dataset.listening = 'true';
-            burnBtn.addEventListener('click', async () => {
-                if (confirm("WARNING: This action will permanently scrub your identity from the Ravenwood Archives. This cannot be undone. Proceed?")) {
-                    try {
-                        await deleteDoc(userDocRef);
-                        await deleteUser(user);
-                        alert("Identity scorched. Redirecting...");
-                        globalThis.location.href = '/';
-                    } catch (err) {
-                        console.error(err);
-                        alert("Error: Clearance insufficient. Re-login required.");
-                    }
-                }
-            });
-        }
-
     });
 }
 
-export default loadProfilePage;

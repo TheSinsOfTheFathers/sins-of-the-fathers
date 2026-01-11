@@ -1,7 +1,8 @@
 import { client, urlFor } from '../../lib/sanityClient.js';
 import { toHTML } from 'https://esm.sh/@portabletext/to-html@2.0.13';
 import { applyBlurToStaticImage } from '../../lib/imageUtils.js';
-import i18next from '../../lib/i18n.js'; // İMPORT EKLENDİ
+import i18next from '../../lib/i18n.js';
+import { NoirEffects } from '../ui/noir-effects.js';
 
 /* --------------------------------------------------------------------------
    RENDER LOGIC (GÖRÜNTÜLEME MOTORU)
@@ -10,9 +11,9 @@ import i18next from '../../lib/i18n.js'; // İMPORT EKLENDİ
    HELPER FUNCTIONS (Cognitive Complexity Reduction)
    -------------------------------------------------------------------------- */
 
-const updateLoreText = (doc) => {
+const updateLoreText = (doc, container) => {
     const setText = (id, val, fallbackKey) => {
-        const el = document.getElementById(id);
+        const el = container.querySelector('#' + id);
         if (el) el.textContent = val || (fallbackKey ? i18next.t(fallbackKey) : '');
     };
 
@@ -20,18 +21,19 @@ const updateLoreText = (doc) => {
     setText('lore-id', `#${doc._id.slice(-6).toUpperCase()}`);
     setText('lore-source', doc.source, 'lore_detail.unknown_source');
 
-    if (document.getElementById('lore-date')) {
+    const dateEl = container.querySelector('#lore-date');
+    if (dateEl) {
         const dateStr = doc.date
             ? new Date(doc.date).toLocaleDateString(i18next.language, { year: 'numeric', month: 'short', day: 'numeric' })
             : i18next.t('lore_detail.undated');
-        document.getElementById('lore-date').textContent = dateStr;
+        dateEl.textContent = dateStr;
     }
 
     setText('lore-author', doc.author, 'lore_detail.redacted');
 };
 
-const renderLoreTags = (doc) => {
-    const tagsContainer = document.getElementById('lore-tags');
+const renderLoreTags = (doc, container) => {
+    const tagsContainer = container.querySelector('#lore-tags');
     if (tagsContainer && doc.relatedEntities) {
         tagsContainer.innerHTML = doc.relatedEntities.map(ref => {
             const typeSlug = ref._type === 'character' ? 'character-detail' : 'faction-detail';
@@ -46,19 +48,19 @@ const renderLoreTags = (doc) => {
     }
 };
 
-const handleAudioMedia = (doc, wrappers) => {
+const handleAudioMedia = (doc, wrappers, container) => {
     const { mediaContainer, audioWrapper, paperWrapper } = wrappers;
 
     if (mediaContainer) mediaContainer.classList.remove('hidden');
     if (audioWrapper) {
         audioWrapper.classList.remove('hidden');
 
-        const audio = document.getElementById('lore-audio-source');
-        const playBtn = document.getElementById('audio-play-btn');
-        const progressBar = document.getElementById('audio-progress-bar');
-        const timeDisplay = document.getElementById('audio-current-time');
-        const statusText = document.getElementById('audio-status-text');
-        const progressContainer = document.getElementById('audio-progress-container');
+        const audio = container.querySelector('#lore-audio-source');
+        const playBtn = container.querySelector('#audio-play-btn');
+        const progressBar = container.querySelector('#audio-progress-bar');
+        const timeDisplay = container.querySelector('#audio-current-time');
+        const statusText = container.querySelector('#audio-status-text');
+        const progressContainer = container.querySelector('#audio-progress-container');
 
         audio.src = doc.audioURL;
         audio.load();
@@ -114,7 +116,7 @@ const handleAudioMedia = (doc, wrappers) => {
     }
 };
 
-const handleImageAndBody = (doc, wrappers) => {
+const handleImageAndBody = (doc, wrappers, container) => {
     const { mediaContainer, imageWrapper, paperWrapper } = wrappers;
 
     if (doc.mainImage && doc.mainImage.asset) {
@@ -126,7 +128,7 @@ const handleImageAndBody = (doc, wrappers) => {
         applyBlurToStaticImage('lore-image', imageUrl, blurHash);
     }
 
-    const bodyContainer = document.getElementById('lore-body');
+    const bodyContainer = container.querySelector('#lore-body');
     const hasContent = doc.body && doc.body.length > 0;
 
     if (paperWrapper) {
@@ -153,15 +155,15 @@ const handleImageAndBody = (doc, wrappers) => {
     }
 };
 
-const renderLoreIntel = (doc) => {
-    updateLoreText(doc);
-    renderLoreTags(doc);
+const renderLoreIntel = (doc, container) => {
+    updateLoreText(doc, container);
+    renderLoreTags(doc, container);
 
     const wrappers = {
-        mediaContainer: document.getElementById('lore-media-container'),
-        imageWrapper: document.getElementById('image-wrapper'),
-        audioWrapper: document.getElementById('audio-player-wrapper'),
-        paperWrapper: document.querySelector('.paper-bg')
+        mediaContainer: container.querySelector('#lore-media-container'),
+        imageWrapper: container.querySelector('#image-wrapper'),
+        audioWrapper: container.querySelector('#audio-player-wrapper'),
+        paperWrapper: container.querySelector('.paper-bg')
     };
 
     // Reset
@@ -171,23 +173,26 @@ const renderLoreIntel = (doc) => {
     if (wrappers.paperWrapper) wrappers.paperWrapper.style.display = 'block';
 
     if (doc.audioURL) {
-        handleAudioMedia(doc, wrappers);
+        handleAudioMedia(doc, wrappers, container);
     } else {
-        handleImageAndBody(doc, wrappers);
+        handleImageAndBody(doc, wrappers, container);
     }
 
-    // Loader Kapat
+    // Loader Kapat & Tags Animasyonu
     setTimeout(() => {
-        const loader = document.getElementById('doc-loader');
-        const content = document.getElementById('doc-content');
+        const loader = container.querySelector('#doc-loader');
+        const content = container.querySelector('#doc-content');
         if (loader) loader.classList.add('hidden');
         if (content) content.classList.remove('opacity-0');
+
+        // Noir Motion: Tags
+        const tags = container.querySelectorAll('.gsap-tag');
+        if (tags.length > 0) NoirEffects.staggerList(tags);
     }, 800);
 };
 
 
-export const loadLoreDetails = async () => {
-    const container = document.getElementById('evidence-container');
+export default async function (container, props) {
     if (!container) return;
 
     const params = new URLSearchParams(globalThis.location.search);
@@ -216,16 +221,16 @@ export const loadLoreDetails = async () => {
         const loreDoc = await client.fetch(query, { slug: loreSlug });
 
         if (loreDoc) {
-            renderLoreIntel(loreDoc);
+            renderLoreIntel(loreDoc, container);
         } else {
             console.error("Doküman bulunamadı.");
-            const loader = document.getElementById('doc-loader');
+            const loader = container.querySelector('#doc-loader');
             if (loader) loader.innerHTML = `<span class='text-red-500'>${i18next.t('lore_detail.error_not_found')}</span>`;
         }
 
     } catch (error) {
         console.error("Veri çekme hatası:", error);
-        const loader = document.getElementById('doc-loader');
+        const loader = container.querySelector('#doc-loader');
         if (loader) loader.innerHTML = `<span class='text-red-500'>${i18next.t('lore_detail.error_system')}</span>`;
     }
 };

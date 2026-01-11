@@ -1,26 +1,17 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  presets: [
+    require('./tailwind.preset.js')
+  ],
   content: [
     "./index.html",
-    "./pages/**/*.html", // Diğer HTML sayfaların varsa
+    "./pages/**/*.html",
     "./src/**/*.{js,ts,jsx,tsx}",
-    "./assets/js/**/*.js" // main.js ve diğerleri
+    "./assets/js/**/*.js"
   ],
+  // Theme and plugins are now handled by the preset, unless specific overrides are needed here.
   theme: {
-    extend: {
-      colors: {
-        'blood': '#4a0404',
-        'gold': '#c5a059',
-        'gold-dim': '#8a6e3e',
-        'obsidian': '#050505',
-        'charcoal': '#121212'
-      },
-      fontFamily: {
-        serif: ['Cinzel', 'serif'],
-        sans: ['Lato', 'sans-serif'],
-        mono: ['Courier Prime', 'monospace']
-      }
-    },
+    extend: {},
   },
   plugins: [],
 }

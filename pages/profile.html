@@ -76,7 +76,7 @@
         <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
             
             <!-- Brand -->
-            <a href="./" aria-label="The Sins of the Fathers - Home" class="text-xl md:text-2xl font-serif text-gold tracking-widest uppercase hover:text-white transition-colors">
+            <a href="/" aria-label="The Sins of the Fathers - Home" class="text-xl md:text-2xl font-serif text-gold tracking-widest uppercase hover:text-white transition-colors">
                 TSOF <span class="hidden md:inline text-xs text-gray-600 ml-2 font-mono" data-i18n="profile_page.header_subtitle">// PERSONNEL FILE</span>
             </a>
             
@@ -108,12 +108,12 @@
 
     <!-- Mobile Menu Overlay -->
     <div id="mobile-menu" class="hidden fixed inset-0 z-40 bg-black/95 flex-col items-center justify-center space-y-8 transition-opacity duration-300 backdrop-blur-xl">
-        <a href="./characters.html" aria-label="Navigate to The Bloodline: Characters" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.bloodline">The Bloodline</a>
-        <a href="./timeline.html" aria-label="Navigate to History: Timeline" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.history">History</a>
-        <a href="./factions.html" aria-label="Navigate to Power Dynamics: Factions" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.factions">Factions</a>
-        <a href="./locations.html" aria-label="Navigate to Territories: Locations" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.territories">Territories</a>
+        <a href="/pages/characters.html" aria-label="Navigate to The Bloodline: Characters" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.bloodline">The Bloodline</a>
+        <a href="/pages/timeline.html" aria-label="Navigate to History: Timeline" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.history">History</a>
+        <a href="/pages/factions.html" aria-label="Navigate to Power Dynamics: Factions" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.factions">Factions</a>
+        <a href="/pages/locations.html" aria-label="Navigate to Territories: Locations" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.territories">Territories</a>
         <a href="https://shop.thesinsofthefathers.com" aria-label="Visit the merchandise store" class="hover:text-gold transition-colors" target="_blank" data-i18n="nav.merch"></a>
-        <a href="./lore.html" aria-label="Access classified lore archive" class="text-xl text-gold font-serif hover:text-white border border-gold px-6 py-2 uppercase tracking-widest" data-i18n="nav.archives">Archives</a>
+        <a href="/pages/lore.html" aria-label="Access classified lore archive" id="nav-link-classified" class="text-xl text-gold font-serif hover:text-white border border-gold px-6 py-2 uppercase tracking-widest" data-i18n="nav.archives">Archives</a>
         
         <!-- Mobile Language -->
         <div class="flex gap-4 font-mono text-sm mt-4">
@@ -128,7 +128,7 @@
         <div id="profile-container" class="container mx-auto max-w-5xl">
 
             <!-- Profile Content (Initially Hidden for Loading Effect) -->
-            <div id="profile-content" class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start opacity-0 transition-opacity duration-1000">
+            <div id="profile-content" class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start opacity-0 transition-opacity duration-1000" data-module="./modules/auth/profile.js">
 
                 <!-- Sidebar: ID Card -->
                 <div class="lg:col-span-4 lg:sticky lg:top-32">
@@ -162,32 +162,10 @@
                             <div class="absolute -bottom-1 -right-1 w-2 h-2 border-b-2 border-r-2 border-gold opacity-50"></div>
                         </div>
 
-                        <!-- ID Details -->
-                        <div class="space-y-3 font-mono text-xs">
-                             <div class="flex justify-between">
-                                 <span class="text-gray-200" data-i18n="profile_page.label_clearance">CLEARANCE:</span>
-                                 <span class="text-white">LEVEL 1</span>
-                             </div>
-                             <div class="flex justify-between">
-                                 <span class="text-gray-200" data-i18n="profile_page.label_status">STATUS:</span>
-                                 <span class="text-green-500 animate-pulse" data-i18n="profile_page.status_active">ACTIVE</span>
-                             </div>
-                             <div class="flex justify-between">
-                                 <span class="text-gray-200" data-i18n="profile_page.label_id">ID:</span>
-                                 <span class="text-gray-400">#829-XJ-92</span>
-                             </div>
-                        </div>
-                        
                         <!-- Barcode Decorative -->
                         <div class="mt-6 pt-4 border-t border-white/10 text-center">
                              <div class="h-8 bg-[url('https://upload.wikimedia.org/wikipedia/commons/4/4b/Code_39_barcode.svg')] bg-cover bg-center opacity-40"></div>
                         </div>
-                    </div>
-                    
-                    <div class="text-center mt-6">
-                         <button class="text-[10px] text-red-900 hover:text-red-500 uppercase tracking-widest transition-colors" data-i18n="profile_page.btn_delete_account">
-                             > Burn Identity (Delete Account)
-                         </button>
                     </div>
                 </div>
 
@@ -202,7 +180,7 @@
                                 <div class="h-px bg-white/10 grow"></div>
                             </div>
                             
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div class="grid grid-cols-1 gap-8">
                                 <div>
                                     <label for="display-name" class="block text-[10px] text-gray-500 font-mono uppercase mb-2" data-i18n="profile_page.label_codename">Codename / Alias</label>
                                     <input type="text" id="display-name" class="agent-input" placeholder="Unknown Operative" data-i18n="[placeholder]profile_page.placeholder_codename" value="">
@@ -212,43 +190,6 @@
                                     <label for="user-email" class="block text-[10px] text-gray-500 font-mono uppercase mb-2" data-i18n="profile_page.label_email">Encrypted Frequency (Email)</label>
                                     <input type="email" id="user-email" class="agent-input opacity-50 cursor-not-allowed" value="" readonly title="Contact Handler to change email">
                                 </div>
-                                
-                                <div class="md:col-span-2">
-                                     <label for="operative-bio" class="block text-[10px] text-gray-500 font-mono uppercase mb-2" data-i18n="profile_page.label_bio">Short Bio / Notes</label>
-                                     <textarea id="operative-bio" class="agent-input h-24 resize-none" placeholder="Enter service record..." data-i18n="[placeholder]profile_page.placeholder_bio"></textarea>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Section 2: Allegiance -->
-                        <div>
-                            <div class="flex items-center gap-4 mb-6">
-                                <h2 class="text-xl font-serif text-white uppercase tracking-widest" data-i18n="profile_page.section_allegiance">Swear Allegiance</h2>
-                                <div class="h-px bg-white/10 grow"></div>
-                            </div>
-                            
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <label class="cursor-pointer relative group">
-                                    <input type="radio" name="faction" value="macpherson" class="allegiance-radio hidden">
-                                    <div class="border border-white/10 p-4 transition-all duration-300 hover:border-red-900 group-hover:bg-red-900/5">
-                                        <div class="flex items-center justify-between mb-2">
-                                            <span class="font-serif text-white group-hover:text-red-500 transition-colors" data-i18n="profile_page.faction_old_blood">Old Blood</span>
-                                            <i class="fas fa-check text-gold opacity-0 transition-opacity check-icon"></i>
-                                        </div>
-                                        <p class="text-[10px] font-mono text-gray-200" data-i18n="profile_page.desc_old_blood">Loyal to tradition. The Macpherson legacy.</p>
-                                    </div>
-                                </label>
-
-                                <label class="cursor-pointer relative group">
-                                    <input type="radio" name="faction" value="Ravenwood" class="allegiance-radio hidden">
-                                    <div class="border border-white/10 p-4 transition-all duration-300 hover:border-gold group-hover:bg-gold/5">
-                                        <div class="flex items-center justify-between mb-2">
-                                            <span class="font-serif text-white group-hover:text-gold transition-colors" data-i18n="profile_page.faction_new_order">New Order</span>
-                                            <i class="fas fa-check text-gold opacity-0 transition-opacity check-icon"></i>
-                                        </div>
-                                        <p class="text-[10px] font-mono text-gray-200" data-i18n="profile_page.desc_new_order">Loyal to the Architect. The Ravenwood future.</p>
-                                    </div>
-                                </label>
                             </div>
                         </div>
 
@@ -279,7 +220,9 @@
         
         <div class="flex justify-center space-x-6 mb-6">
             <a href="https://x.com/sotfathersbook" target="_blank" rel="noopener noreferrer" class="text-gray-200 hover:text-gold transition-colors"><i class="fab fa-x-twitter fa-lg"></i></a>
+            <a href="https://bsky.app/profile/thesinsofthefathers.com" target="_blank" rel="noopener noreferrer" class="text-gray-200 hover:text-gold transition-colors"><i class="fab fa-bluesky fa-lg"></i></a>
             <a href="https://www.instagram.com/sotfathersbook/" target="_blank" rel="noopener noreferrer" class="text-gray-200 hover:text-gold transition-colors"><i class="fab fa-instagram fa-lg"></i></a>
+            <a href="https://www.reddit.com/r/RavenwoodArchives/" target="_blank" rel="noopener noreferrer" class="text-gray-200 hover:text-gold transition-colors"><i class="fab fa-reddit fa-lg"></i></a>
             <a href="https://discord.gg/aDuzq7jKKn" target="_blank" rel="noopener noreferrer" class="text-gray-200 hover:text-gold transition-colors"><i class="fab fa-discord fa-lg"></i></a>
             <a href="https://www.patreon.com/c/TheSinsoftheFathers" target="_blank" rel="noopener noreferrer" class="text-gray-200 hover:text-gold transition-colors"><i class="fab fa-patreon fa-lg"></i></a>
         </div>

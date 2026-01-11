@@ -4,14 +4,15 @@ import { toHTML } from 'https://esm.sh/@portabletext/to-html@2.0.13';
 import i18next from '../../lib/i18n.js';
 import { injectSchema } from '../../lib/seo.js';
 import gsap from 'gsap';
+import { NoirEffects } from '../ui/noir-effects.js';
 
 /**
  * MINI MAP ENGINE (Canlı Uydu Bağlantısı)
  */
-const initMiniMap = (lat, lng, color, containerId = 'mini-map') => {
-    if (!globalThis.L || !document.getElementById(containerId)) return;
+const initMiniMap = (lat, lng, color, containerId = 'mini-map', context = document) => {
+    const container = typeof containerId === 'string' ? context.querySelector('#' + containerId) : containerId;
 
-    const container = document.getElementById(containerId);
+    if (!globalThis.L || !container) return;
 
     if (container._leaflet_id) {
         const mapInstance = container._leaflet_map;
@@ -22,7 +23,7 @@ const initMiniMap = (lat, lng, color, containerId = 'mini-map') => {
 
     if (container._leaflet_id) return;
 
-    const map = L.map(containerId, {
+    const map = L.map(container, {
         center: [lat, lng],
         zoom: 11,
         zoomControl: false,
@@ -58,17 +59,14 @@ const initMiniMap = (lat, lng, color, containerId = 'mini-map') => {
 /**
  * Tema Rengi Ayarlayıcı
  */
-const applyFactionTheme = (colorHex, bannerUrl) => {
+const applyFactionTheme = (colorHex, bannerUrl, container) => {
     const themeColor = colorHex || '#c5a059';
     document.documentElement.style.setProperty('--theme-color', themeColor);
 
-    const banner = document.getElementById('faction-banner');
+    const banner = container ? container.querySelector('#faction-banner') : document.getElementById('faction-banner');
     if (banner && bannerUrl) {
         banner.style.backgroundImage = `url('${bannerUrl}')`;
-        gsap.fromTo(banner,
-            { opacity: 0, scale: 1.1 },
-            { opacity: 1, scale: 1, duration: 2, ease: "power2.out" }
-        );
+        NoirEffects.revealImage(banner);
     }
     return themeColor;
 };
@@ -114,10 +112,18 @@ const renderFactionHeader = (els, faction, safeTitle) => {
     const icon = type === 'syndicate' ? '<i class="fas fa-skull-crossbones"></i>' : '<i class="fas fa-chess-king"></i>';
     if (els.iconContainer) els.iconContainer.innerHTML = icon;
 
-    const themeColor = applyFactionTheme(faction.color?.hex, faction.image?.asset?.url);
+    const themeColor = applyFactionTheme(faction.color?.hex, faction.image?.asset?.url, els.title?.closest('main'));
 
     if (faction.hqLocation?.lat && faction.hqLocation?.lng) {
-        setTimeout(() => initMiniMap(faction.hqLocation.lat, faction.hqLocation.lng, themeColor), 800);
+        // initMiniMap uses ID, let's keep it as is or if initMiniMap supports element? 
+        // Trying to find the element and pass it. But initMiniMap expects ID in current code. 
+        // I should refactor initMiniMap too.
+        // For now, let's pass the container context if possible, or just rely on ID since it is unique.
+        // The renderFactionHeader receives `els` which are already scoped.
+        // Let's refactor initMiniMap to accept element or ID.
+        // For now, just pass the ID as before but maybe check if it exists in container?
+        // 'mini-map' is the ID.
+        setTimeout(() => initMiniMap(faction.hqLocation.lat, faction.hqLocation.lng, themeColor, 'mini-map', els.title?.closest('main')), 800);
     }
 };
 
@@ -234,17 +240,17 @@ const renderFactionRelations = (els, faction) => {
     }
 };
 
-const renderFactionDetails = (faction) => {
+const renderFactionDetails = (faction, container) => {
     const els = {
-        title: document.getElementById('faction-title'),
-        subtitle: document.getElementById('faction-subtitle'),
-        leader: document.getElementById('faction-leader'),
-        hq: document.getElementById('faction-hq'),
-        description: document.getElementById('faction-description'),
-        iconContainer: document.getElementById('faction-icon-container'),
-        roster: document.getElementById('faction-roster'),
-        threat: document.getElementById('threat-text'),
-        relations: document.getElementById('faction-locations-list')
+        title: container.querySelector('#faction-title'),
+        subtitle: container.querySelector('#faction-subtitle'),
+        leader: container.querySelector('#faction-leader'),
+        hq: container.querySelector('#faction-hq'),
+        description: container.querySelector('#faction-description'),
+        iconContainer: container.querySelector('#faction-icon-container'),
+        roster: container.querySelector('#faction-roster'),
+        threat: container.querySelector('#threat-text'),
+        relations: container.querySelector('#faction-locations-list')
     };
 
     const safeTitle = faction.title || 'Unknown Faction';
@@ -261,9 +267,10 @@ const renderFactionDetails = (faction) => {
     if (grid) grid.classList.remove('opacity-0');
 };
 
-export const loadFactionDetails = async () => {
-    const loader = document.getElementById('factions-loader');
-    const mainContainer = document.querySelector('main');
+export default async function (container, props) {
+    const loader = container.querySelector('#factions-loader');
+    // Using container as mainContainer since the script is likely run on <main>
+    const mainContainer = container;
     const params = new URLSearchParams(globalThis.location.search);
     const factionSlug = params.get('slug');
 
@@ -298,7 +305,7 @@ export const loadFactionDetails = async () => {
 
         if (faction) {
             gsap.to(mainContainer, { opacity: 1, duration: 0.5 });
-            renderFactionDetails(faction);
+            renderFactionDetails(faction, container);
         } else if (mainContainer) {
             mainContainer.innerHTML = `<div class="h-[50vh] flex flex-col items-center justify-center text-red-800 font-mono"><span>${i18next.t('faction_detail_loader.error_file_corrupted')}</span></div>`;
         }

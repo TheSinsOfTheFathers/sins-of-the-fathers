@@ -1,12 +1,17 @@
 import { auth, googleProvider, RECAPTCHA_SITE_KEY, functions, db } from '../firebase-config.js';
 import { httpsCallable } from 'firebase/functions';
+import { httpsCallable } from 'firebase/functions';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  signInWithRedirect,
   signInWithPopup,
+  getRedirectResult,
   signOut,
-  onAuthStateChanged
-} from 'firebase/auth';
+  onAuthStateChanged,
+  setPersistence,
+  browserLocalPersistence
+} from 'firebase/auth'; // Updated imports
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import i18next from '../../lib/i18n.js';
 
@@ -132,17 +137,71 @@ export function initAuth() {
   const switchLogin = document.getElementById('switch-to-login');
   const switchRegister = document.getElementById('switch-to-register');
 
+  // --- NEW: Enforce Local Storage Persistence ---
+  setPersistence(auth, browserLocalPersistence)
+    .then(() => {
+      console.log(" > Auth: Persistence set to LOCAL (localStorage).");
+    })
+    .catch((error) => {
+      console.error(" ! Auth: Failed to set persistence:", error);
+    });
+
+  // --- NEW: Handle Redirect Result (Only checks on Production or if forced) ---
+  const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  if (!isLocal) {
+    console.log(" > Auth: Checking for redirect result (Prod)...");
+    getRedirectResult(auth)
+      .then(async (result) => {
+        console.log(" > Auth: Redirect Result Payload:", result);
+        if (result) {
+          // User returned from Google
+          showMessage(authMessage, 'Biometrics confirmed. Processing...', 'info');
+          const u = result.user;
+
+          try {
+            await setDoc(doc(db, 'users', u.uid), {
+              email: u.email,
+              displayName: u.displayName || null,
+              photoURL: u.photoURL || null,
+              provider: 'google',
+              lastLogin: serverTimestamp(),
+            }, { merge: true });
+
+            showMessage(authMessage, 'Access Granted.', 'success');
+            setTimeout(() => globalThis.location.href = '/', 800);
+          } catch (err) {
+
+            showPopup('error', firebaseErrorToMessage(err));
+            showMessage(authMessage, 'Database Sync Failed.', 'error');
+          }
+        }
+      })
+      .catch((error) => {
+        // Handle Errors here.
+        console.error(" > Auth: Redirect Error Details:", error);
+        showPopup('error', firebaseErrorToMessage(error));
+        showMessage(authMessage, 'Authentication Interrupted.', 'error');
+      });
+  }
+
   if (loginForm && registerForm && switchLogin && switchRegister) {
+    // ... (Existing switch logic) ...
     const switchTo = (isRegister) => {
       const title = document.querySelector('h1') || document.getElementById('form-title');
       if (isRegister) {
         loginForm.classList.add('hidden');
         registerForm.classList.remove('hidden');
-        if (title) title.innerHTML = i18next.t('login_page.dynamic_title_register');
+        if (title) {
+          title.innerHTML = i18next.t('login_page.dynamic_title_register');
+          title.setAttribute('data-i18n', 'login_page.dynamic_title_register');
+        }
       } else {
         registerForm.classList.add('hidden');
         loginForm.classList.remove('hidden');
-        if (title) title.innerHTML = i18next.t('login_page.dynamic_title_login');
+        if (title) {
+          title.innerHTML = i18next.t('login_page.dynamic_title_login');
+          title.setAttribute('data-i18n', 'login_page.dynamic_title_login');
+        }
       }
     };
 
@@ -152,6 +211,7 @@ export function initAuth() {
 
   /* --- EMAIL / PASSWORD REGISTER --- */
   if (registerForm) {
+    // ... (Existing register logic) ...
     registerForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = registerForm.querySelector('input[name="email"]').value.trim();
@@ -160,9 +220,14 @@ export function initAuth() {
       showMessage(authMessage, 'Initiating vetting protocol...', 'info');
 
       try {
-        const signupToken = await getRecaptchaToken('signup');
-        const verifyRecaptchaToken = httpsCallable(functions, 'verifyRecaptchaToken');
-        await verifyRecaptchaToken({ token: signupToken, action: 'signup' });
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+          console.warn('Localhost detected: Bypassing ReCAPTCHA.');
+          showMessage(authMessage, 'Localhost: Bypassing Security...', 'info');
+        } else {
+          const signupToken = await getRecaptchaToken('signup');
+          const verifyRecaptchaToken = httpsCallable(functions, 'verifyRecaptchaToken');
+          await verifyRecaptchaToken({ token: signupToken, action: 'signup' });
+        }
 
         showMessage(authMessage, 'Creating dossier...', 'info');
         const userCred = await createUserWithEmailAndPassword(auth, email, password);
@@ -176,8 +241,6 @@ export function initAuth() {
         }, { merge: true });
 
         showMessage(authMessage, 'Identity Verified. Redirecting...', 'success');
-
-        // Düzeltildi: /pages/profile.html (Mutlak yol)
         setTimeout(() => globalThis.location.href = '/pages/profile.html', 1000);
       } catch (err) {
         showPopup('error', firebaseErrorToMessage(err));
@@ -188,6 +251,7 @@ export function initAuth() {
 
   /* --- EMAIL / PASSWORD LOGIN --- */
   if (loginForm) {
+    // ... (Existing login logic) ...
     loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = loginForm.querySelector('input[name="email"]').value.trim();
@@ -196,14 +260,17 @@ export function initAuth() {
       showMessage(authMessage, 'Decrypting credentials...', 'info');
 
       try {
-        const loginToken = await getRecaptchaToken('login');
-        const verifyRecaptchaToken = httpsCallable(functions, 'verifyRecaptchaToken');
-        await verifyRecaptchaToken({ token: loginToken, action: 'login' });
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+          console.warn('Localhost detected: Bypassing ReCAPTCHA.');
+          showMessage(authMessage, 'Localhost: Bypassing Security...', 'info');
+        } else {
+          const loginToken = await getRecaptchaToken('login');
+          const verifyRecaptchaToken = httpsCallable(functions, 'verifyRecaptchaToken');
+          await verifyRecaptchaToken({ token: loginToken, action: 'login' });
+        }
 
         showMessage(authMessage, 'Access Granted.', 'success');
         await signInWithEmailAndPassword(auth, email, password);
-
-        // Düzeltildi:/ (Mutlak yol)
         setTimeout(() => globalThis.location.href = '/', 800);
       } catch (err) {
         showPopup('error', firebaseErrorToMessage(err));
@@ -212,34 +279,47 @@ export function initAuth() {
     });
   }
 
-  /* --- GOOGLE LOGIN --- */
+  /* --- GOOGLE LOGIN (HYBRID: POPUP for Localhost / REDIRECT for Prod) --- */
   const handleGoogleSignIn = async (e) => {
     e.preventDefault();
-    showMessage(authMessage, 'Contacting Google satellites...', 'info');
+    showMessage(authMessage, 'Initiating secure channel...', 'info');
+
+    const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
 
     try {
-      const googleToken = await getRecaptchaToken('google_signin');
-      const verifyRecaptchaToken = httpsCallable(functions, 'verifyRecaptchaToken');
-      await verifyRecaptchaToken({ token: googleToken, action: 'google_signin' });
+      if (isLocal) {
+        console.warn("Localhost: Using Popup Flow to avoid Redirect storage issues.");
+        // POPUP FLOW (Localhost)
+        const result = await signInWithPopup(auth, googleProvider);
 
-      const result = await signInWithPopup(auth, googleProvider);
-      const u = result.user;
+        if (result) {
+          showMessage(authMessage, 'Biometrics confirmed. Processing...', 'info');
+          const u = result.user;
+          await setDoc(doc(db, 'users', u.uid), {
+            email: u.email,
+            displayName: u.displayName || null,
+            photoURL: u.photoURL || null,
+            provider: 'google',
+            lastLogin: serverTimestamp(),
+          }, { merge: true });
 
-      await setDoc(doc(db, 'users', u.uid), {
-        email: u.email,
-        displayName: u.displayName || null,
-        photoURL: u.photoURL || null,
-        provider: 'google',
-        lastLogin: serverTimestamp(),
-      }, { merge: true });
+          showMessage(authMessage, 'Access Granted.', 'success');
+          setTimeout(() => globalThis.location.href = '/', 800);
+        }
+      } else {
+        // REDIRECT FLOW (Production - Better for Mobile)
+        const googleToken = await getRecaptchaToken('google_signin');
+        const verifyRecaptchaToken = httpsCallable(functions, 'verifyRecaptchaToken');
+        await verifyRecaptchaToken({ token: googleToken, action: 'google_signin' });
 
-      showMessage(authMessage, 'Biometrics confirmed.', 'success');
+        showMessage(authMessage, 'Redirecting to secure channel...', 'info');
+        await signInWithRedirect(auth, googleProvider);
+      }
 
-      // Düzeltildi:/ (Mutlak yol)
-      setTimeout(() => globalThis.location.href = '/', 800);
     } catch (err) {
+      console.error(err);
       showPopup('error', firebaseErrorToMessage(err));
-      showMessage(authMessage, 'Signal Lost.', 'error');
+      showMessage(authMessage, 'Connection Refused.', 'error');
     }
   };
 
@@ -247,16 +327,40 @@ export function initAuth() {
   if (googleBtnRegister) googleBtnRegister.addEventListener('click', handleGoogleSignIn);
 
 
+
   /* --------------------------------------------------------------------------
      HEADER MENU & AUTH STATE
      -------------------------------------------------------------------------- */
   onAuthStateChanged(auth, (user) => {
-    const signinLink = document.getElementById('auth-signin-link');
+    console.log(" > Auth State Changed:", user ? user.email : "Logged Out"); // DEBUG
 
+    const signinLink = document.getElementById('auth-signin-link');
     const guestLocks = document.querySelectorAll('.guest-only, .guest-lock');
+
+    // Target the Lore/Classified link
+    // We try multiple selectors to be robust
+    const loreLinkFn = () => {
+      const link = document.getElementById('nav-link-classified') || document.querySelector('a[href="./pages/lore.html"]');
+      if (!link) {
+        console.warn(" ! UI Warning: 'nav-link-classified' not found.");
+        return;
+      }
+      const span = link.querySelector('span');
+      if (!span) return;
+
+      if (user) {
+        span.textContent = "LORE";
+        span.removeAttribute('data-i18n'); // Detach from translation system to force override
+      } else {
+        span.textContent = "CLASSIFIED";
+        span.setAttribute('data-i18n', 'nav.classified');
+      }
+    };
+    loreLinkFn();
 
     if (user) {
       if (signinLink) signinLink.style.display = 'none';
+      else console.warn(" ! UI Warning: 'auth-signin-link' not found in DOM.");
 
       guestLocks.forEach(el => el.style.display = 'none');
 
@@ -279,9 +383,18 @@ export function initAuth() {
   });
 
   function ensureUserMenu(user) {
+    console.log(" > Building User Menu for:", user.email); // DEBUG
     const controls = document.getElementById('auth-controls');
-    if (!controls) return;
-    if (document.getElementById('user-menu')) return;
+
+    if (!controls) {
+      console.error(" ! Critical: 'auth-controls' container not found. Cannot build menu.");
+      return;
+    }
+
+    if (document.getElementById('user-menu')) {
+      console.log(" > User Menu already exists.");
+      return;
+    }
 
     const menu = document.createElement('div');
     menu.id = 'user-menu';
@@ -334,6 +447,9 @@ export function initAuth() {
     });
 
     signoutBtn.addEventListener('click', async () => {
+      try {
+        await signOut(auth);
+        globalThis.location.href = '/';
       try {
         await signOut(auth);
         globalThis.location.href = '/';
