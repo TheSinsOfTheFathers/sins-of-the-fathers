@@ -13,7 +13,7 @@
     "@builder.io/partytown": "^0.10.3",
     "@sanity/block-content-to-markdown": "^1.0.1",
     "@sanity/color-input": "^4.0.6",
-    "@sanity/vision": "^4.16.0",
+    "@sanity/vision": "^5.2.0",
     "@sentry/browser": "^10.27.0",
     "@studio-freight/lenis": "^1.0.42",
     "cytoscape": "^3.33.1",
