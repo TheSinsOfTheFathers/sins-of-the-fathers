@@ -1,5 +1,6 @@
 import { auth, googleProvider, RECAPTCHA_SITE_KEY, functions, db } from '../firebase-config.js';
 import { httpsCallable } from 'firebase/functions';
+import { httpsCallable } from 'firebase/functions';
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -446,6 +447,9 @@ export function initAuth() {
     });
 
     signoutBtn.addEventListener('click', async () => {
+      try {
+        await signOut(auth);
+        globalThis.location.href = '/';
       try {
         await signOut(auth);
         globalThis.location.href = '/';

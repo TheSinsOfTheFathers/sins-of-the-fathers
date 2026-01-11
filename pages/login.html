@@ -24,13 +24,13 @@
     <title>System Access // TSOF</title>
 
     <!-- Manifest -->
-    <link rel="manifest" href="../manifest.json">
+    <link rel="manifest" href="/manifest.json">
 
     <!-- Favicons -->
-    <link rel="icon" type="image/x-icon" href="../assets/images/logo/favicon.ico">
-    <link rel="icon" type="image/svg+xml" href="../assets/images/logo/favicon.svg">
-    <link rel="icon" type="image/png" sizes="96x96" href="../assets/images/logo/favicon-96x96.png">
-    <link rel="shortcut icon" href="../assets/images/logo/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="/assets/images/logo/favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="/assets/images/logo/favicon.svg">
+    <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/logo/favicon-96x96.png">
+    <link rel="shortcut icon" href="/assets/images/logo/favicon.ico">
 
     <!-- Preconnects for Performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
@@ -42,10 +42,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
     
     <!-- Internal Styles -->
-    <link href="../src/style.css" rel="stylesheet">
+    <link href="/src/style.css" rel="stylesheet">
 
     <!-- Internal Scripts -->
-    <script src="../src/main.js" type="module" defer></script>
+    <script src="/src/main.js" type="module" defer></script>
 
     <!-- External Scripts -->
     <!-- Howler.js for Audio Management -->
@@ -63,9 +63,9 @@
     </script>
     
     <!-- Partytown Script -->
-    <script type="module" src="../src/modules/loaders/partytown-loader.js"></script>
+    <script type="module" src="/src/modules/loaders/partytown-loader.js"></script>
 </head>
-<body class="flex flex-col min-h-screen selection:bg-gold selection:text-black overflow-hidden relative">
+<body class="flex flex-col min-h-screen selection:bg-gold selection:text-black relative">
     <!-- Google Tag Manager (noscript) -->
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PVH59MXZ"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -76,7 +76,7 @@
 
     <!-- Background Seal Animation -->
     <div class="absolute inset-0 flex items-center justify-center z-0 pointer-events-none overflow-hidden">
-        <img src="../assets/images/logo/logo.svg" class="relative bottom-16 w-[80vh] h-[80vh] opacity-[0.03] animate-spin-slow invert filter sepia" alt="Background Seal">
+        <img src="/assets/images/logo/logo.svg" class="relative bottom-16 w-[80vh] h-[80vh] opacity-[0.03] animate-spin-slow invert filter sepia" alt="Background Seal">
     </div>
 
     <!-- Header & Navigation -->
@@ -130,7 +130,7 @@
     </div>
 
     <!-- Main Content Area -->
-    <main aria-label="Login form" class="w-full max-w-md mx-auto grow flex flex-col justify-center items-center relative z-10 px-6 pt-16 pb-48">
+    <main aria-label="Login form" class="w-full max-w-md mx-auto grow flex flex-col justify-center items-center relative z-10 px-6 pt-16 pb-16">
         
         <div class="bottom-3 w-full backdrop-blur-sm rounded-sm border-t border-b border-white/5">
             
@@ -217,7 +217,7 @@
     </main>
 
     <!-- Footer -->
-    <footer aria-label="Site footer" class="py-8 bg-obsidian border-t border-white/5 text-center fixed bottom-0 w-full z-10">
+    <footer aria-label="Site footer" class="py-8 bg-obsidian border-t border-white/5 text-center w-full z-10">
         <p class="font-serif text-gold text-2xl mb-4">TSOF</p>
         
         <div class="flex justify-center space-x-6 mb-6">
@@ -230,9 +230,9 @@
         </div>
 
         <div class="flex justify-center space-x-6 mb-6 text-[10px] font-mono uppercase text-gray-200">
-            <a href="./privacy.html" class="hover:text-gold transition-colors" data-i18n="footer.privacy">Privacy Protocol</a>
+            <a href="/pages/privacy.html" class="hover:text-gold transition-colors" data-i18n="footer.privacy">Privacy Protocol</a>
             <span>|</span>
-            <a href="./terms.html" class="hover:text-gold transition-colors" data-i18n="footer.terms">Terms of Operation</a>
+            <a href="/pages/terms.html" class="hover:text-gold transition-colors" data-i18n="footer.terms">Terms of Operation</a>
         </div>
 
         <p class="text-gray-600 text-xs uppercase tracking-widest">
@@ -242,7 +242,7 @@
 
     <!-- Page Specific Script (i18n Title Update) -->
     <script type="module">
-        import i18next from '../src/lib/i18n.js';
+        import i18next from '/src/lib/i18n.js';
         
         const updateTitle = () => {
             if(i18next.isInitialized) {

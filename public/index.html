@@ -1,56 +1,79 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    Date.now(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l=='dataLayer'?'':'&l='+l;j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(globalThis,document,'script','dataLayer','GTM-PVH59MXZ');</script>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Explore the intricate world of 'Sins of the Fathers'.">
+  <head>
+    <script>
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ "gtm.start": Date.now(), event: "gtm.js" });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l == "dataLayer" ? "" : "&l=" + l;
+        j.async = true;
+        j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(globalThis, document, "script", "dataLayer", "GTM-PVH59MXZ");
+    </script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Explore the intricate world of 'Sins of the Fathers'."
+    />
     <title>The Sins of the Fathers - Access Terminal</title>
-    
+
     <!-- LCP Optimizasyonu: Preload (İsteğe bağlı, tarayıcı zaten picture tag'i hızlı çözer) -->
     <!-- <link rel="preload" ... bu kısmı picture etiketi kullandığımız için kaldırabiliriz veya sadece desktop için bırakabiliriz -->
 
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-    tailwind.config = {
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
         theme: {
-            extend: {
-                colors: {
-                    'blood': '#4a0404',
-                    'gold': '#c5a059',
-                    'obsidian': '#050505',
-                    'charcoal': '#121212'
-                },
-                fontFamily: {
-                    serif: ['Cinzel', 'serif'],
-                    sans: ['Lato', 'sans-serif'],
-                    mono: ['Courier Prime', 'monospace']
-                }
-            }
-        }
-    }
-</script>
+          extend: {
+            colors: {
+              blood: "#4a0404",
+              gold: "#c5a059",
+              obsidian: "#050505",
+              charcoal: "#121212",
+            },
+            fontFamily: {
+              serif: ["Cinzel", "serif"],
+              sans: ["Lato", "sans-serif"],
+              mono: ["Courier Prime", "monospace"],
+            },
+          },
+        },
+      };
+    </script>
 
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Courier+Prime&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-<link rel="icon" href="./assets/images/logo/favicon.ico" type="image/x-icon">    
-<style>
-    :root { --color-primary: #c5a059; --color-secondary: #8a6e3e; }
-    
-    body {
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Courier+Prime&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+    />
+    <link
+      rel="icon"
+      href="./assets/images/logo/favicon.ico"
+      type="image/x-icon"
+    />
+    <style>
+      :root {
+        --color-primary: #c5a059;
+        --color-secondary: #8a6e3e;
+      }
+
+      body {
         background-color: #050505;
         color: #d1d5db;
-        font-family: 'Lato', sans-serif;
+        font-family: "Lato", sans-serif;
         overflow-x: hidden;
         font-display: swap;
-    }
+      }
 
-    /* Arkaplan Stilleri */
-    #bg-image {
+      /* Arkaplan Stilleri */
+      #bg-image {
         position: fixed;
         top: 0;
         left: 0;
@@ -58,73 +81,167 @@
         height: 100%;
         object-fit: cover; /* Resmi ekrana yayar */
         z-index: -1;
-        filter: brightness(0.4); 
+        filter: brightness(0.4);
         animation: slowZoom 40s infinite alternate ease-in-out;
         will-change: transform;
-    }
+      }
 
-    @keyframes slowZoom { 
-        from { transform: scale(1); } 
-        to { transform: scale(1.1); } 
-    }
+      @keyframes slowZoom {
+        from {
+          transform: scale(1);
+        }
+        to {
+          transform: scale(1.1);
+        }
+      }
 
-    #particles-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
-    main { position: relative; z-index: 2; }
-    .title-glow {
-        text-shadow: 0 0 5px var(--color-primary), 0 0 10px var(--color-primary), 0 0 20px var(--color-secondary);
+      #particles-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        pointer-events: none;
+      }
+      main {
+        position: relative;
+        z-index: 2;
+      }
+      .title-glow {
+        text-shadow:
+          0 0 5px var(--color-primary),
+          0 0 10px var(--color-primary),
+          0 0 20px var(--color-secondary);
         animation: glow 3s infinite alternate ease-in-out;
-    }
-    @keyframes glow {
-        from { text-shadow: 0 0 5px var(--color-primary); }
-        to { text-shadow: 0 0 10px var(--color-primary), 0 0 25px var(--color-secondary); }
-    }
-    #subscribe-message.success { color: #10b981; }
-    #subscribe-message.error { color: #f87171; }
-</style>
-</head>
-<body class="antialiased flex flex-col min-h-screen">
-<noscript><iframe title="GTM" src="https://www.googletagmanager.com/ns.html?id=GTM-PVH59MXZ" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+      }
+      @keyframes glow {
+        from {
+          text-shadow: 0 0 5px var(--color-primary);
+        }
+        to {
+          text-shadow:
+            0 0 10px var(--color-primary),
+            0 0 25px var(--color-secondary);
+        }
+      }
+      #subscribe-message.success {
+        color: #10b981;
+      }
+      #subscribe-message.error {
+        color: #f87171;
+      }
+    </style>
+  </head>
+  <body class="antialiased flex flex-col min-h-screen">
+    <noscript
+      ><iframe
+        title="GTM"
+        src="https://www.googletagmanager.com/ns.html?id=GTM-PVH59MXZ"
+        height="0"
+        width="0"
+        style="display: none; visibility: hidden"
+      ></iframe
+    ></noscript>
 
-<picture>
-    <source media="(max-width: 768px)" srcset="./assets/images/bg/raven-bg-mobile.webp">
-    
-    <img 
-        id="bg-image" 
-        src="./assets/images/bg/raven-bg-min.webp" 
+    <picture>
+      <source
+        media="(max-width: 768px)"
+        srcset="./assets/images/bg/raven-bg-mobile.webp"
+      />
+
+      <img
+        id="bg-image"
+        src="./assets/images/bg/raven-bg-min.webp"
         alt="Dark Raven Background"
-    >
-</picture>
+      />
+    </picture>
 
-<div id="particles-container"></div>
+    <div id="particles-container"></div>
 
-<main class="grow flex items-center justify-center p-6">
-    <div class="text-center max-w-3xl">
-        <h1 class="text-5xl md:text-7xl font-serif mb-4 title-glow text-gold">The Sins of the Fathers</h1>
-        <p class="text-lg md:text-xl text-neutral-400 italic mb-8">"Every Dynasty is a Debt."</p>
+    <main class="grow flex items-center justify-center p-6">
+      <div class="text-center max-w-3xl">
+        <h1 class="text-5xl md:text-7xl font-serif mb-4 title-glow text-gold">
+          The Sins of the Fathers
+        </h1>
+        <p class="text-lg md:text-xl text-neutral-400 italic mb-8">
+          "Every Dynasty is a Debt."
+        </p>
 
         <div id="countdown" class="flex justify-center gap-4 md:gap-8 my-8">
-            <div class="countdown-item bg-black/40 p-3 md:p-4 border border-gold/30 rounded-md"> <span id="days" class="text-3xl md:text-4xl text-white font-mono">00</span> <p class="text-[10px] md:text-xs">Days</p> </div>
-            <div class="countdown-item bg-black/40 p-3 md:p-4 border border-gold/30 rounded-md"> <span id="hours" class="text-3xl md:text-4xl text-white font-mono">00</span> <p class="text-[10px] md:text-xs">Hours</p> </div>
-            <div class="countdown-item bg-black/40 p-3 md:p-4 border border-gold/30 rounded-md"> <span id="minutes" class="text-3xl md:text-4xl text-white font-mono">00</span> <p class="text-[10px] md:text-xs">Minutes</p> </div>
-            <div class="countdown-item bg-black/40 p-3 md:p-4 border border-gold/30 rounded-md"> <span id="seconds" class="text-3xl md:text-4xl text-white font-mono">00</span> <p class="text-[10px] md:text-xs">Seconds</p> </div>
+          <div
+            class="countdown-item bg-black/40 p-3 md:p-4 border border-gold/30 rounded-md"
+          >
+            <span id="days" class="text-3xl md:text-4xl text-white font-mono"
+              >00</span
+            >
+            <p class="text-[10px] md:text-xs">Days</p>
+          </div>
+          <div
+            class="countdown-item bg-black/40 p-3 md:p-4 border border-gold/30 rounded-md"
+          >
+            <span id="hours" class="text-3xl md:text-4xl text-white font-mono"
+              >00</span
+            >
+            <p class="text-[10px] md:text-xs">Hours</p>
+          </div>
+          <div
+            class="countdown-item bg-black/40 p-3 md:p-4 border border-gold/30 rounded-md"
+          >
+            <span id="minutes" class="text-3xl md:text-4xl text-white font-mono"
+              >00</span
+            >
+            <p class="text-[10px] md:text-xs">Minutes</p>
+          </div>
+          <div
+            class="countdown-item bg-black/40 p-3 md:p-4 border border-gold/30 rounded-md"
+          >
+            <span id="seconds" class="text-3xl md:text-4xl text-white font-mono"
+              >00</span
+            >
+            <p class="text-[10px] md:text-xs">Seconds</p>
+          </div>
         </div>
 
-        <div id="subscription-form-container" class="mt-12 max-w-lg mx-auto p-4 border border-gold/20 bg-black/40 backdrop-blur-sm">
-            <p class="text-neutral-300 mb-4 font-serif italic">Initiate surveillance. Join the watch list.</p>
-            <form id="subscribe-form" class="flex flex-col sm:flex-row gap-3">
-                <input type="email" id="email-input" placeholder="Operative Email..." required class="grow px-4 py-3 rounded-md bg-obsidian/60 border border-gold/30 text-white placeholder-neutral-500 focus:outline-none focus:ring-1 focus:ring-gold transition duration-300 font-mono text-sm">
-                <button type="submit" class="px-6 py-3 bg-gold hover:bg-white text-black font-bold uppercase tracking-wider rounded-md transition-colors duration-300 text-sm">Confirm Access</button>
-            </form>
-            <p id="subscribe-message" class="mt-3 text-sm h-4 text-neutral-400 font-mono"></p>
+        <div
+          id="subscription-form-container"
+          class="mt-12 max-w-lg mx-auto p-4 border border-gold/20 bg-black/40 backdrop-blur-sm"
+        >
+          <p class="text-neutral-300 mb-4 font-serif italic">
+            Initiate surveillance. Join the watch list.
+          </p>
+          <form id="subscribe-form" class="flex flex-col sm:flex-row gap-3">
+            <input
+              type="email"
+              id="email-input"
+              placeholder="Operative Email..."
+              required
+              class="grow px-4 py-3 rounded-md bg-obsidian/60 border border-gold/30 text-white placeholder-neutral-500 focus:outline-none focus:ring-1 focus:ring-gold transition duration-300 font-mono text-sm"
+            />
+            <button
+              type="submit"
+              class="px-6 py-3 bg-gold hover:bg-white text-black font-bold uppercase tracking-wider rounded-md transition-colors duration-300 text-sm"
+            >
+              Confirm Access
+            </button>
+          </form>
+          <p
+            id="subscribe-message"
+            class="mt-3 text-sm h-4 text-neutral-400 font-mono"
+          ></p>
         </div>
-    </div>
-</main>
+      </div>
+    </main>
 
-<footer class="py-4 bg-obsidian/80 border-t border-white/5 text-center relative z-20">
-    <p class="text-gray-600 text-xs uppercase tracking-widest">&copy; 2025 The Sins of the Fathers. All activity logged.</p>
-</footer>
+    <footer
+      class="py-4 bg-obsidian/80 border-t border-white/5 text-center relative z-20"
+    >
+      <p class="text-gray-600 text-xs uppercase tracking-widest">
+        &copy; 2025 The Sins of the Fathers. All activity logged.
+      </p>
+    </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
-<script src="./assets/js/main-index.js" type="module"></script>
-</body>
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.12.0/tsparticles.bundle.min.js"></script>
+    <script src="./assets/js/main-index.js" type="module"></script>
+  </body>
 </html>

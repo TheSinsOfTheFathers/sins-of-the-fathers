@@ -6,6 +6,10 @@
   *Every Dynasty is a Debt.*
 </div>
 
+![License](https://img.shields.io/github/license/TheSinsOfTheFathers/sins-of-the-fathers?style=flat-square)
+![Last Commit](https://img.shields.io/github/last-commit/TheSinsOfTheFathers/sins-of-the-fathers?style=flat-square)
+![Deploy Status](https://img.shields.io/github/actions/workflow/status/TheSinsOfTheFathers/sins-of-the-fathers/firebase-hosting-merge.yml?label=Firebase%20Deploy&style=flat-square)
+
 ---
 
 ## 🏰 Project Vision: The Digital Fortress
