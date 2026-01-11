@@ -19,7 +19,7 @@
     "cytoscape": "^3.33.1",
     "cytoscape-dagre": "^2.5.0",
     "d3": "^7.9.0",
-    "firebase": "^12.6.0",
+    "firebase": "^12.7.0",
     "gsap": "^3.13.0",
     "mermaid": "^11.12.1",
     "resend": "^6.5.2",
