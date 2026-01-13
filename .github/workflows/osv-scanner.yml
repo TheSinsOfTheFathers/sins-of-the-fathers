@@ -1,0 +1,21 @@
+name: OSV-Scanner (Güvenlik Taraması)
+
+on:
+  push:
+    branches: ["main", "dev"]
+  pull_request:
+    branches: ["main", "dev"]
+  schedule:
+    - cron: "30 12 * * 1"
+
+jobs:
+  osv-scan:
+    uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@v2.3.1
+    with:
+      scan-args: |-
+        --recursive
+        ./
+    permissions:
+      security-events: write
+      contents: read
+      actions: read
