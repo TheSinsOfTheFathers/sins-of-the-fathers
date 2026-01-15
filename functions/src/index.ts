@@ -1,19 +1,26 @@
 /* eslint-disable valid-jsdoc */
 /* eslint-disable require-jsdoc */
 /* eslint-disable max-len */
-import { onCall, HttpsError, CallableRequest } from "firebase-functions/v2/https";
+import {
+  onCall,
+  HttpsError,
+  CallableRequest,
+} from "firebase-functions/v2/https";
 import { onDocumentCreated } from "firebase-functions/v2/firestore";
 import * as logger from "firebase-functions/logger";
 import * as admin from "firebase-admin";
 import axios, { AxiosResponse } from "axios";
+// İSTEĞİNİZ ÜZERİNE GERİ EKLENDİ:
 import { SecretManagerServiceClient } from "@google-cloud/secret-manager";
 import { Resend } from "resend";
 
 admin.initializeApp();
 
-// const RECAPTCHA_SITE_KEY... (Bu satırı sildik çünkü kullanılmıyordu)
 const secretManagerClient = new SecretManagerServiceClient();
 const REGION = "europe-west3";
+
+// Global değişken ile secret'i önbelleğe alıyoruz (Performans için kritik)
+let cachedRecaptchaSecret: string | null = null;
 
 // --- Types ---
 interface RecaptchaVerificationData {
@@ -40,24 +47,47 @@ interface SubscriberData {
 // --------------------------------------------------------------------------
 
 async function getRecaptchaSecret(): Promise<string> {
-  const SECRET_NAME = "projects/287213062167/secrets/RECAPTCHA_SECRET_KEY/versions/latest";
-  const [version] = await secretManagerClient.accessSecretVersion({ name: SECRET_NAME });
-
-  if (!version.payload?.data) {
-    throw new Error("reCAPTCHA secret not found or empty.");
+  // 1. Önce hafızadaki önbelleğe bak (Hız ve Maliyet tasarrufu)
+  if (cachedRecaptchaSecret) {
+    return cachedRecaptchaSecret;
   }
-  return version.payload.data.toString();
+
+  // 2. Önbellekte yoksa Google Secret Manager'dan çek
+  try {
+    const SECRET_NAME =
+      "projects/287213062167/secrets/RECAPTCHA_SECRET_KEY/versions/latest";
+
+    const [version] = await secretManagerClient.accessSecretVersion({
+      name: SECRET_NAME,
+    });
+
+    if (!version.payload?.data) {
+      throw new Error("reCAPTCHA secret not found or empty in Secret Manager.");
+    }
+
+    const secret = version.payload.data.toString();
+
+    // 3. Bir sonraki kullanım için kaydet
+    cachedRecaptchaSecret = secret;
+
+    return secret;
+  } catch (error) {
+    logger.error("Failed to access Secret Manager:", error);
+    throw new HttpsError("internal", "Could not retrieve security keys.");
+  }
 }
 
-/**
- * Common reCAPTCHA verification logic
- */
-async function verifyRecaptchaLogic(token: string): Promise<{ isValid: boolean; score: number }> {
+async function verifyRecaptchaLogic(
+  token: string
+): Promise<{ isValid: boolean; score: number }> {
   try {
+    // Helper fonksiyon üzerinden secret'i al
     const secretKey = await getRecaptchaSecret();
+
     const verificationUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${token}`;
 
-    const response: AxiosResponse<AssessmentResponseV3> = await axios.post(verificationUrl);
+    const response: AxiosResponse<AssessmentResponseV3> =
+      await axios.post(verificationUrl);
     const { success, score } = response.data;
     const finalScore = score ?? 0;
 
@@ -70,7 +100,12 @@ async function verifyRecaptchaLogic(token: string): Promise<{ isValid: boolean; 
   }
 }
 
-const getNoirEmailTemplate = (title: string, message: string, ctaLink?: string, ctaText?: string) => {
+const getNoirEmailTemplate = (
+  title: string,
+  message: string,
+  ctaLink?: string,
+  ctaText?: string
+) => {
   return `
     <!DOCTYPE html>
     <html>
@@ -99,7 +134,7 @@ const getNoirEmailTemplate = (title: string, message: string, ctaLink?: string, 
         </div>
         <div class="footer">
           <p>TOP SECRET // EYES ONLY</p>
-          <p>&copy; 2025 The Sins of the Fathers.</p>
+          <p>&copy; 2026 The Sins of the Fathers.</p>
           <p><a href="#">Unsubscribe</a></p>
         </div>
       </div>
@@ -112,72 +147,84 @@ const getNoirEmailTemplate = (title: string, message: string, ctaLink?: string, 
 //  CLOUD FUNCTIONS
 // --------------------------------------------------------------------------
 
-export const verifyRecaptchaToken = onCall({
-  region: REGION,
-  cors: true,
-}, async (request: CallableRequest<RecaptchaVerificationData>) => {
-  const { token, action } = request.data;
-  const uid = request.auth?.uid;
+export const verifyRecaptchaToken = onCall(
+  {
+    region: REGION,
+    cors: true,
+    // Secret Manager Client kullandığımız için burada 'secrets' dizisine gerek yok
+  },
+  async (request: CallableRequest<RecaptchaVerificationData>) => {
+    const { token, action } = request.data;
+    const uid = request.auth?.uid;
 
-  if (!token || !action) {
-    throw new HttpsError("invalid-argument", "Token/action required.");
+    if (!token || !action) {
+      throw new HttpsError("invalid-argument", "Token/action required.");
+    }
+
+    const result = await verifyRecaptchaLogic(token);
+
+    if (!result.isValid) {
+      logger.warn(`Security check failed. Score: ${result.score}`);
+      throw new HttpsError("permission-denied", "Bot detected.");
+    }
+
+    logger.info(
+      `reCAPTCHA Success for User: ${uid || "Guest"} Action: ${action}`
+    );
+    return { success: true, score: result.score };
   }
+);
 
-  const result = await verifyRecaptchaLogic(token);
+export const onNewSubscriber = onDocumentCreated(
+  {
+    region: REGION,
+    document: "subscribers/{subscriberId}",
+    // Resend için hala Gen 2 Secrets kullanıyoruz (Daha pratik olduğu için)
+    secrets: ["RESEND_API_KEY"],
+  },
+  async (event) => {
+    const snapshot = event.data;
+    if (!snapshot) return;
 
-  if (!result.isValid) {
-    logger.warn(`Security check failed. Score: ${result.score}`);
-    throw new HttpsError("permission-denied", "Bot detected.");
-  }
+    const data = snapshot.data() as SubscriberData;
+    const email = data.email;
 
-  logger.info(`reCAPTCHA Success for User: ${uid || "Guest"} Action: ${action}`);
-  return { success: true, score: result.score };
-});
-
-export const onNewSubscriber = onDocumentCreated({
-  region: REGION,
-  document: "subscribers/{subscriberId}",
-  secrets: ["RESEND_API_KEY"],
-}, async (event) => {
-  const snapshot = event.data;
-  if (!snapshot) return;
-
-  const data = snapshot.data() as SubscriberData;
-  const email = data.email;
-
-  if (!email) {
-    logger.warn("No email found.");
-    return;
-  }
-
-  const resendApiKey = process.env["RESEND_API_KEY"];
-
-  if (!resendApiKey) {
-    logger.error("RESEND_API_KEY is missing.");
-    return;
-  }
-
-  const resend = new Resend(resendApiKey);
-
-  try {
-    const { data: emailData, error } = await resend.emails.send({
-      from: "The Sins of the Fathers <intel@thesinsofthefathers.com>",
-      to: [email],
-      subject: "Access Granted: Welcome to the Network",
-      html: getNoirEmailTemplate(
-        "IDENTITY CONFIRMED",
-        "Your clearance level has been established. You are now part of the inner circle.<br><br>Expect further instructions via this secure channel.",
-        "https://thesinsofthefathers.com/pages/timeline.html",
-        "ENTER ARCHIVES"
-      ),
-    });
-
-    if (error) {
-      logger.error("Resend Error:", error);
+    if (!email) {
+      logger.warn("No email found.");
       return;
     }
-    logger.info(`Welcome email sent to ${email}. ID: ${emailData?.id}`);
-  } catch (err) {
-    logger.error("Error in onNewSubscriber:", err);
+
+    const resendApiKey = process.env.RESEND_API_KEY;
+
+    if (!resendApiKey) {
+      logger.error("RESEND_API_KEY is missing.");
+      return;
+    }
+
+    // Resend v6 başlatma
+    const resend = new Resend(resendApiKey);
+
+    try {
+      // Resend v6 Gönderim Formatı
+      const { data: emailData, error } = await resend.emails.send({
+        from: "The Sins of the Fathers <intel@thesinsofthefathers.com>",
+        to: [email],
+        subject: "Access Granted: Welcome to the Network",
+        html: getNoirEmailTemplate(
+          "IDENTITY CONFIRMED",
+          "Your clearance level has been established. You are now part of the inner circle.<br><br>Expect further instructions via this secure channel.",
+          "https://thesinsofthefathers.com/",
+          "ENTER ARCHIVES"
+        ),
+      });
+
+      if (error) {
+        logger.error("Resend Error:", error);
+        return;
+      }
+      logger.info(`Welcome email sent to ${email}. ID: ${emailData?.id}`);
+    } catch (err) {
+      logger.error("Error in onNewSubscriber:", err);
+    }
   }
-});
+);
