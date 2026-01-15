@@ -8,6 +8,10 @@ _Every Dynasty is a Debt._
 </div>
 
 <div align="center">
+
+<div align="center">
+
+<div align="center">
   ![License](https://img.shields.io/github/license/TheSinsOfTheFathers/sins-of-the-fathers?style=flat-square)
   ![Last Commit](https://img.shields.io/github/last-commit/TheSinsOfTheFathers/sins-of-the-fathers?style=flat-square)
   ![Deploy Status](https://img.shields.io/github/actions/workflow/status/TheSinsOfTheFathers/sins-of-the-fathers/firebase-hosting-merge.yml?label=Firebase%20Deploy style=flat-square)
