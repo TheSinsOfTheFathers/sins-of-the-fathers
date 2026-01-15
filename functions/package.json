@@ -20,7 +20,7 @@
     "axios": "^1.13.0",
     "firebase-admin": "^12.6.0",
     "firebase-functions": "^5.0.1",
-    "resend": "^3.2.0"
+    "resend": "^6.7.0"
   },
   "optionalDependencies": {
     "fsevents": "^2.3.3"
