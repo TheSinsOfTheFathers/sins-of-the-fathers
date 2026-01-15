@@ -5,12 +5,15 @@
 
   *Every Dynasty is a Debt.*
 </div>
+
 <div align="center">
   ![License](https://img.shields.io/github/license/TheSinsOfTheFathers/sins-of-the-fathers?style=flat-square)
   ![Last Commit](https://img.shields.io/github/last-commit/TheSinsOfTheFathers/sins-of-the-fathers?style=flat-square)
   ![Deploy Status](https://img.shields.io/github/actions/workflow/status/TheSinsOfTheFathers/sins-of-the-fathers/firebase-hosting-merge.yml?label=Firebase%20Deploy&style=flat-square)
   ![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/TheSinsOfTheFathers/sins-of-the-fathers?utm_source=oss&utm_medium=github&utm_campaign=TheSinsOfTheFathers%2Fsins-of-the-        fathers&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
+  
 </div>
+
 ---
 
 ## 🏰 Project Vision: The Digital Fortress
