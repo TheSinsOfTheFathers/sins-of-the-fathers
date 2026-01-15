@@ -1,9 +1,10 @@
 <div align="center">
   <img src="https://firebasestorage.googleapis.com/v0/b/sins-of-the-fathers.firebasestorage.app/o/logo.png?alt=media&token=a7d1a0b9-5bba-45ee-9f19-e8f5770c0a84" alt="The Sins of The Fathers Logo" width="200"/>
 
-  # The Sins of the Fathers: A Digital Novel Experience Platform
+# The Sins of the Fathers: A Digital Novel Experience Platform
 
-  *Every Dynasty is a Debt.*
+_Every Dynasty is a Debt._
+
 </div>
 
 <div align="center">
@@ -14,7 +15,6 @@
 ![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/TheSinsOfTheFathers/sins-of-the-fathers?utm_source=oss&utm_medium=github&utm_campaign=TheSinsOfTheFathers%2Fsins-of-the-fathers&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
 
 </div>
-  
 
 ---
 
@@ -27,11 +27,15 @@ This project is not merely a promotional website for "The Sins of the Fathers"; 
 The platform is engineered upon a sophisticated, high-performance hybrid architecture, meticulously designed to serve two distinct purposes:
 
 ### ⚡️ **1. The Landing & Core Experience (Static)**
+
 This is the main gateway, optimized for breathtaking speed and immediate engagement. It's built as a static site, leveraging a direct build process for maximum performance and reliability.
+
 - **Technology Stack:** `HTML5`, `Vanilla JavaScript (ES6+)`, `Tailwind CSS (compiled via PostCSS)`.
 
 ### 📚 **2. The Blog & Lore Engine (Server-Side Rendered)**
+
 This is the dynamic heart of the universe, where the ever-expanding lore, character archives, and narrative content reside. It operates in SSR mode to ensure content is always fresh, deeply indexable by search engines, and delivered with optimal performance.
+
 - **Technology Stack:** `Astro v5 (SSR)`, `Firebase Functions`, `Sanity.io (Headless CMS)`.
 
 ---
@@ -41,6 +45,7 @@ This is the dynamic heart of the universe, where the ever-expanding lore, charac
 This platform is forged with a curated selection of modern, high-performance technologies, ensuring a seamless, immersive, and robust user experience.
 
 ### ☁️ Core, Backend & Cloud
+
 <p>
   <img src="https://img.shields.io/badge/Firebase-FFD700?style=for-the-badge&logo=firebase&logoColor=black" alt="Firebase" />
   <img src="https://img.shields.io/badge/Google_Cloud-36454F?style=for-the-badge&logo=google-cloud&logoColor=white" alt="Google Cloud" />
@@ -50,6 +55,7 @@ This platform is forged with a curated selection of modern, high-performance tec
 </p>
 
 ### 🎨 Frontend & Design System
+
 <p>
   <img src="https://img.shields.io/badge/HTML5-880808?style=for-the-badge&logo=html5&logoColor=white" alt="HTML5" />
   <img src="https://img.shields.io/badge/CSS3-36454F?style=for-the-badge&logo=css3&logoColor=white" alt="CSS3" />
@@ -61,6 +67,7 @@ This platform is forged with a curated selection of modern, high-performance tec
 </p>
 
 ### 🚀 Performance & UX
+
 <p>
   <img src="https://img.shields.io/badge/Lenis-880808?style=for-the-badge&logo=&logoColor=white" alt="Lenis" />
   <img src="https://img.shields.io/badge/Partytown-FFD700?style=for-the-badge&logo=partytown&logoColor=black" alt="Partytown" />
@@ -71,6 +78,7 @@ This platform is forged with a curated selection of modern, high-performance tec
 </p>
 
 ### 🗺️ Interactive Modules
+
 <p>
   <img src="https://img.shields.io/badge/Leaflet-FFD700?style=for-the-badge&logo=leaflet&logoColor=black" alt="Leaflet.js" />
   <img src="https://img.shields.io/badge/D3.js-36454F?style=for-the-badge&logo=d3.js&logoColor=white" alt="D3.js" />
@@ -78,6 +86,7 @@ This platform is forged with a curated selection of modern, high-performance tec
 </p>
 
 ### ⚙️ DevOps, QA & Testing
+
 <p>
   <img src="https://img.shields.io/badge/GitHub_Actions-36454F?style=for-the-badge&logo=github-actions&logoColor=white" alt="GitHub Actions" />
   <img src="https://img.shields.io/badge/Dependabot-880808?style=for-the-badge&logo=dependabot&logoColor=white" alt="Dependabot" />
@@ -89,6 +98,7 @@ This platform is forged with a curated selection of modern, high-performance tec
 </p>
 
 ### 🛒 E-Commerce & Integrations
+
 <p>
   <img src="https://img.shields.io/badge/Fourthwall-880808?style=for-the-badge&logo=&logoColor=white" alt="Fourthwall" />
   <img src="https://img.shields.io/badge/Shopier-FFD700?style=for-the-badge&logo=&logoColor=black" alt="Shopier" />
@@ -99,6 +109,7 @@ This platform is forged with a curated selection of modern, high-performance tec
 </p>
 
 ### 📈 Marketing, Social & Community
+
 <p>
   <img src="https://img.shields.io/badge/GA4-FFD700?style=for-the-badge&logo=google-analytics&logoColor=black" alt="Google Analytics 4" />
   <img src="https://img.shields.io/badge/GTM-36454F?style=for-the-badge&logo=google-tag-manager&logoColor=white" alt="Google Tag Manager" />
@@ -108,12 +119,14 @@ This platform is forged with a curated selection of modern, high-performance tec
 </p>
 
 ### 🛡️ Security & Legal
+
 <p>
   <img src="https://img.shields.io/badge/reCAPTCHA_v3-880808?style=for-the-badge&logo=google&logoColor=white" alt="Google reCAPTCHA v3" />
   <img src="https://img.shields.io/badge/Security_Headers-FFD700?style=for-the-badge&logo=firebase&logoColor=black" alt="Security Headers" />
 </p>
 
-  *Every Dynasty is a Debt.*
+_Every Dynasty is a Debt._
+
 </div>
 
 ---

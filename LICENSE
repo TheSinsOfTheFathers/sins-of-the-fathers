@@ -1,11 +1,26 @@
-Copyright (c) 2026 Barış Salih Babacan / Ravenwood Archives
+MIT License (Modified) - RESTRICTED USE
 
-All rights reserved.
+Copyright (c) 2026 Barış Salih Babacan / Ravenwood Archives. All Rights Reserved.
 
-The contents of this repository (code, assets, story elements, and documentation) are the intellectual property of Barış Salih Babacan.
+The contents of this repository (including but not limited to source code, assets, audio files, story elements, lore, characters, and documentation) are the sole intellectual property of Barış Salih Babacan.
 
-You may view and inspect the code for educational or review purposes.
-However, you may NOT:
-1. Fork, modify, or distribute this code.
-2. Use any part of this code or story for commercial purposes.
-3. Re-publish this work as your own.
+---
+
+### 1. PERMISSIONS
+
+Permission is hereby granted to any person obtaining a copy of this software and associated documentation files (the "Software") to:
+
+- **View and Inspect:** You may access, read, and analyze the code for educational purposes, portfolio review, or personal study.
+
+### 2. RESTRICTIONS
+
+The following actions are STRICTLY PROHIBITED without express written permission from the copyright holder:
+
+- **No Forking for Modification:** You may not fork this repository with the intent of modifying, building upon, or distributing derivative works.
+- **No Commercial Use:** You may not use any part of this code, story, assets, or lore for commercial purposes or financial gain.
+- **No Re-distribution:** You may not copy, reproduce, distribute, or re-publish this work (in whole or in part) as your own.
+- **No Asset Usage:** The visual assets, audio files, and narrative text ("Lore") are strictly protected and may not be used in other projects.
+
+### 3. DISCLAIMER
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
