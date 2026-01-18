@@ -29,8 +29,11 @@
     "genkit": "^1.27.0",
     "gsap": "^3.14.2",
     "mermaid": "^11.12.1",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
     "resend": "^6.5.2",
-    "sanity": "^4.16.0"
+    "sanity": "^5.4.0",
+    "styled-components": "^6.3.8"
   },
   "devDependencies": {
     "@playwright/test": "^1.57.0",
