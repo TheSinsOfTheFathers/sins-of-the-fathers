@@ -42,7 +42,7 @@
         }
       ],
       "predeploy": [
-        "npm --prefix blog ci && npm --prefix blog run build"
+        "npm --prefix blog install --legacy-peer-deps && npm --prefix blog run build"
       ],
       "cleanUrls": true,
       "trailingSlash": false
