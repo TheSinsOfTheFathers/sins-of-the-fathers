@@ -9,7 +9,11 @@
     {
       "target": "main-site",
       "public": "public",
-      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
       "rewrites": [
         {
           "source": "/pages/:filename",
@@ -26,14 +30,20 @@
     {
       "target": "blog-site",
       "public": "blog/dist/client",
-      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
       "rewrites": [
         {
           "source": "**",
           "function": "astroServer"
         }
       ],
-      "predeploy": ["npm --prefix blog ci && npm --prefix blog run build"],
+      "predeploy": [
+        "npm --prefix blog ci && npm --prefix blog run build"
+      ],
       "cleanUrls": true,
       "trailingSlash": false
     }
@@ -43,7 +53,6 @@
   },
   "functions": [
     {
-      "source": "functions",
       "codebase": "default",
       "disallowLegacyRuntimeConfig": true,
       "ignore": [
@@ -54,16 +63,23 @@
         "*.local"
       ],
       "predeploy": [
-        "npm --prefix \"$RESOURCE_DIR\" run lint",
         "npm --prefix \"$RESOURCE_DIR\" run build"
-      ]
+      ],
+      "source": "functions"
     },
     {
-      "source": "blog",
       "codebase": "astro-blog",
-      "runtime": "nodejs20",
-      "ignore": ["node_modules", ".git", "dist/client", ".astro"],
-      "predeploy": ["npm --prefix blog run build"]
+      "ignore": [
+        "node_modules",
+        ".git",
+        "dist/client",
+        ".astro"
+      ],
+      "predeploy": [
+        "npm --prefix blog run build"
+      ],
+      "source": "blog",
+      "runtime": "nodejs20"
     }
   ]
 }

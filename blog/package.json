@@ -12,24 +12,38 @@
   "dependencies": {
     "@astrojs/node": "^9.0.0",
     "@astrojs/rss": "^4.0.14",
+    "@portabletext/react": "^6.0.2",
     "@sanity/astro": "^3.2.0",
     "@sanity/client": "^7.14.0",
-    "@sanity/image-url": "^1.1.0",
+    "@sanity/image-url": "^2.0.3",
     "@tailwindcss/typography": "^0.5.16",
     "@tailwindcss/vite": "^4.0.0",
     "astro": "^5.1.1",
     "astro-portabletext": "^0.10.1",
     "firebase-functions": "^6.0.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "prismjs": "^1.30.0",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
     "react-is": "^18.3.1",
-    "sanity": "^3.57.0",
+    "sanity": "^5.4.0",
     "sharp": "^0.33.5",
     "styled-components": "^6.1.13",
     "tailwindcss": "^4.0.0"
   },
   "devDependencies": {
     "firebase-functions-test": "^3.3.0"
+  },
+  "overrides": {
+    "refractor": {
+      "prismjs": "1.30.0"
+    },
+    "undici": "6.23.0",
+    "@actions/github": {
+      "undici": "6.23.0"
+    },
+    "@actions/http-client": {
+      "undici": "6.23.0"
+    }
   },
   "engines": {
     "node": ">=20"
