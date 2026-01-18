@@ -45,5 +45,18 @@
     "tailwindcss": "^4.1.18",
     "vite": "^7.2.4",
     "xmlbuilder": "^15.1.1"
+  },
+  "overrides": {
+    "prismjs": "1.30.0",
+    "refractor": {
+      "prismjs": "1.30.0"
+    },
+    "undici": "6.23.0",
+    "@actions/github": {
+      "undici": "6.23.0"
+    },
+    "@actions/http-client": {
+      "undici": "6.23.0"
+    }
   }
 }

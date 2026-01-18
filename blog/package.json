@@ -21,6 +21,7 @@
     "astro": "^5.1.1",
     "astro-portabletext": "^0.10.1",
     "firebase-functions": "^6.0.0",
+    "prismjs": "^1.30.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "react-is": "^18.3.1",
@@ -31,6 +32,18 @@
   },
   "devDependencies": {
     "firebase-functions-test": "^3.3.0"
+  },
+  "overrides": {
+    "refractor": {
+      "prismjs": "1.30.0"
+    },
+    "undici": "6.23.0",
+    "@actions/github": {
+      "undici": "6.23.0"
+    },
+    "@actions/http-client": {
+      "undici": "6.23.0"
+    }
   },
   "engines": {
     "node": ">=20"
