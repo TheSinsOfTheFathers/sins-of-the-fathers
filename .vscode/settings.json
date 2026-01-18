@@ -1,4 +1,5 @@
 {
+  "css.lint.unknownAtRules": "ignore",
   "livePreview.defaultPreviewPath": "/public/index.html",
   "cSpell.words": [
     "adımından",

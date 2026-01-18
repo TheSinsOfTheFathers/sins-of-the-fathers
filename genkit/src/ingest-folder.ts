@@ -4,7 +4,7 @@ import * as admin from "firebase-admin";
 import { getFirestore, FieldValue } from "firebase-admin/firestore";
 import { initializeApp } from "firebase-admin/app";
 import { genkit } from "genkit";
-import { vertexAI, textEmbedding004 } from "@genkit-ai/vertexai";
+import { vertexAI } from "@genkit-ai/google-genai";
 
 // --- AYARLAR ---
 const PROJECT_ID = "sins-of-the-fathers";
@@ -67,9 +67,9 @@ async function processChunkWithRetry(
   const docId = `${safeFileName}_chunk_${metadata.chunk_index}`;
 
   try {
-    // Gemini Embedding (textEmbedding004 nesnesi en güncelidir)
+    // Gemini Embedding
     const embeddingResult = await ai.embed({
-      embedder: textEmbedding004,
+      embedder: "vertexai/text-embedding-004",
       content: chunkText,
     });
 

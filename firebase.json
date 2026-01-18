@@ -63,7 +63,6 @@
         "*.local"
       ],
       "predeploy": [
-        "npm --prefix \"$RESOURCE_DIR\" run lint",
         "npm --prefix \"$RESOURCE_DIR\" run build"
       ],
       "source": "functions"
@@ -81,15 +80,6 @@
       ],
       "source": "blog",
       "runtime": "nodejs20"
-    },
-    {
-      "source": "genkit",
-      "codebase": "genkit",
-      "disallowLegacyRuntimeConfig": true,
-      "predeploy": [
-        "npm --prefix \"$RESOURCE_DIR\" run lint",
-        "npm --prefix \"$RESOURCE_DIR\" run build"
-      ]
     }
   ]
 }

@@ -43,7 +43,7 @@ const ai = genkit({
   ],
 });
 
-async function askTheNovel(question: string) {
+export async function askTheNovel(question: string) {
   // 1. Karakter Analizi
   const questionLower = question.toLowerCase();
   let relevantCharacterBios = "";
@@ -170,23 +170,29 @@ console.log(`🚀 Motor: ${CHAT_MODEL_NAME}`);
 console.log(`🌍 Konum: ${AI_LOCATION}`);
 console.log(`-------------------------------------------`);
 
-const askLoop = () => {
-  rl.question("\nSualin nedir evlat? (Çıkış: 'exit'): ", async (q) => {
-    if (q.toLowerCase() === "exit") {
-      console.log("Gölge seni korusun...");
-      rl.close();
-      return;
-    }
+// --- CLI ÇALIŞTIRMA (Sadece doğrudan çağrıldığında) ---
+if (process.argv[1].endsWith("chat-novel.ts") || process.env.RUN_CLI === "true") {
+  const askLoop = () => {
+    rl.question("\nSualin nedir evlat? (Çıkış: 'exit'): ", async (q) => {
+      if (q.toLowerCase() === "exit") {
+        console.log("Gölge seni korusun...");
+        rl.close();
+        return;
+      }
 
-    console.log("⏳ Silvio düşünüyor (Thinking Modu devrede)...");
-    try {
-      const result = await askTheNovel(q);
-      console.log("\n📜 SİLVİO:\n", result);
-    } catch (e: any) {
-      console.error("💥 HATA:", e.message);
-    }
-    askLoop();
-  });
-};
+      console.log("⏳ Silvio düşünüyor (Thinking Modu devrede)...");
+      try {
+        const result = await askTheNovel(q);
+        console.log("\n📜 SİLVİO:\n", result);
+      } catch (e: any) {
+        console.error("💥 HATA:", e.message);
+      }
+      askLoop();
+    });
+  };
 
-askLoop();
+  askLoop();
+} else {
+    // If imported as a module, close the readline to prevent it from hanging the process
+    rl.close();
+}

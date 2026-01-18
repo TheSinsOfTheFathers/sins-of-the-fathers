@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en"> 
+<head>
+    <!-- Google Tag Manager -->
+    <script type="text/partytown">
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-PVH59MXZ');
+    </script>
+    <!-- End Google Tag Manager -->
+    
+    <!-- Meta Tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Silvio Dossier - The Sins of the Fathers Archives">
+    <meta name="author" content="The Sins of the Fathers">
+    <meta name="theme-color" content="#050505">
+    
+    <!-- Title -->
+    <title>Silvio | TSOF Archives</title>
+
+    <!-- Favicons -->
+    <link rel="icon" type="image/x-icon" href="../assets/images/logo/favicon.ico">
+    <link rel="icon" type="image/svg+xml" href="../assets/images/logo/favicon.svg">
+    <link rel="icon" type="image/png" sizes="96x96" href="../assets/images/logo/favicon-96x96.png">
+    
+    <!-- External Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Courier+Prime&family=Special+Elite&display=swap&subset=latin-ext">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    
+    <!-- Internal Styles -->
+    <link rel="stylesheet" href="../src/style.css">
+
+    <style>
+        .video-background {
+            position: fixed;
+            right: 0;
+            bottom: 0;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            z-index: -100;
+            background-size: cover;
+            filter: brightness(0.6);
+        }
+
+        .content-overlay {
+            position: relative;
+            z-index: 10;
+        }
+        /* --- INTELLIGENCE TOOLTIPS --- */
+
+        /* The Highlighted Name in Chat */
+        .character-ref {
+            color: var(--silvio-gold); /* #c5a059 */
+            border-bottom: 1px dotted var(--silvio-gold);
+            cursor: help;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+        
+        .character-ref:hover {
+            background: rgba(197, 160, 89, 0.2);
+            color: white;
+            box-shadow: 0 0 10px rgba(197, 160, 89, 0.4);
+        }
+        
+        /* The Popup Box */
+        .character-tooltip {
+            position: fixed;
+            width: 260px;
+            background: rgba(10, 10, 10, 0.95); /* Deep Black */
+            border: 1px solid var(--silvio-gold);
+            color: #eee;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 11px;
+            line-height: 1.4;
+            z-index: 9999;
+            pointer-events: none; /* Crucial: stops flickering */
+            
+            /* Animation State */
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.9);
+            backdrop-filter: blur(5px);
+        }
+        
+        .character-tooltip.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .character-tooltip h3 {
+            margin: 5px 0;
+            font-size: 14px;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .tooltip-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 5px;
+        }
+        
+        .tooltip-header .level {
+            color: #ff3333; /* Alert Red */
+            font-weight: bold;
+        }
+        
+        .tooltip-header .status {
+            color: #00ff00; /* Terminal Green */
+            font-size: 9px;
+            animation: blink 2s infinite;
+        }
+        
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+    </style>
+
+    <!-- External Scripts -->
+    <!-- Howler.js for Audio Management -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
+
+    <!-- Partytown Configuration -->
+    <script>
+        partytown = {
+            forward: ['dataLayer.push', 'gtag', 'fbq'], 
+            lib: '/~partytown/'
+        };
+    </script>
+    
+    <!-- Partytown Script -->
+    <script type="module" src="../src/modules/loaders/partytown-loader.js"></script>
+
+    <!-- Internal Scripts -->
+    <script type="module" src="../src/main.js"></script>
+</head>
+<body class="flex flex-col min-h-screen selection:bg-gold selection:text-black bg-black text-white">
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PVH59MXZ"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+
+    <!-- Visual Effects -->
+    <!-- Visual Effects -->
+    <div class="vignette-overlay"></div>
+    <div class="scanline-overlay"></div>
+    <!-- <div class="noise-overlay"></div> Removed for performance -->
+
+    <!-- Video Background -->
+    <video id="silvio-video" muted loop playsinline poster="../assets/images/bg/silvio_poster.png" class="video-background">
+        <source src="../assets/images/bg/silvio_feed.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <!-- Header & Navigation -->
+    <header aria-label="Main navigation" class="fixed top-0 w-full z-50 transition-all duration-300 bg-obsidian/90 backdrop-blur-md border-b border-white/5">
+        <nav aria-label="Primary navigation" class="container mx-auto px-6 py-4 flex justify-between items-center relative">
+            <!-- Brand -->
+            <a href="/" aria-label="The Sins of the Fathers - Home" class="nav-brand text-2xl md:text-3xl text-gold tracking-widest hover:text-white transition-colors uppercase font-serif z-20 relative">
+                TSOF
+            </a>
+            
+            <!-- Desktop Menu (Absolute Center) -->
+            <div class="hidden md:flex absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 items-center space-x-6 xl:space-x-8 text-xs xl:text-sm uppercase tracking-widest font-semibold whitespace-nowrap">
+                <a href="/pages/characters.html" aria-label="Navigate to The Bloodline: Characters" class="hover:text-gold transition-colors" data-i18n="nav.bloodline">THE BLOODLINE</a>
+                <a href="/pages/timeline.html" aria-label="Navigate to History: Timeline" class="hover:text-gold transition-colors" data-i18n="nav.history">HISTORY</a>
+                <a href="/pages/factions.html" aria-label="Navigate to Factions" class="hover:text-gold transition-colors" data-i18n="nav.factions">FACTIONS</a>
+                <a href="/pages/locations.html" aria-label="Navigate to Territories: Locations" class="hover:text-gold transition-colors" data-i18n="nav.territories">TERRITORIES</a>
+                <a href="/pages/silvio.html" aria-label="Navigate to Silvio Classified Feed" class="text-gold border-b border-gold" data-i18n="nav.silvio">SILVIO</a>
+                <div class="border-l border-white/20 pl-6 ml-4 flex items-center gap-4" id="auth-controls">
+                    <a href="/pages/lore.html" id="nav-link-classified" aria-label="Access classified lore archive" class="text-gold hover:text-white transition-colors flex items-center gap-2"><i class="fas fa-lock text-xs guest-lock"></i> <span data-i18n="nav.classified">Classified</span></a>
+                    <a href="/pages/login.html" aria-label="Sign in to your account" class="hover:text-gold transition-colors guest-only" id="auth-signin-link" data-i18n="auth.login">LOGIN</a>
+                </div>
+            </div>
+
+            <!-- Mobile Hamburger -->
+            <div class="md:hidden relative z-50">
+                <button id="hamburger-button" class="text-gold focus:outline-none flex flex-col justify-between w-6 h-5">
+                    <span class="block w-full h-0.5 bg-gold"></span>
+                    <span class="block w-full h-0.5 bg-gold"></span>
+                    <span class="block w-full h-0.5 bg-gold"></span>
+                </button>
+            </div>
+
+            <!-- Language Switcher -->
+            <div class="hidden md:flex gap-2 font-mono text-[10px] z-20 relative">
+                <button class="lang-btn hover:text-gold transition-colors" data-lang="en" onclick="window.changeAppLanguage('en')">EN</button>
+                <span class="text-gray-600">/</span>
+                <button class="lang-btn hover:text-gold transition-colors" data-lang="tr" onclick="window.changeAppLanguage('tr')">TR</button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="hidden fixed inset-0 z-40 bg-black/95 flex-col items-center justify-center space-y-8 transition-opacity duration-300 backdrop-blur-xl">
+        <a href="/pages/characters.html" aria-label="Navigate to The Bloodline: Characters" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.bloodline"></a>
+        <a href="/pages/timeline.html" aria-label="Navigate to History: Timeline" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.history"></a>
+        <a href="/pages/factions.html" aria-label="Navigate to Factions" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.factions"></a>
+        <a href="/pages/locations.html" aria-label="Navigate to Territories: Locations" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.territories"></a>
+        <a href="/pages/silvio.html" aria-label="Navigate to Silvio Classified Feed" class="text-2xl text-gold font-serif border-b border-gold pb-2 uppercase tracking-widest" data-i18n="nav.silvio"></a>
+        <a href="/pages/lore.html" aria-label="Access classified lore archive" class="text-xl text-gold font-serif hover:text-white border border-gold px-6 py-2 uppercase tracking-widest" data-i18n="nav.archives"></a>
+        <a href="/pages/login.html" aria-label="Sign in to your account" class="text-sm text-gray-400 hover:text-white mt-8 font-mono uppercase" data-i18n="auth.login"></a>
+    </div>
+
+    <!-- Omerta Intro Overlay -->
+    <!-- Omerta Terminal Overlay v3 -->
+    <div id="omerta-overlay" class="fixed inset-0 z-[9999] bg-black flex flex-col items-center justify-center p-6 md:p-0 overflow-hidden font-mono select-none">
+        
+        <!-- CRT/Scanline Effects -->
+        <div class="absolute inset-0 bg-[url('/assets/noise.png')] opacity-10 pointer-events-none mix-blend-overlay"></div>
+        <div class="absolute inset-0 bg-gradient-to-b from-transparent via-gold/5 to-transparent animate-scanline pointer-events-none"></div>
+        
+        <!-- Terminal Container -->
+        <!-- Terminal Container -->
+        <div class="relative z-10 text-center p-6 md:p-8 max-w-6xl w-full border border-gold/30 bg-black/95 shadow-[0_0_50px_rgba(197,160,89,0.2)] backdrop-blur-sm terminal-border">
+            
+            <!-- Header -->
+            <div class="w-full flex justify-between items-start mb-6 border-b border-gold/10 pb-2">
+                <div class="flex flex-col text-[10px] text-gold/40 tracking-[0.2em] uppercase text-left">
+                    <span data-i18n="silvio_page.omerta.protocol_ver">Protocol: v3.04</span>
+                    <span data-i18n="silvio_page.omerta.secure_conn">Secure Connection: Est.</span>
+                </div>
+                
+                <!-- Language Switcher (Omerta Style) -->
+                <div class="flex gap-4 text-[10px] tracking-[0.2em] font-mono z-50">
+                    <button class="lang-btn text-gold/60 hover:text-gold hover:underline transition-all" data-lang="en">EN</button>
+                    <span class="text-gold/20">/</span>
+                    <button class="lang-btn text-gold/60 hover:text-gold hover:underline transition-all" data-lang="tr">TR</button>
+                </div>
+            </div>
+
+            <!-- Glitch Title -->
+            <h1 class="font-display text-4xl md:text-7xl text-gold mb-4 tracking-[0.2em] uppercase glitch-text" data-text="OMERTA PROTOCOL" data-i18n="silvio_page.omerta.title">
+                OMERTA PROTOCOL
+            </h1>
+            
+            <!-- Subtext (Transcript) - Reduced Margin -->
+            <p class="text-gold/60 text-xs md:text-sm tracking-[0.2em] mb-8 text-center uppercase whitespace-pre-line leading-relaxed max-w-4xl mx-auto" data-i18n="silvio_page.omerta.subtext">
+                "Silence is the only currency accepted here."
+            </p>
+
+            <!-- Legal Terminal Input -->
+            <div class="w-full max-w-lg relative mb-8 group mx-auto">
+                <label class="flex items-center gap-6 cursor-pointer p-4 border border-gold/10 hover:border-gold/40 hover:bg-gold/5 transition-all duration-300 relative overflow-hidden">
+                    <!-- Custom Checkbox (Blood Signature) -->
+                    <div class="relative w-10 h-10 flex-shrink-0 border border-gold/30 bg-black/50 flex items-center justify-center transition-colors duration-300 group-hover:border-gold/60">
+                        <input type="checkbox" id="omerta-consent" class="peer sr-only">
+                        
+                        <!-- Unchecked State: Pulse -->
+                        <div class="absolute inset-0 bg-gold/5 animate-pulse peer-checked:hidden"></div>
+                        
+                        <!-- Checked State: Blood Fingerprint -->
+                        <i class="fas fa-fingerprint text-red-700 text-2xl opacity-0 transform scale-150 peer-checked:opacity-100 peer-checked:scale-100 transition-all duration-500 ease-elastic-out filter drop-shadow-[0_0_10px_rgba(185,28,28,0.6)]"></i>
+                    </div>
+                    
+                    <span class="text-gold/80 font-mono text-[10px] md:text-xs tracking-widest uppercase select-none" data-i18n="silvio_page.omerta.checkbox_label">
+                        I HAVE READ AND ACCEPT THE PROTOCOLS
+                    </span>
+                </label>
+            </div>
+
+            <!-- Action Button - Reduced Margin -->
+            <button id="omerta-accept-btn" disabled class="group relative px-12 py-3 bg-transparent border border-gold/20 text-gold/40 font-display tracking-[0.3em] uppercase transition-all duration-300 hover:bg-gold/10 hover:border-gold hover:text-gold disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden">
+                <span class="relative z-10" data-i18n="silvio_page.omerta.action">ACCESS MAINFRAME</span>
+                <div class="absolute inset-0 bg-gold/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+            </button>
+            
+            <!-- Hostile Trace Warning -->
+            <div class="mt-12 text-[9px] text-red-900/50 tracking-[0.5em] font-mono animate-pulse uppercase" data-i18n="silvio_page.omerta.hostile_trace">
+                Hostile Trace Detected
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- Video Controls -->
+    <div class="fixed bottom-10 right-10 z-50 flex items-center gap-4">
+        <button id="video-toggle" class="bg-black/60 backdrop-blur-md border border-gold/30 w-14 h-14 md:w-auto md:h-auto md:p-4 rounded-full text-gold hover:bg-gold hover:text-black transition-all group overflow-hidden flex items-center justify-center">
+            <span class="flex items-center justify-center">
+                <i class="fas fa-play transition-transform text-lg" id="video-icon"></i>
+                <span class="text-[10px] uppercase tracking-widest font-bold whitespace-nowrap max-w-0 group-hover:max-w-xs transition-all duration-500 overflow-hidden hidden md:inline-block" id="video-text" data-i18n="silvio_page.video_controls.play">PLAY FEED</span>
+            </span>
+        </button>
+    </div>
+
+    <!-- Chat Interface -->
+    <main class="dossier-wrapper mx-auto max-w-5xl mt-24 mb-24 px-4 md:px-0">
+        <div class="silvio-chat-container flex flex-col h-[70vh] relative overflow-hidden" data-module="silvio-chatbot-loader.js" id="chatbot-wrapper">
+            <div class="silvio-chat-log flex-grow overflow-y-auto p-6 md:p-10" id="chat-log">
+                <!-- Initial Greeting -->
+                <div class="silvio-message stamped visible">
+                    <span class="silvio-msg-header" data-i18n="silvio_page.headers.system_online">SOURCE: OMEGA // SYSTEM: ONLINE</span>
+                    <p data-i18n="silvio_page.initial_greeting">Karanlıkta bir kibrit çaktın evlat... Söyle bana, Babaların Günahları hakkında ne bilmek istersin?</p>
+                </div>
+            </div>
+    
+            <!-- Chat Input Area (Brutalist Redesign) -->
+    <div class="fixed bottom-0 left-0 w-full z-40 silvio-input-area">
+        <div class="container mx-auto max-w-4xl px-4 md:px-0 relative">
+            <div class="silvio-input-wrapper flex items-end gap-4">
+                <div class="flex-grow relative group">
+                    <input type="text" id="chat-input" class="silvio-input w-full bg-transparent border-b border-white/20 py-4 text-white font-mono placeholder-white/30 focus:outline-none focus:border-gold transition-all duration-300" data-i18n="[placeholder]silvio_page.placeholder" placeholder="Sualini buraya fısılda..." autocomplete="off">
+                    <div class="absolute bottom-0 left-0 w-0 h-[1px] bg-gold group-hover:w-full transition-all duration-700"></div>
+                </div>
+                <button id="mic-btn" class="silvio-mic-btn text-gold/50 hover:text-gold transition-all duration-300 p-4 mb-1">
+                    <i class="fas fa-microphone text-xl"></i>
+                </button>
+                <button id="send-btn" class="silvio-send-btn text-gold/50 hover:text-gold transition-all duration-300 p-4 mb-1">
+                    <i class="fas fa-arrow-right text-xl"></i>
+                </button>
+            </div>
+            <div id="processing-indicator" class="silvio-processing hidden text-gold/60 font-mono text-xs mt-2 tracking-[0.2em] h-6" data-i18n="silvio_page.processing.analyzing">ANALYZING BLOODLINES...</div>
+        </div>
+    </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer aria-label="Site footer" class="py-12 bg-obsidian border-t border-white/5 text-center relative z-10 mt-auto">
+        <p class="font-serif text-gold text-2xl mb-4">TSOF</p>
+        <div class="flex justify-center space-x-6 mb-6">
+            <a href="https://x.com/sotfathersbook" aria-label="Follow us on X (Twitter)" target="_blank" rel="noopener noreferrer" class="text-gray-200 hover:text-gold transition-colors"><i class="fab fa-x-twitter fa-lg"></i></a>
+            <a href="https://bsky.app/profile/thesinsofthefathers.com" aria-label="Follow us on Bluesky" target="_blank" rel="noopener noreferrer" class="text-gray-200 hover:text-gold transition-colors"><i class="fab fa-bluesky fa-lg"></i></a>
+            <a href="https://www.instagram.com/sotfathersbook/" aria-label="Follow us on Instagram" target="_blank" rel="noopener noreferrer" class="text-gray-200 hover:text-gold transition-colors"><i class="fab fa-instagram fa-lg"></i></a>
+            <a href="https://www.reddit.com/r/RavenwoodArchives/" aria-label="Follow us on Reddit" target="_blank" rel="noopener noreferrer" class="text-gray-200 hover:text-gold transition-colors"><i class="fab fa-reddit fa-lg"></i></a>
+            <a href="https://discord.gg/aDuzq7jKKn" aria-label="Join us on Discord" target="_blank" rel="noopener noreferrer" class="text-gray-200 hover:text-gold transition-colors"><i class="fab fa-discord fa-lg"></i></a>
+            <a href="https://www.patreon.com/c/TheSinsoftheFathers" aria-label="Support us on Patreon" target="_blank" rel="noopener noreferrer" class="text-gray-200 hover:text-gold transition-colors"><i class="fab fa-patreon fa-lg"></i></a>
+        </div>
+        
+        <div class="flex justify-center space-x-6 mb-6 text-[10px] font-mono uppercase text-gray-200">
+            <a href="/pages/privacy.html" aria-label="Read privacy policy" class="hover:text-gold transition-colors" data-i18n="footer.privacy"></a>
+            <span>|</span>
+            <a href="/pages/terms.html" aria-label="Read terms of operation" class="hover:text-gold transition-colors" data-i18n="footer.terms"></a>
+        </div>
+        <p class="text-gray-600 text-xs uppercase tracking-widest">
+            <span data-i18n="footer.copyright_slogan">Roland Ravenwood & Havi are watching.</span>
+        </p>
+    </footer>
+
+    <!-- Page Specific Script (i18n Title Update) -->
+    <script type="module">
+        import i18next from '../src/lib/i18n.js';
+        
+        const updateTitle = () => {
+            if(i18next.isInitialized) {
+                // If there's a specific key for Silvio title, use it. Otherwise keep "Silvio | TSOF Archives"
+                // document.title = i18next.t('silvio_page.meta_title') || "Silvio | TSOF Archives";
+            }
+        };
+
+        i18next.on('initialized', updateTitle);
+        i18next.on('languageChanged', updateTitle);
+        
+        if (i18next.isInitialized) updateTitle();
+    </script>
+</body>
+</html>

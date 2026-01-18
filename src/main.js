@@ -1,6 +1,6 @@
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import i18next, { initI18n, changeLanguage } from "./lib/i18n.js";
+import i18next, { initI18n, changeLanguage, updateContent } from "./lib/i18n.js";
 import Lenis from "@studio-freight/lenis";
 import initAuth from "./modules/auth/auth.js";
 import { initMobileMenu } from "./modules/ui/mobile-menu.js";
@@ -69,20 +69,7 @@ async function initMonitoringSystem() {
 /* --------------------------------------------------------------------------
     YARDIMCI: SAYFA ÇEVİRİSİ
     -------------------------------------------------------------------------- */
-function updatePageTranslations() {
-  if (!i18next.isInitialized) return;
-  document.querySelectorAll("[data-i18n]").forEach((el) => {
-    const key = el.getAttribute("data-i18n");
-    const translation = i18next.t(key);
-    if (el.tagName === "INPUT" || el.tagName === "TEXTAREA") {
-      el.placeholder = translation;
-    } else {
-      el.innerHTML = translation;
-    }
-  });
-  const titleKey = document.body.getAttribute("data-page-title-key");
-  if (titleKey) document.title = i18next.t(titleKey);
-}
+
 
 /* --------------------------------------------------------------------------
     AĞIR İŞLEMLERİ YAPAN FONKSİYON (Performans için)
@@ -171,10 +158,9 @@ document.addEventListener("DOMContentLoaded", async () => {
   }
   window.enableTrackingSystem = () => initMonitoringSystem();
 
-  // Language and Cookie Consent initialization moved here
+  // Language and Cookie Consent initialization already handles updateContent
   const currentLang = await initI18n();
   console.log(` > Language Protocol: LOADED [${currentLang.toUpperCase()}]`);
-  updatePageTranslations();
   initCookieConsent();
 
   const activeBtn = document.querySelector(
@@ -188,7 +174,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   window.changeAppLanguage = async (lang) => {
     try {
       await changeLanguage(lang);
-      updatePageTranslations();
+      // updateContent is called inside changeLanguage in i18n.js
       document.querySelectorAll(".lang-btn").forEach((btn) => {
         btn.classList.remove("text-white", "font-bold", "underline");
         btn.classList.add("text-gray-200");

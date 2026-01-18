@@ -8,6 +8,7 @@
     "serve": "npm run build && firebase emulators:start --only functions",
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
+    "server": "tsx src/server.ts",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log"
   },
