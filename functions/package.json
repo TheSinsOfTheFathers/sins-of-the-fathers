@@ -29,7 +29,7 @@
     "@types/cors": "^2.8.17",
     "@types/handlebars": "^4.1.0",
     "@types/node": "^25.2.1",
-    "@typescript-eslint/eslint-plugin": "^5.12.0",
+    "@typescript-eslint/eslint-plugin": "^8.54.0",
     "@typescript-eslint/parser": "^8.53.1",
     "eslint": "^8.9.0",
     "eslint-config-google": "^0.14.0",
