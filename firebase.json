@@ -29,19 +29,13 @@
     },
     {
       "target": "blog-site",
-      "public": "blog/dist/client",
+      "public": "blog/dist/",
       "ignore": [
         "firebase.json",
         "**/.*",
         "**/node_modules/**"
       ],
-      "rewrites": [
-        {
-          "source": "**",
-          "function": "astroServer"
-        }
-      ],
-      "predeploy": [
+      "predeploy": [    
         "npm --prefix blog install --legacy-peer-deps && npm --prefix blog run build"
       ],
       "cleanUrls": true,

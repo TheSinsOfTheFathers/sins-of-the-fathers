@@ -1,14 +1,10 @@
 import { defineConfig } from "astro/config";
 import sanity from "@sanity/astro";
 import tailwindcss from "@tailwindcss/vite";
-import node from "@astrojs/node";
 
 export default defineConfig({
   site: "https://blog.thesinsofthefathers.com",
-  output: "server",
-  adapter: node({
-    mode: "middleware",
-  }),
+  output: "static",
   integrations: [
     sanity({
       projectId: "8cfeoaz2",
