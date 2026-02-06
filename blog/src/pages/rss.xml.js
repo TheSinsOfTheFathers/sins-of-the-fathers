@@ -2,7 +2,7 @@ import rss from "@astrojs/rss";
 import { sanityClient } from "sanity:client";
 
 export async function GET(context) {
-  // 1. Sanity'den postları çek
+  // 1. Fetch posts from Sanity
   const posts = await sanityClient.fetch(`
     *[_type == "post"] | order(publishedAt desc) {
       title,
@@ -13,23 +13,22 @@ export async function GET(context) {
     }
   `);
 
-  // 2. RSS Feed'i oluştur
+  // 2. Generate the RSS Feed
   return rss({
-    // XML İsim Alanları (Namespaces) - Yazar adı ve Atom linki için gerekli
+    // XML Namespaces - Required for Author (DC) and Atom self-link
     xmlns: {
       atom: "http://www.w3.org/2005/Atom",
       dc: "http://purl.org/dc/elements/1.1/",
     },
 
-    title: "Sins of the Fathers | Blog",
+    title: "Sins of the Fathers | Intelligence Hub",
     description:
-      "Gizliliği kaldırılmış belgeler, operasyon notları ve evrenin derinlikleri.",
+      "Declassified documents, operational logs, and transmissions from the depths of the psyche.",
     site: context.site,
 
-    // Kanal seviyesinde ek veriler (Dil ve Self Link)
-    // Not: context.site sonunda / olabilir veya olmayabilir, onu garantiye alıyoruz.
+    // Channel-level metadata (Language and Self Link)
     customData: `
-      <language>tr</language>
+      <language>en</language>
       <atom:link href="${new URL("rss.xml", context.site).href}" rel="self" type="application/rss+xml" />
     `,
 
@@ -39,9 +38,8 @@ export async function GET(context) {
       description: post.excerpt,
       link: `/post/${post.slug.current}/`,
 
-      // ÖNEMLİ DEĞİŞİKLİK: 'author' yerine 'customData' içinde 'dc:creator' kullanıyoruz.
-      // Bu sayede e-posta zorunluluğunu aşıp sadece isim gösterebiliyoruz.
-      customData: `<dc:creator>${post.authorName || "Bilinmeyen Yazar"}</dc:creator>`,
+      // Using 'dc:creator' to show the author's name without requiring an email address
+      customData: `<dc:creator>${post.authorName || "Unknown Agent"}</dc:creator>`,
     })),
   });
 }
