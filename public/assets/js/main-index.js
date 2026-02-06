@@ -21,42 +21,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const countdownDate = new Date("2026-01-25T00:00:00Z").getTime();
 
-const countdownFunction = setInterval(function () {
-  const now = Date.now();
-  const distance = countdownDate - now;
-
-  if (distance < 0) {
-    clearInterval(countdownFunction);
-    const countdownContainer = document.getElementById("countdown");
-    if (countdownContainer)
-      countdownContainer.innerHTML =
-        "<p class='text-2xl text-yellow-500 font-serif'>The story has begun.</p>";
-    return;
-  }
-
-  const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-  const hours = Math.floor(
-    (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-  );
-  const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-  const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
-  const elDays = document.getElementById("days");
-  if (elDays) {
-    elDays.innerText = days.toString().padStart(2, "0");
-    document.getElementById("hours").innerText = hours
-      .toString()
-      .padStart(2, "0");
-    document.getElementById("minutes").innerText = minutes
-      .toString()
-      .padStart(2, "0");
-    document.getElementById("seconds").innerText = seconds
-      .toString()
-      .padStart(2, "0");
-  }
-}, 1000);
 
 if (window.tsParticles) {
   tsParticles.load("particles-container", {

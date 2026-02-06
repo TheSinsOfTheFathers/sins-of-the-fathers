@@ -34,7 +34,7 @@
     "resend": "^6.9.1",
     "sanity": "^5.8.1",
     "styled-components": "^6.3.8",
-    "tar": "^7.5.6"
+    "tar": "^7.5.7"
   },
   "devDependencies": {
     "@playwright/test": "^1.58.1",
