@@ -51,8 +51,8 @@
     <!-- Howler.js for Audio Management -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
 
-    <!-- Google ReCaptcha -->
-    <script src="https://www.google.com/recaptcha/api.js?render=6LeoRfYrAAAAANpaxG70cHRmK5ciRKf7sVt9Crnz" async defer></script>
+    <!-- Cloudflare Turnstile -->
+    <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 
     <!-- Partytown Configuration -->
     <script>
@@ -141,6 +141,9 @@
 
             <!-- Login Form -->
             <form id="auth-login-form" class="space-y-4 form-switch-transition">
+                <!-- Turnstile Widget (Hidden/Invisible) -->
+                <div id="turnstile-widget" class="cf-turnstile" data-sitekey="0x4AAAAAAA8u_7sVt9Crnz" data-size="flexible"></div>
+
                 <div class="group">
                     <label for="login-email" class="block text-[10px] text-gray-200 uppercase font-mono mb-1 group-focus-within:text-gold" data-i18n="login_page.label_email">Operative ID / Email</label>
                     <input id="login-email" type="email" name="email" required class="w-full terminal-input font-mono text-sm" placeholder="operative@tsof.internal" autocomplete="email"/>

@@ -27,11 +27,30 @@ const transformDataForTimeline = (eras) => {
 
         let mediaObj = null;
         if (evt.image) {
-          mediaObj = {
-            url: urlFor(evt.image).url(),
-            caption: evt.caption || "",
-            credit: evt.credit || "",
-          };
+          // PRIORITY IMAGE HANDLING
+          // 1. External URL (Manual override)
+          // 2. Asset URL (Direct from Sanity query - Fast)
+          // 3. Builder URL (Fallback - Slow)
+          
+          let imageUrl = evt.external_image_url;
+          
+          if (!imageUrl && evt.image?.asset?.url) {
+              imageUrl = evt.image.asset.url;
+          }
+  
+          if (!imageUrl && evt.image) {
+               try {
+                  imageUrl = urlFor(evt.image)?.url();
+               } catch(e) { console.warn("Image builder failed", e); }
+          }
+  
+          if (imageUrl) {
+              mediaObj = {
+              url: imageUrl,
+              caption: evt.caption || "",
+              credit: evt.credit || "",
+              };
+          }
         }
 
         const formattedText = `
@@ -141,8 +160,12 @@ const initializeTimeline = (embedId, timelineData, lang, loaderEl) => {
 };
 
 export default async function (container, props) {
-  const embedId = container.id || "timeline-embed";
-  const embedEl = container;
+  // Container is usually the section with data-module. Data-module container.
+  // We want to target the inner div #timeline-embed if it exists, otherwise use container.
+  const innerEmbed = container.querySelector("#timeline-embed");
+  const embedEl = innerEmbed || container;
+  const embedId = embedEl.id || "timeline-embed";
+
   // Assuming loader is siblings or global, but let's try to find it in doc if not in container.
   // However, if the module is the embed element, likely the loader is separate.
   let loaderEl = document.getElementById("timeline-loading");
@@ -163,6 +186,7 @@ export default async function (container, props) {
                 date,
                 caption,
                 credit,
+                external_image_url,
                 image {
                     asset->{
                         url,
@@ -191,10 +215,20 @@ export default async function (container, props) {
       if (loaderEl) loaderEl.style.display = "none";
     }
   } catch (error) {
-    console.error("Timeline Malfunction:", error);
+    console.error("Sanity Fetch Failed:", error);
+    
+    // FALLBACK RELOAD
+    // If sanity fails, we fail gracefully now.
     if (loaderEl)
       loaderEl.innerHTML = `<span class='text-red-500'>${i18next.t("timeline_loader.data_corruption")}</span>`;
+    
     if (embedEl)
-      embedEl.innerHTML = `<p class='text-center pt-20 text-red-800'>${i18next.t("timeline_loader.system_failure")}</p>`;
+      embedEl.innerHTML = `
+        <div class='flex flex-col items-center justify-center h-full pt-20 text-center'>
+            <p class='text-red-800 text-xl font-serif mb-4'>ARCHIVE CONNECTION SEVERED</p>
+            <p class='text-gold font-mono text-sm border p-4 border-red-900/50 bg-black/50'>
+                ${error.message}
+            </p>
+        </div>`;
   }
 }

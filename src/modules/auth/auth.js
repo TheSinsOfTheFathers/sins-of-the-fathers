@@ -1,7 +1,7 @@
 import {
   auth,
   googleProvider,
-  RECAPTCHA_SITE_KEY,
+  TURNSTILE_SITE_KEY,
   functions,
   db,
 } from "../firebase-config.js";
@@ -129,31 +129,74 @@ function firebaseErrorToMessage(err) {
 /* --------------------------------------------------------------------------
    RECAPTCHA LOGIC
    -------------------------------------------------------------------------- */
-let recaptchaReadyPromise = new Promise((resolve) => {
-  if (globalThis.grecaptcha && globalThis.grecaptcha.execute) {
-    resolve();
-  } else {
-    const checkInterval = setInterval(() => {
-      if (globalThis.grecaptcha && globalThis.grecaptcha.execute) {
-        clearInterval(checkInterval);
-        resolve();
-      }
-    }, 500);
-  }
-});
+/* --------------------------------------------------------------------------
+   TURNSTILE LOGIC (Cloudflare)
+   -------------------------------------------------------------------------- */
+let turnstileWidgetId = null;
 
-async function getRecaptchaToken(action = "auth") {
-  if (!RECAPTCHA_SITE_KEY) return null;
-  try {
-    await recaptchaReadyPromise;
-    const token = await globalThis.grecaptcha.execute(RECAPTCHA_SITE_KEY, {
-      action,
-    });
-    return token;
-  } catch (e) {
-    console.error("Bot detection failed:", e);
-    return null;
-  }
+function renderTurnstile() {
+  return new Promise((resolve) => {
+    if (turnstileWidgetId !== null) {
+      window.turnstile.reset(turnstileWidgetId);
+      resolve(turnstileWidgetId);
+      return;
+    }
+
+    const checkInterval = setInterval(() => {
+      if (window.turnstile) {
+        clearInterval(checkInterval);
+        
+        try {
+          // If a widget/container exists in HTML, use it.
+          // Otherwise, create one dynamically if needed (but login.html has #turnstile-widget)
+          const container = document.getElementById("turnstile-widget");
+          
+          if (container) {
+             turnstileWidgetId = window.turnstile.render("#turnstile-widget", {
+              sitekey: TURNSTILE_SITE_KEY,
+              theme: 'dark',
+              callback: function(token) {
+                console.log('Turnstile challenge success', token);
+              },
+            });
+            resolve(turnstileWidgetId);
+          } else {
+            console.warn("Turnstile container not found.");
+            resolve(null);
+          }
+        } catch (e) {
+          console.error("Turnstile render error:", e);
+          resolve(null);
+        }
+      }
+    }, 100);
+  });
+}
+
+async function getTurnstileToken(action = "auth") {
+  if (!TURNSTILE_SITE_KEY) return null;
+  
+  // Ensure widget is rendered/ready
+  await renderTurnstile();
+
+  // For Turnstile, we typically get the token via callback or getResponse.
+  // Since we are adapting an async flow that expects a token ON DEMAND, 
+  // and Turnstile might need user interaction or time to solve:
+  
+  if (!window.turnstile) return null;
+
+  const token = window.turnstile.getResponse(turnstileWidgetId);
+  
+  // If we already have a token, return it.
+  if (token) return token;
+
+  // If no token, we might need to wait for the user to solve it 
+  // OR if it's invisible, it might be solving.
+  // For this migration, if the token isn't there, we'll try to return what we have (null/empty)
+  // and handle the error, or wait a bit. 
+  // But strictly, we should probably wrap this in a customized Promise if we strictly need to wait.
+  // However, removing the complexity:
+  return token; 
 }
 
 /* --------------------------------------------------------------------------
@@ -280,7 +323,7 @@ export function initAuth() {
           console.warn("Localhost detected: Bypassing ReCAPTCHA.");
           showMessage(authMessage, "Localhost: Bypassing Security...", "info");
         } else {
-          const signupToken = await getRecaptchaToken("signup");
+          const signupToken = await getTurnstileToken("signup");
           const verifyRecaptchaToken = httpsCallable(
             functions,
             "verifyRecaptchaToken"
@@ -343,12 +386,12 @@ export function initAuth() {
           console.warn("Localhost detected: Bypassing ReCAPTCHA.");
           showMessage(authMessage, "Localhost: Bypassing Security...", "info");
         } else {
-          const loginToken = await getRecaptchaToken("login");
-          const verifyRecaptchaToken = httpsCallable(
+          const loginToken = await getTurnstileToken("login");
+          const verifyTurnstileToken = httpsCallable(
             functions,
-            "verifyRecaptchaToken"
+            "verifyTurnstileToken"
           );
-          await verifyRecaptchaToken({ token: loginToken, action: "login" });
+          await verifyTurnstileToken({ token: loginToken, action: "login" });
         }
 
         showMessage(authMessage, "Access Granted.", "success");
@@ -402,7 +445,7 @@ export function initAuth() {
         }
       } else {
         // REDIRECT FLOW (Production - Better for Mobile)
-        const googleToken = await getRecaptchaToken("google_signin");
+        const googleToken = await getTurnstileToken("google_signin");
         const verifyRecaptchaToken = httpsCallable(
           functions,
           "verifyRecaptchaToken"

@@ -60,20 +60,6 @@
         "npm --prefix \"$RESOURCE_DIR\" run build"
       ],
       "source": "functions"
-    },
-    {
-      "codebase": "astro-blog",
-      "ignore": [
-        "node_modules",
-        ".git",
-        "dist/client",
-        ".astro"
-      ],
-      "predeploy": [
-        "npm --prefix blog run build"
-      ],
-      "source": "blog",
-      "runtime": "nodejs20"
     }
   ]
 }

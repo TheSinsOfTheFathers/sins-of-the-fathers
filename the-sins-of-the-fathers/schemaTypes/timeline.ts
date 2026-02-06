@@ -37,6 +37,12 @@ export default defineType({
                         {name: 'credit', type: 'string', title: 'Credit'}
                     ]
                 },
+                {
+                    name: 'external_image_url', 
+                    title: 'External Image URL', 
+                    type: 'url', 
+                    description: 'Optional: Use a direct image link instead of uploading.'
+                },
                 {name: 'relatedLocation', type: 'reference', to: [{type: 'location'}], title: 'Location Ref'},
             ]
         }]

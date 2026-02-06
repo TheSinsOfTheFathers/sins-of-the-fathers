@@ -1,5 +1,5 @@
-import { createClient } from 'https://esm.sh/@sanity/client@6.22.0';
-import imageUrlBuilder from 'https://esm.sh/@sanity/image-url@1.1.0';
+import { createClient } from '@sanity/client';
+import { createImageUrlBuilder } from '@sanity/image-url';
 
 export const client = createClient({
   projectId: '8cfeoaz2', 
@@ -8,23 +8,8 @@ export const client = createClient({
   apiVersion: '2024-11-28',
 });
 
-let builderInstance;
-
-try {
-    const builderSource = imageUrlBuilder;
-
-    if (typeof builderSource === 'function') {
-        builderInstance = builderSource(client);
-    } else if (builderSource && typeof builderSource.default === 'function') {
-        builderInstance = builderSource.default(client);
-    } else {
-        console.error("Sanity Image Builder Yüklenemedi:", builderSource);
-    }
-} catch (error) {
-    console.error("Builder Başlatma Hatası:", error);
-}
+const builder = createImageUrlBuilder(client);
 
 export const urlFor = (source) => {
-  if (!builderInstance || !source) return undefined;
-  return builderInstance.image(source);
+  return builder.image(source);
 };

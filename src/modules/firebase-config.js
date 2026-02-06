@@ -33,8 +33,7 @@ const firebaseConfig = {
   measurementId: "G-9H3782YN0N",
 };
 
-// Export hatasını önlemek için doğrudan export const olarak tanımlıyoruz
-export const RECAPTCHA_SITE_KEY = "6LeoRfYrAAAAANpaxG70cHRmK5ciRKf7sVt9Crnz";
+export const TURNSTILE_SITE_KEY = "0x4AAAAAACYllPxy3Qv5WB8q";
 
 /* --------------------------------------------------------------------------
     SYSTEM INITIALIZATION
