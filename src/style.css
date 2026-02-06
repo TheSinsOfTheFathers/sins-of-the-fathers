@@ -673,7 +673,13 @@ input:-webkit-autofill:active {
 }
 
 .tl-media-content-container {
-  border: 1px solid #333;
+  border: 1px solid #c5a059 !important;
+  box-shadow: 0 0 15px rgba(197, 160, 89, 0.1);
+}
+
+.tl-media-content img {
+  border: 1px solid #c5a059 !important;
+  box-shadow: 0 0 10px rgba(197, 160, 89, 0.2);
 }
 
 .tl-slidenav-icon {
