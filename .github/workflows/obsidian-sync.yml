@@ -1,0 +1,41 @@
+name: "Intelligence Sync: Obsidian to Sanity"
+
+on:
+  workflow_dispatch:
+    inputs:
+      sync_target:
+        description: 'Senkronize edilecek birim:'
+        required: true
+        default: 'Characters'
+        type: choice
+        options:
+          - Characters
+          - Lore
+          - Timeline
+          - ALL
+      dry_run:
+        description: 'Dry Run? (Sadece test et, Sanityye gönderme)'
+        type: boolean
+        default: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          
+      - name: Install Dependencies
+        run: |
+          npm install @sanity/client gray-matter slugify
+          
+      - name: Run Sync Script
+        env:
+          SANITY_AUTH_TOKEN: ${{ secrets.SANITY_AUTH_TOKEN }}
+          SYNC_TARGET: ${{ github.event.inputs.sync_target }}
+          DRY_RUN: ${{ github.event.inputs.dry_run }}
+        run: node scripts/sync-obsidian.mjs
