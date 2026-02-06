@@ -31,7 +31,7 @@
     "mermaid": "^11.12.1",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
-    "resend": "^6.5.2",
+    "resend": "^6.9.1",
     "sanity": "^5.4.0",
     "styled-components": "^6.3.8",
     "tar": "^7.5.6"
