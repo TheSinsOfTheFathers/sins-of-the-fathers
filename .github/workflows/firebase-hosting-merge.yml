@@ -15,4 +15,4 @@ jobs:
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           projectId: sins-of-the-fathers
           target: main-site
-          channelId: live"
+          channelId: live
