@@ -12,7 +12,8 @@
     "characters": "Characters",
     "map": "Map",
     "merch": "Merch",
-    "silvio": "Silvio"
+    "silvio": "Commission",
+    "blog": "BLOG"
   },
   "common": {
     "loading": "Decrypting Data...",
@@ -448,7 +449,13 @@
       "checkbox_label": "I have read and accept the <a href='/pages/privacy.html' target='_blank' class='text-gold hover:underline relative z-50'>Privacy Policy</a> and <a href='/pages/terms.html' target='_blank' class='text-gold hover:underline relative z-50'>Terms of Use</a>.",
       "action": "ACCESS MAINFRAME",
       "access_granted": "ACCESS GRANTED",
-      "hostile_trace": "Hostile Trace Detected"
+      "hostile_trace": "Hostile Trace Detected",
+      "lockdown_title": "COMMISSION IN SESSION",
+      "lockdown_subtext": "The High Table has convened. All channels are silenced.\nNo external connections accepted.",
+      "access_denied": "ACCESS DENIED",
+      "access_restricted_msg": "This area is currently restricted to Commission members only.",
+      "authorized_personnel": "AUTHORIZED PERSONNEL ONLY",
+      "return_home": "RETURN TO SAFETY"
     }
   }
 }

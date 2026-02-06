@@ -12,7 +12,8 @@
     "characters": "Karakterler",
     "map": "Harita",
     "merch": "Ürünler",
-    "silvio": "Silvio"
+    "silvio": "Komisyon",
+    "blog": "BLOG"
   },
   "common": {
     "loading": "Veri Şifresi Çözülüyor...",
@@ -448,7 +449,13 @@
       "checkbox_label": "<a href='/pages/privacy.html' target='_blank' class='text-gold hover:underline relative z-50'>Gizlilik Politikası</a> ve <a href='/pages/terms.html' target='_blank' class='text-gold hover:underline relative z-50'>Kullanım Koşullarını</a> okudum, kabul ediyorum.",
       "action": "ANA SİSTEME ERİŞ",
       "access_granted": "ERİŞİM İZNİ VERİLDİ",
-      "hostile_trace": "Düşman İzi Tespit Edildi"
+      "hostile_trace": "Düşman İzi Tespit Edildi",
+      "lockdown_title": "KOMİSYON TOPLANIYOR",
+      "lockdown_subtext": "Yüksek Masa oturumda. Tüm kanallar susturuldu.\nHiçbir dış bağlantı kabul edilmeyecek.",
+      "access_denied": "ERİŞİM REDDEDİLDİ",
+      "access_restricted_msg": "Bu alan şu anda sadece Komisyon üyelerine açıktır.",
+      "authorized_personnel": "SADECE YETKİLİ PERSONEL",
+      "return_home": "GÜVENLİ BÖLGEYE DÖN"
     }
   }
 }
