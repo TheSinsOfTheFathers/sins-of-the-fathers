@@ -28,7 +28,6 @@
     "firebase-functions": "^7.0.3",
     "genkit": "^1.27.0",
     "gsap": "^3.14.2",
-    "mermaid": "^11.12.1",
     "react": "^19.2.3",
     "react-dom": "^19.2.4",
     "resend": "^6.9.1",

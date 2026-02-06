@@ -185,14 +185,6 @@ export default defineType({
         }
       }]
     }),
-    defineField({
-      name: 'familyTree',
-      title: 'Legacy Family Tree Data (Mermaid)',
-      type: 'text',
-      rows: 5,
-      hidden: true,
-      group: 'network',
-    })
   ],
   preview: {
     select: {
