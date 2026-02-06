@@ -4,28 +4,44 @@ import { urlFor } from "../../lib/urlFor";
 import { PortableText } from "astro-portabletext";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 
-export const prerender = false; 
+interface Post {
+  title: string;
+  publishedAt: string;
+  mainImage: any;
+  body: any;
+  authorName?: string;
+}
 
-const { slug } = Astro.params;
+interface Props {
+  post: Post;
+}
 
-const client = createClient({
-  projectId: "8cfeoaz2", 
-  dataset: "production",
-  useCdn: true,
-  apiVersion: "2023-05-03",
-});
+export async function getStaticPaths() {
+  const client = createClient({
+    projectId: "8cfeoaz2", 
+    dataset: "production",
+    useCdn: true,
+    apiVersion: "2023-05-03",
+  });
 
-const post = await client.fetch(`*[_type == "post" && slug.current == $slug][0]{
-  title,
-  publishedAt,
-  mainImage,
-  body,
-  authorName 
-}`, { slug });
+  const posts = await client.fetch(`*[_type == "post" && defined(slug.current)]{
+    "slug": slug.current,
+    title,
+    publishedAt,
+    mainImage,
+    body,
+    authorName 
+  }`);
 
-if (!post) return Astro.redirect("/404");
+  return posts.map((post: Post) => ({
+    params: { slug: (post as any).slug },
+    props: { post },
+  }));
+}
 
-// 3. DÜZELTME: TypeScript hatası için ': string' tipini ekledik.
+// 2. Props'u artık güvenle alabiliriz
+const { post } = Astro.props as Props;
+
 function formatDate(dateString: string) {
   if (!dateString) return 'Undated Record';
   return new Date(dateString).toLocaleDateString('en-US', { 
@@ -35,9 +51,7 @@ function formatDate(dateString: string) {
 ---
 
 <BaseLayout title={post.title}>
-    
     <div class="max-w-3xl mx-auto px-6 py-12">
-      
       <div class="flex items-center gap-4 mb-6 text-xs font-mono text-[#c5a059] uppercase tracking-widest">
         <span>{formatDate(post.publishedAt)}</span>
         <span class="text-gray-700">|</span>
@@ -55,7 +69,6 @@ function formatDate(dateString: string) {
             alt={post.title}
             class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000"
           />
-          {/* 4. DÜZELTME: bg-gradient-to-t -> bg-linear-to-t */}
           <div class="absolute inset-0 shadow-inner bg-linear-to-t from-[#050505] to-transparent opacity-60"></div>
         </div>
       )}
@@ -74,5 +87,4 @@ function formatDate(dateString: string) {
         </div>
       </div>
     </div>
-
 </BaseLayout>
