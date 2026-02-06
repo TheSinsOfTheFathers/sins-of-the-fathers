@@ -13,7 +13,7 @@
     "@builder.io/partytown": "^0.10.3",
     "@genkit-ai/firebase": "^1.27.0",
     "@genkit-ai/google-genai": "^1.28.0",
-    "@sanity/client": "^7.14.0",
+    "@sanity/client": "^7.14.1",
     "@sanity/color-input": "^6.0.3",
     "@sanity/image-url": "^2.0.2",
     "@sanity/vision": "^5.8.1",
