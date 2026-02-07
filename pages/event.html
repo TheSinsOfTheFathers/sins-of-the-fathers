@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sins of the Fathers | Event Record</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg">
+    
+    <!-- Styles -->
+    <link href="../src/style.css" rel="stylesheet">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Cormorant+Garamond:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body class="bg-obsidian text-mercury font-sans antialiased overflow-x-hidden selection:bg-gold selection:text-black">
+
+    <!-- Background Texture -->
+    <div class="fixed inset-0 pointer-events-none z-0 opacity-20" style="background-image: url('../assets/textures/noise.png');"></div>
+
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 transition-all duration-300 border-b border-white/5 bg-obsidian/90 backdrop-blur-md" id="main-nav">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <a href="../index.html" class="text-gold font-serif text-xl tracking-widest hover:text-white transition-colors">
+                    SINS OF THE FATHERS
+                </a>
+                <a href="timeline.html" class="text-xs uppercase tracking-[0.2em] text-gray-400 hover:text-gold transition-colors">
+                    < Back to Timeline
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="relative z-10 pt-24 pb-20 px-4 min-h-screen flex items-center justify-center">
+        
+        <div id="event-detail-container" class="max-w-5xl w-full mx-auto" data-module="event-detail-loader.js">
+            <!-- Loading State -->
+            <div id="event-loading" class="flex flex-col items-center justify-center py-20 min-h-[50vh]">
+                <div class="w-16 h-16 border-2 border-gold border-t-transparent rounded-full animate-spin mb-6"></div>
+                <p class="text-gold font-mono text-sm uppercase tracking-[0.3em] animate-pulse">Retrieving Classified Record...</p>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="relative z-10 bg-black py-12 border-t border-white/10">
+        <div class="max-w-7xl mx-auto px-4 text-center">
+            <p class="text-gray-600 font-serif text-sm tracking-widest">
+                &copy; 2026 THE SINS OF THE FATHERS. CLASSIFIED.
+            </p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script type="module" src="../src/main.js"></script>
+</body>
+</html>

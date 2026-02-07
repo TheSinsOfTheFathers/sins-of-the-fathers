@@ -27,6 +27,16 @@ export default defineType({
             fields: [
                 {name: 'date', title: 'Date', type: 'date', description: 'YYYY-MM-DD (veya sadece yıl seçin).'},
                 {name: 'title_en', title: 'Event Headline', type: 'string'},
+                {
+                  name: 'slug',
+                  title: 'Slug',
+                  type: 'slug',
+                  options: {
+                    source: (doc, options) => (options.parent as any)?.title_en,
+                    maxLength: 96,
+                  },
+                  validation: (Rule) => Rule.required(),
+                },
                 {name: 'text_en', title: 'Description', type: 'text', rows: 3},
                 {
                     name: 'image', 

@@ -3,13 +3,29 @@
 
 /* =========================================
    Base Styles & Scrollbar
+   =========================================*/
+/* =========================================
+   GLOBAL EFFECTS
    ========================================= */
+.noise-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 50;
+    opacity: 0.05;
+    background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+    mix-blend-mode: overlay;
+}
+
+/* Base Styles */
 body {
-  background-color: #050505;
-  color: #d4d4d4;
-  /* HTML'den gelen metin rengi */
+  background-color: var(--bg-obsidian);
+  color: var(--text-offwhite);
   font-family: 'Lato', sans-serif;
-  font-display: swap;
+  overflow-x: hidden;
 
   ::selection {
     background: #D4AF37;
@@ -54,6 +70,14 @@ html.lenis {
 .lenis.lenis-stopped {
   overflow: hidden;
   height: 100%;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
 }
 
 /* =========================================
@@ -624,66 +648,121 @@ input:-webkit-autofill:active {
   }
 }
 
-/* --- TIMELINE.JS OVERRIDES (Dark Mode Hack) --- */
-/* Bu stiller Timeline.js'in beyaz temasını ezer */
+/* =========================================
+   TIMELINE MAKEOVER STYLES
+   ========================================= */
 
-.tl-timeline,
-.tl-storyslider,
-.tl-slide-content,
-.tl-slide,
-.tl-slide-scrollable-container {
+/* Central Line */
+.timeline-line {
+  width: 2px;
+  background: linear-gradient(to bottom, 
+    transparent 0%, 
+    rgba(197, 160, 89, 0.2) 20%, 
+    rgba(197, 160, 89, 0.8) 50%, 
+    rgba(197, 160, 89, 0.2) 80%, 
+    transparent 100%
+  );
+  background-size: 100% 200%;
+  animation: flowLine 3s linear infinite;
+  box-shadow: 0 0 15px rgba(197, 160, 89, 0.2);
+}
+
+@keyframes flowLine {
+  0% { background-position: 0% 0%; }
+  100% { background-position: 0% 100%; }
+}
+
+/* Timeline Node */
+.timeline-node {
   background-color: #050505 !important;
-}
-
-.tl-headline-date,
-.tl-headline {
-  font-family: 'Cinzel', serif !important;
-  color: #c5a059 !important;
-  /* GOLD */
-  text-transform: uppercase;
-  font-display: swap;
-}
-
-.tl-text {
-  font-family: 'Lato', sans-serif !important;
-  color: #b0b0b0 !important;
-  font-display: swap;
-}
-
-.tl-timenav,
-.tl-timenav-slider {
-  background-color: #111 !important;
-  border-top: 1px solid #333 !important;
-}
-
-.tl-timegroup-message {
-  color: #666 !important;
-  text-shadow: none !important;
-}
-
-.tl-timemarker .tl-timemarker-content {
-  background-color: #000 !important;
   border: 1px solid #c5a059 !important;
-  border-radius: 0 !important;
+  box-shadow: 0 0 10px rgba(197, 160, 89, 0.4), inset 0 0 5px rgba(197, 160, 89, 0.2);
+  transition: all 0.5s ease;
 }
 
-.tl-timemarker.tl-timemarker-active .tl-timemarker-content {
+.timeline-row:hover .timeline-node {
   background-color: #c5a059 !important;
-  box-shadow: 0 0 15px rgba(197, 160, 89, 0.5);
+  box-shadow: 0 0 20px rgba(197, 160, 89, 0.8), 0 0 40px rgba(197, 160, 89, 0.4);
+  transform: translateX(-50%) scale(1.2);
 }
 
-.tl-media-content-container {
-  border: 1px solid #c5a059 !important;
-  box-shadow: 0 0 15px rgba(197, 160, 89, 0.1);
+/* Timeline Card - Glassmorphism & Noir */
+.timeline-card {
+  background: rgba(20, 20, 20, 0.6) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-left: 2px solid rgba(197, 160, 89, 0.3); /* Gold accent on left */
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  overflow: hidden;
 }
 
-.tl-media-content img {
-  border: 1px solid #c5a059 !important;
-  box-shadow: 0 0 10px rgba(197, 160, 89, 0.2);
+.timeline-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(197, 160, 89, 0.5), transparent);
+  opacity: 0;
+  transition: opacity 0.4s ease;
 }
 
-.tl-slidenav-icon {
-  color: #c5a059 !important;
+.timeline-card:hover {
+  transform: translateY(-5px) scale(1.02);
+  border-color: rgba(197, 160, 89, 0.4);
+  box-shadow: 0 10px 50px rgba(0, 0, 0, 0.8), 0 0 20px rgba(197, 160, 89, 0.1);
+  background: rgba(30, 30, 30, 0.7) !important;
+}
+
+.timeline-card:hover::before {
+  opacity: 1;
+}
+
+/* Typography & Content */
+.timeline-card h3 {
+  font-family: 'Cinzel', serif;
+  letter-spacing: 0.05em;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+}
+
+.timeline-card .wysiwyg-content {
+  font-family: 'Lato', sans-serif;
+  font-weight: 300;
+  color: #a3a3a3;
+}
+
+/* Media Containers */
+.timeline-media,
+.timeline-media img {
+  border: 1px solid rgba(197, 160, 89, 0.2) !important;
+  transition: border-color 0.3s ease;
+}
+
+.timeline-card:hover .timeline-media img {
+  border-color: rgba(197, 160, 89, 0.6) !important;
+}
+
+/* Mobile Tweaks */
+@media (max-width: 640px) {
+    .timeline-content-wrapper {
+        justify-content: center !important;
+        padding: 0 !important;
+    }
+    
+    .timeline-card {
+        width: 100% !important;
+        margin-bottom: 2rem;
+        background-color: rgba(5, 5, 5, 0.95);
+        z-index: 20;
+    }
+
+    /* Hide center line connector lines on mobile */
+    .timeline-row::before { 
+        display: none; 
+    }
 }
 
 /* =========================================
