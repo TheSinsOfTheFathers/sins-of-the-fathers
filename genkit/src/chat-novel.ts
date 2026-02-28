@@ -14,19 +14,6 @@ const AI_LOCATION = "global";
 // 🚀 MODEL İSMİ: Gemini 3 Pro Preview
 const CHAT_MODEL_NAME = "vertexai/gemini-3-pro-preview";
 
-// --- KARAKTER VERİTABANI ---
-const CHARACTER_DB: Record<string, string> = {
-  silvio:
-    "Silvio: 85 yaşında, anlatıcı, bilge, manipülatif akıl hocası. Racon keser.",
-  roland:
-    "Roland: Ana karakter, 'Karga'. Hırslı, duygusuzlaşmaya çalışan lider.",
-  fabio:
-    "Fabio: Umberto'nun oğlu. Onurlu olmaya çalıştı ama Roland'a karşı kaybetti.",
-  umberto: "Umberto: Fabio'nun babası ve ailenin finansçısı (Muhasebeci).",
-  aurelia: "Aurelia: Roland'ın geçmişindeki kadın, onun zayıf noktası.",
-  riccardo: "Riccardo: Kas gücü, sadık tetikçi, sonu kötü biter.",
-};
-
 // --- BAŞLATMA ---
 try {
   initializeApp({ projectId: PROJECT_ID });
@@ -44,26 +31,12 @@ const ai = genkit({
 });
 
 export async function askTheNovel(question: string) {
-  // 1. Karakter Analizi
-  const questionLower = question.toLowerCase();
-  let relevantCharacterBios = "";
-  Object.keys(CHARACTER_DB).forEach((key) => {
-    if (questionLower.includes(key)) {
-      relevantCharacterBios += `- ${CHARACTER_DB[key]}\n`;
-    }
-  });
-  if (!relevantCharacterBios) {
-    relevantCharacterBios = `- ${CHARACTER_DB["silvio"]}\n- ${CHARACTER_DB["roland"]}`;
-  }
-
-  // 2. Embedding (Vektör)
-  // Global konumda da "vertexai/" prefix'i ile çalışır.
+  // Embedding (Vektör)
   const embeddingResult = await ai.embed({
     embedder: "vertexai/text-embedding-004",
     content: question,
   });
 
-  // Veriyi güvenli alma
   let vector: number[];
   // @ts-ignore
   if (Array.isArray(embeddingResult)) {
@@ -74,7 +47,7 @@ export async function askTheNovel(question: string) {
     vector = embeddingResult.embedding || embeddingResult;
   }
 
-  // 3. Firestore Arama (RAG)
+  // Firestore Arama (RAG)
   const coll = db.collection("novel_vectors");
   let contextText = "";
 
@@ -94,16 +67,13 @@ export async function askTheNovel(question: string) {
       contextText = "Bu konuda küllerin arasında hiçbir iz yok.";
     }
 
-    // 4. Prompt
+    // Prompt
     const prompt = `
       KİMLİK: Sen SİLVİO'sun. 85 yaşında, eski toprak, tehlikeli bir İtalyan mafya bilgesisin.
       
       DİL KURALI:
       - Kullanıcı Türkçe sorarsa TÜRKÇE cevap ver.
       - Kullanıcı İngilizce sorarsa İNGİLİZCE cevap ver.
-      
-      ⚠️ KESİN BİLGİLER:
-      ${relevantCharacterBios}
 
       📚 HAFIZA:
       ${contextText}
@@ -116,15 +86,14 @@ export async function askTheNovel(question: string) {
       SORU: ${question}
     `;
 
-    // 5. Cevap Üretme (GÜVENLİK + DÜŞÜNME AYARLARI EKLENDİ)
+    // Cevap Üretme (GÜVENLİK + DÜŞÜNME AYARLARI EKLENDİ)
     const response = await ai.generate({
       model: CHAT_MODEL_NAME,
       prompt: prompt,
       config: {
         temperature: 1.0,
 
-        // 🛡️ GÜVENLİK (SAFETY): Silvio'yu özgür bırakıyoruz.
-        // Standart filtreler "silah", "ölüm", "mafya" kelimelerini engellemesin.
+        // 🛡️ GÜVENLİK (SAFETY): Silvio'yu özgür bırakıyoruz. Standart filtreler "silah", "ölüm", "mafya" kelimelerini engellemesin.
         safetySettings: [
           {
             category: "HARM_CATEGORY_HATE_SPEECH",
@@ -144,8 +113,7 @@ export async function askTheNovel(question: string) {
           },
         ],
 
-        // 🧠 SOTA DÜŞÜNME (THINKING):
-        // Gemini 3.0'ın "Reasoning" yeteneğini açıyoruz.
+        // 🧠 SOTA DÜŞÜNME (THINKING): Gemini 3.0'ın "Reasoning" yeteneğini açıyoruz.
         thinkingConfig: {
           includeThoughts: false, // Düşünceleri kullanıcıya gösterme (Sır kalsın)
           thinkingBudget: 2048, // Düşünme kapasitesi (Token sınırı)

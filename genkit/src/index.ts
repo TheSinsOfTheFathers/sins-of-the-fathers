@@ -16,16 +16,6 @@ const PROJECT_ID = "sins-of-the-fathers";
 const AI_LOCATION = "global";
 const CHAT_MODEL_NAME = "vertexai/gemini-3-pro-preview";
 
-// --- CHARACTER DATABASE ---
-const CHARACTER_DB: Record<string, string> = {
-  silvio: "Silvio: 85 yaşında, anlatıcı, bilge, manipülatif akıl hocası. Racon keser.",
-  roland: "Roland: Ana karakter, 'Karga'. Hırslı, duygusuzlaşmaya çalışan lider.",
-  fabio: "Fabio: Umberto'nun oğlu. Onurlu olmaya çalıştı ama Roland'a karşı kaybetti.",
-  umberto: "Umberto: Fabio'nun babası ve ailenin finansçısı (Muhasebeci).",
-  aurelia: "Aurelia: Roland'ın geçmişindeki kadın, onun zayıf noktası.",
-  riccardo: "Riccardo: Kas gücü, sadık tetikçi, sonu kötü biter.",
-};
-
 // --- GENKIT INIT ---
 const ai = genkit({
   plugins: [
@@ -52,15 +42,7 @@ export const askTheNovel = onCall({
   }
 
   try {
-    // 1. Character Bios
-    const questionLower = question.toLowerCase();
-    let bios = "";
-    Object.keys(CHARACTER_DB).forEach((key) => {
-      if (questionLower.includes(key)) bios += `- ${CHARACTER_DB[key]}\n`;
-    });
-    if (!bios) bios = `- ${CHARACTER_DB["silvio"]}\n- ${CHARACTER_DB["roland"]}`;
-
-    // 2. Embedding
+    // Embedding
     const embeddingResult = await ai.embed({
       embedder: "vertexai/text-embedding-004",
       content: question,
@@ -76,7 +58,7 @@ export const askTheNovel = onCall({
         vector = embeddingResult.embedding || embeddingResult;
     }
 
-    // 3. Vector Search
+    // Vector Search
     const coll = db.collection("novel_vectors");
     let contextText = "";
 
@@ -95,17 +77,16 @@ export const askTheNovel = onCall({
       contextText = "Bu konuda küllerin arasında hiçbir iz yok.";
     }
 
-    // 4. Prompt
+    // Prompt
     const prompt = `
       KİMLİK: Sen SİLVİO'sun. 85 yaşında, eski toprak, tehlikeli bir İtalyan mafya bilgesisin.
       DİL KURALI: Kullanıcı Türkçe sorarsa TÜRKÇE, İngilizce sorarsa İNGİLİZCE cevap ver.
-      ⚠️ KESİN BİLGİLER: ${bios}
       📚 HAFIZA: ${contextText}
       ÜSLUP: Ağırbaşlı, otoriter ve "Noir" havasında konuş. Asla yapay zeka olduğunu söyleme.
       SORU: ${question}
     `;
 
-    // 5. Generate Response
+    // Generate Response
     const response = await ai.generate({
       model: CHAT_MODEL_NAME,
       prompt: prompt,
