@@ -12,7 +12,6 @@
     "characters": "Characters",
     "map": "Map",
     "merch": "Merch",
-    "silvio": "Commission",
     "blog": "BLOG"
   },
   "common": {
@@ -413,49 +412,5 @@
     "accept": "AUTHORIZE",
     "decline": "DECLINE",
     "policy_link": "View Protocol"
-  },
-  "silvio_page": {
-    "meta_title": "Silvio | TSOF Archives",
-    "placeholder": "Whisper your question here...",
-    "initial_greeting": "You've struck a match in the dark, kid... Tell me, what do you want to know about the Sins of the Fathers?",
-    "video_controls": {
-      "play": "PLAY VIDEO",
-      "pause": "PAUSE VIDEO"
-    },
-    "headers": {
-      "source": "SOURCE",
-      "system_online": "SOURCE: OMEGA // SYSTEM: ONLINE",
-      "time": "TIME"
-    },
-    "processing": {
-      "analyzing": "ANALYZING BLOODLINES",
-      "consulting": "CONSULTING THE ARCHIVES",
-      "decrypting": "DECRYPTING SECRETS",
-      "establishing": "ESTABLISHING IDENTITY",
-      "tracing": "TRACING THE LINEAGE"
-    },
-    "errors": {
-      "connection": "The darkness deepens, kid... My intel channels are closed right now. Come back later.",
-      "server": "Server error."
-    },
-    "placeholder_listening": "Listening...",
-    "dossier_access": "DOSSIER ACCESS // LEVEL 4",
-    "target_id": "ID CONFIRMED // RESTRICTED ACCESS",
-    "omerta": {
-      "title": "OMERTA PROTOCOL",
-      "protocol_ver": "Protocol: v3.04",
-      "secure_conn": "Secure Connection: Est.",
-      "subtext": "You hear that noise outside...?\nThat... is the world... choking on its own lies.\n\nBut in here... in The Fortress... we do not deal in noise. We deal in memory.\n\nListen close... bambino.\nYou are stepping into the shadow of a dangerous man. Roland's shadow.\nIn this dark... silence is not just a virtue. It is the only way to stay breathing.\n\nIf your spine is too weak for the weight of the truth... turn around. Walk away while you still can.\n\nBut... if you seek the sins of the fathers... If you are ready to carry the burden...\n\nSign the protocol.\nJust remember one thing...\nIn this life... we do not retire.\n\nWe only... expire.",
-      "checkbox_label": "I have read and accept the <a href='/pages/privacy.html' target='_blank' class='text-gold hover:underline relative z-50'>Privacy Policy</a> and <a href='/pages/terms.html' target='_blank' class='text-gold hover:underline relative z-50'>Terms of Use</a>.",
-      "action": "ACCESS MAINFRAME",
-      "access_granted": "ACCESS GRANTED",
-      "hostile_trace": "Hostile Trace Detected",
-      "lockdown_title": "COMMISSION IN SESSION",
-      "lockdown_subtext": "The High Table has convened. All channels are silenced.\nNo external connections accepted.",
-      "access_denied": "ACCESS DENIED",
-      "access_restricted_msg": "This area is currently restricted to Commission members only.",
-      "authorized_personnel": "AUTHORIZED PERSONNEL ONLY",
-      "return_home": "RETURN TO SAFETY"
-    }
   }
 }

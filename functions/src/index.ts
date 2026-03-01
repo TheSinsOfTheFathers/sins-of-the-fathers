@@ -5,10 +5,8 @@
 
 import { verifyTurnstileToken } from "./handlers/auth";
 import { onNewSubscriber } from "./handlers/subscribers";
-import { askTheNovel } from "./handlers/silvio";
 
 export {
   verifyTurnstileToken,
   onNewSubscriber,
-  askTheNovel,
 };

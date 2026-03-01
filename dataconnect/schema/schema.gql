@@ -1,0 +1,39 @@
+type Entity @table {
+  id: UUID! @default(expr: "uuidV4()")
+  name: String!
+  role: String
+  status: String! @default(value: "ACTIVE") # 'ACTIVE', 'DECEASED', 'MISSING'
+  threatLevel: String! @default(value: "LOW") # 'LOW', 'MODERATE', 'HIGH', 'CRITICAL'
+  imageUrl: String
+  metadata: String # Any additional classified info encoded as JSON string or text
+}
+
+type BloodlineLink @table {
+  id: UUID! @default(expr: "uuidV4()")
+  source: Entity! @ref
+  target: Entity! @ref
+  relationType: String! # e.g. 'BIOLOGICAL', 'BLOOD_OATH', 'RIVAL', 'SUBORDINATE'
+  notes: String
+}
+
+# Add queries and mutations using Data Connect conventions
+query ListBloodline @auth(level: PUBLIC) {
+  entities {
+    id
+    name
+    role
+    status
+    threatLevel
+    imageUrl
+  }
+  bloodlineLinks {
+    id
+    source {
+      id
+    }
+    target {
+      id
+    }
+    relationType
+  }
+}

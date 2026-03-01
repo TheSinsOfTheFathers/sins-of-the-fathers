@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en"> 
+<head>
+    <!-- Google Tag Manager -->
+    <script type="text/partytown">
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-PVH59MXZ');
+    </script>
+    <!-- End Google Tag Manager -->
+     
+    <!-- Meta Tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="The Bloodline Case File: An intelligence web of all major operatives, architects, and associates in the Ravenwood & Havi saga.">
+    
+    <!-- Title -->
+    <title>Bloodline Case File | TSOF Archives</title>
+
+    <!-- Preconnects for Performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- External Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Courier+Prime&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+    
+    <!-- Internal Styles -->
+    <link rel="stylesheet" href="../src/style.css">
+
+    <!-- Internal Scripts -->
+    <script type="module" src="../src/main.js"></script>
+
+    <!-- Partytown Configuration -->
+    <script>
+        partytown = {
+            forward: ['dataLayer.push', 'gtag', 'fbq'], 
+            lib: '/~partytown/'
+        };
+    </script>
+    
+    <!-- Partytown Script -->
+    <script type="module" src="../src/modules/loaders/partytown-loader.js"></script>
+
+    <style>
+        /* Small inline tweaks for SVG tuval overlap */
+        #bloodline-container {
+            min-height: 800px;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen bg-obsidian selection:bg-gold selection:text-black relative overflow-x-hidden">
+
+    <!-- Visual Effects -->
+    <div class="fixed inset-0 pointer-events-none z-0">
+        <!-- Ambient Glow -->
+        <div class="absolute top-1/4 left-1/4 w-[800px] h-[800px] bg-gold/5 rounded-full blur-[120px] mix-blend-screen opacity-50"></div>
+        <div class="absolute bottom-1/4 right-1/4 w-[600px] h-[600px] bg-red-900/5 rounded-full blur-[150px] mix-blend-screen opacity-30"></div>
+        <!-- Noise -->
+        <div class="noise-overlay absolute inset-0 opacity-40"></div>
+    </div>
+
+    <!-- Header & Navigation (Duplicated from characters.html for standalone routing) -->
+    <header aria-label="Main navigation" class="fixed top-0 w-full z-50 bg-obsidian/90 backdrop-blur-md border-b border-white/5 transition-all">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center relative">
+            <a href="/" class="text-xl md:text-3xl font-serif text-gold tracking-widest uppercase hover:text-white transition-colors z-20 relative">TSOF</a>
+            
+            <div class="hidden md:flex absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 items-center space-x-6 xl:space-x-8 text-xs xl:text-sm uppercase tracking-widest font-semibold whitespace-nowrap">
+                <a href="/pages/characters.html" class="text-gold border-b border-gold">THE BLOODLINE</a>
+                <a href="/pages/timeline.html" class="text-gray-400 hover:text-gold transition-colors">HISTORY</a>
+                <a href="/pages/factions.html" class="text-gray-400 hover:text-gold transition-colors">FACTIONS</a>
+                <a href="/pages/locations.html" class="text-gray-400 hover:text-gold transition-colors">TERRITORIES</a>
+            </div>
+            
+            <div class="hidden md:flex gap-2 font-mono text-[10px] z-20 relative">
+                <button class="lang-btn hover:text-gold transition-colors text-gray-200" onclick="window.changeAppLanguage('en')">EN</button>
+                <span class="text-gray-600">/</span>
+                <button class="lang-btn hover:text-gold transition-colors text-gray-200" onclick="window.changeAppLanguage('tr')">TR</button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="pt-32 min-h-screen relative z-10">
+        
+        <!-- Page Title -->
+        <div class="container mx-auto px-6 mb-16 text-center animate-fade-in-up">
+            <h1 class="text-5xl md:text-7xl font-serif text-white mb-4 tracking-wider uppercase drop-shadow-lg text-shadow-lg">
+                The Bloodline
+            </h1>
+            <div class="inline-flex items-center gap-4">
+                <div class="h-px bg-gold/50 w-12"></div>
+                <p class="font-mono text-xs text-gold uppercase tracking-[0.3em] bg-gold/5 border border-gold/20 px-4 py-1">
+                    INTELLIGENCE WEB & CASE FILES
+                </p>
+                <div class="h-px bg-gold/50 w-12"></div>
+            </div>
+        </div>
+
+        <!-- Notification Banner -->
+        <div class="container mx-auto px-6 mb-8 hidden" id="dataconnect-warning">
+            <div class="bg-red-900/10 border border-red-900/30 p-4 rounded text-center">
+                <p class="font-mono text-xs text-red-500 tracking-widest uppercase"><i class="fas fa-exclamation-triangle mr-2"></i> ERROR: Data Connect backend not initialized. Displaying mock archive data.</p>
+            </div>
+        </div>
+
+        <!-- D3.js SVG Container -->
+        <section class="w-full relative" aria-label="Intelligence web visualization">
+            <!-- Scroll instructions -->
+            <div class="absolute top-4 left-6 z-20 flex flex-col gap-2 font-mono text-[10px] text-gray-400 uppercase tracking-widest">
+                <span class="flex items-center gap-2"><div class="w-4 h-[1px] bg-red-900"></div> RIVALRY / BLOOD OATH</span>
+                <span class="flex items-center gap-2"><div class="w-4 h-[1px] bg-gray-600"></div> BIOLOGICAL / ALLIANCE</span>
+            </div>
+
+            <!-- The canvas -->
+            <div id="bloodline-container" class="w-full overflow-hidden border-y border-white/5 bg-black/20">
+                <!-- SVG injected via JS -->
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer aria-label="Site footer" class="py-12 bg-obsidian border-t border-white/5 text-center relative z-10 mt-20">
+        <p class="font-serif text-gold text-2xl mb-4">TSOF</p>
+        <p class="text-gray-600 text-xs uppercase tracking-widest mt-6">
+            Roland Ravenwood & Havi are watching.
+        </p>
+    </footer>
+
+    <!-- Initialize Bloodline Script -->
+    <script type="module">
+        import { renderBloodline } from '../src/modules/loaders/bloodline-loader.js';
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            renderBloodline('#bloodline-container');
+        });
+    </script>
+</body>
+</html>

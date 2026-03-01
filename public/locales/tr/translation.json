@@ -12,7 +12,6 @@
     "characters": "Karakterler",
     "map": "Harita",
     "merch": "Ürünler",
-    "silvio": "Komisyon",
     "blog": "BLOG"
   },
   "common": {
@@ -413,49 +412,5 @@
     "accept": "YETKİ VER",
     "decline": "REDDET",
     "policy_link": "Protokolü İncele"
-  },
-  "silvio_page": {
-    "meta_title": "Silvio | TSOF Arşivleri",
-    "placeholder": "Sualini buraya fısılda...",
-    "initial_greeting": "Karanlıkta bir kibrit çaktın evlat... Söyle bana, Babaların Günahları hakkında ne bilmek istersin?",
-    "video_controls": {
-      "play": "VİDEOYU OYNAT",
-      "pause": "VİDEOYU DURDUR"
-    },
-    "headers": {
-      "source": "KAYNAK",
-      "system_online": "KAYNAK: OMEGA // SİSTEM: ÇEVRİMİÇİ",
-      "time": "ZAMAN"
-    },
-    "processing": {
-      "analyzing": "KAN HATLARI ANALİZ EDİLİYOR",
-      "consulting": "ARŞİVLERE DANIŞILIYOR",
-      "decrypting": "SIRLAR ÇÖZÜLÜYOR",
-      "establishing": "KİMLİK TESPİT EDİLİYOR",
-      "tracing": "SOY AĞACI İZLENİYOR"
-    },
-    "errors": {
-      "connection": "Karanlık derinleşiyor evlat... İstihbarat kanallarım şu an kapalı. Daha sonra gel.",
-      "server": "Sunucu hatası."
-    },
-    "placeholder_listening": "Dinliyorum...",
-    "dossier_access": "DOSYA ERİŞİMİ // SEVİYE 4",
-    "target_id": "KİMLİK DOĞRULANDI // KISITLI ERİŞİM",
-    "omerta": {
-      "title": "SUSKUNLUK YASASI",
-      "protocol_ver": "Protokol: v3.04",
-      "secure_conn": "Güvenli Bağlantı: Kuruldu",
-      "subtext": "Kapının dışındaki dünya, yalanlarla dönüyor.\nAma burası, Babaların Kalesi.\nBurası hafızanın sığınağı.\n\nBurada konuşulanlar burada kalır.\nBu senin ilk ve son uyarın evlat.\n\nRolandın gölgesine adım atıyorsun.\nBu karanlıkta sessizlik bir erdem değil, hayatta kalma sanatıdır.\n\nEğer bildiklerini taşıyamayacak kadar zayıfsan, şimdi geri dön.\nYol yakınken git.\n\nAma gerçeği, Babaların Günahlarını arıyorsan.\nSuskunluk Yasasını imzala.\n\nSadece şunu unutma.\nBizde emeklilik yoktur.\nSadece.\nÖlüm vardır.",
-      "checkbox_label": "<a href='/pages/privacy.html' target='_blank' class='text-gold hover:underline relative z-50'>Gizlilik Politikası</a> ve <a href='/pages/terms.html' target='_blank' class='text-gold hover:underline relative z-50'>Kullanım Koşullarını</a> okudum, kabul ediyorum.",
-      "action": "ANA SİSTEME ERİŞ",
-      "access_granted": "ERİŞİM İZNİ VERİLDİ",
-      "hostile_trace": "Düşman İzi Tespit Edildi",
-      "lockdown_title": "KOMİSYON TOPLANIYOR",
-      "lockdown_subtext": "Yüksek Masa oturumda. Tüm kanallar susturuldu.\nHiçbir dış bağlantı kabul edilmeyecek.",
-      "access_denied": "ERİŞİM REDDEDİLDİ",
-      "access_restricted_msg": "Bu alan şu anda sadece Komisyon üyelerine açıktır.",
-      "authorized_personnel": "SADECE YETKİLİ PERSONEL",
-      "return_home": "GÜVENLİ BÖLGEYE DÖN"
-    }
   }
 }

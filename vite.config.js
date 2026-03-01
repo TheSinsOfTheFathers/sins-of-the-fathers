@@ -10,7 +10,12 @@ function getHtmlEntries(dir) {
     for (const file of files) {
         const fullPath = resolve(dir, file.name);
 
-        if (file.isDirectory() && file.name !== 'node_modules' && file.name !== 'dist' && file.name !== '.git') {
+        if (file.isDirectory() && 
+            file.name !== 'node_modules' && 
+            file.name !== 'dist' && 
+            file.name !== '.git' && 
+            file.name !== '.sanity' && 
+            file.name !== 'the-sins-of-the-fathers') {
             Object.assign(entries, getHtmlEntries(fullPath));
         } else if (file.isFile() && extname(file.name) === '.html') {
             // Generate a unique key for the input
