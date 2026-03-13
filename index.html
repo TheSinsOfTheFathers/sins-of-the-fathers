@@ -57,37 +57,44 @@
     <div class="noise-overlay"></div>
     <div class="vignette"></div>
     
-    <header aria-label="Main navigation" class="fixed top-0 w-full z-50 transition-all duration-300 bg-obsidian/90 backdrop-blur-md border-b border-white/5">
-        <nav aria-label="Primary navigation" class="container mx-auto px-6 py-4 flex justify-between items-center relative">
+    <!-- Header & Navigation -->
+    <header aria-label="Main navigation" class="fixed top-0 w-full z-50 bg-obsidian/90 backdrop-blur-md border-b border-white/5 transition-all">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center relative">
             <!-- Brand -->
-            <a href="/" aria-label="The Sins of the Fathers - Home" class="nav-brand text-2xl md:text-3xl text-gold tracking-widest hover:text-white transition-colors uppercase font-serif z-20 relative">
+            <a href="/" aria-label="The Sins of the Fathers - Home" class="text-xl md:text-3xl font-serif text-gold tracking-widest uppercase hover:text-white transition-colors z-20 relative">
                 TSOF
             </a>
             
             <!-- Desktop Menu (Absolute Center) -->
             <div class="hidden md:flex absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 items-center space-x-6 xl:space-x-8 text-xs xl:text-sm uppercase tracking-widest font-semibold whitespace-nowrap">
-                <a href="/pages/characters.html" aria-label="Navigate to The Bloodline: Characters" class="text-gray-400 hover:text-gold transition-colors" data-i18n="nav.bloodline">THE BLOODLINE</a>
-                <a href="/pages/timeline.html" aria-label="Navigate to History: Timeline" class="text-gray-400 hover:text-gold transition-colors" data-i18n="nav.history">HISTORY</a>
-                <a href="/pages/factions.html" aria-label="Navigate to Factions" class="text-gray-400 hover:text-gold transition-colors" data-i18n="nav.factions">FACTIONS</a>
-                <a href="/pages/locations.html" aria-label="Navigate to Territories: Locations" class="text-gray-400 hover:text-gold transition-colors" data-i18n="nav.territories">TERRITORIES</a>
-            <a href="https://shop.thesinsofthefathers.com" aria-label="Visit official merchandise shop" class="text-gray-400 hover:text-gold transition-colors" target="_blank" data-i18n="nav.merch">MERCH</a>
-                <a href="https://blog.thesinsofthefathers.com" aria-label="Visit the blog" class="text-gray-400 hover:text-gold transition-colors" data-i18n="nav.blog">BLOG</a>
+                <a href="/pages/bloodline.html" aria-label="Navigate to The Bloodline: Intelligence Web" class="text-gray-400 hover:text-gold transition-colors block border-b border-transparent hover:border-gold" data-i18n="nav.bloodline">THE BLOODLINE</a>
+                <a href="/pages/characters.html" aria-label="Navigate to The Dossier: Characters" class="text-gray-400 hover:text-gold transition-colors block border-b border-transparent hover:border-gold" data-i18n="nav.dossier">DOSSIER</a>
+                <a href="/pages/timeline.html" aria-label="Navigate to History: Timeline" class="text-gray-400 hover:text-gold transition-colors block border-b border-transparent hover:border-gold" data-i18n="nav.history">HISTORY</a>
+                <a href="/pages/factions.html" aria-label="Navigate to Power Dynamics: Factions" class="text-gray-400 hover:text-gold transition-colors block border-b border-transparent hover:border-gold" data-i18n="nav.factions">FACTIONS</a>
+                <a href="/pages/locations.html" aria-label="Navigate to Territories: Locations" class="text-gray-400 hover:text-gold transition-colors block border-b border-transparent hover:border-gold" data-i18n="nav.territories">TERRITORIES</a>
+
+                <a href="https://shop.thesinsofthefathers.com" aria-label="Visit the merchandise store" class="text-gray-400 hover:text-gold transition-colors block border-b border-transparent hover:border-gold" target="_blank" data-i18n="nav.merch">MERCH</a>
+                <a href="https://blog.thesinsofthefathers.com" aria-label="Visit the blog" class="text-gray-400 hover:text-gold transition-colors block border-b border-transparent hover:border-gold" data-i18n="nav.blog">BLOG</a>
+                
+                <!-- Auth Controls -->
                 <div class="border-l border-white/20 pl-6 ml-4 flex items-center gap-4" id="auth-controls">
-                    <a href="/pages/lore.html" id="nav-link-classified" aria-label="Access classified lore archive" class="text-gold hover:text-white transition-colors flex items-center gap-2"><i class="fas fa-lock text-xs guest-lock"></i> <span data-i18n="nav.classified">Classified</span></a>
-                    <a href="/pages/login.html" aria-label="Sign in to your account" class="text-gray-400 hover:text-gold transition-colors guest-only" id="auth-signin-link" data-i18n="auth.login">LOGIN</a>
+                    <a href="/pages/lore.html" aria-label="Access classified lore archive" id="nav-link-classified" class="text-gold hover:text-white transition-colors flex items-center gap-2">
+                        <i class="fas fa-lock text-xs guest-lock"></i> <span data-i18n="nav.classified">Classified</span>
+                    </a>
+                    <a href="/pages/login.html" aria-label="Sign in to your account" class="hover:text-gold transition-colors guest-only" id="auth-signin-link" data-i18n="auth.login"><span data-i18n="auth.login">Sign in</span></a>
                 </div>
             </div>
-            
+
             <!-- Mobile Hamburger -->
             <div class="md:hidden relative z-50">
-                <button id="hamburger-button" class="text-gold focus:outline-none flex flex-col justify-between w-6 h-5">
-                    <span class="block w-full h-0.5 bg-gold"></span>
-                    <span class="block w-full h-0.5 bg-gold"></span>
-                    <span class="block w-full h-0.5 bg-gold"></span>
+                <button id="hamburger-button" aria-label="Open main menu" class="text-gold focus:outline-none flex flex-col justify-center items-center w-8 h-8 space-y-1.5 group">
+                    <span class="block w-6 h-0.5 bg-gold transition-transform duration-300"></span>
+                    <span class="block w-6 h-0.5 bg-gold transition-opacity duration-300"></span>
+                    <span class="block w-6 h-0.5 bg-gold transition-transform duration-300"></span>
                 </button>
             </div>
 
-            <!-- Language Switcher -->
+            <!-- Language Switcher (Desktop) -->
             <div class="hidden md:flex gap-2 font-mono text-[10px] z-20 relative">
                 <button class="lang-btn hover:text-gold transition-colors text-gray-200" data-lang="en" onclick="window.changeAppLanguage('en')">EN</button>
                 <span class="text-gray-600">/</span>
@@ -95,15 +102,25 @@
             </div>
         </nav>
     </header>
+    <!-- Mobile Menu Overlay -->
     <div id="mobile-menu" class="hidden fixed inset-0 z-40 bg-black/95 flex-col items-center justify-center space-y-8 transition-opacity duration-300 backdrop-blur-xl">
-        <a href="/pages/characters.html" aria-label="Navigate to The Bloodline: Characters" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.bloodline"></a>
-        <a href="/pages/timeline.html" aria-label="Navigate to History: Timeline" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.history"></a>
-        <a href="/pages/factions.html" aria-label="Navigate to Factions" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.factions"></a>
-        <a href="/pages/locations.html" aria-label="Navigate to Territories: Locations" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.territories"></a>
-        <a href="https://shop.thesinsofthefathers.com/password" aria-label="Visit merchandise" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.merch"></a>
-        <a href="https://blog.thesinsofthefathers.com" aria-label="Visit the blog" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.blog"></a>
-        <a href="/pages/lore.html" aria-label="Access classified lore archive" class="text-xl text-gold font-serif hover:text-white border border-gold px-6 py-2 uppercase tracking-widest" data-i18n="nav.archives"></a>
-        <a href="/pages/login.html" aria-label="Sign in to your account" class="text-sm text-gray-400 hover:text-white mt-8 font-mono uppercase" data-i18n="auth.login"></a>
+        <a href="/pages/bloodline.html" aria-label="Navigate to The Bloodline: Intelligence Web" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.bloodline">Bloodline</a>
+        <a href="/pages/characters.html" aria-label="Navigate to The Dossier: Characters" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.dossier">Dossier</a>
+        <a href="/pages/timeline.html" aria-label="Navigate to History: Timeline" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.history">History</a>
+        <a href="/pages/factions.html" aria-label="Navigate to Power Dynamics: Factions" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.factions">Factions</a>
+        <a href="/pages/locations.html" aria-label="Navigate to Territories: Locations" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.territories">Territories</a>
+
+        <a href="https://shop.thesinsofthefathers.com" aria-label="Visit the merchandise store" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest transition-colors" target="_blank" data-i18n="nav.merch">Merch</a>
+        <a href="https://blog.thesinsofthefathers.com" aria-label="Visit the blog" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.blog">Blog</a>
+        <a href="/pages/lore.html" aria-label="Access classified lore archive" id="nav-link-classified" class="text-xl text-gold font-serif hover:text-white uppercase tracking-widest" data-i18n="nav.classified">Classified</a>
+        <a href="/pages/login.html" aria-label="Sign in to your account" class="text-sm text-gray-400 hover:text-white mt-8 font-mono uppercase" data-i18n="auth.login">Sign in</a>
+
+        <!-- Mobile Language -->
+        <div class="flex gap-4 font-mono text-sm mt-4">
+            <button class="lang-btn hover:text-gold transition-colors text-gray-200" data-lang="en" onclick="window.changeAppLanguage('en')">EN</button>
+            <span class="text-gray-600">/</span>
+            <button class="lang-btn hover:text-gold transition-colors text-gray-200" data-lang="tr" onclick="window.changeAppLanguage('tr')">TR</button>
+        </div>
     </div>
     <section aria-label="Hero introduction" class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
         <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?q=80&w=1920=format&fit=crop')] bg-cover bg-center opacity-20 grayscale"></div>

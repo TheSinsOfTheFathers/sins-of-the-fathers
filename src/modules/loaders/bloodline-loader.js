@@ -4,6 +4,17 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
+import { listBloodline, connectorConfig } from '@dataconnect/generated';
+import { initializeApp, getApps } from 'firebase/app';
+import { connectDataConnectEmulator, getDataConnect } from 'firebase/data-connect';
+
+// Connect to Local Emulator (Port 9400 as set in firebase.json)
+if (getApps().length === 0) {
+    initializeApp({ projectId: "sins-of-the-fathers" });
+}
+const dc = getDataConnect(connectorConfig);
+connectDataConnectEmulator(dc, '127.0.0.1', 9400);
+
 /**
  * Initializes and renders the Bloodline / Case File visualization.
  * @param {string} containerSelector - The CSS selector for the container element.
@@ -12,21 +23,24 @@ export const renderBloodline = async (containerSelector) => {
     const container = document.querySelector(containerSelector);
     if (!container) return;
 
-    // TODO: Replace with actual Firebase Data Connect fetch
-    // const { entities, bloodlineLinks } = await fetchBloodlineData();
-    
-    // Mock Data for scaffolding
-    const mockNodes = [
-        { id: "1", name: "Gregor Ravenwood", role: "Industrial Baron", status: "DECEASED", threatLevel: "CRITICAL", imageUrl: "/assets/images/characters/gregor.jpg" },
-        { id: "2", name: "Silvio", role: "Information Broker", status: "ACTIVE", threatLevel: "HIGH", imageUrl: "/assets/images/characters/silvio.jpg" },
-        { id: "3", name: "Isabella", role: "Assassin", status: "ACTIVE", threatLevel: "HIGH", imageUrl: "/assets/images/characters/isabella.jpg" }
-    ];
-    
-    const mockLinks = [
-        { source: "1", target: "2", relationType: "BLOOD_OATH" },
-        { source: "1", target: "3", relationType: "BIOLOGICAL" },
-        { source: "2", target: "3", relationType: "RIVAL" }
-    ];
+    try {
+        const response = await listBloodline(dc);
+        const data = response.data;
+        
+        const nodes = data.entities;
+        const links = data.bloodlineLinks.map(link => ({
+            ...link,
+            source: link.source.id,
+            target: link.target.id
+        }));
+
+        renderGraph(container, containerSelector, nodes, links);
+    } catch (error) {
+        console.error("Error fetching Bloodline data:", error);
+    }
+};
+
+const renderGraph = (container, containerSelector, nodes, links) => {
 
     // Setup SVG Canvas
     const width = container.clientWidth || 1000;
@@ -45,8 +59,8 @@ export const renderBloodline = async (containerSelector) => {
     // Setup Force Directed Graph or Tree Layout
     // For a structured hierarchical case file, d3.tree() is preferred, but force topology is good for tangled webs.
     // Let's use a force simulation tweaked for a top-down hierarchy
-    const simulation = d3.forceSimulation(mockNodes)
-        .force("link", d3.forceLink(mockLinks).id(d => d.id).distance(220)) // Increased distance to 220
+    const simulation = d3.forceSimulation(nodes)
+        .force("link", d3.forceLink(links).id(d => d.id).distance(220)) // Increased distance to 220
         .force("charge", d3.forceManyBody().strength(-2000)) // Increased repulsion to -2000
         .force("center", d3.forceCenter(width / 2, height / 2 + 50)) // Pushed center down slightly
         .force("collide", d3.forceCollide().radius(140).iterations(3)) // Added collide force based on node width
@@ -56,7 +70,7 @@ export const renderBloodline = async (containerSelector) => {
     const link = g.append('g')
         .attr('class', 'links')
         .selectAll('path')
-        .data(mockLinks)
+        .data(links)
         .join('path')
         .attr('fill', 'none')
         .attr('stroke', d => d.relationType === 'RIVAL' || d.relationType === 'BLOOD_OATH' ? '#7f1d1d' : '#4b5563') // red-900 or gray-600
@@ -68,7 +82,7 @@ export const renderBloodline = async (containerSelector) => {
     const node = g.append('g')
         .attr('class', 'nodes')
         .selectAll('g')
-        .data(mockNodes)
+        .data(nodes)
         .join('g')
         .attr('class', 'bloodline-node cursor-default')
         .attr('opacity', 0); // hidden for GSAP

@@ -74,39 +74,43 @@
 
     <!-- Header & Navigation -->
     <header aria-label="Main navigation" class="fixed top-0 w-full z-50 bg-obsidian/90 backdrop-blur-md border-b border-white/5 transition-all">
-        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center relative">
             <!-- Brand -->
-            <a href="/" aria-label="The Sins of the Fathers - Home" class="text-xl md:text-2xl font-serif text-gold tracking-widest uppercase hover:text-white transition-colors">
-                TSOF <span class="hidden md:inline text-xs text-gray-600 ml-2 font-mono" data-i18n="faction_detail_page.header_subtitle">// FACTION INTEL</span>
+            <a href="/" aria-label="The Sins of the Fathers - Home" class="text-xl md:text-3xl font-serif text-gold tracking-widest uppercase hover:text-white transition-colors z-20 relative">
+                TSOF
             </a>
             
-            <!-- Desktop Controls -->
-            <div class="hidden md:flex items-center space-x-6 text-xs uppercase tracking-widest font-semibold">
-                <!-- Back Button -->
-                <a href="/pages/factions.html" aria-label="Exit territory and return to factions" class="text-gray-200 hover:text-gold transition-colors flex items-center border-r border-white/10 pr-6">
-                    <i class="fas fa-arrow-left mr-2"></i> <span data-i18n="faction_detail_page.exit_territory">Exit Territory</span>
-                </a>
+            <!-- Desktop Menu (Absolute Center) -->
+            <div class="hidden md:flex absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 items-center space-x-6 xl:space-x-8 text-xs xl:text-sm uppercase tracking-widest font-semibold whitespace-nowrap">
+                <a href="/pages/bloodline.html" aria-label="Navigate to The Bloodline: Intelligence Web" class="text-gray-400 hover:text-gold transition-colors block border-b border-transparent hover:border-gold" data-i18n="nav.bloodline">THE BLOODLINE</a>
+                <a href="/pages/characters.html" aria-label="Navigate to The Dossier: Characters" class="text-gray-400 hover:text-gold transition-colors block border-b border-transparent hover:border-gold" data-i18n="nav.dossier">DOSSIER</a>
+                <a href="/pages/timeline.html" aria-label="Navigate to History: Timeline" class="text-gray-400 hover:text-gold transition-colors block border-b border-transparent hover:border-gold" data-i18n="nav.history">HISTORY</a>
+                <a href="/pages/factions.html" aria-label="Navigate to Power Dynamics: Factions" class="text-gray-400 hover:text-gold transition-colors block border-b border-transparent hover:border-gold" data-i18n="nav.factions">FACTIONS</a>
+                <a href="/pages/locations.html" aria-label="Navigate to Territories: Locations" class="text-gray-400 hover:text-gold transition-colors block border-b border-transparent hover:border-gold" data-i18n="nav.territories">TERRITORIES</a>
+
+                <a href="https://shop.thesinsofthefathers.com" aria-label="Visit the merchandise store" class="text-gray-400 hover:text-gold transition-colors block border-b border-transparent hover:border-gold" target="_blank" data-i18n="nav.merch">MERCH</a>
+                <a href="https://blog.thesinsofthefathers.com" aria-label="Visit the blog" class="text-gray-400 hover:text-gold transition-colors block border-b border-transparent hover:border-gold" data-i18n="nav.blog">BLOG</a>
                 
                 <!-- Auth Controls -->
-                <div class="flex items-center gap-4" id="auth-controls">
-                    <a href="/pages/login.html" aria-label="Sign in to your account" class="text-gold/80 hover:text-white transition-colors guest-only" id="auth-signin-link" data-i18n="faction_detail_page.identify">Identify</a>
+                <div class="border-l border-white/20 pl-6 ml-4 flex items-center gap-4" id="auth-controls">
+                    <a href="/pages/lore.html" aria-label="Access classified lore archive" id="nav-link-classified" class="text-gold hover:text-white transition-colors flex items-center gap-2">
+                        <i class="fas fa-lock text-xs guest-lock"></i> <span data-i18n="nav.classified">Classified</span>
+                    </a>
+                    <a href="/pages/login.html" aria-label="Sign in to your account" class="hover:text-gold transition-colors guest-only" id="auth-signin-link" data-i18n="auth.login"><span data-i18n="auth.login">Sign in</span></a>
                 </div>
             </div>
 
-            <!-- Mobile Controls -->
-                    <div class="flex items-center gap-4 md:hidden">
-                <!-- Hamburger Button -->
-                <div class="relative z-50">
-                    <button id="hamburger-button" aria-label="Open main menu" class="text-gold focus:outline-none flex flex-col justify-center items-center w-8 h-8 space-y-1.5 group">
-                        <span class="block w-6 h-0.5 bg-gold transition-transform duration-300"></span>
-                        <span class="block w-6 h-0.5 bg-gold transition-opacity duration-300"></span>
-                        <span class="block w-6 h-0.5 bg-gold transition-transform duration-300"></span>
-                    </button>
-                </div>
+            <!-- Mobile Hamburger -->
+            <div class="md:hidden relative z-50">
+                <button id="hamburger-button" aria-label="Open main menu" class="text-gold focus:outline-none flex flex-col justify-center items-center w-8 h-8 space-y-1.5 group">
+                    <span class="block w-6 h-0.5 bg-gold transition-transform duration-300"></span>
+                    <span class="block w-6 h-0.5 bg-gold transition-opacity duration-300"></span>
+                    <span class="block w-6 h-0.5 bg-gold transition-transform duration-300"></span>
+                </button>
             </div>
 
             <!-- Language Switcher (Desktop) -->
-            <div class="hidden md:flex gap-2 font-mono text-[10px]">
+            <div class="hidden md:flex gap-2 font-mono text-[10px] z-20 relative">
                 <button class="lang-btn hover:text-gold transition-colors text-gray-200" data-lang="en" onclick="window.changeAppLanguage('en')">EN</button>
                 <span class="text-gray-600">/</span>
                 <button class="lang-btn hover:text-gold transition-colors text-gray-200" data-lang="tr" onclick="window.changeAppLanguage('tr')">TR</button>
@@ -116,18 +120,17 @@
 
     <!-- Mobile Menu Overlay -->
     <div id="mobile-menu" class="hidden fixed inset-0 z-40 bg-black/95 flex-col items-center justify-center space-y-8 transition-opacity duration-300 backdrop-blur-xl">
-        <a href="/pages/factions.html" class="text-lg text-red-500 font-serif hover:text-white border border-red-900 px-6 py-2 uppercase tracking-widest mb-4">
-            <i class="fas fa-arrow-left mr-2"></i> <span data-i18n="faction_detail_page.exit_territory">Exit Territory</span>
-        </a>
-        <a href="/" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.home">Home</a>
-        <a href="/pages/timeline.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.history">History</a>
-        <a href="/pages/characters.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.bloodline">Bloodline</a>
-        <a href="/pages/locations.html" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.territories">Territories</a>
+        <a href="/pages/bloodline.html" aria-label="Navigate to The Bloodline: Intelligence Web" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.bloodline">Bloodline</a>
+        <a href="/pages/characters.html" aria-label="Navigate to The Dossier: Characters" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.dossier">Dossier</a>
+        <a href="/pages/timeline.html" aria-label="Navigate to History: Timeline" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.history">History</a>
+        <a href="/pages/factions.html" aria-label="Navigate to Power Dynamics: Factions" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.factions">Factions</a>
+        <a href="/pages/locations.html" aria-label="Navigate to Territories: Locations" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.territories">Territories</a>
 
-        <a href="https://shop.thesinsofthefathers.com" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest transition-colors" target="_blank" data-i18n="nav.merch">Merch</a>
-        <a href="https://blog.thesinsofthefathers.com" aria-label="Visit the blog" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.blog">BLOG</a>
-        <a href="/pages/login.html" class="text-sm text-gray-400 hover:text-white mt-8 font-mono uppercase" data-i18n="auth.login">Login</a>
-        
+        <a href="https://shop.thesinsofthefathers.com" aria-label="Visit the merchandise store" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest transition-colors" target="_blank" data-i18n="nav.merch">Merch</a>
+        <a href="https://blog.thesinsofthefathers.com" aria-label="Visit the blog" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.blog">Blog</a>
+        <a href="/pages/lore.html" aria-label="Access classified lore archive" id="nav-link-classified" class="text-xl text-gold font-serif hover:text-white uppercase tracking-widest" data-i18n="nav.classified">Classified</a>
+        <a href="/pages/login.html" aria-label="Sign in to your account" class="text-sm text-gray-400 hover:text-white mt-8 font-mono uppercase" data-i18n="auth.login">Sign in</a>
+
         <!-- Mobile Language -->
         <div class="flex gap-4 font-mono text-sm mt-4">
             <button class="lang-btn hover:text-gold transition-colors text-gray-200" data-lang="en" onclick="window.changeAppLanguage('en')">EN</button>
@@ -137,27 +140,45 @@
     </div>
 
     <!-- Main Content Area -->
-    <div id="main-wrapper" class="flex flex-col grow">
+
+    <div id="main-wrapper" class="flex flex-col grow pt-[4rem] min-h-screen">
         
-        <!-- HERO BANNER (Dynamic Background) -->
-        <div id="faction-banner" class="relative h-[60vh] w-full bg-cover bg-center bg-neutral-900 mt-16 grayscale transition-all duration-1000">
-            <!-- Overlays -->
-            <div class="absolute inset-0 bg-black/70 backdrop-blur-[2px]"></div> 
-            <div class="absolute inset-0 hq-bg-glow"></div>
-            
-            <div class="absolute inset-0 flex flex-col justify-end container mx-auto px-6 pb-12">
-                <!-- Faction Icon (Populated by JS) -->
-                <div id="faction-icon-container" class="mb-4 text-6xl hq-text opacity-80"></div>
+        <!-- DOSSIER HEADER (Premium Noir Style) -->
+        <div class="relative w-full border-b border-white/5 bg-obsidian mt-8">
+            <!-- Background Image Container (Dynamic) -->
+            <div id="faction-banner" class="absolute inset-0 bg-cover bg-center opacity-10 grayscale-[0.8] mix-blend-luminosity"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/80 to-transparent"></div>
+            <div class="absolute inset-0 hq-bg-glow opacity-30"></div>
+
+            <div class="container mx-auto px-6 pt-16 pb-12 relative z-10 flex flex-col md:flex-row items-start md:items-end justify-between gap-8">
                 
-                <h1 id="faction-title" class="text-5xl md:text-7xl font-serif text-white uppercase tracking-wider mb-2 drop-shadow-lg" data-i18n="faction_detail_page.retrieving">
-                    Retrieving...
-                </h1>
-                <p id="faction-subtitle" class="font-mono text-gray-400 text-sm md:text-base max-w-2xl border-l-2 hq-text pl-4" data-i18n="faction_detail_page.encrypting_connection">
-                    Establishing encrypted connection...
-                </p>
+                <div class="flex-1 max-w-4xl">
+                    <!-- Security Badges -->
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="border border-red-500/50 bg-red-500/10 px-3 py-1 text-red-500 font-mono text-[9px] uppercase tracking-widest flex items-center gap-2">
+                            <i class="fas fa-exclamation-triangle"></i> Classified Intel
+                        </div>
+                        <div class="text-gray-500 font-mono text-[9px] uppercase tracking-widest border-l border-white/10 pl-4 hq-text" id="faction-file-id">
+                            FILE ID: <span class="text-white">████-████</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-4 mb-2">
+                         <!-- Fractional Icon (Populated by JS) -->
+                         <div id="faction-icon-container" class="text-4xl hq-text opacity-90"></div>
+                         <h1 id="faction-title" class="text-4xl md:text-6xl font-serif text-white uppercase tracking-wider drop-shadow-xl" data-i18n="faction_detail_page.retrieving">
+                             Retrieving...
+                         </h1>
+                    </div>
+                    
+                    <p id="faction-subtitle" class="font-mono text-gray-400 text-sm md:text-base border-l-2 border-gold/50 pl-4 hq-text max-w-2xl mt-4" data-i18n="faction_detail_page.encrypting_connection">
+                        Establishing encrypted connection...
+                    </p>
+                </div>
             </div>
         </div>
 
+        
         <!-- CONTENT -->
         <main aria-label="Faction details" class="container mx-auto px-6 py-12 -mt-8 relative z-10 opacity-0 transition-opacity duration-1000" data-module="faction-detail-loader.js">
             
@@ -237,15 +258,28 @@
                     </div>
                 </div>
             </div>
+        
+            <!-- LOADER (Inside main so JS scoped to container finds it) -->
+            <div id="factions-loader" class="absolute inset-0 z-30 bg-black/90 backdrop-blur-md flex flex-col items-center justify-start pt-32 h-[50vh]">
+                <div class="relative w-20 h-20 mb-6">
+                    <div class="absolute inset-0 border-t-2 border-b-2 border-gold/40 rounded-full animate-[spin_3s_linear_infinite]"></div>
+                    <div class="absolute inset-2 border-r-2 border-l-2 border-gold/20 rounded-full animate-[spin_2s_linear_infinite_reverse]"></div>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <i class="fas fa-fingerprint text-gold text-2xl hq-text animate-pulse"></i>
+                    </div>
+                </div>
+                <p class="font-mono text-[10px] text-gold uppercase tracking-[0.3em] hq-text animate-pulse" data-i18n="faction_detail_page.loader_text">AUTHENTICATING BIOMETRICS...</p>
+                <!-- Terminal readouts -->
+                <div class="mt-8 font-mono text-[9px] text-green-500/50 opacity-50 space-y-1 text-center">
+                    <p>> INITIATING SECURE HANDSHAKE</p>
+                    <p>> BYPASSING FIREWALL [████████]</p>
+                    <p>> ACCESSING SYNDICATE ARCHIVES</p>
+                </div>
+            </div>
         </main>
     </div>
     
-    <!-- LOADER (Specific to Faction Intel) -->
-    <div id="factions-loader" class="fixed inset-0 z-30 bg-obsidian flex flex-col items-center justify-center pt-20">
-        <i class="fas fa-fingerprint text-gold text-4xl mb-4 animate-pulse"></i>
-        <p class="font-mono text-xs text-gold uppercase tracking-[0.3em]" data-i18n="faction_detail_page.loader_text">AUTHENTICATING BIOMETRICS...</p>
-    </div>
-
+    
     <!-- Footer -->
     <footer aria-label="Site footer" class="py-12 bg-obsidian border-t border-white/5 text-center relative z-10">
         <p class="font-serif text-gold text-2xl mb-4">TSOF</p>

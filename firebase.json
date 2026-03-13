@@ -61,5 +61,15 @@
       ],
       "source": "functions"
     }
-  ]
+  ],
+  "emulators": {
+    "dataconnect": {
+      "port": 9400,
+      "host": "127.0.0.1",
+      "dataDir": "dataconnect/.dataconnect/pgliteData"
+    }
+  },
+  "dataconnect": {
+    "source": "dataconnect"
+  }
 }

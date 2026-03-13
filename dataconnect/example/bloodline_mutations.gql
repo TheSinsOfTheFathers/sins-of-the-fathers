@@ -1,0 +1,45 @@
+# Create a single character
+mutation CreateEntity(
+  $id: String!
+  $name: String!
+  $role: String
+  $status: String
+  $threatLevel: String
+  $imageUrl: String
+  $creatorId: String!
+) @auth(expr: "auth.uid == creatorId") {
+  entity_insert(
+    data: {
+      id: $id
+      name: $name
+      role: $role
+      status: $status
+      threatLevel: $threatLevel
+      imageUrl: $imageUrl
+      creatorId: $creatorId
+    }
+  )
+}
+
+# Create a blood connection between two entities
+mutation CreateLink(
+  $id: String!
+  $source: String!
+  $target: String!
+  $relationType: String!
+  $notes: String
+  $isClassified: Boolean
+  $creatorId: String!
+) @auth(expr: "auth.uid == creatorId") {
+  bloodlineLink_insert(
+    data: {
+      id: $id
+      sourceId: $source
+      targetId: $target
+      relationType: $relationType
+      notes: $notes
+      isClassified: $isClassified
+      creatorId: $creatorId
+    }
+  )
+}

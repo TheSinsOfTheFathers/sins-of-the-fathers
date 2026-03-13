@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@builder.io/partytown": "^0.10.3",
+    "@dataconnect/admin-generated": "file:src/dataconnect-admin-generated",
+    "@dataconnect/generated": "file:src/dataconnect-generated",
     "@genkit-ai/firebase": "^1.27.0",
     "@genkit-ai/google-genai": "^1.28.0",
     "@sanity/client": "^7.14.0",
@@ -33,7 +35,8 @@
     "resend": "^6.9.1",
     "sanity": "^5.8.1",
     "styled-components": "^6.3.8",
-    "tar": "^7.5.7"
+    "tar": "^7.5.7",
+    "vanilla-tilt": "^1.8.1"
   },
   "devDependencies": {
     "@playwright/test": "^1.58.1",

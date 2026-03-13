@@ -12,7 +12,8 @@
     "characters": "Characters",
     "map": "Map",
     "merch": "Merch",
-    "blog": "BLOG"
+    "blog": "BLOG",
+    "dossier": "Dossier"
   },
   "common": {
     "loading": "Decrypting Data...",

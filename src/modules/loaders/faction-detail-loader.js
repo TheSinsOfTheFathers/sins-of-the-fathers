@@ -33,8 +33,8 @@ const initMiniMap = (
   if (container._leaflet_id) return;
 
   const map = L.map(container, {
-    center: [lat, lng],
-    zoom: 11,
+    center: [lat + 10, lng - 10], // Offset initial position for drama
+    zoom: 4,                      // Start zoomed out (satellite view)
     zoomControl: false,
     attributionControl: false,
     dragging: false,
@@ -60,26 +60,36 @@ const initMiniMap = (
     iconAnchor: [10, 10],
   });
 
-  L.marker([lat, lng], { icon: radarIcon }).addTo(map);
+  // Delay the marker rendering and the flyTo for dramatic effect
+  setTimeout(() => {
+     map.flyTo([lat, lng], 15, {
+        animate: true,
+        duration: 2.5,
+        easeLinearity: 0.25
+     });
+     
+     // Drop ping when approach finishes
+     setTimeout(() => {
+        L.marker([lat, lng], { icon: radarIcon }).addTo(map);
+     }, 2500);
+  }, 1000);
 
   gsap.from(container, {
     opacity: 0,
-    scale: 0.9,
-    duration: 1,
-    ease: "power2.out",
+    scale: 0.95,
+    duration: 1.5,
+    ease: "power3.out",
   });
 };
 
 /**
  * Tema Rengi Ayarlayıcı
  */
-const applyFactionTheme = (colorHex, bannerUrl, container) => {
+const applyFactionTheme = (colorHex, bannerUrl) => {
   const themeColor = colorHex || "#c5a059";
   document.documentElement.style.setProperty("--theme-color", themeColor);
 
-  const banner = container
-    ? container.querySelector("#faction-banner")
-    : document.getElementById("faction-banner");
+  const banner = document.getElementById("faction-banner");
   if (banner && bannerUrl) {
     banner.style.backgroundImage = `url('${bannerUrl}')`;
     NoirEffects.revealImage(banner);
@@ -122,7 +132,7 @@ const injectFactionSeo = (faction, safeTitle) => {
 
 const renderFactionHeader = (els, faction, safeTitle) => {
   if (els.title) {
-    els.title.textContent = safeTitle;
+    els.title.innerHTML = `<span class="glitch-text" data-text="${safeTitle}">${safeTitle}</span>`;
     els.title.classList.remove("animate-fade-in-down");
     // Force reflow
     els.title.offsetWidth;
@@ -133,6 +143,13 @@ const renderFactionHeader = (els, faction, safeTitle) => {
       ? `"${faction.motto}"`
       : i18next.t("faction_detail_loader.motto_redacted");
 
+  // File ID Generation (Cosmetic)
+  if (els.fileId) {
+    const randomHex = Math.random().toString(16).substr(2, 4).toUpperCase();
+    const typeCode = faction.type === "syndicate" ? "SYN" : "CORP";
+    els.fileId.innerHTML = `FILE ID: <span class="text-white">${typeCode}-${randomHex}</span>`;
+  }
+
   const type = faction.type || "syndicate";
   const icon =
     type === "syndicate"
@@ -142,27 +159,17 @@ const renderFactionHeader = (els, faction, safeTitle) => {
 
   const themeColor = applyFactionTheme(
     faction.color?.hex,
-    faction.image?.asset?.url,
-    els.title?.closest("main")
+    faction.image?.asset?.url
   );
 
   if (faction.hqLocation?.lat && faction.hqLocation?.lng) {
-    // initMiniMap uses ID, let's keep it as is or if initMiniMap supports element?
-    // Trying to find the element and pass it. But initMiniMap expects ID in current code.
-    // I should refactor initMiniMap too.
-    // For now, let's pass the container context if possible, or just rely on ID since it is unique.
-    // The renderFactionHeader receives `els` which are already scoped.
-    // Let's refactor initMiniMap to accept element or ID.
-    // For now, just pass the ID as before but maybe check if it exists in container?
-    // 'mini-map' is the ID.
     setTimeout(
       () =>
         initMiniMap(
           faction.hqLocation.lat,
           faction.hqLocation.lng,
           themeColor,
-          "mini-map",
-          els.title?.closest("main")
+          "mini-map"
         ),
       800
     );
@@ -254,7 +261,7 @@ const renderFactionDescription = (els, faction) => {
   if (!els.description) return;
 
   if (faction.description) {
-    els.description.innerHTML = toHTML(faction.description, {
+    const rawHTML = toHTML(faction.description, {
       components: {
         block: {
           normal: ({ children }) =>
@@ -264,8 +271,41 @@ const renderFactionDescription = (els, faction) => {
         },
       },
     });
+
+    // Create a shadow container to hold the HTML securely while TextPlugin types it
+    els.description.innerHTML = `<div class="terminal-text opacity-0">${rawHTML}</div>`;
+    
+    // Type out the manifesto sequentially
+    import("gsap").then(({ gsap }) => {
+      import("gsap/TextPlugin").then(({ TextPlugin }) => {
+         gsap.registerPlugin(TextPlugin);
+         const target = els.description.querySelector('.terminal-text');
+         
+         // Only run typing effect if text is visible (Scrolled into view)
+         gsap.to(target, {
+            opacity: 1,
+            duration: 0.1,
+            delay: 1.5 // Wait for Hero
+         });
+         
+         // Optional: Full GSAP text typing (too slow for long text, fading instead with an overlay)
+         // For a true typewriter, we fade paragraph by paragraph to avoid GSAP breaking HTML tags.
+         const paras = target.querySelectorAll('p, h3');
+         if(paras.length > 0) {
+             gsap.from(paras, {
+                 opacity: 0,
+                 y: 10,
+                 duration: 0.8,
+                 stagger: 0.3,
+                 delay: 1.6,
+                 ease: "power2.out"
+             });
+         }
+      });
+    });
+
   } else {
-    els.description.innerHTML = `<p class="text-gray-200 italic font-mono">${i18next.t("faction_detail_loader.no_records_available")}</p>`;
+    els.description.innerHTML = `<p class="text-gray-200 italic font-mono terminal-typewriter">${i18next.t("faction_detail_loader.no_records_available")}</p>`;
   }
 };
 
@@ -279,7 +319,7 @@ const renderFactionRoster = (els, faction) => {
           member.imageUrl ||
           `https://ui-avatars.com/api/?background=1a1a1a&color=888&name=${encodeURIComponent(member.name || "User")}`;
         return `
-                <a href="character-detail.html?slug=${member.slug}" class="roster-card bg-white/5 p-3 border border-white/5 flex items-center space-x-3 hover:bg-white/10 transition-all group">
+                <a href="character-detail.html?slug=${member.slug}" class="roster-card bg-white/5 p-3 border border-white/5 flex items-center space-x-3 hover:bg-white/10 transition-all group" data-tilt data-tilt-max="10" data-tilt-speed="400" data-tilt-glare="true" data-tilt-max-glare="0.1">
                     <div class="w-10 h-10 bg-black overflow-hidden rounded-full border border-white/10 group-hover:border-(--theme-color) transition-colors">
                         <img src="${avatarUrl}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500">
                     </div>
@@ -290,6 +330,12 @@ const renderFactionRoster = (els, faction) => {
                 </a>`;
       })
       .join("");
+      
+      // Initialize 3D Hover on the new roster cards
+      import('vanilla-tilt').then(VanillaTilt => {
+          VanillaTilt.default.init(els.roster.querySelectorAll(".roster-card"));
+      }).catch(err => console.warn("VanillaTilt load failed:", err));
+      
   } else {
     els.roster.innerHTML = `<div class="text-xs font-mono text-gray-600 col-span-full py-4 text-center border border-dashed border-gray-800">${i18next.t("faction_detail_loader.roster_empty")}</div>`;
   }
@@ -345,10 +391,11 @@ const renderFactionDetails = (faction, container) => {
   const els = {
     title: container.querySelector("#faction-title"),
     subtitle: container.querySelector("#faction-subtitle"),
+    fileId: document.getElementById("faction-file-id"),
     leader: container.querySelector("#faction-leader"),
     hq: container.querySelector("#faction-hq"),
     description: container.querySelector("#faction-description"),
-    iconContainer: container.querySelector("#faction-icon-container"),
+    iconContainer: document.getElementById("faction-icon-container"),
     roster: container.querySelector("#faction-roster"),
     threat: container.querySelector("#threat-text"),
     relations: container.querySelector("#faction-locations-list"),
@@ -371,9 +418,9 @@ const renderFactionDetails = (faction, container) => {
 };
 
 export default async function (container, props) {
-  const loader = container.querySelector("#factions-loader");
-  // Using container as mainContainer since the script is likely run on <main>
-  const mainContainer = container;
+  // Try finding loader globally if not in container (since we moved it inside main)
+  const loader = document.getElementById("factions-loader");
+  const mainContainer = document.querySelector("main");
   const params = new URLSearchParams(globalThis.location.search);
   const factionSlug = params.get("slug");
 
@@ -405,17 +452,22 @@ export default async function (container, props) {
 
     const faction = await client.fetch(query, { slug: factionSlug });
 
-    if (loader) loader.style.display = "none";
+    if (loader) {
+        gsap.to(loader, { opacity: 0, duration: 0.5, onComplete: () => loader.remove() });
+    }
 
     if (faction) {
-      gsap.to(mainContainer, { opacity: 1, duration: 0.5 });
+      gsap.to(mainContainer, { opacity: 1, duration: 0.8, delay: 0.2 });
       renderFactionDetails(faction, container);
-    } else if (mainContainer) {
-      mainContainer.innerHTML = `<div class="h-[50vh] flex flex-col items-center justify-center text-red-800 font-mono"><span>${i18next.t("faction_detail_loader.error_file_corrupted")}</span></div>`;
+    } else {
+      if (document.getElementById("faction-title")) document.getElementById("faction-title").textContent = "DATA CORRUPTED";
+      if (loader) loader.remove();
+      gsap.to(mainContainer, { opacity: 1, duration: 0.5 });
     }
   } catch (error) {
     console.error("Intel Failure:", error);
-    if (mainContainer)
-      mainContainer.innerHTML = `<div class="h-[50vh] flex items-center justify-center text-red-500 font-mono">${i18next.t("faction_detail_loader.error_system_malfunction")}</div>`;
+    if (document.getElementById("faction-title")) document.getElementById("faction-title").textContent = "SYSTEM MALFUNCTION";
+    if (loader) loader.remove();
+    gsap.to(mainContainer, { opacity: 1, duration: 0.5 });
   }
 }

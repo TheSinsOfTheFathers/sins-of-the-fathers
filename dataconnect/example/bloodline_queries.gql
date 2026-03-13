@@ -1,0 +1,24 @@
+# İstihbarat Ağı (Bloodline) hiyerarşisini çeken tekil sorgu
+query ListBloodline @auth(level: USER, insecureReason: "Agents must be able to view all roster targets.") {
+  entities {
+    id
+    name
+    role
+    status
+    threatLevel
+    imageUrl
+  }
+  bloodlineLinks {
+    id
+    source {
+      id
+      name
+    }
+    target {
+      id
+      name
+    }
+    relationType
+    isClassified
+  }
+}

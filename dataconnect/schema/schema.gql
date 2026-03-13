@@ -1,39 +1,21 @@
 type Entity @table {
-  id: UUID! @default(expr: "uuidV4()")
+  id: String!
   name: String!
   role: String
-  status: String! @default(value: "ACTIVE") # 'ACTIVE', 'DECEASED', 'MISSING'
-  threatLevel: String! @default(value: "LOW") # 'LOW', 'MODERATE', 'HIGH', 'CRITICAL'
+  status: String! @default(value: "ACTIVE")
+  threatLevel: String! @default(value: "LOW")
   imageUrl: String
-  metadata: String # Any additional classified info encoded as JSON string or text
+  metadata: String
+  creatorId: String!
 }
 
 type BloodlineLink @table {
-  id: UUID! @default(expr: "uuidV4()")
+  id: String!
+  # Aynı tabloya iki kez referans verdiğimiz için isim (name) belirttik
   source: Entity! @ref
   target: Entity! @ref
-  relationType: String! # e.g. 'BIOLOGICAL', 'BLOOD_OATH', 'RIVAL', 'SUBORDINATE'
+  relationType: String!
   notes: String
-}
-
-# Add queries and mutations using Data Connect conventions
-query ListBloodline @auth(level: PUBLIC) {
-  entities {
-    id
-    name
-    role
-    status
-    threatLevel
-    imageUrl
-  }
-  bloodlineLinks {
-    id
-    source {
-      id
-    }
-    target {
-      id
-    }
-    relationType
-  }
+  isClassified: Boolean! @default(value: false)
+  creatorId: String!
 }
