@@ -7,67 +7,82 @@ import { NoirEffects } from '../ui/noir-effects.js';
 let mapInstance = null;
 
 const FACTION_THEMES = {
-    'ravenwood-empire': { border: '#c5a059', fill: '#c5a059' }, // Fixed casing to lowercase to match typical slug
-    'Ravenwood-empire': { border: '#c5a059', fill: '#c5a059' }, // Kept for safety
+    'ravenwood-empire': { border: '#c5a059', fill: '#c5a059' },
     'macpherson-clan': { border: '#7f1d1d', fill: '#991b1b' },
-    'cagliari-family': { border: '#155e75', fill: '#0e7490' },
-    'default': { border: '#555555', fill: '#777777' }
+    'cagliari': { border: '#155e75', fill: '#0e7490' },
+    'cagliari-crime-family': { border: '#155e75', fill: '#0e7490' },
+    'the-gilded-hand': { border: '#c5a059', fill: '#c5a059' },
+    'blackwood-syndicate': { border: '#1a1a1a', fill: '#1a1a1a' },
+    'default': { border: '#c5a059', fill: '#c5a059' }
 };
 
 /**
  * Harita Temizleyici (Anti-Initialized Error)
  */
-const destroyMap = (containerOrId) => {
-    const container = typeof containerOrId === 'string' ? document.getElementById(containerOrId) : containerOrId;
+const destroyMap = () => {
     if (mapInstance) {
-        mapInstance.off();
+        console.log("> [MapLoader] Destroying existing map instance.");
         mapInstance.remove();
         mapInstance = null;
-    }
-    if (container) {
-        container._leaflet_id = null;
     }
 };
 
 /**
- * Taktiksel Marker İkonu Oluşturucu
+ * Taktiksel Marker Element Oluşturucu
  */
-const createTacticalIcon = (slug) => {
-    if (!globalThis.L) return null;
+const createTacticalMarkerElement = (slug) => {
     // Handle potential casing mismatch
     const theme = FACTION_THEMES[slug] || FACTION_THEMES[slug.toLowerCase()] || FACTION_THEMES.default;
     const color = theme.border;
 
-    return L.divIcon({
-        className: 'tactical-pin',
-        html: `
-            <div style="position:relative; width:30px; height:30px; display:flex; justify-content:center; align-items:center;">
-               <div style="position:absolute; width:100%; height:100%; border:1px solid ${color}; border-radius:50%; opacity:0.5;" class="animate-spin-slow"></div>
-               <div style="width:10px; height:10px; background:${color}; border-radius:50%; box-shadow:0 0 8px ${color};"></div>
-            </div>`,
-        iconSize: [30, 30],
-        iconAnchor: [15, 15],
-        popupAnchor: [0, -15]
-    });
+    const el = document.createElement('div');
+    el.className = 'tactical-pin';
+    el.style.width = '30px';
+    el.style.height = '30px';
+    el.innerHTML = `
+        <div style="position:relative; width:100%; height:100%; display:flex; justify-content:center; align-items:center;">
+           <div style="position:absolute; width:100%; height:100%; border:1px solid ${color}; border-radius:50%; opacity:0.5;" class="animate-spin-slow"></div>
+           <div style="width:10px; height:10px; background:${color}; border-radius:50%; box-shadow:0 0 8px ${color};"></div>
+        </div>`;
+    return el;
 };
 
-async function loadLayer(map, path, theme) {
+async function loadLayer(map, path, id, theme) {
     try {
         const res = await fetch(path);
-
         if (!res.ok) throw new Error(`404 Not Found: ${path}`);
         const data = await res.json();
 
-        L.geoJSON(data, {
-            style: {
-                color: theme.border,
-                weight: 1,
-                opacity: 0.6,
-                fillColor: theme.fill,
-                fillOpacity: 0.1,
-                dashArray: '4 4'
+        map.addSource(id, {
+            type: 'geojson',
+            data: data
+        });
+
+        // Fill Layer
+        map.addLayer({
+            id: `${id}-fill`,
+            type: 'fill',
+            source: id,
+            layout: {},
+            paint: {
+                'fill-color': theme.fill,
+                'fill-opacity': 0.05
             }
-        }).addTo(map);
+        });
+
+        // Outline Layer
+        map.addLayer({
+            id: `${id}-outline`,
+            type: 'line',
+            source: id,
+            layout: {},
+            paint: {
+                'line-color': theme.border,
+                'line-width': 1,
+                'line-dasharray': [2, 2],
+                'line-opacity': 0.4
+            }
+        });
 
     } catch (e) {
         if (e.message.includes('404')) {
@@ -80,9 +95,17 @@ async function loadLayer(map, path, theme) {
 
 export default async function (container, props) {
     const mapContainer = container;
-    const loader = document.getElementById('map-loader'); // Loader might be external overlay
+    const loader = document.getElementById('map-loader');
 
-    if (mapContainer) gsap.set(mapContainer, { opacity: 0, scale: 0.98 });
+    if (mapContainer) {
+        gsap.set(mapContainer, { 
+            opacity: 0, 
+            scale: 0.98,
+            // Force GPU rendering to prevent black squares
+            transform: 'translate3d(0, 0, 0)',
+            backfaceVisibility: 'hidden'
+        });
+    }
 
     try {
         const schemaData = {
@@ -97,136 +120,178 @@ export default async function (container, props) {
         console.warn("Schema Injection Failed:", e);
     }
 
-    if (!mapContainer) return;
-    if (!globalThis.L) {
-        console.error("Leaflet Library Missing!");
+    if (!globalThis.mapboxgl) {
+        console.error("Mapbox Library Missing!");
         if (loader) loader.innerHTML = "<span class='text-red-500'>OFFLINE</span>";
         return;
     }
 
-    try {
-        destroyMap(mapContainer);
+    // Mapbox Token
+    mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN || ''; 
 
-        const map = L.map(mapContainer, {
-            center: [40, -30],
-            zoom: 3,
-            zoomControl: false,
-            attributionControl: false
+    const applyStaticFallback = (msg = "Static_Fallback_Active") => {
+        console.warn(`> [MapLoader] Triggering Static Fallback: ${msg}`);
+        const staticUrl = `https://api.mapbox.com/styles/v1/mapbox/dark-v11/static/-30,40,2,0/1200x800?access_token=${mapboxgl.accessToken}&attribution=false&logo=false`;
+        
+        mapContainer.innerHTML = `
+            <div class="relative w-full h-full overflow-hidden flex items-center justify-center bg-black">
+                <img src="${staticUrl}" 
+                     class="w-full h-full object-cover grayscale opacity-40" 
+                     alt="Global Surveillance Fallback">
+                <div class="absolute inset-0 bg-obsidian/40 pointer-events-none"></div>
+                <div class="absolute bottom-6 right-6 bg-black/80 px-3 py-1 text-[10px] font-mono text-gold uppercase border border-gold/20 z-20">${msg}</div>
+                <div class="absolute inset-0 map-grid pointer-events-none opacity-20"></div>
+            </div>
+        `;
+
+        if (loader) {
+            gsap.to(loader, { autoAlpha: 0, duration: 1, onComplete: () => loader.style.display = 'none' });
+        }
+        gsap.to(mapContainer, { 
+            opacity: 1, 
+            scale: 1, 
+            filter: "contrast(1.2) brightness(0.8)",
+            duration: 2 
+        });
+    };
+
+    if (!mapboxgl.supported()) {
+        applyStaticFallback("WebGL_Unsupported");
+        return;
+    }
+
+    try {
+        destroyMap();
+
+        const map = new mapboxgl.Map({
+            container: mapContainer,
+            style: 'mapbox://styles/mapbox/dark-v10',
+            center: [-30, 40],
+            zoom: 2,
+            attributionControl: false,
+            projection: 'mercator' // Standard tactical projection
         });
         mapInstance = map;
 
-        const zoomControl = L.control.zoom({ position: 'bottomright' }).addTo(map);
-        const zoomContainer = zoomControl.getContainer();
-        if (zoomContainer) gsap.set(zoomContainer, { autoAlpha: 0, x: 50 });
-
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-            maxZoom: 18
-        }).addTo(map);
+        // Custom Zoom Control positioning (Bottom Right)
+        map.addControl(new mapboxgl.NavigationControl({ showCompass: false }), 'bottom-right');
 
         globalThis.zoomToLocation = (lat, lng, z) => {
-            map.flyTo([lat, lng], z, { duration: 2 });
+            map.flyTo({ center: [lng, lat], zoom: z, duration: 2000, essential: true });
             const display = document.getElementById('location-name-display');
             if (display) display.textContent = i18next.t('location_loader.sector_info', { lat: lat.toFixed(4), lng: lng.toFixed(4) });
         };
+
         globalThis.resetMap = () => {
-            map.flyTo([40, -30], 3, { duration: 1.5 });
+            map.flyTo({ center: [-30, 40], zoom: 2, duration: 1500, essential: true });
             const display = document.getElementById('location-name-display');
             if (display) display.textContent = i18next.t('location_loader.global_orbit');
         };
 
-        const factionsData = {
-            'Ravenwood-empire': [
-                'united-kingdom-border.geojson',
-                'california-border.geojson',
-                'italy-border.geojson',
-                'netherlands-border.geojson'
-            ],
-            'macpherson-clan': [
-                'scotland-highlands.geojson'
-            ],
-            'cagliari-family': [
-                'corsica-border.geojson'
-            ]
-        };
+        map.on('load', async () => {
+            console.log("> [MapLoader] Map load complete. Initiating staggered resize.");
+            
+            // Staggered resize to fix "black square" issue
+            const resizeInt = setInterval(() => map.resize(), 1000);
+            setTimeout(() => clearInterval(resizeInt), 5000);
 
-        for (const [slug, files] of Object.entries(factionsData)) {
-            // Check both original and lowercase slug to be safe
-            const theme = FACTION_THEMES[slug] || FACTION_THEMES[slug.toLowerCase()] || FACTION_THEMES.default;
-            for (const file of files) {
-                await loadLayer(map, `/assets/maps/${file}`, theme);
-            }
-        }
+            // 1. Load Faction Territories
+                'Ravenwood-empire': [
+                    'uk-no-aberdeen.geojson',
+                    'california-border.geojson',
+                    'italy-border.geojson',
+                    'netherlands-border.geojson'
+                ],
+                'macpherson-clan': [
+                    'scotland-highlands.geojson',
+                    'aberdeen.geojson'
+                ],
+                'cagliari-family': [
+                    'corsica-border.geojson'
+                ]
+            };
 
-        const query = `*[_type == "location" && defined(location)] { 
-            name, "slug": slug.current, location, faction->{slug}, summary 
-        }`;
-
-        const locations = await client.fetch(query);
-        console.log(`> Found ${locations.length} locations.`);
-
-        const markerElements = [];
-
-        if (locations.length > 0) {
-            locations.forEach(loc => {
-                const { lat, lng } = loc.location;
-                const fSlug = loc.faction?.slug?.current || 'default';
-
-                const marker = L.marker([lat, lng], {
-                    icon: createTacticalIcon(fSlug)
-                }).addTo(map);
-
-                marker.bindPopup(`
-                    <div class="text-left font-mono min-w-[150px]">
-                        <h4 class="text-gold text-sm font-bold mb-1 border-b border-white/20 pb-1">${loc.name.toUpperCase()}</h4>
-                        <p class="text-[10px] text-gray-400 mb-2 line-clamp-2">${loc.summary || i18next.t('location_loader.no_intel')}</p>
-                        <a href="location-detail.html?slug=${loc.slug}" class="block text-center bg-white/10 py-1 text-[9px] hover:bg-gold hover:text-black uppercase transition">
-                            ${i18next.t('location_loader.inspect_button')}
-                        </a>
-                    </div>
-                `, { className: 'custom-popup-theme' });
-
-                const el = marker.getElement();
-                if (el) {
-                    markerElements.push(el);
-                    gsap.set(el, { scale: 0, opacity: 0 });
+            for (const [slug, files] of Object.entries(factionsData)) {
+                const theme = FACTION_THEMES[slug] || FACTION_THEMES[slug.toLowerCase()] || FACTION_THEMES.default;
+                for (const file of files) {
+                    const id = file.replace('.geojson', '');
+                    await loadLayer(map, `/assets/maps/${file}`, id, theme);
                 }
-            });
-        }
+            }
 
-        map.on('mousemove', (e) => {
-            const el = document.getElementById('coordinates-display');
-            if (el) el.textContent = `${e.latlng.lat.toFixed(4)} | ${e.latlng.lng.toFixed(4)}`;
+            // 2. Load Markers from Sanity
+            const query = `*[_type == "location" && defined(location)] { 
+                name, "slug": slug.current, location, faction->{slug}, summary 
+            }`;
+
+            const locations = await client.fetch(query);
+            console.log(`> [MapLoader] Found ${locations.length} locations.`);
+
+            const markerElements = [];
+            if (locations.length > 0) {
+                locations.forEach(loc => {
+                    const { lat, lng } = loc.location;
+                    const fSlug = loc.faction?.slug?.current || 'default';
+
+                    const el = createTacticalMarkerElement(fSlug);
+                    markerElements.push(el);
+
+                    const popup = new mapboxgl.Popup({ offset: 15, className: 'custom-popup-theme' })
+                        .setHTML(`
+                            <div class="p-3 bg-obsidian text-gray-300">
+                                <h4 class="text-gold text-xs font-bold mb-1 border-b border-gold/20 pb-1 uppercase tracking-widest">${loc.name.toUpperCase()}</h4>
+                                <p class="text-[9px] text-gray-400 mb-2 line-clamp-2 leading-relaxed">${loc.summary || i18next.t('location_loader.no_intel')}</p>
+                                <a href="/pages/location-detail.html?slug=${loc.slug}" class="block text-center border border-white/10 py-1 text-[8px] hover:bg-gold hover:text-black uppercase transition-colors tracking-tighter">
+                                    ${i18next.t('location_loader.inspect_button')}
+                                </a>
+                            </div>
+                        `);
+
+                    new mapboxgl.Marker(el)
+                        .setLngLat([lng, lat])
+                        .setPopup(popup)
+                        .addTo(map);
+
+                    gsap.set(el, { scale: 0, opacity: 0 });
+                });
+            }
+
+            // Coordination tracking
+            map.on('mousemove', (e) => {
+                const coordEl = document.getElementById('coordinates-display');
+                if (coordEl) coordEl.textContent = `${e.lngLat.lat.toFixed(4)} | ${e.lngLat.lng.toFixed(4)}`;
+            });
+
+            // Reveal Animation
+            const tl = gsap.timeline();
+
+            if (loader) {
+                tl.to(loader, {
+                    autoAlpha: 0,
+                    duration: 0.5,
+                    onComplete: () => loader.style.display = 'none'
+                });
+            }
+
+            tl.to(mapContainer, {
+                opacity: 1,
+                scale: 1,
+                filter: "contrast(1.2) brightness(0.8)",
+                duration: 1.2,
+                ease: "power2.inOut"
+            }, "-=0.2");
+
+            if (markerElements.length > 0) {
+                NoirEffects.staggerScaleReveal(markerElements);
+            }
         });
 
-        const tl = gsap.timeline();
-
-        if (loader) {
-            tl.to(loader, {
-                autoAlpha: 0,
-                duration: 0.5,
-                onComplete: () => loader.style.display = 'none'
-            });
-        }
-
-        tl.to(mapContainer, {
-            opacity: 1,
-            scale: 1,
-            duration: 1.2,
-            ease: "power2.inOut"
-        }, "-=0.2");
-
-        if (zoomContainer) {
-            tl.to(zoomContainer, { autoAlpha: 1, x: 0, duration: 0.5 }, "-=0.5");
-        }
-
-        if (markerElements.length > 0) {
-            NoirEffects.staggerScaleReveal(markerElements);
-        }
+        map.on('error', (e) => {
+            console.error("> [MapLoader] Mapbox Error:", e.error);
+        });
 
     } catch (err) {
-        console.error("Map Critical Error:", err);
-        if (mapContainer) mapContainer.innerHTML = '<p class="text-center text-red-500 mt-10">MAP SYSTEM FAILURE</p>';
-        if (loader) loader.style.display = 'none';
-        gsap.to(mapContainer, { opacity: 1 });
+        console.error("> [MapLoader] Critical Error:", err);
+        applyStaticFallback("System_Failure");
     }
 }

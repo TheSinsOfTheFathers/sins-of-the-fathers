@@ -182,8 +182,104 @@ html.lenis {
 }
 
 /* =========================================
-  Faction Detail Page Specific
+   Faction Detail & Dossier Terminal
 ========================================= */
+
+:root {
+  --theme-color: #c5a059;
+  --panel-bg: rgba(5, 5, 5, 0.85);
+  --border-subtle: rgba(255, 255, 255, 0.1);
+  --hud-cyan: rgba(34, 211, 238, 0.3);
+}
+
+.dossier-panel {
+    background: var(--panel-bg);
+    border: 1px solid var(--border-subtle);
+    backdrop-filter: blur(12px);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s ease;
+    overscroll-behavior: contain;
+}
+
+#coverflow-container {
+    overscroll-behavior: contain;
+}
+
+.dossier-panel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--theme-color), transparent);
+    opacity: 0.5;
+}
+
+.hud-overlay {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 5;
+    background-image: 
+        radial-gradient(circle at 2px 2px, rgba(255,255,255,0.05) 1px, transparent 0);
+    background-size: 40px 40px;
+    opacity: 0.5;
+}
+
+.tactical-corner {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--theme-color);
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+.top-left { top: 0; left: 0; border-right: 0; border-bottom: 0; }
+.top-right { top: 0; right: 0; border-left: 0; border-bottom: 0; }
+.bottom-left { bottom: 0; left: 0; border-right: 0; border-top: 0; }
+.bottom-right { bottom: 0; right: 0; border-left: 0; border-top: 0; }
+
+.scanning-bar {
+    position: absolute;
+    width: 100%;
+    height: 1px;
+    background: var(--theme-color);
+    box-shadow: 0 0 10px var(--theme-color);
+    opacity: 0.2;
+    z-index: 10;
+    pointer-events: none;
+}
+
+.glitch-hover:hover {
+    animation: simple-glitch 0.3s ease-in-out;
+}
+
+@keyframes simple-glitch {
+    0% { transform: translate(0); }
+    20% { transform: translate(-2px, 2px); filter: hue-rotate(90deg); }
+    40% { transform: translate(2px, -2px); }
+    60% { transform: translate(-1px, 0); }
+    100% { transform: translate(0); }
+}
+
+.data-item {
+    border-left: 1px solid var(--theme-color);
+    padding-left: 1rem;
+    position: relative;
+}
+
+.data-item::before {
+    content: '';
+    position: absolute;
+    left: -4px;
+    top: 0;
+    width: 7px;
+    height: 7px;
+    background: var(--theme-color);
+}
 
 /* Dynamic Theme Variable Default (JS will override this) */
 :root {
@@ -197,6 +293,68 @@ html.lenis {
 
 .hq-text {
   color: var(--theme-color);
+}
+
+/* TERMINAL & INTEL STYLES */
+.terminal-window {
+    background: rgba(0, 0, 0, 0.9);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 2rem;
+    position: relative;
+    box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.5);
+    z-index: 60; /* Ensure manifesto text appears above overlays */
+}
+
+
+
+.intel-text {
+    font-family: 'Courier Prime', monospace;
+    color: var(--text-offwhite);
+    line-height: 1.8;
+    position: relative;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
+    font-weight: 400;
+}
+
+.intel-text p {
+    margin-bottom: 1.5rem;
+    opacity: 0.9;
+}
+
+.intel-text h3 {
+    color: var(--theme-color);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-size: 1.25rem;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px border-dashed var(--theme-color);
+    padding-bottom: 0.5rem;
+}
+
+.terminal-cursor {
+    display: inline-block;
+    width: 8px;
+    height: 1.2em;
+    background: var(--theme-color);
+    margin-left: 4px;
+    vertical-align: middle;
+    animation: blink 1s step-end infinite;
+}
+
+@keyframes blink {
+    50% { opacity: 0; }
+}
+
+.intel-header-meta {
+    font-size: 10px;
+    color: var(--theme-color);
+    opacity: 0.5;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
 }
 
 /* Base CRT Glow backing for elements */
@@ -422,14 +580,7 @@ html.lenis {
   box-shadow: 0 0 5px var(--theme-color);
 }
 
-/* Leaflet Map "Noir" Mode Override */
-.leaflet-container {
-  background: #050505 !important;
-}
 
-.leaflet-control-attribution {
-  display: none !important;
-}
 
 /* =========================================
    Factions Page Specific
@@ -509,83 +660,7 @@ html.lenis {
   background-color: #c5a059;
 }
 
-/* =========================================
-   Locations Page Specific (Map UI)
-   ========================================= */
 
-/* Leaflet Map Filters (Noir Theme) */
-.leaflet-layer {
-  filter: brightness(0.6) contrast(1.1);
-}
-
-.leaflet-container {
-  background: #080808 !important;
-}
-
-/* Overlay Patterns */
-.map-grid {
-  background-image:
-    linear-gradient(rgba(197, 160, 89, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(197, 160, 89, 0.05) 1px, transparent 1px);
-  background-size: 60px 60px;
-}
-
-/* Scan Line Animation */
-.scan-line {
-  height: 3px;
-  background: rgba(197, 160, 89, 0.2);
-  box-shadow: 0 0 10px rgba(197, 160, 89, 0.4);
-  animation: scan 4s linear infinite;
-  pointer-events: none;
-}
-
-@keyframes scan {
-  0% {
-    transform: translateY(0);
-  }
-
-  100% {
-    transform: translateY(100vh);
-  }
-}
-
-/* Custom Leaflet Popups (Gold & Obsidian Theme) */
-.leaflet-popup-content-wrapper {
-  background: rgba(5, 5, 5, 0.95);
-  border: 1px solid #c5a059;
-  color: #ccc;
-  border-radius: 0;
-}
-
-.leaflet-popup-tip {
-  background: #c5a059;
-}
-
-.leaflet-popup-content {
-  min-width: 190px !important;
-}
-
-.leaflet-popup-close-button {
-  pointer-events: auto !important;
-  cursor: pointer !important;
-  z-index: 10 !important;
-  color: #c5a059 !important;
-}
-
-.leaflet-popup-close-button:hover {
-  color: #fff !important;
-}
-
-/* Custom Tactical Icon Animation */
-.custom-tactical-icon .animate-spin-slow {
-  animation: spin 10s linear infinite;
-}
-
-@keyframes spin {
-  100% {
-    transform: rotate(360deg);
-  }
-}
 
 /* =========================================
    Login / Auth Page Specific
@@ -826,10 +901,98 @@ input:-webkit-autofill:active {
   }
 }
 
-/* =========================================
-  Leaflet Map Fixes
-  ========================================= */
-/* Fix for Tailwind CSS conflict with Leaflet tiles */
+#mini-map {
+    position: relative;
+    z-index: 55;
+    visibility: visible !important;
+    opacity: 1 !important;
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    filter: contrast(1.2) brightness(0.8);
+}
+
+.mapboxgl-ctrl-logo { display: none !important; }
+.mapboxgl-ctrl-attrib { display: none !important; }
+
+.leaflet-container {
+  background: #050505 !important;
+}
+
+.leaflet-control-attribution {
+  display: none !important;
+}
+
+.leaflet-layer {
+  filter: brightness(0.6) contrast(1.1);
+}
+
+.map-grid {
+  background-image:
+    linear-gradient(rgba(197, 160, 89, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(197, 160, 89, 0.05) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+.scan-line {
+  height: 3px;
+  background: rgba(197, 160, 89, 0.2);
+  box-shadow: 0 0 10px rgba(197, 160, 89, 0.4);
+  animation: scan 4s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes scan {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(100vh); }
+}
+
+.leaflet-popup-content-wrapper {
+  background: rgba(5, 5, 5, 0.95);
+  border: 1px solid #c5a059;
+  color: #ccc;
+  border-radius: 0;
+}
+
+.leaflet-popup-tip {
+  background: #c5a059;
+}
+
+/* Mapbox Popup Overrides */
+.custom-popup-theme .mapboxgl-popup-content {
+  background: rgba(5, 5, 5, 0.9) !important;
+  border: 1px solid rgba(197, 160, 89, 0.5);
+  border-radius: 0;
+  padding: 0;
+  color: #d1d1d1;
+  font-family: 'Courier Prime', monospace;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.8), inset 0 0 10px rgba(197, 160, 89, 0.05);
+  backdrop-filter: blur(8px);
+}
+
+.custom-popup-theme .mapboxgl-popup-tip {
+  border-top-color: rgba(197, 160, 89, 0.5) !important;
+  border-bottom-color: rgba(197, 160, 89, 0.5) !important;
+}
+
+.custom-popup-theme .mapboxgl-popup-close-button {
+  color: #c5a059;
+  font-size: 16px;
+  padding: 5px 10px;
+  transition: color 0.2s;
+}
+
+.custom-popup-theme .mapboxgl-popup-close-button:hover {
+  background: transparent;
+  color: #fff;
+}
+
+.leaflet-popup-close-button {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  z-index: 10 !important;
+  color: #c5a059 !important;
+}
+
 .leaflet-pane img,
 .leaflet-tile,
 .leaflet-marker-icon,
@@ -840,38 +1003,23 @@ input:-webkit-autofill:active {
   height: auto;
 }
 
-/* Ensure map container has z-index lower than overlay */
 #map {
   z-index: 1;
+  visibility: visible !important;
+  opacity: 1 !important;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  filter: contrast(1.2) brightness(0.8);
 }
 
-/* Custom Popup Styles */
-.custom-popup-theme .leaflet-popup-content-wrapper {
-  background: rgba(10, 10, 10, 0.95);
-  border: 1px solid rgba(197, 160, 89, 0.3);
-  border-radius: 0;
-  backdrop-filter: blur(8px);
-  letter-spacing: 0.2em;
-  display: none;
-}
-
-@keyframes dots {
-  0%, 20% { opacity: 0; }
-  50% { opacity: 1; }
-  100% { opacity: 0; }
-}
-
+/*
 .custom-popup-theme .leaflet-popup-content-wrapper {
   background: rgba(10, 10, 10, 0.95);
   border: 1px solid rgba(197, 160, 89, 0.3);
   border-radius: 0;
   backdrop-filter: blur(8px);
 }
-
-.custom-popup-theme .leaflet-popup-tip {
-  background: rgba(10, 10, 10, 0.95);
-  border: 1px solid rgba(197, 160, 89, 0.3);
-}
+*/
 
 :root {
   --bg-obsidian: #050505;
@@ -883,6 +1031,8 @@ input:-webkit-autofill:active {
   --font-display: 'Cinzel', serif;
   --font-body: 'Lato', sans-serif;
   --font-mono: 'Courier Prime', monospace;
+  --text-offwhite: #e5e5e5;
+  --text-mercury: #d1d1d1;
 }
 
 /* Atmospheric Overlays */

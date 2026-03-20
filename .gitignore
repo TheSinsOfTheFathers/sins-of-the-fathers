@@ -80,3 +80,11 @@ dist
 
 # Partytown library files
 public/~partytown
+
+# Map Data (Raw/Large)
+scotland_nuts3.json
+wales_topo.json
+ni_topo.json
+wales_raw.geojson
+ni_raw.geojson
+wfe
