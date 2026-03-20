@@ -211,21 +211,55 @@ const initCoverflow = (factions, coverflowContainer, displayContainer) => {
         renderActiveFaction(factions[currentIndex], displayContainer);
     };
 
-    // 3. Wheel Interaction
+    // 3. Wheel & Touch Interaction
+    let lastWheelTime = 0;
+    const scrollThrottle = 150; // ms
+
+    const handleNext = () => {
+        if (currentIndex < items.length - 1) {
+            currentIndex++;
+            updateCoverflow();
+        }
+    };
+
+    const handlePrev = () => {
+        if (currentIndex > 0) {
+            currentIndex--;
+            updateCoverflow();
+        }
+    };
+
     coverflowContainer.addEventListener('wheel', (e) => {
-        e.preventDefault(); // Prevent page scroll
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        
+        const now = Date.now();
+        if (now - lastWheelTime < scrollThrottle) return;
+        lastWheelTime = now;
+
         if (e.deltaY > 0) {
-            // Scroll down -> next faction
-            if (currentIndex < items.length - 1) {
-                currentIndex++;
-                updateCoverflow();
-            }
-        } else {
-             // Scroll up -> prev faction
-            if (currentIndex > 0) {
-                currentIndex--;
-                updateCoverflow();
-            }
+            handleNext();
+        } else if (e.deltaY < 0) {
+            handlePrev();
+        }
+    }, { passive: false });
+
+    // Touch Support
+    let touchStartY = 0;
+    coverflowContainer.addEventListener('touchstart', (e) => {
+        touchStartY = e.touches[0].clientY;
+    }, { passive: true });
+
+    coverflowContainer.addEventListener('touchmove', (e) => {
+        const touchY = e.touches[0].clientY;
+        const diff = touchStartY - touchY;
+        
+        if (Math.abs(diff) > 30) {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            if (diff > 0) handleNext();
+            else handlePrev();
+            touchStartY = touchY; // Reset for next segment
         }
     }, { passive: false });
 
@@ -258,8 +292,8 @@ export default async function (container, props) {
             summary,
             type,
             color,
-            "image": hqImage,
-            "hqLocation": hq,
+            "image": image.asset->url,
+            "hqName": hq,
             leader->{name}
         }`;
 

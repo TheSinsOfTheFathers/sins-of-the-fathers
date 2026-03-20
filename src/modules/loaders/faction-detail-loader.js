@@ -7,7 +7,7 @@ import gsap from "gsap";
 import { NoirEffects } from "../ui/noir-effects.js";
 
 /**
- * MINI MAP ENGINE (Canlı Uydu Bağlantısı)
+ * MINI MAP ENGINE (Canlı Uydu Bağlantısı via Mapbox)
  */
 const initMiniMap = (
   lat,
@@ -21,64 +21,162 @@ const initMiniMap = (
       ? context.querySelector("#" + containerId)
       : containerId;
 
-  if (!globalThis.L || !container) return;
+  console.log(`> [MiniMap] Initializing for: ${lat}, ${lng} (Container: ${containerId})`);
 
-  if (container._leaflet_id) {
-    const mapInstance = container._leaflet_map;
-    if (mapInstance) {
-      mapInstance.remove();
-    }
+  // Helper for "Signal Lost" UI (Thematic fallback for blocked/failed services)
+  const applySignalLostUI = (msg = "SIGNAL_LOST") => {
+    console.warn(`> [MiniMap] Signal Lost: ${msg}`);
+    container.innerHTML = `
+        <div class="relative w-full h-full overflow-hidden flex flex-col items-center justify-center bg-black/90 border border-red-900/20 group">
+            <div class="absolute inset-0 bg-[radial-gradient(circle,rgba(239,68,68,0.1)_0%,transparent_70%)] animate-pulse"></div>
+            <i class="fas fa-satellite-dish text-4xl text-red-600/40 mb-3 group-hover:scale-110 transition-transform duration-700"></i>
+            <div class="text-[10px] font-mono text-red-500 tracking-[0.3em] uppercase animate-pulse">${msg}</div>
+            <div class="text-[8px] font-mono text-white/30 mt-2 uppercase tracking-widest text-center px-4">
+                Satellite link blocked by local proxy or defense protocol.
+            </div>
+            <div class="absolute top-2 left-2 bg-red-950/40 px-1.5 py-0.5 text-[7px] font-mono text-red-400 border border-red-900/30">SEC_FAILURE</div>
+        </div>
+    `;
+  };
+
+  // 1. Update labels in the UI (Do this early regardless of map success)
+  const latEl = document.getElementById('map-lat');
+  const lngEl = document.getElementById('map-lng');
+  if (latEl) latEl.textContent = `LAT: ${lat.toFixed(4)} ${lat >= 0 ? 'N' : 'S'}`;
+  if (lngEl) lngEl.textContent = `LNG: ${lng.toFixed(4)} ${lng >= 0 ? 'E' : 'W'}`;
+
+  // Check if library is even available (might be blocked by ad-blockers)
+  if (!globalThis.mapboxgl) {
+    console.warn("> [MiniMap] Critical Error: mapboxgl is not defined on window. Check if script is loaded or blocked.");
+    applySignalLostUI("CONNECTION_BLOCKED");
+    return;
+  }
+  console.log("> [MiniMap] mapboxgl library detected.");
+
+  // Mapbox Access Token
+  mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN; 
+
+  // Helper for static fallback
+  const applyStaticFallback = (msg = "Static_Fallback_Active") => {
+    console.warn(`> [MiniMap] Triggering Static Fallback: ${msg}`);
+    const staticUrl = `https://api.mapbox.com/styles/v1/mapbox/dark-v11/static/${lng},${lat},14,0/600x600?access_token=${mapboxgl.accessToken}&attribution=false&logo=false`;
+    
+    container.innerHTML = `
+        <div class="relative w-full h-full overflow-hidden flex items-center justify-center bg-black">
+            <img src="${staticUrl}" 
+                 class="w-full h-full object-cover grayscale opacity-60" 
+                 alt="Satellite View Fallback"
+                 onerror="this.parentElement.innerHTML = '<div class=\'w-full h-full flex flex-col items-center justify-center text-[8px] text-red-500 font-mono tracking-tighter p-4 text-center\'>LINK_BLOCKED_BY_ADS_PROTO</div>'">
+            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <div class="radar-ping w-8 h-8 relative">
+                    <div class="absolute inset-0 rounded-full animate-ping opacity-75" style="background-color: ${color}"></div>
+                    <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full shadow-[0_0_20px_${color}]" style="background-color: ${color}"></div>
+                </div>
+            </div>
+            <div class="absolute bottom-2 left-2 bg-black/80 px-2 py-0.5 text-[8px] font-mono text-gold uppercase border border-gold/20 z-20">${msg}</div>
+        </div>
+    `;
+  };
+
+  // 2. Check for WebGL support
+  if (!mapboxgl.supported()) {
+    console.warn("> [MiniMap] WebGL is not supported by this browser/device.");
+    applyStaticFallback("WebGL_Unsupported");
+    return;
+  }
+  console.log("> [MiniMap] WebGL support confirmed.");
+
+  try {
+    console.log("> [MiniMap] Starting map instance creation...");
+    const map = new mapboxgl.Map({
+      container: container,
+      style: 'mapbox://styles/mapbox/dark-v10',
+      center: [lng, lat],
+      zoom: 1, // Start zoomed out
+      interactive: false,
+      attributionControl: false,
+      failIfMajorPerformanceCaveat: false // Try harder
+    });
+    console.log("> [MiniMap] Instance created successfully.");
+
+    map.on('error', (e) => {
+      console.error("> [MiniMap] Mapbox internal error:", e.error);
+    });
+
+    map.on('load', () => {
+      console.log("> [MiniMap] Map 'load' event fired. Initiating staggered resize...");
+      
+      // Staggered resize to catch potential layout shifts
+      const resizeInterval = setInterval(() => {
+        console.log("> [MiniMap] Periodic resize trigger...");
+        map.resize();
+      }, 1000);
+
+      // Stop periodic resize after 5 seconds
+      setTimeout(() => {
+        clearInterval(resizeInterval);
+        console.log("> [MiniMap] Staggered resize sequence complete.");
+      }, 5000);
+
+      // Zoom in animation with longer delay
+      console.log("> [MiniMap] Scheduling flyTo sequence (2s delay)...");
+      setTimeout(() => {
+          console.log("> [MiniMap] Executing flyTo...");
+          map.flyTo({
+              center: [lng, lat],
+              zoom: 14,
+              speed: 0.8,
+              curve: 1.5,
+              essential: true
+          });
+      }, 2000);
+
+      map.on('moveend', () => {
+        console.log("> [MiniMap] Map movement/zoom sequence complete.");
+      });
+
+      // Pulse effect at destination
+      const el = document.createElement('div');
+      el.className = 'radar-ping';
+      el.style.width = '20px';
+      el.style.height = '20px';
+      el.innerHTML = `
+          <div class="relative w-full h-full flex items-center justify-center">
+              <div class="absolute w-full h-full rounded-full animate-ping opacity-75" style="background-color: ${color}"></div>
+              <div class="absolute w-2 h-2 rounded-full shadow-[0_0_10px_${color}]" style="background-color: ${color}"></div>
+          </div>
+      `;
+
+      const popup = new mapboxgl.Popup({ offset: 15, className: 'custom-popup-theme' })
+        .setHTML(`
+            <div class="p-3 bg-obsidian text-gray-300">
+                <h4 class="text-gold text-xs font-bold mb-1 uppercase tracking-widest border-b border-gold/20 pb-1">${props.factionName.toUpperCase()} HQ</h4>
+                <p class="text-[9px] leading-relaxed text-gray-400 font-mono">SIGNAL_STRENGTH: OPTIMAL<br>VECTOR_LOCK: CONFIRMED</p>
+            </div>
+        `);
+
+      new mapboxgl.Marker(el)
+        .setLngLat([lng, lat])
+        .setPopup(popup)
+        .addTo(map);
+    });
+
+    // Handle container resize
+    window.addEventListener('resize', () => map.resize());
+
+  } catch (err) {
+    console.error("> [MiniMap] Critical Initialization Failure:", err);
+    applyStaticFallback("Initialization_Failed");
   }
 
-  if (container._leaflet_id) return;
-
-  const map = L.map(container, {
-    center: [lat + 10, lng - 10], // Offset initial position for drama
-    zoom: 4,                      // Start zoomed out (satellite view)
-    zoomControl: false,
-    attributionControl: false,
-    dragging: false,
-    scrollWheelZoom: false,
-    doubleClickZoom: false,
-    boxZoom: false,
-    keyboard: false,
-  });
-
-  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-    maxZoom: 19,
-  }).addTo(map);
-
-  const radarIcon = L.divIcon({
-    className: "radar-ping",
-    html: `
-            <div class="relative w-4 h-4 flex items-center justify-center">
-                <div class="absolute w-full h-full rounded-full animate-ping opacity-75" style="background-color: ${color}"></div>
-                <div class="absolute w-2 h-2 rounded-full shadow-[0_0_10px_${color}]" style="background-color: ${color}"></div>
-            </div>
-        `,
-    iconSize: [20, 20],
-    iconAnchor: [10, 10],
-  });
-
-  // Delay the marker rendering and the flyTo for dramatic effect
-  setTimeout(() => {
-     map.flyTo([lat, lng], 15, {
-        animate: true,
-        duration: 2.5,
-        easeLinearity: 0.25
-     });
-     
-     // Drop ping when approach finishes
-     setTimeout(() => {
-        L.marker([lat, lng], { icon: radarIcon }).addTo(map);
-     }, 2500);
-  }, 1000);
-
-  gsap.from(container, {
-    opacity: 0,
-    scale: 0.95,
+  // Ensure container is visible regardless of animation start state
+  gsap.to(container, {
+    opacity: 1,
+    scale: 1,
+    filter: "contrast(1.2) brightness(0.8)",
     duration: 1.5,
     ease: "power3.out",
+    delay: 0.2
   });
 };
 
@@ -133,126 +231,81 @@ const injectFactionSeo = (faction, safeTitle) => {
 const renderFactionHeader = (els, faction, safeTitle) => {
   if (els.title) {
     els.title.innerHTML = `<span class="glitch-text" data-text="${safeTitle}">${safeTitle}</span>`;
-    els.title.classList.remove("animate-fade-in-down");
-    // Force reflow
-    els.title.offsetWidth;
-    els.title.classList.add("animate-fade-in-down");
+    gsap.from(els.title, {
+        opacity: 0,
+        x: -30,
+        duration: 1,
+        ease: "power4.out",
+        delay: 0.5
+    });
   }
-  if (els.subtitle)
-    els.subtitle.textContent = faction.motto
-      ? `"${faction.motto}"`
-      : i18next.t("faction_detail_loader.motto_redacted");
+  
+  if (els.subtitle) {
+    els.subtitle.textContent = faction.motto ? `"${faction.motto}"` : `// MOTTO_REDACTED`;
+    gsap.from(els.subtitle, {
+        opacity: 0,
+        y: 10,
+        duration: 0.8,
+        ease: "power2.out",
+        delay: 0.7
+    });
+  }
 
-  // File ID Generation (Cosmetic)
   if (els.fileId) {
-    const randomHex = Math.random().toString(16).substr(2, 4).toUpperCase();
     const typeCode = faction.type === "syndicate" ? "SYN" : "CORP";
-    els.fileId.innerHTML = `FILE ID: <span class="text-white">${typeCode}-${randomHex}</span>`;
+    const randomHex = Math.random().toString(16).substr(2, 4).toUpperCase();
+    els.fileId.textContent = `FILE: ${typeCode}-${randomHex}`;
   }
 
   const type = faction.type || "syndicate";
-  const icon =
-    type === "syndicate"
-      ? '<i class="fas fa-skull-crossbones"></i>'
-      : '<i class="fas fa-chess-king"></i>';
-  if (els.iconContainer) els.iconContainer.innerHTML = icon;
+  const icon = type === "syndicate" ? '<i class="fas fa-skull-crossbones text-6xl opacity-30"></i>' : '<i class="fas fa-chess-king text-6xl opacity-30"></i>';
+  if (els.iconContainer) {
+      els.iconContainer.innerHTML = `<div class="scanning-bar animate-[scan_3s_linear_infinite]"></div>${icon}`;
+      gsap.from(els.iconContainer, { scale: 0.8, opacity: 0, duration: 1, ease: "back.out(1.7)", delay: 0.3 });
+  }
 
-  const themeColor = applyFactionTheme(
-    faction.color?.hex,
-    faction.image?.asset?.url
-  );
+  const themeColor = applyFactionTheme(faction.color?.hex, faction.image?.asset?.url);
 
   if (faction.hqLocation?.lat && faction.hqLocation?.lng) {
-    setTimeout(
-      () =>
-        initMiniMap(
-          faction.hqLocation.lat,
-          faction.hqLocation.lng,
-          themeColor,
-          "mini-map"
-        ),
-      800
-    );
+    setTimeout(() => initMiniMap(faction.hqLocation.lat, faction.hqLocation.lng, themeColor, "mini-map"), 1200);
   }
 };
 
 const renderFactionInfo = (els, faction) => {
   if (els.leader) {
-    const leaderName = faction.leader
-      ? faction.leader.name
-      : i18next.t("faction_detail_loader.unknown_leader");
-    const leaderSlug = faction.leader ? faction.leader.slug : null;
-    const leaderLink = leaderSlug
-      ? `<a href="character-detail.html?slug=${leaderSlug}" title="${i18next.t("faction_detail_loader.view_profile")}"><i class="fas fa-external-link-alt text-xs opacity-50 hover:opacity-100"></i></a>`
-      : "";
-    els.leader.innerHTML = `<span>${leaderName}</span>${leaderLink}`;
+    const leaderName = faction.leader ? faction.leader.name : "REDACTED";
+    els.leader.innerHTML = `<span class="glitch-hover cursor-pointer">${leaderName}</span>`;
   }
-  if (els.hq)
-    els.hq.textContent =
-      faction.hqName || i18next.t("faction_detail_loader.encrypted_coords");
+  
+  if (els.hq) els.hq.textContent = faction.hqName || "LOC_ENCRYPTED";
 
   if (els.threat) {
     const threatLevel = (faction.threatLevel || "unknown").toLowerCase();
-    const threatContainer = els.threat.parentElement;
-
     const levels = {
-      minimal: {
-        text: "MINIMAL",
-        bars: 1,
-        color: "text-cyan-400",
-        barColor: "bg-cyan-400",
-      },
-      low: {
-        text: "LOW",
-        bars: 2,
-        color: "text-green-400",
-        barColor: "bg-green-400",
-      },
-      medium: {
-        text: "MEDIUM",
-        bars: 3,
-        color: "text-yellow-400",
-        barColor: "bg-yellow-400",
-      },
-      high: {
-        text: "HIGH",
-        bars: 4,
-        color: "text-orange-500",
-        barColor: "bg-orange-500",
-      },
-      critical: {
-        text: "CRITICAL",
-        bars: 5,
-        color: "text-gold",
-        barColor: "bg-gold",
-      },
-      extreme: {
-        text: "EXTREME",
-        bars: 6,
-        color: "text-red-500",
-        barColor: "bg-red-500",
-      },
-      unknown: {
-        text: i18next.t("faction_detail_loader.threat_analyzing"),
-        bars: 0,
-        color: "text-gray-200",
-        barColor: "bg-gray-800",
-      },
+      minimal: { active: 1, color: "bg-cyan-500" },
+      low: { active: 2, color: "bg-green-500" },
+      medium: { active: 3, color: "bg-yellow-500" },
+      high: { active: 4, color: "bg-orange-500" },
+      critical: { active: 5, color: "bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]" },
+      extreme: { active: 5, color: "bg-red-600 shadow-[0_0_15px_rgba(220,38,38,0.8)]" },
+      unknown: { active: 0, color: "bg-gray-800" }
     };
 
     const config = levels[threatLevel] || levels.unknown;
-
-    els.threat.textContent = config.text;
-    els.threat.className = `ml-2 font-bold font-mono text-xs ${config.color}`;
-
-    const bars = threatContainer.querySelectorAll(".threat-bar");
-    bars.forEach((bar, index) => {
-      bar.className = "threat-bar w-2 h-6";
-      if (index < config.bars) {
-        bar.classList.add(config.barColor);
-      } else {
-        bar.classList.add("bg-gray-800");
-      }
+    const bars = els.threat.querySelectorAll(".threat-indicator-bar");
+    
+    gsap.to(bars, {
+        backgroundColor: (i) => i < config.active ? "" : "#1f2937", // gray-800
+        duration: 0.1,
+        stagger: 0.1,
+        onStart: () => {
+            bars.forEach((bar, i) => {
+                if(i < config.active) {
+                    bar.className = `threat-indicator-bar w-2 h-4 ${config.color}`;
+                    gsap.from(bar, { opacity: 0, duration: 0.3, delay: i * 0.1 });
+                }
+            });
+        }
     });
   }
 };
@@ -264,48 +317,47 @@ const renderFactionDescription = (els, faction) => {
     const rawHTML = toHTML(faction.description, {
       components: {
         block: {
-          normal: ({ children }) =>
-            `<p class="mb-4 opacity-90">${children}</p>`,
-          h2: ({ children }) =>
-            `<h3 class="text-xl text-white mt-6 mb-2 font-serif border-b border-white/10 pb-1">${children}</h3>`,
+          normal: ({ children }) => `<p class="opacity-90 leading-relaxed">${children}</p>`,
+          h2: ({ children }) => `<h3 class="text-xl text-gold mt-6 mb-3">${children}</h3>`,
         },
       },
     });
 
-    // Create a shadow container to hold the HTML securely while TextPlugin types it
-    els.description.innerHTML = `<div class="terminal-text opacity-0">${rawHTML}</div>`;
+    // Clear previous and prep for typewriter
+    els.description.innerHTML = '';
+    const textLayer = document.createElement('div');
+    textLayer.className = 'terminal-text-layer';
+    textLayer.innerHTML = rawHTML;
+    els.description.appendChild(textLayer);
     
-    // Type out the manifesto sequentially
-    import("gsap").then(({ gsap }) => {
-      import("gsap/TextPlugin").then(({ TextPlugin }) => {
-         gsap.registerPlugin(TextPlugin);
-         const target = els.description.querySelector('.terminal-text');
-         
-         // Only run typing effect if text is visible (Scrolled into view)
-         gsap.to(target, {
-            opacity: 1,
-            duration: 0.1,
-            delay: 1.5 // Wait for Hero
-         });
-         
-         // Optional: Full GSAP text typing (too slow for long text, fading instead with an overlay)
-         // For a true typewriter, we fade paragraph by paragraph to avoid GSAP breaking HTML tags.
-         const paras = target.querySelectorAll('p, h3');
-         if(paras.length > 0) {
-             gsap.from(paras, {
-                 opacity: 0,
-                 y: 10,
-                 duration: 0.8,
-                 stagger: 0.3,
-                 delay: 1.6,
-                 ease: "power2.out"
-             });
-         }
-      });
+    // Add blinking cursor at the end
+    const cursor = document.createElement('span');
+    cursor.className = 'terminal-cursor';
+    els.description.appendChild(cursor);
+
+    // Initial state: hidden
+    gsap.set(textLayer, { opacity: 0 });
+
+    // Animate the reveal withNoirEffects scramble or reveal
+    // We use a custom stagger reveal for better results with HTML
+    const revealTl = gsap.timeline({ delay: 1.5 });
+    
+    revealTl.to(textLayer, { opacity: 1, duration: 0.5 });
+    
+    const paragraphs = textLayer.querySelectorAll('p, h3');
+    paragraphs.forEach((p, index) => {
+        const originalText = p.innerHTML;
+        p.innerHTML = ''; // Clear for animation
+        
+        revealTl.add(() => {
+            NoirEffects.typewriterEffect(p, originalText);
+        }, index * 0.8);
     });
 
+    // Remove cursor when done
+    revealTl.to(cursor, { opacity: 0, duration: 0.5, delay: 1 });
   } else {
-    els.description.innerHTML = `<p class="text-gray-200 italic font-mono terminal-typewriter">${i18next.t("faction_detail_loader.no_records_available")}</p>`;
+    els.description.innerHTML = `<p class="text-gray-500 italic font-mono uppercase tracking-widest text-sm">[ NO DATA RECORDED IN SYNDICATE ARCHIVE ]</p>`;
   }
 };
 
@@ -319,86 +371,67 @@ const renderFactionRoster = (els, faction) => {
           member.imageUrl ||
           `https://ui-avatars.com/api/?background=1a1a1a&color=888&name=${encodeURIComponent(member.name || "User")}`;
         return `
-                <a href="character-detail.html?slug=${member.slug}" class="roster-card bg-white/5 p-3 border border-white/5 flex items-center space-x-3 hover:bg-white/10 transition-all group" data-tilt data-tilt-max="10" data-tilt-speed="400" data-tilt-glare="true" data-tilt-max-glare="0.1">
-                    <div class="w-10 h-10 bg-black overflow-hidden rounded-full border border-white/10 group-hover:border-(--theme-color) transition-colors">
-                        <img src="${avatarUrl}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500">
+                <a href="character-detail.html?slug=${member.slug}" class="roster-card bg-black/40 p-4 border border-white/5 flex items-center space-x-4 hover:bg-gold/5 hover:border-gold/30 transition-all group tech-clip relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-r from-gold/0 via-gold/5 to-gold/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+                    <div class="w-12 h-12 bg-black overflow-hidden ring-1 ring-white/10 group-hover:ring-gold/50 transition-all">
+                        <img src="${avatarUrl}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500 group-hover:scale-110">
                     </div>
                     <div>
-                        <h4 class="font-serif text-gray-200 leading-tight group-hover:text-white text-sm">${member.name}</h4>
-                        <p class="text-[9px] text-gray-200 font-mono uppercase tracking-wider group-hover:text-(--theme-color)">${member.role || "Member"}</p>
+                        <h4 class="font-serif text-gray-200 leading-tight group-hover:text-white">${member.name}</h4>
+                        <p class="text-[9px] text-gold/40 font-mono uppercase tracking-[0.2em] group-hover:text-gold transition-colors">${member.role || "ASSOCIATE"}</p>
                     </div>
+                    <i class="fas fa-chevron-right absolute right-4 opacity-0 group-hover:opacity-40 transition-opacity text-[10px]"></i>
                 </a>`;
       })
       .join("");
-      
-      // Initialize 3D Hover on the new roster cards
-      import('vanilla-tilt').then(VanillaTilt => {
-          VanillaTilt.default.init(els.roster.querySelectorAll(".roster-card"));
-      }).catch(err => console.warn("VanillaTilt load failed:", err));
-      
   } else {
-    els.roster.innerHTML = `<div class="text-xs font-mono text-gray-600 col-span-full py-4 text-center border border-dashed border-gray-800">${i18next.t("faction_detail_loader.roster_empty")}</div>`;
+    els.roster.innerHTML = `<div class="text-[10px] font-mono text-gray-600 col-span-full py-8 text-center border border-dashed border-white/5 uppercase tracking-widest">[ PERSONNEL_RECORDS_REDACTED ]</div>`;
   }
 };
 
 const renderFactionRelations = (els, faction) => {
   if (!els.relations) return;
 
-  const headerEl = els.relations.previousElementSibling;
-  if (headerEl)
-    headerEl.textContent = i18next.t("faction_detail_loader.foreign_relations");
   if (faction.relations && faction.relations.length > 0) {
     els.relations.innerHTML = faction.relations
       .map((rel) => {
-        let statusColor = "text-gray-200";
-        let icon = "fa-minus";
+        let statusColor = "text-gray-400";
+        let icon = "fa-circle-nodes";
 
-        if (rel.status === "hostile") {
-          statusColor = "text-red-500";
-          icon = "fa-times";
-        }
-        if (rel.status === "ally") {
-          statusColor = "text-green-500";
-          icon = "fa-handshake";
-        }
-        if (rel.status === "vassal") {
-          statusColor = "text-blue-400";
-          icon = "fa-link";
-        }
+        if (rel.status === "hostile") statusColor = "text-red-500";
+        if (rel.status === "ally") statusColor = "text-gold";
+        if (rel.status === "vassal") statusColor = "text-cyan-400";
 
         return `
-                <div class="flex justify-between items-center text-xs border-b border-white/5 pb-2 last:border-0 group cursor-help" title="${rel.description || "No notes"}">
-                    <span class="text-gray-300 group-hover:text-white transition-colors">${rel.targetName}</span>
-                    <span class="font-mono ${statusColor} uppercase flex items-center gap-1">
-                        <i class="fas ${icon} text-[9px]"></i> ${rel.status}
+                <div class="flex justify-between items-center text-[10px] font-mono border-b border-white/5 pb-2 last:border-0 group">
+                    <span class="text-gray-400 group-hover:text-white transition-colors uppercase tracking-wider">${rel.targetName}</span>
+                    <span class="${statusColor} uppercase flex items-center gap-2">
+                         ${rel.status} <i class="fas ${icon} text-[8px] opacity-40"></i>
                     </span>
                 </div>
             `;
       })
       .join("");
   } else {
-    els.relations.innerHTML = `<div class="text-xs text-gray-600 font-mono text-center py-2">${i18next.t("faction_detail_loader.no_diplomatic_records")}</div>`;
-  }
-
-  const mapBtn = els.relations.parentElement.querySelector("button");
-  if (mapBtn) {
-    mapBtn.innerText = i18next.t("faction_detail_loader.access_global_map");
-    mapBtn.onclick = () => (globalThis.location.href = "locations.html");
+    els.relations.innerHTML = `<div class="text-[9px] text-gray-600 font-mono text-center py-4 uppercase">[ NO_ALLIANCE_DATA ]</div>`;
   }
 };
 
 const renderFactionDetails = (faction, container) => {
+  // Broaden search to document if container is just 'main'
+  const searchRoot = document.getElementById('main-wrapper') || document;
+  
   const els = {
-    title: container.querySelector("#faction-title"),
-    subtitle: container.querySelector("#faction-subtitle"),
-    fileId: document.getElementById("faction-file-id"),
-    leader: container.querySelector("#faction-leader"),
-    hq: container.querySelector("#faction-hq"),
-    description: container.querySelector("#faction-description"),
-    iconContainer: document.getElementById("faction-icon-container"),
-    roster: container.querySelector("#faction-roster"),
-    threat: container.querySelector("#threat-text"),
-    relations: container.querySelector("#faction-locations-list"),
+    title: searchRoot.querySelector("#faction-title"),
+    subtitle: searchRoot.querySelector("#faction-subtitle"),
+    fileId: searchRoot.querySelector("#faction-file-id"),
+    leader: searchRoot.querySelector("#faction-leader"),
+    hq: searchRoot.querySelector("#faction-hq"),
+    description: searchRoot.querySelector("#faction-description"),
+    iconContainer: searchRoot.querySelector("#faction-icon-container"),
+    roster: searchRoot.querySelector("#faction-roster"),
+    threat: searchRoot.querySelector("#threat-indicator"),
+    relations: searchRoot.querySelector("#faction-locations-list"),
   };
 
   const safeTitle = faction.title || "Unknown Faction";
@@ -434,6 +467,7 @@ export default async function (container, props) {
   }
 
   try {
+    console.log(`> Querying Sanity for Faction: ${factionSlug}`);
     const query = `*[_type == "faction" && slug.current == $slug][0]{
             title, motto, description, type, threatLevel,
             "hqName": hq, 
@@ -451,6 +485,7 @@ export default async function (container, props) {
         }`;
 
     const faction = await client.fetch(query, { slug: factionSlug });
+    console.log("> Sanity Result:", faction);
 
     if (loader) {
         gsap.to(loader, { opacity: 0, duration: 0.5, onComplete: () => loader.remove() });
