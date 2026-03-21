@@ -165,15 +165,14 @@ export default async function (container, props) {
 
         const map = new mapboxgl.Map({
             container: mapContainer,
-            style: 'mapbox://styles/mapbox/dark-v10',
+            style: 'mapbox://styles/mapbox/dark-v11',
             center: [-30, 40],
             zoom: 2,
             attributionControl: false,
-            projection: 'mercator' // Standard tactical projection
+            projection: 'mercator'
         });
         mapInstance = map;
 
-        // Custom Zoom Control positioning (Bottom Right)
         map.addControl(new mapboxgl.NavigationControl({ showCompass: false }), 'bottom-right');
 
         globalThis.zoomToLocation = (lat, lng, z) => {
@@ -191,12 +190,12 @@ export default async function (container, props) {
         map.on('load', async () => {
             console.log("> [MapLoader] Map load complete. Initiating staggered resize.");
             
-            // Staggered resize to fix "black square" issue
             const resizeInt = setInterval(() => map.resize(), 1000);
             setTimeout(() => clearInterval(resizeInt), 5000);
 
-            // 1. Load Faction Territories
-                'Ravenwood-empire': [
+            // Territories Data
+            const factionsData = {
+                'ravenwood-empire': [
                     'uk-no-aberdeen.geojson',
                     'california-border.geojson',
                     'italy-border.geojson',
@@ -219,15 +218,14 @@ export default async function (container, props) {
                 }
             }
 
-            // 2. Load Markers from Sanity
+            // Load Markers from Sanity
             const query = `*[_type == "location" && defined(location)] { 
                 name, "slug": slug.current, location, faction->{slug}, summary 
             }`;
 
             const locations = await client.fetch(query);
-            console.log(`> [MapLoader] Found ${locations.length} locations.`);
-
             const markerElements = [];
+
             if (locations.length > 0) {
                 locations.forEach(loc => {
                     const { lat, lng } = loc.location;
@@ -256,15 +254,12 @@ export default async function (container, props) {
                 });
             }
 
-            // Coordination tracking
             map.on('mousemove', (e) => {
                 const coordEl = document.getElementById('coordinates-display');
                 if (coordEl) coordEl.textContent = `${e.lngLat.lat.toFixed(4)} | ${e.lngLat.lng.toFixed(4)}`;
             });
 
-            // Reveal Animation
             const tl = gsap.timeline();
-
             if (loader) {
                 tl.to(loader, {
                     autoAlpha: 0,
