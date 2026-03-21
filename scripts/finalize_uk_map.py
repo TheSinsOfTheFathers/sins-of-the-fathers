@@ -47,10 +47,21 @@ def process_and_merge():
     topo = topojson.Topology(eng_topo, object_name=obj_name)
     eng_geo = topo.to_geojson()
     if isinstance(eng_geo, str): eng_geo = json.loads(eng_geo)
-    eng_geoms = [shape(f['geometry']) for f in eng_geo['features'] if f['geometry']]
+    
+    eng_geoms = []
+    london_geoms = []
+    for f in eng_geo['features']:
+        if not f['geometry']: continue
+        geom = shape(f['geometry'])
+        name = f.get('properties', {}).get('EER13NM', '')
+        if name == 'London':
+            print("Extracting London...")
+            london_geoms.append(geom)
+        else:
+            eng_geoms.append(geom)
 
     # 4. Merge Everything for Ravenwood
-    print("Merging GB territories (minus Aberdeen)...")
+    print("Merging GB territories (minus Aberdeen and London)...")
     all_ravenwood_geoms = [g.buffer(0) for g in (rest_sco_geoms + wal_geoms + eng_geoms) if g.is_valid or g.buffer(0).is_valid]
     
     try:
@@ -71,14 +82,26 @@ def process_and_merge():
     print("Saving GeoJSON files...")
     os.makedirs('public/assets/maps', exist_ok=True)
     
-    # uk-no-aberdeen.geojson
-    with open('public/assets/maps/uk-no-aberdeen.geojson', 'w', encoding='utf-8') as f:
+    # uk-no-london.geojson (Previously uk-no-aberdeen)
+    with open('public/assets/maps/uk-custom.geojson', 'w', encoding='utf-8') as f:
         json.dump({
             "type": "FeatureCollection",
             "features": [{
                 "type": "Feature",
-                "properties": {"name": "UK Territory (Excluding Aberdeen)"},
+                "properties": {"name": "UK Territory (Excluding Aberdeen & London)"},
                 "geometry": mapping(ravenwood_simplified)
+            }]
+        }, f)
+
+    # london.geojson
+    london_merged = unary_union([g.buffer(0) for g in london_geoms])
+    with open('public/assets/maps/london.geojson', 'w', encoding='utf-8') as f:
+        json.dump({
+            "type": "FeatureCollection",
+            "features": [{
+                "type": "Feature",
+                "properties": {"name": "London Territory"},
+                "geometry": mapping(london_merged)
             }]
         }, f)
 
