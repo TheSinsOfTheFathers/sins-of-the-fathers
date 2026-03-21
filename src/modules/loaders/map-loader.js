@@ -10,6 +10,7 @@ const FACTION_THEMES = {
     'ravenwood-empire': { border: '#c5a059', fill: '#c5a059' },
     'macpherson-clan': { border: '#7f1d1d', fill: '#991b1b' },
     'cagliari': { border: '#155e75', fill: '#0e7490' },
+    'cagliari-family': { border: '#155e75', fill: '#0e7490' },
     'cagliari-crime-family': { border: '#155e75', fill: '#0e7490' },
     'the-gilded-hand': { border: '#c5a059', fill: '#c5a059' },
     'blackwood-syndicate': { border: '#1a1a1a', fill: '#1a1a1a' },
@@ -196,7 +197,7 @@ export default async function (container, props) {
             // Territories Data
             const factionsData = {
                 'ravenwood-empire': [
-                    'uk-no-aberdeen.geojson',
+                    'uk-custom.geojson',
                     'california-border.geojson',
                     'italy-border.geojson',
                     'netherlands-border.geojson'
@@ -206,7 +207,10 @@ export default async function (container, props) {
                     'aberdeen.geojson'
                 ],
                 'cagliari-family': [
-                    'corsica-border.geojson'
+                    'corsica.geojson'
+                ],
+                'the-gilded-hand': [
+                    'london.geojson'
                 ]
             };
 
