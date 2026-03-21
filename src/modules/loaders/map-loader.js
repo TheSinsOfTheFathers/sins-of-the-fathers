@@ -12,7 +12,7 @@ const FACTION_THEMES = {
     'cagliari': { border: '#155e75', fill: '#0e7490' },
     'cagliari-family': { border: '#155e75', fill: '#0e7490' },
     'cagliari-crime-family': { border: '#155e75', fill: '#0e7490' },
-    'the-gilded-hand': { border: '#c5a059', fill: '#c5a059' },
+    'the-gilded-hand': { border: '#6d28d9', fill: '#7c3aed' },
     'blackwood-syndicate': { border: '#1a1a1a', fill: '#1a1a1a' },
     'default': { border: '#c5a059', fill: '#c5a059' }
 };
