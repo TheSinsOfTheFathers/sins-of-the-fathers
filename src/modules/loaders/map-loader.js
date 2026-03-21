@@ -11,7 +11,6 @@ const FACTION_THEMES = {
     'macpherson-clan': { border: '#7f1d1d', fill: '#991b1b' },
     'cagliari': { border: '#155e75', fill: '#0e7490' },
     'cagliari-family': { border: '#155e75', fill: '#0e7490' },
-    'cagliari-crime-family': { border: '#155e75', fill: '#0e7490' },
     'blackwood-syndicate': { border: '#1a1a1a', fill: '#1a1a1a' },
     'default': { border: '#c5a059', fill: '#c5a059' }
 };
@@ -196,7 +195,7 @@ export default async function (container, props) {
             // Territories Data
             const factionsData = {
                 'ravenwood-empire': [
-                    'uk-custom.geojson',
+                    'united-kingdom-main.geojson',
                     'california-border.geojson',
                     'italy-border.geojson',
                     'netherlands-border.geojson'
