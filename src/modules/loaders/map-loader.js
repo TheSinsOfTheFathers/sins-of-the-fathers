@@ -206,8 +206,7 @@ export default async function (container, props) {
                     'aberdeen.geojson'
                 ],
                 'cagliari-family': [
-                    'corsica.geojson',
-                    'london.geojson'
+                    'corsica.geojson'
                 ]
             };
 
