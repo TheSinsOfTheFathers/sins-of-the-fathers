@@ -15,6 +15,13 @@ def process_and_merge():
     edinburgh_geoms = []
     rest_sco_geoms = []
     
+    # Edinburgh larger region NUTS3 names
+    edinburgh_region_names = [
+        "City of Edinburgh",
+        "East Lothian and Midlothian",
+        "West Lothian"
+    ]
+    
     for feature in sco_features:
         props = feature.get('properties', {})
         name = props.get('NUTS3_NAME', '')
@@ -24,8 +31,8 @@ def process_and_merge():
         if "Aberdeen" in name:
             print(f"Assigning Aberdeen: {name}")
             aberdeen_geoms.append(geom)
-        elif "Edinburgh" in name:
-            print(f"Extracting Edinburgh: {name}")
+        elif any(en in name for en in edinburgh_region_names):
+            print(f"Extracting Edinburgh Region: {name}")
             edinburgh_geoms.append(geom)
         else:
             # Everything else (including Highlands) goes to Ravenwood
@@ -59,7 +66,6 @@ def process_and_merge():
     if isinstance(eng_geo, str): eng_geo = json.loads(eng_geo)
     
     eng_geoms = []
-    london_geoms = []
     for f in eng_geo['features']:
         if not f['geometry']: continue
         geom = shape(f['geometry']).buffer(0)
@@ -110,7 +116,7 @@ def process_and_merge():
             "type": "FeatureCollection",
             "features": [{
                 "type": "Feature",
-                "properties": {"name": "Edinburgh (Fraser Clan)"},
+                "properties": {"name": "Edinburgh & Lothians (Fraser Clan)"},
                 "geometry": mapping(edinburgh_merged)
             }]
         }, f)
