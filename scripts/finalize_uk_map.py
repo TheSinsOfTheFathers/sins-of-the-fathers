@@ -1,7 +1,7 @@
 import json
 import os
 import topojson
-from shapely.geometry import shape, mapping
+from shapely.geometry import shape, mapping, Point
 from shapely.ops import unary_union
 
 def process_and_merge():
@@ -12,10 +12,10 @@ def process_and_merge():
     
     sco_features = sco_data.get('features', [])
     aberdeen_geoms = []
-    edinburgh_geoms = []
+    fraser_geoms = []
     rest_sco_geoms = []
     
-    # Fraser Clan region keywords (Edinburgh + Lothians + Borders)
+    # Fraser Clan region keywords
     fraser_keywords = ["edinburgh", "lothian", "scottish borders"]
     
     for feature in sco_features:
@@ -30,7 +30,7 @@ def process_and_merge():
             aberdeen_geoms.append(geom)
         elif any(kw in name_lower for kw in fraser_keywords):
             print(f"Extracting Fraser Clan Region: {name}")
-            edinburgh_geoms.append(geom)
+            fraser_geoms.append(geom)
         else:
             # Everything else (including Highlands) goes to Ravenwood
             rest_sco_geoms.append(geom)
@@ -73,25 +73,33 @@ def process_and_merge():
         else:
             eng_geoms.append(geom)
 
-    # 5. Merge Everything for Ravenwood (Mainland + NI - Aberdeen - Edinburgh/Borders - London)
-    print("Merging UK territories (GB Mainland + NI minus Aberdeen, Fraser territories, and London)...")
-    all_ravenwood_geoms = [g for g in (rest_sco_geoms + ni_geoms + wal_geoms + eng_geoms) if g.is_valid or g.buffer(0).is_valid]
+    # 5. Preliminary Merges
+    print("Merging regions...")
+    ravenwood_merged = unary_union(rest_sco_geoms + ni_geoms + wal_geoms + eng_geoms)
+    fraser_merged = unary_union(fraser_geoms)
     
-    try:
-        ravenwood_merged = unary_union(all_ravenwood_geoms)
-    except Exception as e:
-        print(f"Union failed: {e}. Trying fallback...")
-        ravenwood_merged = all_ravenwood_geoms[0]
-        for g in all_ravenwood_geoms[1:]:
-            try:
-                ravenwood_merged = ravenwood_merged.union(g)
-            except:
-                continue
+    # 6. Specific Adjustments (Hawick remove, Berwick add)
+    print("Applying Hawick/Berwick adjustments...")
+    
+    # Hawick (Remove from Fraser, Add to Ravenwood)
+    # Approx 4km radius
+    hawick_area = Point(-2.783, 55.424).buffer(0.04)
+    hawick_piece = fraser_merged.intersection(hawick_area)
+    fraser_merged = fraser_merged.difference(hawick_piece)
+    ravenwood_merged = ravenwood_merged.union(hawick_piece)
+    
+    # Berwick-upon-Tweed (Add to Fraser from Ravenwood)
+    # Approx 4km radius
+    berwick_area = Point(-2.007, 55.773).buffer(0.04)
+    berwick_piece = ravenwood_merged.intersection(berwick_area)
+    ravenwood_merged = ravenwood_merged.difference(berwick_piece)
+    fraser_merged = fraser_merged.union(berwick_piece)
 
-    # Simplify slightly to keep file size down
+    # Simplify to keep file size down
     ravenwood_simplified = ravenwood_merged.simplify(0.005)
+    fraser_simplified = fraser_merged.simplify(0.005)
 
-    # 6. Save Files
+    # 7. Save Files
     print("Saving GeoJSON files...")
     os.makedirs('public/assets/maps', exist_ok=True)
     
@@ -106,31 +114,28 @@ def process_and_merge():
             }]
         }, f)
 
-    # edinburgh.geojson (Broader Fraser Clan Region)
-    if edinburgh_geoms:
-        edinburgh_merged = unary_union([g.buffer(0) for g in edinburgh_geoms])
-        with open('public/assets/maps/edinburgh.geojson', 'w', encoding='utf-8') as f:
-            json.dump({
-                "type": "FeatureCollection",
-                "features": [{
-                    "type": "Feature",
-                    "properties": {"name": "Edinburgh, Lothians & Borders (Fraser Clan)"},
-                    "geometry": mapping(edinburgh_merged)
-                }]
-            }, f)
+    # edinburgh.geojson (Fraser Clan)
+    with open('public/assets/maps/edinburgh.geojson', 'w', encoding='utf-8') as f:
+        json.dump({
+            "type": "FeatureCollection",
+            "features": [{
+                "type": "Feature",
+                "properties": {"name": "Edinburgh, Lothians & Borders (Fraser Clan)"},
+                "geometry": mapping(fraser_simplified)
+            }]
+        }, f)
 
-    # aberdeen.geojson
-    if aberdeen_geoms:
-        aberdeen_merged = unary_union([g.buffer(0) for g in aberdeen_geoms])
-        with open('public/assets/maps/aberdeen.geojson', 'w', encoding='utf-8') as f:
-            json.dump({
-                "type": "FeatureCollection",
-                "features": [{
-                    "type": "Feature",
-                    "properties": {"name": "Aberdeen Territory (MacPherson Clan)"},
-                    "geometry": mapping(aberdeen_merged)
-                }]
-            }, f)
+    # aberdeen.geojson (MacPherson Clan)
+    aberdeen_merged = unary_union([g.buffer(0) for g in aberdeen_geoms])
+    with open('public/assets/maps/aberdeen.geojson', 'w', encoding='utf-8') as f:
+        json.dump({
+            "type": "FeatureCollection",
+            "features": [{
+                "type": "Feature",
+                "properties": {"name": "Aberdeen Territory (MacPherson Clan)"},
+                "geometry": mapping(aberdeen_merged)
+            }]
+        }, f)
 
     print("Cleanup...")
     for f in ['temp_sco.json', 'temp_ni.json', 'temp_wal.json', 'temp_eng.json']:
