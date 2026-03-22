@@ -26,19 +26,24 @@ def process_and_merge():
         else:
             rest_sco_geoms.append(geom)
 
-    # 2. Load and Convert Wales (TopoJSON)
+    # 2. Load Northern Ireland (GeoJSON)
+    print("Loading Northern Ireland...")
+    with open('temp_ni.json', 'r', encoding='utf-8') as f:
+        ni_data = json.load(f)
+    ni_geoms = [shape(feat['geometry']).buffer(0) for feat in ni_data['features'] if feat['geometry']]
+
+    # 3. Load and Convert Wales (TopoJSON)
     print("Converting Wales...")
     with open('temp_wal.json', 'r', encoding='utf-8') as f:
         wal_topo = json.load(f)
     
-    # Get the object key (usually 'eer' or 'data')
     obj_name = list(wal_topo['objects'].keys())[0]
     topo = topojson.Topology(wal_topo, object_name=obj_name)
     wal_geo = topo.to_geojson()
     if isinstance(wal_geo, str): wal_geo = json.loads(wal_geo)
-    wal_geoms = [shape(f['geometry']) for f in wal_geo['features'] if f['geometry']]
+    wal_geoms = [shape(f['geometry']).buffer(0) for f in wal_geo['features'] if f['geometry']]
 
-    # 3. Load and Convert England (TopoJSON)
+    # 4. Load and Convert England (TopoJSON)
     print("Converting England...")
     with open('temp_eng.json', 'r', encoding='utf-8') as f:
         eng_topo = json.load(f)
@@ -52,7 +57,7 @@ def process_and_merge():
     london_geoms = []
     for f in eng_geo['features']:
         if not f['geometry']: continue
-        geom = shape(f['geometry'])
+        geom = shape(f['geometry']).buffer(0)
         name = f.get('properties', {}).get('EER13NM', '')
         if name == 'London':
             print("Extracting London...")
@@ -60,9 +65,9 @@ def process_and_merge():
         else:
             eng_geoms.append(geom)
 
-    # 4. Merge Everything for Ravenwood
-    print("Merging GB territories (minus Aberdeen and London)...")
-    all_ravenwood_geoms = [g.buffer(0) for g in (rest_sco_geoms + wal_geoms + eng_geoms) if g.is_valid or g.buffer(0).is_valid]
+    # 5. Merge Everything for Ravenwood (Mainland + NI - Aberdeen - London)
+    print("Merging UK territories (GB Mainland + NI minus Aberdeen and London)...")
+    all_ravenwood_geoms = [g for g in (rest_sco_geoms + ni_geoms + wal_geoms + eng_geoms) if g.is_valid or g.buffer(0).is_valid]
     
     try:
         ravenwood_merged = unary_union(all_ravenwood_geoms)
@@ -78,30 +83,18 @@ def process_and_merge():
     # Simplify slightly to keep file size down
     ravenwood_simplified = ravenwood_merged.simplify(0.005)
 
-    # 5. Save Files
+    # 6. Save Files
     print("Saving GeoJSON files...")
     os.makedirs('public/assets/maps', exist_ok=True)
     
-    # uk-no-london.geojson (Previously uk-no-aberdeen)
-    with open('public/assets/maps/uk-custom.geojson', 'w', encoding='utf-8') as f:
+    # united-kingdom-main.geojson
+    with open('public/assets/maps/united-kingdom-main.geojson', 'w', encoding='utf-8') as f:
         json.dump({
             "type": "FeatureCollection",
             "features": [{
                 "type": "Feature",
                 "properties": {"name": "UK Territory (Excluding Aberdeen & London)"},
                 "geometry": mapping(ravenwood_simplified)
-            }]
-        }, f)
-
-    # london.geojson
-    london_merged = unary_union([g.buffer(0) for g in london_geoms])
-    with open('public/assets/maps/london.geojson', 'w', encoding='utf-8') as f:
-        json.dump({
-            "type": "FeatureCollection",
-            "features": [{
-                "type": "Feature",
-                "properties": {"name": "London Territory"},
-                "geometry": mapping(london_merged)
             }]
         }, f)
 
@@ -118,7 +111,7 @@ def process_and_merge():
         }, f)
 
     print("Cleanup...")
-    for f in ['temp_sco.json', 'temp_wal.json', 'temp_eng.json']:
+    for f in ['temp_sco.json', 'temp_ni.json', 'temp_wal.json', 'temp_eng.json']:
         if os.path.exists(f): os.remove(f)
     print("Done!")
 
