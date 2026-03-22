@@ -12,6 +12,7 @@ def process_and_merge():
     
     sco_features = sco_data.get('features', [])
     aberdeen_geoms = []
+    edinburgh_geoms = []
     rest_sco_geoms = []
     
     for feature in sco_features:
@@ -23,7 +24,11 @@ def process_and_merge():
         if "Aberdeen" in name:
             print(f"Assigning Aberdeen: {name}")
             aberdeen_geoms.append(geom)
+        elif "Edinburgh" in name:
+            print(f"Extracting Edinburgh: {name}")
+            edinburgh_geoms.append(geom)
         else:
+            # Everything else (including Highlands) goes to Ravenwood
             rest_sco_geoms.append(geom)
 
     # 2. Load Northern Ireland (GeoJSON)
@@ -60,13 +65,13 @@ def process_and_merge():
         geom = shape(f['geometry']).buffer(0)
         name = f.get('properties', {}).get('EER13NM', '')
         if name == 'London':
-            print("Extracting London...")
-            london_geoms.append(geom)
+            # London is excluded (shows plain map style)
+            continue
         else:
             eng_geoms.append(geom)
 
-    # 5. Merge Everything for Ravenwood (Mainland + NI - Aberdeen - London)
-    print("Merging UK territories (GB Mainland + NI minus Aberdeen and London)...")
+    # 5. Merge Everything for Ravenwood (Mainland + NI - Aberdeen - Edinburgh - London)
+    print("Merging UK territories (GB Mainland + NI minus Aberdeen, Edinburgh, and London)...")
     all_ravenwood_geoms = [g for g in (rest_sco_geoms + ni_geoms + wal_geoms + eng_geoms) if g.is_valid or g.buffer(0).is_valid]
     
     try:
@@ -93,8 +98,20 @@ def process_and_merge():
             "type": "FeatureCollection",
             "features": [{
                 "type": "Feature",
-                "properties": {"name": "UK Territory (Excluding Aberdeen & London)"},
+                "properties": {"name": "UK Territory (Excluding Aberdeen, Edinburgh, & London)"},
                 "geometry": mapping(ravenwood_simplified)
+            }]
+        }, f)
+
+    # edinburgh.geojson
+    edinburgh_merged = unary_union([g.buffer(0) for g in edinburgh_geoms])
+    with open('public/assets/maps/edinburgh.geojson', 'w', encoding='utf-8') as f:
+        json.dump({
+            "type": "FeatureCollection",
+            "features": [{
+                "type": "Feature",
+                "properties": {"name": "Edinburgh (Fraser Clan)"},
+                "geometry": mapping(edinburgh_merged)
             }]
         }, f)
 
@@ -105,7 +122,7 @@ def process_and_merge():
             "type": "FeatureCollection",
             "features": [{
                 "type": "Feature",
-                "properties": {"name": "Aberdeen Territory"},
+                "properties": {"name": "Aberdeen Territory (MacPherson Clan)"},
                 "geometry": mapping(aberdeen_merged)
             }]
         }, f)

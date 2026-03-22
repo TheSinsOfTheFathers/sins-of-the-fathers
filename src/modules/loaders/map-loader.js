@@ -11,6 +11,8 @@ const FACTION_THEMES = {
     'macpherson-clan': { border: '#7f1d1d', fill: '#991b1b' },
     'cagliari': { border: '#155e75', fill: '#0e7490' },
     'cagliari-family': { border: '#155e75', fill: '#0e7490' },
+    'cagliari-crime-family': { border: '#155e75', fill: '#0e7490' },
+    'fraser-clan': { border: '#166534', fill: '#15803d' },
     'blackwood-syndicate': { border: '#1a1a1a', fill: '#1a1a1a' },
     'default': { border: '#c5a059', fill: '#c5a059' }
 };
@@ -201,8 +203,10 @@ export default async function (container, props) {
                     'netherlands-border.geojson'
                 ],
                 'macpherson-clan': [
-                    'scotland-highlands.geojson',
                     'aberdeen.geojson'
+                ],
+                'fraser-clan': [
+                    'edinburgh.geojson'
                 ],
                 'cagliari-family': [
                     'corsica.geojson'
