@@ -54,7 +54,7 @@ const BLOODLINE_SEED = {
     { id: "char_havi", name: "Havi", status: "TRAINING", threatLevel: "UNKNOWN" }
   ],
   links: [
-    { source: "char_roland", target: "char_havi", relationType: "MENTOR" },
+    { source: "char_roland", target: "char_havi", relationType: "BLOOD_RELATION" }, // Father/Son (Efe Karahanlı)
     { source: "char_roland", target: "char_miranda", relationType: "COMMANDER" },
     { source: "char_roland", target: "char_lek", relationType: "COMMANDER" },
     { source: "char_roland", target: "char_julian", relationType: "ALLIANCE" },
@@ -63,7 +63,8 @@ const BLOODLINE_SEED = {
     { source: "char_lek", target: "char_elias", relationType: "FINANCE_RING" },
     { source: "char_menslier", target: "char_julian", relationType: "LEGAL_SHIELD" },
     { source: "char_hamish", target: "char_silvio_sezar", relationType: "LOGISTICS" },
-    { source: "char_nathaniel", target: "char_hamish", relationType: "BLINDSPOT" }
+    { source: "char_nathaniel", target: "char_hamish", relationType: "BLINDSPOT" },
+    { source: "char_roland", target: "char_menslier", relationType: "BLOOD_OATH" }
   ]
 };
 

@@ -162,8 +162,12 @@ const setupD3Graph = (container, containerSelector, nodesData, linksData, sanity
         
         const linkEnter = linkElements.enter().append('path')
             .attr('fill', 'none')
-            .attr('stroke', d => d.relationType === 'RIVAL' || d.relationType === 'BLOOD_OATH' ? '#7f1d1d' : '#4b5563')
-            .attr('stroke-width', 2)
+            .attr('stroke', d => {
+                if (d.relationType === 'BLOOD_RELATION') return '#c5a059'; // Gold
+                if (d.relationType === 'BLOOD_OATH' || d.relationType === 'RIVAL') return '#7f1d1d'; // Dark Red
+                return '#4b5563'; // Gray
+            })
+            .attr('stroke-width', d => d.relationType === 'BLOOD_RELATION' ? 3 : 2)
             .attr('stroke-dasharray', d => d.relationType === 'RIVAL' ? '5,5' : 'none')
             .attr('opacity', 0);
             
