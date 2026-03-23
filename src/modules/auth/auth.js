@@ -134,69 +134,52 @@ function firebaseErrorToMessage(err) {
    -------------------------------------------------------------------------- */
 let turnstileWidgetId = null;
 
-function renderTurnstile() {
-  return new Promise((resolve) => {
-    if (turnstileWidgetId !== null) {
-      window.turnstile.reset(turnstileWidgetId);
-      resolve(turnstileWidgetId);
-      return;
+function renderTurnstile(action = "auth") {
+  return new Promise((resolve, reject) => {
+    if (!window.turnstile) {
+      console.warn("Turnstile script not loaded.");
+      return resolve(null);
     }
 
-    const checkInterval = setInterval(() => {
-      if (window.turnstile) {
-        clearInterval(checkInterval);
-        
-        try {
-          // If a widget/container exists in HTML, use it.
-          // Otherwise, create one dynamically if needed (but login.html has #turnstile-widget)
-          const container = document.getElementById("turnstile-widget");
-          
-          if (container) {
-             turnstileWidgetId = window.turnstile.render("#turnstile-widget", {
-              sitekey: TURNSTILE_SITE_KEY,
-              theme: 'dark',
-              callback: function(token) {
-                console.log('Turnstile challenge success', token);
-              },
-            });
-            resolve(turnstileWidgetId);
-          } else {
-            console.warn("Turnstile container not found.");
-            resolve(null);
-          }
-        } catch (e) {
-          console.error("Turnstile render error:", e);
-          resolve(null);
+    const container = document.getElementById("turnstile-root");
+    if (!container) return resolve(null);
+
+    // If widget exists, remove it to generate a fresh token cleanly
+    if (turnstileWidgetId !== null) {
+      try { window.turnstile.remove(turnstileWidgetId); } catch (e) {}
+    }
+    
+    try {
+      turnstileWidgetId = window.turnstile.render(container, {
+        sitekey: TURNSTILE_SITE_KEY,
+        action: action,
+        theme: 'dark',
+        size: 'invisible',
+        callback: function(token) {
+          resolve(token);
+        },
+        "error-callback": function(error) {
+          console.error("Turnstile error:", error);
+          reject(new Error("Turnstile validation failed."));
         }
-      }
-    }, 100);
+      });
+    } catch (e) {
+      console.error("Failed to render Turnstile:", e);
+      resolve(null);
+    }
   });
 }
 
 async function getTurnstileToken(action = "auth") {
   if (!TURNSTILE_SITE_KEY) return null;
   
-  // Ensure widget is rendered/ready
-  await renderTurnstile();
-
-  // For Turnstile, we typically get the token via callback or getResponse.
-  // Since we are adapting an async flow that expects a token ON DEMAND, 
-  // and Turnstile might need user interaction or time to solve:
-  
-  if (!window.turnstile) return null;
-
-  const token = window.turnstile.getResponse(turnstileWidgetId);
-  
-  // If we already have a token, return it.
-  if (token) return token;
-
-  // If no token, we might need to wait for the user to solve it 
-  // OR if it's invisible, it might be solving.
-  // For this migration, if the token isn't there, we'll try to return what we have (null/empty)
-  // and handle the error, or wait a bit. 
-  // But strictly, we should probably wrap this in a customized Promise if we strictly need to wait.
-  // However, removing the complexity:
-  return token; 
+  try {
+    const token = await renderTurnstile(action);
+    return token;
+  } catch (e) {
+    console.error("Turnstile Token generation failed:", e);
+    return null;
+  }
 }
 
 /* --------------------------------------------------------------------------

@@ -167,89 +167,6 @@
                 </div>
                 
                 <div class="pt-4 space-y-4">
-                    <!-- Turnstile Widget (Invisible/Compact) -->
-                    <div class="flex justify-center mb-0 h-0 overflow-hidden" id="turnstile-container">
-                        <div id="turnstile-widget" class="cf-turnstile" data-sitekey="0x4AAAAAACu8NLdKV-Ei7tAk" data-appearance="interaction-only" data-size="compact" data-theme="dark"></div>
-                    </div>
-
-                    <button type="submit" class="w-full py-3 border border-gold text-gold hover:bg-gold hover:text-black font-serif uppercase tracking-widest text-sm transition-all duration-300" data-i18n="login_page.btn_login">
-                        Initiate Session
-                    </button>
-                    
-                    <div class="flex items-center justify-between gap-4">
-                        <div class="h-px bg-white/10 grow"></div>
-                        <span class="text-[10px] text-gray-600 font-mono uppercase" data-i18n="login_page.divider_auth">Or authenticate via</span>
-                        <div class="h-px bg-white/10 grow"></div>
-                    </div>
-                    
-                    <button id="google-signin-btn" type="button" class="w-full py-3 bg-black border border-white/20 text-gray-400 hover:text-white hover:border-white transition-all duration-300 flex items-center justify-center space-x-3 group">
-                        <i class="fab fa-google text-sm group-hover:text-gold transition-colors"></i>
-                        <span class="text-xs uppercase tracking-wide" data-i18n="login_page.btn_google">Google Biometrics</span>
-                    </button>
-                </div>
-                
-                <div class="text-center pt-4">
-                    <p class="text-xs text-gray-600 font-mono">
-                        <span data-i18n="login_page.text_not_registered">Not in the database?</span> 
-                        <a href="#" id="switch-to-register" class="text-gold hover:text-white border-b border-gold/50 pb-0.5 ml-1 transition-colors" data-i18n="login_page.link_register">Request Clearance</a>
-                    </p>
-                </div>
-            </form>
-
-            <!-- Register Form (Hidden by default) -->
-            <form id="auth-register-form" class="space-y-4 form-switch-transition hidden">
-                <div class="group">
-                    <label for="register-email" class="block text-[10px] text-gray-200 uppercase font-mono mb-1 group-focus-within:text-gold" data-i18n="login_page.label_new_email">New Operative Email</label>
-                    <input id="register-email" type="email" name="email" required class="w-full terminal-input font-mono text-sm" placeholder="recruit@tsof.internal" autocomplete="email" />
-                </div>
-
-                <div class="group">
-                    <label for="register-password" class="block text-[10px] text-gray-200 uppercase font-mono mb-1 group-focus-within:text-gold" data-i18n="login_page.label_new_password">Set Security Key</label>
-                    <input id="register-password" type="password" name="password" required class="w-full terminal-input font-mono text-sm" placeholder="••••••••" autocomplete="new-password" />
-                </div>
-                
-                <div class="pt-4 space-y-4">
-                    <button type="submit" class="w-full py-3 border border-red-800 text-red-500 hover:bg-red-900/20 hover:text-red-400 font-serif uppercase tracking-widest text-sm transition-all duration-300" data-i18n="login_page.btn_register">
-                        Submit Recruitment
-                    </button>
-                    
-                    <div class="flex items-center justify-between gap-4">
-                        <div class="h-px bg-white/10 grow"></div>
-                        <span class="text-[10px] text-gray-600 font-mono uppercase" data-i18n="login_page.divider_external">External Protocol</span>
-                        <div class="h-px bg-white/10 grow"></div>
-                    </div>
-                    
-                    <button id="google-signin-btn-register" type="button" class="w-full py-3 bg-black border border-white/20 text-gray-400 hover:text-white hover:border-white transition-all duration-300 flex items-center justify-center space-x-3 group">
-                        <i class="fab fa-google text-sm group-hover:text-gold transition-colors"></i>
-                        <span class="text-xs uppercase tracking-wide" data-i18n="login_page.btn_google_join">Join via Google</span>
-                    </button>
-    </div>
-
-    <!-- Main Content Area -->
-    <main aria-label="Login form" class="w-full max-w-md mx-auto grow flex flex-col justify-center items-center relative z-10 px-6 pt-16 pb-16">
-        
-        <div class="bottom-3 w-full backdrop-blur-sm rounded-sm border-t border-b border-white/5">
-            
-            <h1 class="text-3xl font-serif text-center text-gold mb-1 tracking-widest uppercase" data-i18n="login_page.system_access">System Access</h1>
-            <p class="text-[10px] font-mono text-center text-gray-600 uppercase mb-3 tracking-widest" data-i18n="login_page.verify_identity">Verify Identity to proceed</p>
-
-            <!-- Login Form -->
-            <form id="auth-login-form" class="space-y-4 form-switch-transition">
-                <div class="group">
-                    <label for="login-email" class="block text-[10px] text-gray-200 uppercase font-mono mb-1 group-focus-within:text-gold" data-i18n="login_page.label_email">Operative ID / Email</label>
-                    <input id="login-email" type="email" name="email" required class="w-full terminal-input font-mono text-sm" placeholder="operative@tsof.internal" autocomplete="email"/>
-                </div>
-
-                <div class="group">
-                    <label for="login-password" class="block text-[10px] text-gray-200 uppercase font-mono mb-1 group-focus-within:text-gold" data-i18n="login_page.label_password">Encrypted Key / Password</label>
-                    <input id="login-password" type="password" name="password" required class="w-full terminal-input font-mono text-sm" placeholder="••••••••" autocomplete="current-password" />
-                </div>
-                
-                <div class="pt-4 space-y-4">
-                    <!-- Turnstile Widget (Invisible/Compact) -->
-                    <div class="flex justify-center mb-0 h-0 overflow-hidden" id="turnstile-container">
-                        <div id="turnstile-widget" class="cf-turnstile" data-sitekey="0x4AAAAAACu8NLdKV-Ei7tAk" data-appearance="interaction-only" data-size="compact" data-theme="dark"></div>
-                    </div>
 
                     <button type="submit" class="w-full py-3 border border-gold text-gold hover:bg-gold hover:text-black font-serif uppercase tracking-widest text-sm transition-all duration-300" data-i18n="login_page.btn_login">
                         Initiate Session
@@ -313,6 +230,9 @@
             </form>
 
             <div id="auth-message" class="text-center mt-4 min-h-[20px] font-mono text-xs text-gold animate-pulse"></div>
+            
+            <!-- Global Invisible Turnstile Root -->
+            <div id="turnstile-root"></div>
 
         </div>
     </main>
