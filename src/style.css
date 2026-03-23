@@ -36,7 +36,7 @@ body {
 
 /* Scrollbar Özelleştirme */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 0.417vw;
 }
 
 ::-webkit-scrollbar-track {
@@ -56,7 +56,7 @@ body {
   Lenis (Smooth Scroll) Setup
   ========================================= */
 html {
-  scroll-padding-top: 80px;
+  scroll-padding-top: 7.407vh;
 }
 
 html.lenis {
@@ -159,7 +159,7 @@ html.lenis {
 
 .node text {
   font-family: 'Courier Prime', monospace;
-  font-size: 12px;
+  font-size: 0.625vw;
   fill: #a3a3a3;
   pointer-events: none;
   font-display: swap;
@@ -230,8 +230,8 @@ html.lenis {
 
 .tactical-corner {
     position: absolute;
-    width: 20px;
-    height: 20px;
+    width: 1.042vw;
+    height: 1.852vh;
     border: 2px solid var(--theme-color);
     opacity: 0.4;
     pointer-events: none;
@@ -276,8 +276,8 @@ html.lenis {
     position: absolute;
     left: -4px;
     top: 0;
-    width: 7px;
-    height: 7px;
+    width: 0.365vw;
+    height: 0.648vh;
     background: var(--theme-color);
 }
 
@@ -325,7 +325,7 @@ html.lenis {
     color: var(--theme-color);
     text-transform: uppercase;
     letter-spacing: 0.2em;
-    font-size: 1.25rem;
+    font-size: clamp(10px, 1.042vw, 30px);
     margin-top: 2.5rem;
     margin-bottom: 1rem;
     border-bottom: 1px border-dashed var(--theme-color);
@@ -334,7 +334,7 @@ html.lenis {
 
 .terminal-cursor {
     display: inline-block;
-    width: 8px;
+    width: 0.417vw;
     height: 1.2em;
     background: var(--theme-color);
     margin-left: 4px;
@@ -347,7 +347,7 @@ html.lenis {
 }
 
 .intel-header-meta {
-    font-size: 10px;
+    font-size: 0.521vw;
     color: var(--theme-color);
     opacity: 0.5;
     margin-bottom: 2rem;
@@ -385,8 +385,8 @@ html.lenis {
 .coverflow-item {
     position: absolute;
     width: 80%;
-    max-width: 320px;
-    height: 100px;
+    max-width: 16.667vw;
+    height: 9.259vh;
     left: 50%;
     top: 50%;
     margin-left: -40%; /* Half of 80% */
@@ -437,7 +437,7 @@ html.lenis {
 
 .coverflow-item .item-title {
     font-family: 'Cinzel', serif; /* Or whatever serif font */
-    font-size: 1.1rem;
+    font-size: clamp(8.8px, 0.917vw, 26.400000000000002px);
     color: #fff;
     margin-bottom: 0.25rem;
     transition: color 0.3s;
@@ -450,7 +450,7 @@ html.lenis {
 
 .coverflow-item .item-subtitle {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.65rem;
+    font-size: clamp(5.2px, 0.542vw, 15.600000000000001px);
     color: #666;
     letter-spacing: 0.2em;
     text-transform: uppercase;
@@ -673,7 +673,7 @@ html.lenis {
   border-bottom: 1px solid #333;
   color: #fff;
   border-radius: 0;
-  padding: 10px 0;
+  padding: 0.521vw 0;
   transition: all 0.3s ease;
 }
 
@@ -802,13 +802,13 @@ input:-webkit-autofill:active {
   color: #c5a059;
   /* Gold */
   font-family: 'Cinzel', serif;
-  font-size: 1.25rem;
+  font-size: clamp(10px, 1.042vw, 30px);
   font-display: swap;
 }
 
 .legal-section p {
   margin-bottom: 1rem;
-  font-size: 1rem;
+  font-size: clamp(8px, 0.833vw, 24px);
   line-height: 1.7;
   color: #d1d5db;
   /* Gray-300 */
@@ -841,7 +841,7 @@ input:-webkit-autofill:active {
   border-bottom: 1px solid #333;
   color: #c5a059;
   width: 100%;
-  padding: 8px 0;
+  padding: 0.417vw 0;
   font-family: 'Courier Prime', monospace;
   transition: all 0.3s ease;
   font-display: swap;
@@ -874,16 +874,16 @@ input:-webkit-autofill:active {
 /* Custom Loading Spinner (Ring) */
 .loading-ring {
   display: inline-block;
-  width: 64px;
-  height: 64px;
+  width: 3.333vw;
+  height: 5.926vh;
 }
 
 .loading-ring:after {
   content: " ";
   display: block;
-  width: 46px;
-  height: 46px;
-  margin: 8px;
+  width: 2.396vw;
+  height: 4.259vh;
+  margin: 0.417vw;
   border-radius: 50%;
   border: 2px solid #c5a059;
   /* Gold */
@@ -976,8 +976,8 @@ input:-webkit-autofill:active {
 
 .custom-popup-theme .mapboxgl-popup-close-button {
   color: #c5a059;
-  font-size: 16px;
-  padding: 5px 10px;
+  font-size: 0.833vw;
+  padding: 0.463vh 0.521vw;
   transition: color 0.2s;
 }
 
@@ -1062,4 +1062,43 @@ input:-webkit-autofill:active {
 @keyframes pulse-alert {
   0%, 100% { opacity: 0.6; }
   50% { opacity: 1; }
+}
+
+/* =========================================
+   Responsive Overrides & Mobile Adjustments
+   ========================================= */
+@media screen and (max-width: 1024px) {
+    .dossier-panel, .terminal-window {
+        padding: 4vw;
+        font-size: 1.5vw;
+    }
+    .coverflow-item {
+        width: 60vw;
+        height: 15vh;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .coverflow-item {
+        width: 80vw;
+        height: 12vh;
+        margin-left: -40vw;
+    }
+    .intel-text {
+        font-size: 2vw;
+    }
+    body {
+        font-size: 3vw;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .coverflow-item {
+        width: 90vw;
+        height: 15vh;
+        margin-left: -45vw;
+    }
+    .intel-text {
+        font-size: 3vw;
+    }
 }
