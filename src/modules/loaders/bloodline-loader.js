@@ -4,17 +4,6 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
 gsap.registerPlugin(ScrollTrigger);
 
-import { listBloodline, connectorConfig } from '@dataconnect/generated';
-import { initializeApp, getApps } from 'firebase/app';
-import { connectDataConnectEmulator, getDataConnect } from 'firebase/data-connect';
-
-// Connect to Local Emulator (Port 9400 as set in firebase.json)
-if (getApps().length === 0) {
-    initializeApp({ projectId: "sins-of-the-fathers" });
-}
-const dc = getDataConnect(connectorConfig);
-connectDataConnectEmulator(dc, '127.0.0.1', 9400);
-
 /**
  * Initializes and renders the Bloodline / Case File visualization.
  * @param {string} containerSelector - The CSS selector for the container element.
@@ -24,8 +13,9 @@ export const renderBloodline = async (containerSelector) => {
     if (!container) return;
 
     try {
-        const response = await listBloodline(dc);
-        const data = response.data;
+        const response = await fetch('https://ai-brain.bbabacanbaba059.workers.dev/api/bloodline');
+        const json = await response.json();
+        const data = json.data;
         
         const nodes = data.entities;
         const links = data.bloodlineLinks.map(link => ({
