@@ -33,7 +33,7 @@ const firebaseConfig = {
   measurementId: "G-9H3782YN0N",
 };
 
-export const TURNSTILE_SITE_KEY = "0x4AAAAAACYllPxy3Qv5WB8q";
+export const TURNSTILE_SITE_KEY = "0x4AAAAAACu8NLdKV-Ei7tAk";
 
 /* --------------------------------------------------------------------------
     SYSTEM INITIALIZATION
