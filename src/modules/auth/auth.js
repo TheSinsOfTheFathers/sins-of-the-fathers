@@ -324,11 +324,11 @@ export function initAuth() {
           showMessage(authMessage, "Localhost: Bypassing Security...", "info");
         } else {
           const signupToken = await getTurnstileToken("signup");
-          const verifyRecaptchaToken = httpsCallable(
+          const verifyTurnstileToken = httpsCallable(
             functions,
-            "verifyRecaptchaToken"
+            "verifyTurnstileToken"
           );
-          await verifyRecaptchaToken({ token: signupToken, action: "signup" });
+          await verifyTurnstileToken({ token: signupToken, action: "signup" });
         }
 
         showMessage(authMessage, "Creating dossier...", "info");
@@ -446,11 +446,11 @@ export function initAuth() {
       } else {
         // REDIRECT FLOW (Production - Better for Mobile)
         const googleToken = await getTurnstileToken("google_signin");
-        const verifyRecaptchaToken = httpsCallable(
+        const verifyTurnstileToken = httpsCallable(
           functions,
-          "verifyRecaptchaToken"
+          "verifyTurnstileToken"
         );
-        await verifyRecaptchaToken({
+        await verifyTurnstileToken({
           token: googleToken,
           action: "google_signin",
         });
