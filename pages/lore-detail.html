@@ -44,7 +44,6 @@
     <!-- Internal Scripts -->
     <script src="../src/main.js" type="module"></script>
 
-    <!-- External Scripts -->
     <!-- Howler.js for Audio Management -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/howler/2.2.4/howler.min.js"></script>
     
@@ -67,6 +66,7 @@
 
     <!-- Visual Effects -->
     <div class="noise-overlay"></div>
+    <div class="fixed inset-0 grid-bg pointer-events-none z-0 opacity-20"></div>
 
     <!-- Header & Navigation -->
     <header aria-label="Main navigation" class="fixed top-0 w-full z-50 bg-obsidian/90 backdrop-blur-md border-b border-white/5 transition-all">
@@ -134,41 +134,108 @@
     </div>
 
     <!-- Main Content Area -->
-    <main aria-label="Lore entry details" class="grow pt-28 pb-20 px-4 md:px-6">
-        
-        <div id="evidence-container" class="container mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-10 items-start" data-module="lore-detail-loader.js">
+    <main aria-label="Lore entry details" class="pt-[4rem] min-h-screen relative z-10">
 
-            <!-- Sidebar: Metadata -->
-            <aside class="lg:col-span-3 lg:sticky lg:top-28 space-y-8 order-2 lg:order-1">
-                
-                <div class="bg-obsidian border border-white/10 p-5">
-                    <h4 class="text-[10px] font-mono text-gray-200 uppercase tracking-widest mb-4" data-i18n="lore_detail.metadata_title">File Metadata</h4>
-                    
-                    <div class="space-y-4 font-mono text-xs">
-                        <div>
-                            <span class="block text-gray-600 mb-1" data-i18n="lore_detail.meta_origin">ORIGIN</span>
-                            <span id="lore-source" class="text-gold uppercase">...</span>
-                        </div>
-                        <div>
-                            <span class="block text-gray-600 mb-1" data-i18n="lore_detail.meta_date">DATE</span>
-                            <span id="lore-date" class="text-white">...</span>
-                        </div>
-                        <div>
-                            <span class="block text-gray-600 mb-1" data-i18n="lore_detail.meta_author">AUTHOR / SPEAKER</span>
-                            <span id="lore-author" class="text-white">...</span>
-                        </div>
-                        <div>
-                            <span class="block text-gray-600 mb-1" data-i18n="lore_detail.meta_clearance">CLEARANCE</span>
-                            <span class="px-2 py-0.5 bg-red-900/20 text-red-500 border border-red-900 text-[10px] inline-block" data-i18n="lore_detail.meta_confidential">CONFIDENTIAL</span>
-                        </div>
-                    </div>
+        <!-- TACTICAL HERO STRIP -->
+        <div class="relative w-full overflow-hidden border-b border-white/5 bg-obsidian mt-8 flicker-overlay">
+            <div class="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px] opacity-20 pointer-events-none z-10"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent z-20"></div>
+            <div class="hq-scanlines"></div>
+
+            <div class="container mx-auto px-6 py-16 relative z-30 max-w-6xl">
+                <!-- Breadcrumb -->
+                <div class="flex items-center gap-2 font-mono text-[10px] text-gray-500 uppercase tracking-widest mb-6">
+                    <a href="/pages/lore.html" class="hover:text-gold transition-colors" data-i18n="lore_detail.breadcrumb_archives">Archives</a>
+                    <span>/</span>
+                    <span class="text-gold" data-i18n="lore_detail.breadcrumb_record">Evidence Record</span>
                 </div>
 
-                <div class="bg-white/5 border border-white/5 p-5">
-                    <h4 class="text-[10px] font-mono text-gray-200 uppercase tracking-widest mb-4" data-i18n="lore_detail.tagged_entities">Tagged Entities</h4>
-                    <div id="lore-tags" class="flex flex-wrap gap-2">
-                        <!-- JS injects tags here -->
+                <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+                    <div>
+                        <div class="inline-block mb-4 border border-gold/30 bg-gold/5 px-3 py-1 rounded-sm hq-border-top">
+                            <span class="font-mono text-[10px] text-gold tracking-[0.3em] uppercase">
+                                <i class="fas fa-file-contract mr-2 animate-pulse"></i>
+                                <span data-i18n="lore_detail.header_badge">Case File</span>
+                            </span>
+                        </div>
+                        <!-- Dynamic Title (populated by JS) -->
+                        <h1 id="lore-title" class="text-4xl md:text-6xl font-serif text-white uppercase tracking-wide leading-tight">
+                            ...
+                        </h1>
+                        <p class="text-gray-200 font-mono text-sm italic mt-2">
+                            <span data-i18n="lore_detail.record_id">Archived Record ID:</span> <span id="lore-id" class="text-gold">#...</span>
+                        </p>
                     </div>
+
+                    <!-- Status Badge -->
+                    <div class="shrink-0 flex items-center gap-2 font-mono text-xs text-gold">
+                        <span class="w-2 h-2 rounded-[1px] bg-gold animate-pulse shadow-[0_0_8px_gold]"></span>
+                        <span data-i18n="lore_detail.uplink_status">FILE RETRIEVED</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- CONTENT CONTAINER -->
+        <div id="evidence-container" class="container mx-auto max-w-6xl px-6 pt-10 pb-24 grid grid-cols-1 lg:grid-cols-12 gap-10 items-start" data-module="lore-detail-loader.js">
+
+            <!-- Sidebar: Metadata -->
+            <aside class="lg:col-span-3 lg:sticky lg:top-28 space-y-6 order-2 lg:order-1">
+
+                <!-- Loading State -->
+                <div id="doc-loader" class="flex flex-col items-center justify-center py-12 font-mono text-gold text-xs uppercase tracking-widest">
+                    <div class="relative w-12 h-12 mb-4">
+                        <div class="absolute inset-0 border border-gold/20 rounded-full animate-[spin_4s_linear_infinite]"></div>
+                        <div class="absolute inset-1 border border-dashed border-gold/40 rounded-full animate-[spin_8s_linear_infinite_reverse]"></div>
+                    </div>
+                    <span class="animate-pulse typewriter" data-i18n="common.loading">Loading...</span>
+                </div>
+
+                <!-- Actual Metadata (hidden until loaded) -->
+                <div id="sidebar-content" class="opacity-0 transition-opacity duration-700 space-y-6">
+
+                    <div class="bg-obsidian border border-white/10 p-5 relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-gold/50 via-gold/20 to-transparent"></div>
+                        <h4 class="text-[10px] font-mono text-gold uppercase tracking-widest mb-4 flex items-center gap-2">
+                            <i class="fas fa-crosshairs text-[8px]"></i>
+                            <span data-i18n="lore_detail.metadata_title">File Metadata</span>
+                        </h4>
+                        
+                        <div class="space-y-4 font-mono text-xs">
+                            <div>
+                                <span class="block text-gray-600 mb-1 uppercase text-[10px]" data-i18n="lore_detail.meta_origin">Origin</span>
+                                <span id="lore-source" class="text-gold uppercase">...</span>
+                            </div>
+                            <div>
+                                <span class="block text-gray-600 mb-1 uppercase text-[10px]" data-i18n="lore_detail.meta_date">Date</span>
+                                <span id="lore-date" class="text-white">...</span>
+                            </div>
+                            <div>
+                                <span class="block text-gray-600 mb-1 uppercase text-[10px]" data-i18n="lore_detail.meta_author">Author / Speaker</span>
+                                <span id="lore-author" class="text-white">...</span>
+                            </div>
+                            <div>
+                                <span class="block text-gray-600 mb-1 uppercase text-[10px]" data-i18n="lore_detail.meta_clearance">Clearance</span>
+                                <span class="px-2 py-0.5 bg-red-900/20 text-red-500 border border-red-900 text-[10px] inline-block" data-i18n="lore_detail.meta_confidential">CONFIDENTIAL</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-obsidian/50 border border-white/5 p-5">
+                        <h4 class="text-[10px] font-mono text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                            <i class="fas fa-tags text-[8px]"></i>
+                            <span data-i18n="lore_detail.tagged_entities">Tagged Entities</span>
+                        </h4>
+                        <div id="lore-tags" class="flex flex-wrap gap-2">
+                            <!-- JS injects tags here -->
+                        </div>
+                    </div>
+
+                    <!-- Back Button -->
+                    <a href="/pages/lore.html" class="flex items-center gap-2 font-mono text-xs text-gray-500 hover:text-gold transition-colors uppercase tracking-widest group">
+                        <i class="fas fa-arrow-left text-[10px] group-hover:-translate-x-1 transition-transform"></i>
+                        <span data-i18n="lore_detail.back_to_archives">Back to Archives</span>
+                    </a>
                 </div>
 
             </aside>
@@ -177,20 +244,17 @@
             <!-- Main Article Content -->
             <article class="lg:col-span-9 order-1 lg:order-2">
                 
-                <!-- Loading State -->
-                <div id="doc-loader" class="text-center py-20 font-mono text-gold text-xs uppercase tracking-widest typewriter" data-i18n="common.loading">
-                    Reconstructing Fragmented Data...
-                </div>
-
-                <!-- Actual Content -->
+                <!-- Actual Content (hidden until loaded) -->
                 <div id="doc-content" class="opacity-0 transition-opacity duration-1000">
                     
+                    <!-- Media Container -->
                     <div id="lore-media-container" class="mb-8 hidden">
                         
                          <!-- Image Area -->
                          <div id="image-wrapper" class="relative w-full h-64 md:h-96 bg-black overflow-hidden border border-white/10 group hidden">
                             <img src="assets/images/lore/1.jpg" id="lore-image" alt="Figure A — evidence photograph" class="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition duration-700">
-                             <div class="absolute bottom-2 right-2 bg-black px-2 py-1 text-[10px] font-mono text-white" data-i18n="lore_detail.fig_evidence">FIG. A // EVIDENCE</div>
+                            <div class="absolute bottom-2 right-2 bg-black px-2 py-1 text-[10px] font-mono text-white" data-i18n="lore_detail.fig_evidence">FIG. A // EVIDENCE</div>
+                            <div class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-gold/50 via-gold/20 to-transparent"></div>
                          </div>
 
                          <!-- Audio Player -->
@@ -271,16 +335,9 @@
                         </div>
                     </div>
 
-                    <div class="mb-8 border-b border-white/10 pb-6">
-                        <h1 id="lore-title" class="text-3xl md:text-5xl font-serif text-white uppercase tracking-wide leading-tight mb-2">
-                            ...
-                        </h1>
-                        <p class="text-gray-200 font-mono text-sm italic">
-                            <span data-i18n="lore_detail.record_id">Archived Record ID:</span> <span id="lore-id">#...</span>
-                        </p>
-                    </div>
-
-                    <div class="paper-bg p-8 md:p-12 shadow-2xl">
+                    <!-- Document Body -->
+                    <div class="paper-bg p-8 md:p-12 shadow-2xl relative">
+                        <div class="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-gold/50 via-gold/20 to-transparent"></div>
                         
                         <div class="font-serif text-gray-300 text-lg leading-relaxed document-text text-justify" id="lore-body">
                              <!-- Lore Content Injected Here -->
