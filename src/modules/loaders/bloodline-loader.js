@@ -1,167 +1,270 @@
 import * as d3 from 'd3';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { client } from '../../lib/sanityClient.js';
 
-gsap.registerPlugin(ScrollTrigger);
+// Depth/Tier mapping to force a hierarchical Tree-like Top-Down layout
+const TIER_MAP = {
+    "char_roland": 0, // Patriarch
+    "char_miranda": 1, // High Command
+    "char_lek": 1,
+    "char_julian": 1,
+    "char_gideon": 1,
+    "char_havi": 1,
+    "char_silvio_sezar": 2, // Europe / Finance heads
+    "char_menslier": 2,
+    "char_elias": 2,
+    "char_hamish": 3, // Logistics
+    "char_nathaniel": 4 // Ground rules
+};
 
-/**
- * Initializes and renders the Bloodline / Case File visualization.
- * @param {string} containerSelector - The CSS selector for the container element.
- */
+// D1 and Sanity Name mismatches mapping (D1 Name -> Sanity Name)
+const NAME_MAP = {
+    "Silvio & Sezar Orsini": "Silvio"
+};
+
 export const renderBloodline = async (containerSelector) => {
     const container = document.querySelector(containerSelector);
     if (!container) return;
 
     try {
-        const response = await fetch('https://ai-brain.bbabacanbaba059.workers.dev/api/bloodline');
-        const json = await response.json();
-        const data = json.data;
+        // Fetch D1 Bloodline Data
+        const responseList = await Promise.all([
+            fetch('https://ai-brain.bbabacanbaba059.workers.dev/api/bloodline').then(r => r.json()),
+            client.fetch('*[_type == "faction"]{title, "slug": slug.current, color}'),
+            client.fetch('*[_type == "character"]{name, faction->{title, "slug": slug.current}}')
+        ]);
+
+        const d1Data = responseList[0].data;
+        const sanityFactions = responseList[1];
+        const sanityCharacters = responseList[2];
+
+        // 1. Build Faction Map from Sanity Characters
+        const FACTION_MAP = {};
+        sanityCharacters.forEach(c => {
+            if (c.faction) {
+                FACTION_MAP[c.name.toLowerCase()] = c.faction.slug;
+            }
+        });
+
+        // 2. Generate Filter Buttons Dynamically
+        const filtersContainerDesktop = document.querySelector('.faction-filters.hidden.md\\:flex');
+        const filtersContainerMobile = document.querySelector('.faction-filters.md\\:hidden');
         
-        const nodes = data.entities;
-        const links = data.bloodlineLinks.map(link => ({
+        const generateButtons = (isMobile) => {
+            let html = `<button data-faction="ALL" class="active px-3 py-1 border border-white/10 hover:border-gold/50 text-white/70 transition-all rounded">ALL</button>`;
+            sanityFactions.forEach(f => {
+                const label = isMobile ? f.title.substring(0, 5).toUpperCase() : f.title.toUpperCase();
+                html += `<button data-faction="${f.slug}" class="px-3 py-1 border border-white/10 hover:border-gold/50 text-white/70 transition-all rounded" style="--faction-color: ${f.color?.hex || '#c5a059'}">${label}</button>`;
+            });
+            return html;
+        };
+
+        if (filtersContainerDesktop) filtersContainerDesktop.innerHTML = generateButtons(false);
+        if (filtersContainerMobile) filtersContainerMobile.innerHTML = generateButtons(true);
+
+        // 3. Process D1 Nodes
+        let nodes = d1Data.entities.map(n => {
+            const mappedName = NAME_MAP[n.name] || n.name;
+            const factionSlug = FACTION_MAP[mappedName.toLowerCase()] || "independent";
+            // Get color from sanity faction
+            const factionDetails = sanityFactions.find(f => f.slug === factionSlug);
+
+            return {
+                ...n, 
+                faction: factionSlug,
+                factionColor: factionDetails?.color?.hex || (factionSlug === 'independent' ? '#555' : '#c5a059'),
+                tier: TIER_MAP[n.id] !== undefined ? TIER_MAP[n.id] : 3
+            };
+        });
+
+        let links = d1Data.bloodlineLinks.map(link => ({
             ...link,
             source: link.source.id,
             target: link.target.id
         }));
 
-        renderGraph(container, containerSelector, nodes, links);
+        setupD3Graph(container, containerSelector, nodes, links, sanityFactions);
     } catch (error) {
-        console.error("Error fetching Bloodline data:", error);
+        console.error("Error fetching or processing Bloodline + Sanity data:", error);
     }
 };
 
-const renderGraph = (container, containerSelector, nodes, links) => {
-
-    // Setup SVG Canvas
-    const width = container.clientWidth || 1000;
-    const height = 800; // Will be dynamic based on tree depth
+const setupD3Graph = (container, containerSelector, nodesData, linksData, sanityFactions) => {
+    const width = container.clientWidth;
+    const height = container.clientHeight;
     
-    container.innerHTML = ''; // Clear previous
+    container.innerHTML = '';
+    
+    // Zoom behaviors
+    const zoom = d3.zoom()
+        .scaleExtent([0.2, 3])
+        .on("zoom", (e) => g.attr("transform", e.transform));
+
     const svg = d3.select(containerSelector)
         .append('svg')
         .attr('width', '100%')
-        .attr('height', height)
-        .attr('viewBox', [0, 0, width, height])
-        .style('background-color', 'transparent');
+        .attr('height', '100%')
+        .call(zoom)
+        .on("dblclick.zoom", null);
 
-    const g = svg.append('g').attr('class', 'bloodline-layer');
+    const g = svg.append('g').attr('class', 'bloodline-canvas');
 
-    // Setup Force Directed Graph or Tree Layout
-    // For a structured hierarchical case file, d3.tree() is preferred, but force topology is good for tangled webs.
-    // Let's use a force simulation tweaked for a top-down hierarchy
-    const simulation = d3.forceSimulation(nodes)
-        .force("link", d3.forceLink(links).id(d => d.id).distance(220)) // Increased distance to 220
-        .force("charge", d3.forceManyBody().strength(-2000)) // Increased repulsion to -2000
-        .force("center", d3.forceCenter(width / 2, height / 2 + 50)) // Pushed center down slightly
-        .force("collide", d3.forceCollide().radius(140).iterations(3)) // Added collide force based on node width
-        .force("y", d3.forceY().strength(0.1)); // encourage spread
+    // Filter controls logic
+    let currentFaction = "ALL";
+    let activeNodes = [...nodesData];
+    let activeLinks = [...linksData];
 
-    // Draw Links
-    const link = g.append('g')
-        .attr('class', 'links')
-        .selectAll('path')
-        .data(links)
-        .join('path')
-        .attr('fill', 'none')
-        .attr('stroke', d => d.relationType === 'RIVAL' || d.relationType === 'BLOOD_OATH' ? '#7f1d1d' : '#4b5563') // red-900 or gray-600
-        .attr('stroke-width', 2)
-        .attr('stroke-dasharray', d => d.relationType === 'RIVAL' ? '5,5' : 'none')
-        .attr('opacity', 0); // hidden for GSAP
+    document.querySelectorAll('.faction-filters button').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            document.querySelectorAll('.faction-filters button').forEach(b => {
+                b.classList.remove('active');
+                b.style.borderColor = "rgba(255,255,255,0.1)"; 
+                b.style.color = "rgba(255,255,255,0.7)";
+                b.style.background = "transparent";
+            });
+            e.target.classList.add('active');
+            
+            const pColor = e.target.style.getPropertyValue('--faction-color') || '#c5a059';
+            e.target.style.borderColor = pColor;
+            e.target.style.color = pColor;
+            e.target.style.background = `color-mix(in srgb, ${pColor} 10%, transparent)`;
 
-    // Draw Nodes
-    const node = g.append('g')
-        .attr('class', 'nodes')
-        .selectAll('g')
-        .data(nodes)
-        .join('g')
-        .attr('class', 'bloodline-node cursor-default')
-        .attr('opacity', 0); // hidden for GSAP
-
-    // Node Background (Obsidian)
-    node.append('rect')
-        .attr('width', 220)
-        .attr('height', 80)
-        .attr('x', -110)
-        .attr('y', -40)
-        .attr('fill', '#0a0a0b') // bg-obsidian
-        .attr('stroke', '#c5a059') // border-gold/40
-        .attr('stroke-width', 1)
-        .attr('rx', 4);
-
-    // Node Name (Serif)
-    node.append('text')
-        .attr('dy', -10)
-        .attr('text-anchor', 'middle')
-        .attr('class', 'fill-gold font-serif text-lg tracking-wider')
-        .text(d => d.name);
-
-    // Node Status/Threat (Terminal/Monospace)
-    node.append('text')
-        .attr('dy', 15)
-        .attr('text-anchor', 'middle')
-        .attr('class', 'fill-gray-500 font-mono text-[10px] uppercase tracking-widest')
-        .text(d => `STATUS: ${d.status}`);
-
-    node.append('text')
-        .attr('dy', 30)
-        .attr('text-anchor', 'middle')
-        .attr('class', d => `font-mono text-[10px] uppercase tracking-widest ${d.threatLevel === 'CRITICAL' || d.threatLevel === 'HIGH' ? 'fill-red-900' : 'fill-gray-600'}`)
-        .text(d => `THREAT: ${d.threatLevel}`);
-
-    // Simulation Tick
-    simulation.on("tick", () => {
-        link.attr("d", d => {
-            const dx = d.target.x - d.source.x,
-                  dy = d.target.y - d.source.y,
-                  dr = Math.sqrt(dx * dx + dy * dy);
-            return `M${d.source.x},${d.source.y}A${dr},${dr} 0 0,1 ${d.target.x},${d.target.y}`;
+            currentFaction = e.target.dataset.faction;
+            updateFilter();
         });
-        node.attr("transform", d => `translate(${d.x},${d.y})`);
     });
 
-    // --- GSAP Animations ---
-    const initAnimations = () => {
-        const tl = gsap.timeline({
-            scrollTrigger: {
-                trigger: containerSelector,
-                start: "top 70%",
-                once: true
-            }
+    // Map Controls
+    document.getElementById('zoom-in').addEventListener('click', () => svg.transition().call(zoom.scaleBy, 1.5));
+    document.getElementById('zoom-out').addEventListener('click', () => svg.transition().call(zoom.scaleBy, 0.75));
+    document.getElementById('zoom-reset').addEventListener('click', () => {
+        svg.transition().duration(750).call(zoom.transform, d3.zoomIdentity.translate(width/2, 100).scale(1));
+    });
+
+    // Layers
+    const linkGroup = g.append('g').attr('class', 'links');
+    const nodeGroup = g.append('g').attr('class', 'nodes');
+
+    // Force Simulation config
+    const simulation = d3.forceSimulation()
+        .force("link", d3.forceLink().id(d => d.id).distance(150).strength(0.3))
+        .force("charge", d3.forceManyBody().strength(-1200))
+        .force("collide", d3.forceCollide().radius(120).iterations(3))
+        .force("x", d3.forceX(0).strength(0.05))
+        .force("y", d3.forceY(d => d.tier * 180).strength(0.8));
+
+    let nodeElements, linkElements;
+
+    function render() {
+        linkElements = linkGroup.selectAll('path')
+            .data(activeLinks, d => d.source.id + "-" + d.target.id);
+        
+        linkElements.exit().transition().duration(300).attr('opacity', 0).remove();
+        
+        const linkEnter = linkElements.enter().append('path')
+            .attr('fill', 'none')
+            .attr('stroke', d => d.relationType === 'RIVAL' || d.relationType === 'BLOOD_OATH' ? '#7f1d1d' : '#4b5563')
+            .attr('stroke-width', 2)
+            .attr('stroke-dasharray', d => d.relationType === 'RIVAL' ? '5,5' : 'none')
+            .attr('opacity', 0);
+            
+        linkElements = linkEnter.merge(linkElements);
+        linkElements.transition().duration(300).attr('opacity', 0.8);
+
+        nodeElements = nodeGroup.selectAll('g.bloodline-node')
+            .data(activeNodes, d => d.id);
+            
+        nodeElements.exit().transition().duration(300).attr('opacity', 0).remove();
+        
+        const nodeEnter = nodeElements.enter().append('g')
+            .attr('class', 'bloodline-node cursor-pointer')
+            .attr('opacity', 0)
+            .call(d3.drag()
+                .on("start", dragstarted)
+                .on("drag", dragged)
+                .on("end", dragended));
+
+        nodeEnter.append('rect')
+            .attr('width', 200)
+            .attr('height', 70)
+            .attr('x', -100)
+            .attr('y', -35)
+            .attr('fill', '#0a0a0b')
+            .attr('stroke', d => d.factionColor)
+            .attr('stroke-width', 1.5)
+            .attr('rx', 4);
+
+        nodeEnter.append('text')
+            .attr('dy', -8)
+            .attr('text-anchor', 'middle')
+            .attr('class', 'font-serif text-[14px] tracking-wider fill-white')
+            .text(d => d.name);
+
+        nodeEnter.append('text')
+            .attr('dy', 12)
+            .attr('text-anchor', 'middle')
+            .attr('class', d => `font-mono text-[9px] uppercase tracking-widest fill-gray-500`)
+            .text(d => `STATUS: ${d.status}`);
+            
+        nodeEnter.append('text')
+            .attr('dy', 25)
+            .attr('text-anchor', 'middle')
+            .attr('class', d => `font-mono text-[9px] uppercase tracking-widest ${d.threatLevel === 'CRITICAL' ? 'fill-red-500' : 'fill-gray-600'}`)
+            .text(d => `THREAT: ${d.threatLevel}`);
+
+        nodeElements = nodeEnter.merge(nodeElements);
+        nodeElements.transition().duration(300).attr('opacity', 1);
+
+        simulation.nodes(activeNodes).on("tick", ticked);
+        simulation.force("link").links(activeLinks);
+        simulation.alpha(1).restart();
+    }
+
+    function updateFilter() {
+        if (currentFaction === "ALL") {
+            activeNodes = nodesData;
+        } else {
+            activeNodes = nodesData.filter(d => d.faction === currentFaction);
+        }
+        
+        const activeNodeIds = new Set(activeNodes.map(n => n.id));
+        activeLinks =  linksData.filter(l => {
+            const sourceId = typeof l.source === 'object' ? l.source.id : l.source;
+            const targetId = typeof l.target === 'object' ? l.target.id : l.target;
+            return activeNodeIds.has(sourceId) && activeNodeIds.has(targetId);
         });
+        
+        render();
+    }
 
-        // 1. Reveal Patriarch/Core Nodes
-        // Removed y:0 because it conflicted with D3 tick transform.
-        tl.fromTo('.bloodline-node', 
-            { opacity: 0, scale: 0.9 },
-            {
-                opacity: 1,
-                scale: 1,
-                duration: 1.5,
-                stagger: 0.3,
-                ease: "power3.out"
-            }
-        )
-        // 2. Animate connecting links
-        .to(link.nodes(), {
-            opacity: 0.6,
-            duration: 1,
-            stagger: 0.1,
-            ease: "power2.inOut"
-        }, "-=1");
-
-        // Hover functionality (Vanilla JS + D3)
-        node.on('mouseenter', function() {
-            gsap.to(this, { scale: 1.05, duration: 0.3, ease: 'back.out(1.7)' });
-            d3.select(this).select('rect').attr('stroke', '#fff'); // Brighten border
-        }).on('mouseleave', function() {
-            gsap.to(this, { scale: 1, duration: 0.3, ease: 'power2.out' });
-            d3.select(this).select('rect').attr('stroke', '#c5a059'); // Reset border
+    function ticked() {
+        linkElements.attr("d", d => {
+            const dx = d.target.x - d.source.x,
+                  dy = d.target.y - d.source.y,
+                  dr = Math.sqrt(dx * dx + dy * dy); 
+            return `M${d.source.x},${d.source.y}A${dr},${dr} 0 0,1 ${d.target.x},${d.target.y}`;
         });
-    };
+        nodeElements.attr("transform", d => `translate(${d.x},${d.y})`);
+    }
 
-    // Wait for simulation to cool down before animating
-    setTimeout(() => {
-        simulation.stop();
-        initAnimations();
-    }, 1000);
+    function dragstarted(event, d) {
+        if (!event.active) simulation.alphaTarget(0.3).restart();
+        d.fx = d.x;
+        d.fy = d.y;
+        d3.select(this).select('rect').attr('stroke', '#fff');
+    }
+
+    function dragged(event, d) {
+        d.fx = event.x;
+        d.fy = event.y;
+    }
+
+    function dragended(event, d) {
+        if (!event.active) simulation.alphaTarget(0);
+        d.fx = null;
+        d.fy = null;
+        d3.select(this).select('rect').attr('stroke', d => d.factionColor);
+    }
+
+    render();
+    svg.call(zoom.transform, d3.zoomIdentity.translate(width/2, 100).scale(1));
 };
