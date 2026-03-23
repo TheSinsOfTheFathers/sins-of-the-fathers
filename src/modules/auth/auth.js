@@ -154,7 +154,8 @@ function renderTurnstile(action = "auth") {
         sitekey: TURNSTILE_SITE_KEY,
         action: action,
         theme: 'dark',
-        size: 'invisible',
+        appearance: 'interaction-only',
+        size: 'compact',
         callback: function(token) {
           resolve(token);
         },
