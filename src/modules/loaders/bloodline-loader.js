@@ -46,20 +46,17 @@ export const renderBloodline = async (containerSelector) => {
         });
 
         // 2. Generate Filter Buttons Dynamically
-        const filtersContainerDesktop = document.querySelector('.faction-filters.hidden.md\\:flex');
-        const filtersContainerMobile = document.querySelector('.faction-filters.md\\:hidden');
+        const filtersContainer = document.querySelector('.faction-filters');
         
-        const generateButtons = (isMobile) => {
-            let html = `<button data-faction="ALL" class="active px-3 py-1 border border-white/10 hover:border-gold/50 text-white/70 transition-all rounded">ALL</button>`;
+        const generateButtons = () => {
+            let html = `<button data-faction="ALL" class="active px-4 py-1.5 text-[10px] tracking-widest uppercase font-mono border border-white/10 hover:border-gold/50 text-white/70 transition-all rounded-full whitespace-nowrap">ALL</button>`;
             sanityFactions.forEach(f => {
-                const label = isMobile ? f.title.substring(0, 5).toUpperCase() : f.title.toUpperCase();
-                html += `<button data-faction="${f.slug}" class="px-3 py-1 border border-white/10 hover:border-gold/50 text-white/70 transition-all rounded" style="--faction-color: ${f.color?.hex || '#c5a059'}">${label}</button>`;
+                html += `<button data-faction="${f.slug}" class="px-4 py-1.5 text-[10px] tracking-widest uppercase font-mono border border-white/10 hover:border-gold/50 text-white/70 transition-all rounded-full whitespace-nowrap" style="--faction-color: ${f.color?.hex || '#c5a059'}">${f.title}</button>`;
             });
             return html;
         };
 
-        if (filtersContainerDesktop) filtersContainerDesktop.innerHTML = generateButtons(false);
-        if (filtersContainerMobile) filtersContainerMobile.innerHTML = generateButtons(true);
+        if (filtersContainer) filtersContainer.innerHTML = generateButtons();
 
         // 3. Process D1 Nodes
         let nodes = d1Data.entities.map(n => {

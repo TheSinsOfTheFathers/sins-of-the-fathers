@@ -28,10 +28,13 @@
             cursor: grabbing;
         }
         .faction-filters button.active {
-            border-color: #c5a059;
-            color: #c5a059;
-            background: rgba(197, 160, 89, 0.1);
+            border-color: var(--faction-color, #c5a059) !important;
+            color: var(--faction-color, #c5a059) !important;
+            background: color-mix(in srgb, var(--faction-color, #c5a059) 15%, transparent) !important;
+            box-shadow: 0 0 15px color-mix(in srgb, var(--faction-color, #c5a059) 30%, transparent);
         }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="flex flex-col h-screen bg-obsidian selection:bg-gold selection:text-black relative overflow-hidden">
@@ -43,19 +46,24 @@
         <div class="noise-overlay absolute inset-0 opacity-40"></div>
     </div>
 
-    <!-- Header Navigation (Slimmed height assumed ~80px) -->
-    <header class="fixed top-0 w-full z-50 bg-obsidian/90 backdrop-blur-md border-b border-white/5 h-[80px] flex items-center">
-        <nav class="container mx-auto px-6 flex justify-between items-center relative w-full">
-            <a href="/" class="text-xl md:text-3xl font-serif text-gold tracking-widest uppercase hover:text-white transition-colors z-20 relative">TSOF</a>
+    <!-- Header & Navigation -->
+    <header aria-label="Main navigation" class="fixed top-0 w-full z-50 bg-obsidian/90 backdrop-blur-md border-b border-white/5 transition-all">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center relative">
+            <!-- Brand -->
+            <a href="/" aria-label="The Sins of the Fathers - Home" class="text-xl md:text-3xl font-serif text-gold tracking-widest uppercase hover:text-white transition-colors z-20 relative">
+                TSOF
+            </a>
             
-            <!-- Filters -->
-            <div class="faction-filters hidden md:flex items-center space-x-2 xl:space-x-4 text-[10px] xl:text-xs uppercase tracking-widest font-mono z-20">
-                <button data-faction="ALL" class="active px-3 py-1 border border-white/10 hover:border-gold/50 text-white/70 transition-all rounded">ALL</button>
-                <button data-faction="RAVENWOOD" class="px-3 py-1 border border-white/10 hover:border-gold/50 text-white/70 transition-all rounded">RAVENWOOD</button>
-                <button data-faction="OLD_WORLD" class="px-3 py-1 border border-white/10 hover:border-gold/50 text-white/70 transition-all rounded">OLD WORLD</button>
+            <!-- Desktop Menu (Absolute Center) -->
+            <div class="hidden md:flex absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 items-center space-x-6 xl:space-x-8 text-xs xl:text-sm uppercase tracking-widest font-semibold whitespace-nowrap">
+                <a href="/pages/bloodline.html" class="text-gold hover:text-gold transition-colors block border-b border-gold" data-i18n="nav.bloodline">THE BLOODLINE</a>
+                <a href="/pages/characters.html" class="text-gray-400 hover:text-gold transition-colors block border-b border-transparent hover:border-gold" data-i18n="nav.dossier">DOSSIER</a>
+                <a href="/pages/timeline.html" class="text-gray-400 hover:text-gold transition-colors block border-b border-transparent hover:border-gold" data-i18n="nav.history">HISTORY</a>
+                <a href="/pages/factions.html" class="text-gray-400 hover:text-gold transition-colors block border-b border-transparent hover:border-gold" data-i18n="nav.factions">FACTIONS</a>
+                <a href="/pages/locations.html" class="text-gray-400 hover:text-gold transition-colors block border-b border-transparent hover:border-gold" data-i18n="nav.territories">TERRITORIES</a>
             </div>
 
-            <!-- Language Switcher & Back -->
+            <!-- Language Switcher & Back (Keeping it simple for inner page) -->
             <div class="flex gap-4 items-center font-mono text-[10px] z-20">
                 <a href="/" class="hover:text-gold text-gray-400 border-b border-white/10 pb-1">GO BACK</a>
             </div>
@@ -65,11 +73,9 @@
     <!-- Main Content Area strictly fitted -->
     <main class="pt-[80px] h-screen relative z-10 w-full">
         <section class="w-full h-full relative" aria-label="Intelligence web visualization">
-            <!-- Mobile Filters (if screen is small) -->
-            <div class="faction-filters md:hidden absolute top-4 left-1/2 transform -translate-x-1/2 z-30 flex space-x-2 text-[10px] uppercase font-mono bg-black/80 backdrop-blur p-2 rounded border border-white/10">
-                <button data-faction="ALL" class="active px-2 py-1 border border-transparent text-white/70">ALL</button>
-                <button data-faction="RAVENWOOD" class="px-2 py-1 border border-transparent text-white/70">RAVEN</button>
-                <button data-faction="OLD_WORLD" class="px-2 py-1 border border-transparent text-white/70">OLD</button>
+            <!-- NEW: Floating Faction Filters at Bottom -->
+            <div class="faction-filters fixed bottom-8 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2 p-1.5 bg-obsidian/80 backdrop-blur-xl border border-white/10 rounded-full shadow-2xl overflow-x-auto max-w-[90vw] no-scrollbar">
+                <!-- Data populated by JS -->
             </div>
 
             <!-- Map Controls -->
