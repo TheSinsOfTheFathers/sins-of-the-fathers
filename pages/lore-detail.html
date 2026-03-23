@@ -23,8 +23,6 @@
     <!-- Title -->
     <title data-i18n="lore_detail.page_title">Evidence Record | The Sins of the Fathers</title>
 
-    
-
     <!-- Favicons -->
     <link rel="icon" type="image/x-icon" href="../assets/images/logo/favicon.ico">
     <link rel="icon" type="image/svg+xml" href="../assets/images/logo/favicon.svg">
@@ -85,7 +83,6 @@
                 <a href="/pages/timeline.html" aria-label="Navigate to History: Timeline" class="text-gray-400 hover:text-gold transition-colors block border-b border-transparent hover:border-gold" data-i18n="nav.history">HISTORY</a>
                 <a href="/pages/factions.html" aria-label="Navigate to Power Dynamics: Factions" class="text-gray-400 hover:text-gold transition-colors block border-b border-transparent hover:border-gold" data-i18n="nav.factions">FACTIONS</a>
                 <a href="/pages/locations.html" aria-label="Navigate to Territories: Locations" class="text-gray-400 hover:text-gold transition-colors block border-b border-transparent hover:border-gold" data-i18n="nav.territories">TERRITORIES</a>
-
                 <a href="https://shop.thesinsofthefathers.com" aria-label="Visit the merchandise store" class="text-gray-400 hover:text-gold transition-colors block border-b border-transparent hover:border-gold" target="_blank" data-i18n="nav.merch">MERCH</a>
                 <a href="https://blog.thesinsofthefathers.com" aria-label="Visit the blog" class="text-gray-400 hover:text-gold transition-colors block border-b border-transparent hover:border-gold" data-i18n="nav.blog">BLOG</a>
                 
@@ -123,10 +120,9 @@
         <a href="/pages/timeline.html" aria-label="Navigate to History: Timeline" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.history">History</a>
         <a href="/pages/factions.html" aria-label="Navigate to Power Dynamics: Factions" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.factions">Factions</a>
         <a href="/pages/locations.html" aria-label="Navigate to Territories: Locations" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.territories">Territories</a>
-
         <a href="https://shop.thesinsofthefathers.com" aria-label="Visit the merchandise store" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest transition-colors" target="_blank" data-i18n="nav.merch">Merch</a>
         <a href="https://blog.thesinsofthefathers.com" aria-label="Visit the blog" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.blog">Blog</a>
-        <a href="/pages/lore.html" aria-label="Access classified lore archive" id="nav-link-classified" class="text-xl text-gold font-serif hover:text-white uppercase tracking-widest" data-i18n="nav.classified">Classified</a>
+        <a href="/pages/lore.html" aria-label="Access classified lore archive" id="nav-link-classified-mobile" class="text-xl text-gold font-serif hover:text-white uppercase tracking-widest" data-i18n="nav.classified">Classified</a>
         <a href="/pages/login.html" aria-label="Sign in to your account" class="text-sm text-gray-400 hover:text-white mt-8 font-mono uppercase" data-i18n="auth.login">Sign in</a>
 
         <!-- Mobile Language -->
@@ -292,163 +288,6 @@
 
                         <div class="mt-12 pt-8 border-t border-dashed border-white/20 flex justify-between items-end opacity-50 hover:opacity-100 transition-opacity">
                              <div class="text-[10px] font-mono text-gray-600 w-1/2" data-i18n="lore_detail.warning_text">
-    </div>
-
-    <!-- Main Content Area -->
-    <main aria-label="Lore entry details" class="grow pt-28 pb-20 px-4 md:px-6">
-        
-        <div id="evidence-container" class="container mx-auto max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-10 items-start" data-module="lore-detail-loader.js">
-
-            <!-- Sidebar: Metadata -->
-            <aside class="lg:col-span-3 lg:sticky lg:top-28 space-y-8 order-2 lg:order-1">
-                
-                <div class="bg-obsidian border border-white/10 p-5">
-                    <h4 class="text-[10px] font-mono text-gray-200 uppercase tracking-widest mb-4" data-i18n="lore_detail.metadata_title">File Metadata</h4>
-                    
-                    <div class="space-y-4 font-mono text-xs">
-                        <div>
-                            <span class="block text-gray-600 mb-1" data-i18n="lore_detail.meta_origin">ORIGIN</span>
-                            <span id="lore-source" class="text-gold uppercase">...</span>
-                        </div>
-                        <div>
-                            <span class="block text-gray-600 mb-1" data-i18n="lore_detail.meta_date">DATE</span>
-                            <span id="lore-date" class="text-white">...</span>
-                        </div>
-                        <div>
-                            <span class="block text-gray-600 mb-1" data-i18n="lore_detail.meta_author">AUTHOR / SPEAKER</span>
-                            <span id="lore-author" class="text-white">...</span>
-                        </div>
-                        <div>
-                            <span class="block text-gray-600 mb-1" data-i18n="lore_detail.meta_clearance">CLEARANCE</span>
-                            <span class="px-2 py-0.5 bg-red-900/20 text-red-500 border border-red-900 text-[10px] inline-block" data-i18n="lore_detail.meta_confidential">CONFIDENTIAL</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white/5 border border-white/5 p-5">
-                    <h4 class="text-[10px] font-mono text-gray-200 uppercase tracking-widest mb-4" data-i18n="lore_detail.tagged_entities">Tagged Entities</h4>
-                    <div id="lore-tags" class="flex flex-wrap gap-2">
-                        <!-- JS injects tags here -->
-                    </div>
-                </div>
-
-            </aside>
-
-
-            <!-- Main Article Content -->
-            <article class="lg:col-span-9 order-1 lg:order-2">
-                
-                <!-- Loading State -->
-                <div id="doc-loader" class="text-center py-20 font-mono text-gold text-xs uppercase tracking-widest typewriter" data-i18n="common.loading">
-                    Reconstructing Fragmented Data...
-                </div>
-
-                <!-- Actual Content -->
-                <div id="doc-content" class="opacity-0 transition-opacity duration-1000">
-                    
-                    <div id="lore-media-container" class="mb-8 hidden">
-                        
-                         <!-- Image Area -->
-                         <div id="image-wrapper" class="relative w-full h-64 md:h-96 bg-black overflow-hidden border border-white/10 group hidden">
-                            <img src="assets/images/lore/1.jpg" id="lore-image" alt="Figure A — evidence photograph" class="w-full h-full object-cover grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition duration-700">
-                             <div class="absolute bottom-2 right-2 bg-black px-2 py-1 text-[10px] font-mono text-white" data-i18n="lore_detail.fig_evidence">FIG. A // EVIDENCE</div>
-                         </div>
-
-                         <!-- Audio Player -->
-                         <div id="audio-player-wrapper" class="w-full bg-[#080808] border-l-2 border-gold relative overflow-hidden group hidden shadow-[0_10px_40px_-10px_rgba(0,0,0,0.8)] mt-4">
-    
-                            <div class="absolute inset-0 opacity-[0.03] pointer-events-none" 
-                                 style="background-image: linear-gradient(#444 1px, transparent 1px), linear-gradient(90deg, #444 1px, transparent 1px); background-size: 20px 20px;">
-                            </div>
-                        
-                            <audio id="lore-audio-source" preload="metadata"></audio>
-                        
-                            <div class="relative z-10 p-6 md:p-8 flex flex-col md:flex-row items-center gap-6 md:gap-8">
-                            
-                                <div class="shrink-0 relative">
-                                    <div class="absolute inset-0 bg-gold/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                                    <button id="audio-play-btn" class="relative w-20 h-20 flex items-center justify-center bg-black border border-gold/30 text-gold rounded-full hover:border-gold hover:text-white hover:scale-105 transition-all duration-300 group-play shadow-2xl">
-                                        <i class="fas fa-play text-2xl ml-1 group-play-hover:scale-110 transition-transform"></i>
-                                    </button>
-                                </div>
-                            
-                                <div class="grow w-full space-y-4">
-                                
-                                    <div class="flex justify-between items-end border-b border-white/5 pb-2 mb-2">
-                                        <div>
-                                            <span class="block text-[8px] text-gray-600 font-mono tracking-[0.2em] mb-1">SIGNAL ORIGIN</span>
-                                            <span class="text-xs font-mono text-gold uppercase tracking-widest font-bold flex items-center gap-2">
-                                                <i class="fas fa-lock text-[10px]"></i> 
-                                                <span data-i18n="lore_detail.audio_trans">ENCRYPTED LOG</span>
-                                            </span>
-                                        </div>
-                                        <div class="text-right">
-                                            <span id="audio-status-text" class="text-[9px] font-mono text-gray-200 uppercase tracking-widest">STANDBY</span>
-                                            <div class="flex gap-3 text-[8px] text-gray-700 font-mono mt-1 uppercase">
-                                                <span>WAV_44.1</span>
-                                                <span>CH_MONO</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                
-                                    <div class="relative h-16 bg-black/40 border border-white/10 group-hover:border-gold/30 transition-colors cursor-pointer overflow-hidden backdrop-blur-sm" id="audio-progress-container">
-                                    
-                                        <!-- Visualizer Bars (Static) -->
-                                        <div class="absolute inset-0 flex items-end justify-between px-1 pb-0 opacity-20 gap-2px pointer-events-none">
-                                            <div class="w-1 bg-gold h-[40%]"></div><div class="w-1 bg-gold h-[70%]"></div><div class="w-1 bg-gold h-[30%]"></div>
-                                            <div class="w-1 bg-gold h-[50%]"></div><div class="w-1 bg-gold h-[90%]"></div><div class="w-1 bg-gold h-[20%]"></div>
-                                            <div class="w-1 bg-gold h-[60%]"></div><div class="w-1 bg-gold h-[80%]"></div><div class="w-1 bg-gold h-[40%]"></div>
-                                            <div class="w-1 bg-gold h-[30%]"></div><div class="w-1 bg-gold h-[70%]"></div><div class="w-1 bg-gold h-[20%]"></div>
-                                            <div class="w-1 bg-gold h-[50%]"></div><div class="w-1 bg-gold h-[80%]"></div><div class="w-1 bg-gold h-[40%]"></div>
-                                            <div class="w-1 bg-gold h-[60%]"></div><div class="w-1 bg-gold h-[30%]"></div><div class="w-1 bg-gold h-[90%]"></div>
-                                            <div class="w-1 bg-gold h-[40%]"></div><div class="w-1 bg-gold h-[70%]"></div><div class="w-1 bg-gold h-[20%]"></div>
-                                            <div class="w-1 bg-gold h-[50%]"></div><div class="w-1 bg-gold h-[20%]"></div><div class="w-1 bg-gold h-[60%]"></div>
-                                            <div class="w-1 bg-gold h-[80%]"></div><div class="w-1 bg-gold h-[40%]"></div><div class="w-1 bg-gold h-[30%]"></div>
-                                            <div class="w-1 bg-gold h-[60%]"></div><div class="w-1 bg-gold h-[90%]"></div><div class="w-1 bg-gold h-[50%]"></div>
-                                            <div class="w-1 bg-gold h-[30%]"></div><div class="w-1 bg-gold h-[70%]"></div><div class="w-1 bg-gold h-[20%]"></div>
-                                            <div class="w-1 bg-gold h-[50%]"></div><div class="w-1 bg-gold h-[80%]"></div><div class="w-1 bg-gold h-[40%]"></div>
-                                            <div class="w-1 bg-gold h-[60%]"></div><div class="w-1 bg-gold h-[30%]"></div><div class="w-1 bg-gold h-[90%]"></div>
-                                            <div class="w-1 bg-gold h-[40%]"></div><div class="w-1 bg-gold h-[70%]"></div><div class="w-1 bg-gold h-[20%]"></div>
-                                            <div class="w-1 bg-gold h-[50%]"></div><div class="w-1 bg-gold h-[80%]"></div><div class="w-1 bg-gold h-[40%]"></div>
-                                        </div>
-                                    
-                                        <!-- Progress Bar -->
-                                        <div id="audio-progress-bar" class="absolute top-0 bottom-0 left-0 bg-gold/10 border-r-2 border-gold shadow-[0_0_15px_rgba(197,160,89,0.3)] w-0 pointer-events-none transition-all duration-100 ease-linear"></div>
-                                    
-                                        <!-- Hover Line -->
-                                        <div class="absolute inset-y-0 w-1px bg-white/40 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" id="hover-line"></div>
-                                    </div>
-                                
-                                    <div class="flex justify-between items-center text-[10px] font-mono">
-                                        <span class="text-gray-700">ID: <span class="text-gray-200">REC-294-ALPHA</span></span>
-                                        <span id="audio-current-time" class="text-gold font-bold text-sm tabular-nums tracking-widest">00:00</span>
-                                    </div>
-                                </div>
-                            </div>
-    
-                            <!-- Decorative Corners -->
-                            <div class="absolute top-0 right-0 w-6 h-6 border-t border-r border-gold/20"></div>
-                            <div class="absolute bottom-0 left-0 w-6 h-6 border-b border-l border-gold/20"></div>
-                        </div>
-                    </div>
-
-                    <div class="mb-8 border-b border-white/10 pb-6">
-                        <h1 id="lore-title" class="text-3xl md:text-5xl font-serif text-white uppercase tracking-wide leading-tight mb-2">
-                            ...
-                        </h1>
-                        <p class="text-gray-200 font-mono text-sm italic">
-                            <span data-i18n="lore_detail.record_id">Archived Record ID:</span> <span id="lore-id">#...</span>
-                        </p>
-                    </div>
-
-                    <div class="paper-bg p-8 md:p-12 shadow-2xl">
-                        
-                        <div class="font-serif text-gray-300 text-lg leading-relaxed document-text text-justify" id="lore-body">
-                             <!-- Lore Content Injected Here -->
-                        </div>
-
-                        <div class="mt-12 pt-8 border-t border-dashed border-white/20 flex justify-between items-end opacity-50 hover:opacity-100 transition-opacity">
-                             <div class="text-[10px] font-mono text-gray-600 w-1/2" data-i18n="lore_detail.warning_text">
                                  WARNING: Unauthorized distribution of this material is punishable by excommunication or termination.
                              </div>
                              <div class="border-4 border-red-800 text-red-800 font-bold font-mono text-xl px-4 py-2 rotate-[-5deg] opacity-70 select-none" data-i18n="lore_detail.stamp_verified">
@@ -483,7 +322,7 @@
             <span class="whitespace-nowrap text-white/50">© <a href="https://www.mapbox.com/" target="_blank" class="text-white hover:text-gold transition-colors">Mapbox</a> | © <a href="http://www.openstreetmap.org/copyright" target="_blank" class="text-white hover:text-gold transition-colors">OpenStreetMap</a></span>
         </div>
         <p class="text-gray-600 text-xs uppercase tracking-widest px-6">
-            <span data-i18n="footer.copyright_slogan">Roland Ravenwood & Havi are watching.</span>
+            <span data-i18n="footer.copyright_slogan">Roland Ravenwood &amp; Havi are watching.</span>
         </p>
     </footer>
 
