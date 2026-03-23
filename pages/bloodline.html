@@ -35,6 +35,12 @@
         }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Popup Styles */
+        #character-popup.active { display: block; }
+        #character-popup.active .popup-content { opacity: 1; transform: scale(1); }
+        .popup-content { transition: all 0.2s ease-out; pointer-events: auto; }
+        #character-popup { pointer-events: none; }
     </style>
 </head>
 <body class="flex flex-col h-screen bg-obsidian selection:bg-gold selection:text-black relative overflow-hidden">
@@ -95,6 +101,30 @@
             <div id="bloodline-container" class="bg-black/20"></div>
         </section>
     </main>
+
+    <!-- Character Info Popup (Attached to Node) -->
+    <div id="character-popup" class="absolute z-[100] hidden">
+        <div class="popup-content bg-obsidian/95 border border-gold/30 p-6 rounded-lg shadow-[0_0_30px_rgba(0,0,0,0.8)] transform scale-95 opacity-0 w-64 backdrop-blur-xl">
+            <button id="modal-close" class="absolute top-3 right-3 text-white/40 hover:text-white transition-colors">
+                <i class="fas fa-times text-xs"></i>
+            </button>
+
+            <div class="text-left">
+                <span class="text-[7px] font-mono tracking-[0.3em] uppercase text-gold/60 mb-1 block">Record Identified</span>
+                <h2 id="modal-name" class="font-serif text-lg text-white tracking-widest uppercase mb-1 leading-tight">RECORD NAME</h2>
+                <div id="modal-faction" class="font-mono text-[9px] tracking-widest text-gray-400 uppercase mb-4 flex items-center gap-2">
+                    <span class="w-1.5 h-1.5 rounded-full faction-dot"></span>
+                    <span class="faction-name">FACTION</span>
+                </div>
+
+                <div class="space-y-2">
+                    <a id="modal-dossier-link" href="#" class="block w-full py-2 bg-gold/5 border border-gold/30 hover:bg-gold/10 text-gold text-[9px] font-mono tracking-[0.2em] uppercase transition-all rounded text-center">
+                        View Dossier
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Init -->
     <script type="module">

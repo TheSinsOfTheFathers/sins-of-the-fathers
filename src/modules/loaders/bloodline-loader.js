@@ -137,6 +137,42 @@ const setupD3Graph = (container, containerSelector, nodesData, linksData, sanity
         svg.transition().duration(750).call(zoom.transform, d3.zoomIdentity.translate(width/2, 100).scale(1));
     });
 
+    // Popup Logic
+    const popup = document.getElementById('character-popup');
+    if (popup) popup.addEventListener('click', (e) => e.stopPropagation());
+
+    const modalName = document.getElementById('modal-name');
+    const modalFaction = document.getElementById('modal-faction').querySelector('.faction-name');
+    const modalDot = document.getElementById('modal-faction').querySelector('.faction-dot');
+    const modalLink = document.getElementById('modal-dossier-link');
+
+    const showModal = (event, d) => {
+        if (event) event.stopPropagation();
+        
+        modalName.textContent = d.name;
+        modalFaction.textContent = d.faction?.replaceAll('_', ' ') || 'Independent';
+        modalDot.style.backgroundColor = d.factionColor;
+        modalLink.href = `/pages/characters.html?slug=${d.id}`;
+        
+        // Use actual screen position of the clicked node element
+        const rect = event.currentTarget.getBoundingClientRect();
+        const mainRect = container.getBoundingClientRect();
+
+        popup.style.left = `${rect.right + 20 - mainRect.left}px`;
+        popup.style.top = `${rect.top - mainRect.top}px`;
+        
+        popup.classList.add('active');
+        popup.classList.remove('hidden');
+    };
+
+    const closeModal = () => {
+        popup.classList.remove('active');
+        setTimeout(() => { if (!popup.classList.contains('active')) popup.classList.add('hidden'); }, 200);
+    };
+
+    document.getElementById('modal-close')?.addEventListener('click', closeModal);
+    svg.on('click', () => { closeModal(); });
+
     // Layers
     const linkGroup = g.append('g').attr('class', 'links');
     const nodeGroup = g.append('g').attr('class', 'nodes');
@@ -183,6 +219,16 @@ const setupD3Graph = (container, containerSelector, nodesData, linksData, sanity
                 .on("start", dragstarted)
                 .on("drag", dragged)
                 .on("end", dragended));
+
+        nodeElements = nodeEnter.merge(nodeElements);
+
+        // Add handler to merged selection to ensure all nodes have it
+        nodeElements.on('click', (event, d) => {
+            if (event.defaultPrevented) return;
+            showModal(event, d);
+        });
+
+        nodeElements.transition().duration(500).attr('opacity', 1);
 
         nodeEnter.append('rect')
             .attr('width', 200)
