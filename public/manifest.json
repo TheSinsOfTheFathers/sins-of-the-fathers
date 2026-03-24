@@ -1,0 +1,21 @@
+{
+  "name": "The Sins of the Fathers",
+  "short_name": "TSOF",
+  "description": "A dark fantasy lore and storytelling experience.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#050505",
+  "theme_color": "#c5a059",
+  "icons": [
+    {
+      "src": "/assets/images/logo/favicon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/images/logo/logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

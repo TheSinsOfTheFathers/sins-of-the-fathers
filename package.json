@@ -10,7 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@builder.io/partytown": "^0.10.3",
+    "@qwik.dev/partytown": "^0.10.3",
     "@dataconnect/admin-generated": "file:src/dataconnect-admin-generated",
     "@dataconnect/generated": "file:src/dataconnect-generated",
     "@genkit-ai/firebase": "^1.27.0",
