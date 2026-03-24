@@ -10,6 +10,7 @@ interface Post {
   mainImage: any;
   body: any;
   authorName?: string;
+  excerpt?: string;
 }
 
 interface Props {
@@ -30,7 +31,8 @@ export async function getStaticPaths() {
     publishedAt,
     mainImage,
     body,
-    authorName 
+    authorName,
+    excerpt
   }`);
 
   return posts.map((post: Post) => ({
@@ -39,52 +41,91 @@ export async function getStaticPaths() {
   }));
 }
 
-// 2. Props'u artık güvenle alabiliriz
 const { post } = Astro.props as Props;
 
 function formatDate(dateString: string) {
-  if (!dateString) return 'Undated Record';
-  return new Date(dateString).toLocaleDateString('en-US', { 
+  if (!dateString) return 'Undated';
+  return new Date(dateString).toLocaleDateString('tr-TR', { 
     year: "numeric", month: "long", day: "numeric"
   });
 }
 ---
 
-<BaseLayout title={post.title}>
-    <div class="max-w-3xl mx-auto px-6 py-12">
-      <div class="flex items-center gap-4 mb-6 text-xs font-mono text-[#c5a059] uppercase tracking-widest">
-        <span>{formatDate(post.publishedAt)}</span>
-        <span class="text-gray-700">|</span>
-        <span class="text-white">CLEARANCE: OPEN</span>
-      </div>
-
-      <h1 class="text-3xl md:text-5xl font-serif text-white mb-8 leading-tight">
-        {post.title}
-      </h1>
-
-      {post.mainImage && (
-        <div class="relative w-full aspect-video mb-12 border border-white/10 overflow-hidden group">
-          <img 
-            src={urlFor(post.mainImage).width(1200).height(675).url()} 
-            alt={post.title}
-            class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-1000"
-          />
-          <div class="absolute inset-0 shadow-inner bg-linear-to-t from-[#050505] to-transparent opacity-60"></div>
+<BaseLayout title={post.title} description={post.excerpt || post.title}>
+  
+  <!-- Post Hero Image -->
+  {post.mainImage ? (
+    <div class="relative w-full h-[50vh] md:h-[65vh] overflow-hidden border-b border-white/5">
+      <img 
+        src={urlFor(post.mainImage).width(1600).height(900).url()} 
+        alt={post.title}
+        class="w-full h-full object-cover brightness-50"
+      />
+      <div class="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/30 to-transparent"></div>
+      
+      <!-- Metadata overlay on image -->
+      <div class="absolute bottom-0 left-0 right-0 p-8 md:p-12 max-w-4xl mx-auto w-full">
+        <div class="flex items-center gap-3 mb-4 text-[10px] font-mono text-[#c5a059] uppercase tracking-widest">
+          <span class="status-dot"></span>
+          <span>{formatDate(post.publishedAt)}</span>
+          <span class="text-gray-700">|</span>
+          <span class="text-white/70">CLEARANCE: OPEN</span>
+          {post.authorName && <>
+            <span class="text-gray-700">|</span>
+            <span class="text-white/50">{post.authorName}</span>
+          </>}
         </div>
-      )}
-
-      <article class="prose prose-invert prose-lg max-w-none font-sans font-light text-gray-400">
-        <div class="space-y-6 leading-relaxed">
-            <PortableText value={post.body} />
-        </div>
-      </article>
-
-      <div class="mt-16 pt-8 border-t border-white/10 flex items-center gap-4">
-        <div class="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center text-[#c5a059] font-serif border border-[#c5a059]">A</div>
-        <div>
-            <p class="text-xs text-gray-200 font-mono uppercase">REPORT PREPARER</p>
-            <p class="text-white font-serif tracking-wide">{post.authorName || 'Unknown Agent'}</p>
-        </div>
+        <h1 class="font-serif text-4xl md:text-6xl text-white leading-tight tracking-tight drop-shadow-2xl">
+          {post.title}
+        </h1>
       </div>
     </div>
+  ) : (
+    <div class="border-b border-white/5 bg-black">
+      <div class="max-w-4xl mx-auto px-6 pt-16 pb-12">
+        <div class="flex items-center gap-3 mb-5 text-[10px] font-mono text-[#c5a059] uppercase tracking-widest">
+          <span class="status-dot"></span>
+          <span>{formatDate(post.publishedAt)}</span>
+          {post.authorName && <><span class="text-gray-700">|</span><span>{post.authorName}</span></>}
+        </div>
+        <h1 class="font-serif text-4xl md:text-6xl text-white leading-tight tracking-tight">
+          {post.title}
+        </h1>
+      </div>
+    </div>
+  )}
+
+  <!-- Article Body -->
+  <div class="max-w-3xl mx-auto px-6 py-16">
+    
+    {post.excerpt && (
+      <p class="font-serif text-xl text-gray-300 italic border-l-2 border-[#c5a059]/40 pl-6 mb-12 leading-relaxed">
+        {post.excerpt}
+      </p>
+    )}
+
+    <article class="prose-dark">
+      <PortableText value={post.body} />
+    </article>
+
+    <!-- Author Card -->
+    <div class="mt-16 pt-8 border-t border-white/5 flex items-center gap-5">
+      <div class="w-14 h-14 rounded-sm bg-[#0a0a0a] flex items-center justify-center text-[#c5a059] font-serif text-xl border border-[#c5a059]/30 shrink-0">
+        {(post.authorName || 'A')[0].toUpperCase()}
+      </div>
+      <div>
+        <p class="text-[10px] text-gray-600 font-mono uppercase tracking-widest mb-1">RAPORU HAZIRLAYAN</p>
+        <p class="text-white font-serif tracking-wide">{post.authorName || 'Unknown Agent'}</p>
+      </div>
+    </div>
+
+    <!-- Back Link -->
+    <div class="mt-12 text-center">
+      <a href="/" class="text-xs font-mono uppercase tracking-widest text-gray-600 hover:text-[#c5a059] border border-white/5 hover:border-[#c5a059]/30 px-8 py-3 transition-all inline-block">
+        ← Arşive Dön
+      </a>
+    </div>
+    
+  </div>
+
 </BaseLayout>

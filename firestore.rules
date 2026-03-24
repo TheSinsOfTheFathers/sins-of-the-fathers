@@ -60,5 +60,16 @@ service cloud.firestore {
     match /admin_settings/{document} {
       allow read, write: if isAdmin();
     }
+
+    // --- Blog Poll Koleksiyonu ---
+    // Okuma: Herkese açık
+    // Oy verme: Giriş yapmış kullanıcılar (increment ile güncelleme)
+    // Yönetim: Sadece admin
+    match /polls/{pollId} {
+      allow read: if true;
+      allow create: if isAdmin();
+      allow update: if isSignedIn() || true; // Allow anonymous votes too
+      allow delete: if isAdmin();
+    }
   }
 }

@@ -3,48 +3,177 @@ import '../styles/global.css';
 
 interface Props {
 	title: string;
+  description?: string;
 }
 
-const { title } = Astro.props;
+const { title, description = "Ravenwood & Havi saga için yazım notları, kararlar ve gelecek kitaplar." } = Astro.props;
 const isPostPage = Astro.url.pathname.startsWith('/post/');
 const returnUrl = isPostPage ? '/' : 'https://thesinsofthefathers.com';
+const pageUrl = Astro.url.href;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="tr">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <title>{title} | TSOF Blog</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Courier+Prime&display=swap" rel="stylesheet">
-    <link rel="alternate" type="application/rss+xml" title="Sins of the Fathers Blog" href="/rss.xml" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} | The Sins of the Fathers — Author's Log</title>
+    <meta name="description" content={description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={pageUrl} />
+    <meta property="og:type" content="website" />
+    <meta name="theme-color" content="#050505" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Lato:ital,wght@0,300;0,400;0,700;1,300&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet" />
+    
+    <link rel="alternate" type="application/rss+xml" title="TSOF Author's Log" href="/rss.xml" />
+    <link rel="icon" type="image/x-icon" href="https://thesinsofthefathers.com/favicon.ico" />
   </head>
 
-  <body class="bg-[#050505] text-gray-300 font-sans min-h-screen selection:bg-[#c5a059] selection:text-black flex flex-col">
+  <body class="flex flex-col min-h-screen">
     
-    <header class="border-b border-white/10 bg-black/50 backdrop-blur-md sticky top-0 z-50">
-      <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-        <div class="flex items-center gap-4">
-            <a href="/" class="text-xl font-serif text-[#c5a059] tracking-widest uppercase hover:text-white transition-colors">
-              TSOF <span class="text-xs text-gray-600 ml-2">// DOSSIER</span> 
-            </a>
-        </div>
+    <!-- Atmospheric Background Elements -->
+    <div class="fixed inset-0 pointer-events-none -z-10">
+      <div class="absolute inset-0 bg-[#050505]"></div>
+      <!-- Subtle radial gradient center glow -->
+      <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-[radial-gradient(ellipse_at_center,rgba(197,160,89,0.04)_0%,transparent_70%)]"></div>
+      <!-- Grid pattern -->
+      <div class="absolute inset-0 opacity-[0.015]" style="background-image: linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px); background-size: 40px 40px;"></div>
+    </div>
+
+    <!-- HEADER -->
+    <header class="sticky top-0 z-50 border-b border-white/5 bg-black/70 backdrop-blur-xl">
+      <div class="max-w-7xl mx-auto px-6 py-0 flex items-stretch justify-between gap-4">
         
-        <a href={returnUrl} class="text-xs font-mono text-gray-200 hover:text-[#c5a059] transition-colors border border-white/10 px-3 py-1">
-          {isPostPage ? 'RETURN TO ARCHIVES' : 'RETURN TO TERMINAL'} &nbsp; &larr;
+        <!-- Logo -->
+        <a href="/" class="flex items-center gap-3 py-4 group">
+          <div class="flex flex-col">
+            <span class="font-serif text-base text-white tracking-[0.15em] uppercase leading-tight group-hover:text-[#c5a059] transition-colors">
+              The Sins of the Fathers
+            </span>
+            <span class="font-mono text-[9px] text-[#c5a059]/60 tracking-[0.3em] uppercase">
+              Author's Log &nbsp;// &nbsp;Development Journal
+            </span>
+          </div>
         </a>
+
+        <!-- Nav -->
+        <nav class="hidden md:flex items-center text-[10px] font-mono uppercase tracking-[0.2em]">
+          <a href="/" class="h-full flex items-center px-5 text-gray-500 hover:text-white hover:bg-white/5 transition-all border-r border-white/5 py-4">
+            Archives
+          </a>
+          <a href="/decisions" class="h-full flex items-center px-5 text-gray-500 hover:text-white hover:bg-white/5 transition-all border-r border-white/5 py-4">
+            Kararlar
+          </a>
+          <a href="/upcoming-books" class="h-full flex items-center px-5 text-gray-500 hover:text-white hover:bg-white/5 transition-all border-r border-white/5 py-4">
+            Kitaplar
+          </a>
+        </nav>
+
+        <!-- Right side: Return + Auth Status -->
+        <div class="flex items-center gap-3">
+          <!-- Auth Status (populated by client JS) -->
+          <div id="blog-auth-status" class="hidden md:flex items-center gap-2 text-[10px] font-mono text-gray-600">
+            <span class="w-2 h-2 rounded-full bg-gray-700"></span>
+            <span>Checking...</span>
+          </div>
+
+          <a href={returnUrl} class="flex items-center gap-2 text-[10px] font-mono text-gray-400 hover:text-[#c5a059] border border-white/10 hover:border-[#c5a059]/40 px-4 py-2 transition-all">
+            {isPostPage ? '← Archives' : '← Main Site'}
+          </a>
+        </div>
       </div>
     </header>
 
-    <main class="w-full max-w-4xl mx-auto px-6 md:px-12 py-12 grow">
-        <slot />
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 w-full">
+      <slot />
     </main>
 
-    <footer class="border-t border-white/5 py-8 mt-12 text-center bg-black">
-      <p class="text-[10px] font-mono text-gray-600 uppercase tracking-widest">
-        © 2025 The Sins of the Fathers.
-      </p>
+    <!-- FOOTER -->
+    <footer class="mt-24 border-t border-white/5 bg-black/50">
+      <div class="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+        
+        <div>
+          <p class="font-serif text-white text-sm mb-2 tracking-widest uppercase">TSOF — Author's Log</p>
+          <p class="text-xs text-gray-600 font-light leading-relaxed">
+            Ravenwood & Havi saga'nın perde arkası. Yazım kararları, karakter notları ve güncel gelişmeler.
+          </p>
+        </div>
+
+        <div>
+          <p class="text-[10px] font-mono text-[#c5a059] uppercase tracking-widest mb-3">Navigation</p>
+          <ul class="space-y-2 text-xs text-gray-500 font-mono">
+            <li><a href="/" class="hover:text-white transition-colors">// Archives</a></li>
+            <li><a href="/decisions" class="hover:text-white transition-colors">// Kararlar</a></li>
+            <li><a href="/upcoming-books" class="hover:text-white transition-colors">// Kitaplar</a></li>
+            <li><a href="/rss.xml" class="hover:text-[#c5a059] transition-colors">// RSS Feed</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <p class="text-[10px] font-mono text-[#c5a059] uppercase tracking-widest mb-3">Main Site</p>
+          <a href="https://thesinsofthefathers.com" class="text-xs text-gray-500 font-mono hover:text-white transition-colors flex items-center gap-2">
+            <span class="status-dot"></span>
+            thesinsofthefathers.com
+          </a>
+        </div>
+      </div>
+
+      <div class="border-t border-white/5 py-4 text-center">
+        <p class="text-[10px] font-mono text-gray-700 uppercase tracking-widest">
+          © 2025 The Sins of the Fathers. All records classified.
+        </p>
+      </div>
     </footer>
+
+    <!-- Auth State Sync -->
+    <script>
+      import { initializeApp, getApps } from 'firebase/app';
+      import { getAuth, onAuthStateChanged } from 'firebase/auth';
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyB7Xa5tZYVenPEkkjB0KVJDkoV7pQ7_QcQ",
+        authDomain: "sins-of-the-fathers.firebaseapp.com",
+        projectId: "sins-of-the-fathers",
+        storageBucket: "sins-of-the-fathers.firebasestorage.app",
+        messagingSenderId: "287213062167",
+        appId: "1:287213062167:web:1f863b4e96641570f5b452",
+      };
+
+      const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+
+      const statusEl = document.getElementById('blog-auth-status');
+
+      onAuthStateChanged(auth, (user) => {
+        if (!statusEl) return;
+        statusEl.classList.remove('hidden');
+        statusEl.classList.add('flex');
+
+        if (user) {
+          const dot = statusEl.querySelector('span:first-child');
+          const label = statusEl.querySelector('span:last-child');
+          if (dot) { dot.className = 'w-2 h-2 rounded-full bg-green-500'; }
+          if (label) {
+            label.textContent = user.displayName || user.email || 'Connected';
+            label.className = 'text-green-400/70';
+          }
+          // Store UID for poll voting
+          sessionStorage.setItem('blog_uid', user.uid);
+        } else {
+          const dot = statusEl.querySelector('span:first-child');
+          const label = statusEl.querySelector('span:last-child');
+          if (dot) { dot.className = 'w-2 h-2 rounded-full bg-gray-600'; }
+          if (label) { label.textContent = 'Guest'; }
+          sessionStorage.removeItem('blog_uid');
+        }
+      });
+    </script>
 
   </body>
 </html>
