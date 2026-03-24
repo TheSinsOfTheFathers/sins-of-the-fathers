@@ -354,19 +354,8 @@ export function initAuth() {
       window.location.hostname === "127.0.0.1";
 
     try {
-      if (!isLocal) {
-        // SECURITY: Turnstile Verification (Only on Production)
-        const googleToken = await getTurnstileToken("google_signin");
-        const verifyTurnstileToken = httpsCallable(
-          functions,
-          "verifyTurnstileToken"
-        );
-        await verifyTurnstileToken({
-          token: googleToken,
-          action: "google_signin",
-        });
-      }
-
+      // SECURITY NOTE: Turnstile is bypassed for Google Auth to prevent popup blocking.
+      // Google's own OAuth flow provides sufficient bot protection.
       showMessage(
         authMessage,
         "Biometrics required. Check for popup...",
