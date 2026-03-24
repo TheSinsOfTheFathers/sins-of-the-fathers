@@ -465,22 +465,25 @@ export function initAuth() {
     // Target the Lore/Classified link
     // We try multiple selectors to be robust
     const loreLinkFn = () => {
-      const link =
-        document.getElementById("nav-link-classified") ||
-        document.querySelector('a[href="./pages/lore.html"]');
-      if (!link) {
-        console.warn(" ! UI Warning: 'nav-link-classified' not found.");
-        return;
-      }
-      const span = link.querySelector("span");
-      if (!span) return;
+      const links = document.querySelectorAll(".nav-link-classified");
+      
+      const updateLink = (link) => {
+        const span = link.querySelector("span") || link;
+        if (user) {
+          span.textContent = "LORE";
+          span.removeAttribute("data-i18n");
+        } else {
+          span.textContent = "CLASSIFIED";
+          span.setAttribute("data-i18n", "nav.classified");
+        }
+      };
 
-      if (user) {
-        span.textContent = "LORE";
-        span.removeAttribute("data-i18n"); // Detach from translation system to force override
+      if (links.length > 0) {
+        links.forEach(updateLink);
       } else {
-        span.textContent = "CLASSIFIED";
-        span.setAttribute("data-i18n", "nav.classified");
+        // Fallback for legacy ID
+        const link = document.getElementById("nav-link-classified");
+        if (link) updateLink(link);
       }
     };
     loreLinkFn();
