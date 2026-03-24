@@ -30,19 +30,20 @@ export const renderBloodline = async (containerSelector) => {
         const responseList = await Promise.all([
             fetch('https://ai-brain.bbabacanbaba059.workers.dev/api/bloodline').then(r => r.json()),
             client.fetch('*[_type == "faction"]{title, "slug": slug.current, color}'),
-            client.fetch('*[_type == "character"]{name, faction->{title, "slug": slug.current}}')
+            client.fetch('*[_type == "character"]{name, "slug": slug.current, faction->{title, "slug": slug.current}}')
         ]);
 
         const d1Data = responseList[0].data;
         const sanityFactions = responseList[1];
         const sanityCharacters = responseList[2];
 
-        // 1. Build Faction Map from Sanity Characters
+        // 1. Build Faction & Slug Maps from Sanity
         const FACTION_MAP = {};
+        const SLUG_MAP = {};
         sanityCharacters.forEach(c => {
-            if (c.faction) {
-                FACTION_MAP[c.name.toLowerCase()] = c.faction.slug;
-            }
+            const nameKey = c.name.toLowerCase();
+            if (c.faction) FACTION_MAP[nameKey] = c.faction.slug;
+            if (c.slug) SLUG_MAP[nameKey] = c.slug;
         });
 
         // 2. Generate Filter Buttons Dynamically
@@ -79,13 +80,13 @@ export const renderBloodline = async (containerSelector) => {
             target: link.target.id
         }));
 
-        setupD3Graph(container, containerSelector, nodes, links, sanityFactions);
+        setupD3Graph(container, containerSelector, nodes, links, sanityFactions, SLUG_MAP);
     } catch (error) {
         console.error("Error fetching or processing Bloodline + Sanity data:", error);
     }
 };
 
-const setupD3Graph = (container, containerSelector, nodesData, linksData, sanityFactions) => {
+const setupD3Graph = (container, containerSelector, nodesData, linksData, sanityFactions, slugMap) => {
     const width = container.clientWidth;
     const height = container.clientHeight;
     
@@ -152,7 +153,19 @@ const setupD3Graph = (container, containerSelector, nodesData, linksData, sanity
         modalName.textContent = d.name;
         modalFaction.textContent = d.faction?.replaceAll('_', ' ') || 'Independent';
         modalDot.style.backgroundColor = d.factionColor;
-        modalLink.href = `/pages/characters.html?slug=${d.id}`;
+        
+        // Use the mapped slug from Sanity for the Dossier link
+        const nameKey = d.name.toLowerCase();
+        const charSlug = slugMap[nameKey] || d.id;
+        modalLink.href = `/pages/character-detail.html?slug=${charSlug}`;
+        
+        // Ensure the link click triggers navigation regardless of event interception
+        modalLink.onclick = (e) => {
+            e.preventDefault(); // Stop any other handlers
+            e.stopPropagation();
+            window.location.href = modalLink.href;
+        };
+        modalLink.style.pointerEvents = 'auto';
         
         // Use actual screen position of the clicked node element
         const rect = event.currentTarget.getBoundingClientRect();
