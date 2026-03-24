@@ -148,51 +148,78 @@
         </div>
 
         <!-- Character Dossier Container -->
-        <div id="character-dossier" class="container mx-auto max-w-5xl opacity-0 transition-opacity duration-1000 delay-500">
+        <div id="character-dossier" class="container mx-auto max-w-6xl px-6 opacity-0 transition-all duration-1000 delay-500 transform translate-y-4">
             
-            <!-- Top Section: Identity Card -->
-            <div class="border border-white/10 bg-white/5 p-8 rounded-sm mb-8 relative overflow-hidden group">
-                <!-- Golden Scan Line -->
-                <div class="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-gold to-transparent opacity-50"></div>
+            <!-- Top Section: Tactical Identity Card -->
+            <div class="relative mb-16">
+                <!-- Decorative HUD Elements -->
+                <div class="absolute -top-10 -left-10 w-40 h-40 border-t-2 border-l-2 border-gold/20 rounded-tl-3xl pointer-events-none"></div>
+                <div class="absolute -bottom-10 -right-10 w-40 h-40 border-b-2 border-r-2 border-gold/20 rounded-br-3xl pointer-events-none"></div>
 
-                <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
-                    <!-- Portrait / Image -->
-                    <div class="md:col-span-4 lg:col-span-3 relative">
-                        <div class="relative w-full aspect-3/4 bg-black border border-white/10 overflow-hidden shadow-2xl">
-                            <img id="char-image" src="" alt="Subject Unknown" class="w-full h-full object-cover filter grayscale hover:grayscale-0 transition-all duration-700">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-0 border border-white/10 bg-black/40 backdrop-blur-xl rounded-sm overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.5)]">
+                    
+                    <!-- Portrait Column -->
+                    <div class="lg:col-span-5 relative group">
+                        <div class="relative aspect-3/4 overflow-hidden bg-obsidian">
+                            <img id="char-image" src="" alt="Subject Portrait" class="w-full h-full object-cover filter grayscale brightness-75 group-hover:grayscale-0 group-hover:brightness-100 transition-all duration-1000 ease-out scale-105 group-hover:scale-100 shadow-inner">
                             
-                            <!-- Tactical Overlays -->
-                            <div class="absolute inset-0 border-2 border-transparent border-t-gold/30 border-b-gold/30 pointer-events-none"></div>
-                            <div class="absolute bottom-4 left-4 right-4 bg-black/80 backdrop-blur-sm border border-white/10 p-2 text-center">
-                                <span id="char-status" class="font-mono text-xs uppercase font-bold tracking-widest text-green-500 animate-pulse">Active</span>
+                            <!-- Scanner Overlay -->
+                            <div class="absolute inset-0 pointer-events-none overflow-hidden">
+                                <div class="absolute top-0 left-0 w-full h-[2px] bg-gold/40 shadow-[0_0_15px_rgba(212,175,55,0.8)] animate-[scan_3s_ease-in-out_infinite] opacity-30"></div>
+                                <div class="absolute inset-0 bg-radial-at-t from-transparent via-transparent to-black/60"></div>
+                            </div>
+
+                            <!-- Tactical HUD Badges -->
+                            <div class="absolute top-4 left-4 flex flex-col gap-2 font-mono text-[10px] uppercase">
+                                <span class="bg-black/80 text-gold px-2 py-1 border border-gold/30 tracking-widest">Live Visual Feed</span>
+                                <span class="bg-black/80 text-white/40 px-2 py-1 border border-white/10">Signal: Encrypted</span>
+                            </div>
+                            
+                            <div class="absolute bottom-6 left-1/2 -translate-x-1/2 w-3/4">
+                                <div id="char-status" class="bg-black/90 backdrop-blur-md border border-white/10 py-2 px-4 text-center font-mono text-xs font-bold tracking-[0.4em] uppercase shadow-lg">
+                                    Status: Unknown
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Vital Info -->
-                    <div class="md:col-span-8 lg:col-span-9">
-                        <div class="flex flex-col h-full justify-between">
-                            <div>
-                                <h4 class="font-mono text-xs text-gray-200 mb-2 uppercase tracking-widest" data-i18n="character_detail_page.subject_name">Subject Name</h4>
-                                <h1 id="char-name" class="text-4xl md:text-5xl font-serif text-white mb-2 uppercase tracking-wide">
+                    <!-- Identity Data Column -->
+                    <div class="lg:col-span-7 p-8 md:p-12 flex flex-col justify-center relative">
+                        <!-- Background Grid Decor -->
+                        <div class="absolute inset-0 grid-bg opacity-5 pointer-events-none"></div>
+
+                        <div class="relative z-10">
+                            <header class="mb-10">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <div class="h-px w-8 bg-gold/50"></div>
+                                    <span class="font-mono text-[10px] text-gold uppercase tracking-[0.5em]">Classified Dossier</span>
+                                </div>
+                                <h1 id="char-name" class="text-5xl md:text-7xl font-serif text-white mb-2 uppercase tracking-tight leading-none drop-shadow-lg">
                                     Loading...
                                 </h1>
-                                <p id="char-alias" class="text-xl text-gold italic font-serif mb-6">"Loading Alias..."</p>
-                                
-                                <!-- Stats Grid -->
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm font-mono border-t border-white/10 pt-6">
-                                    <div class="p-3 border border-white/5 bg-black/20">
-                                        <span class="text-gray-200 block text-xs uppercase mb-1" data-i18n="character_detail_page.affiliation">Affiliation</span>
-                                        <span id="char-faction" class="text-white tracking-wider">Unverified</span>
-                                    </div>
-                                    <div class="p-3 border border-white/5 bg-black/20">
-                                        <span class="text-gray-200 block text-xs uppercase mb-1" data-i18n="character_detail_page.place_of_origin">Place of Origin</span>
-                                        <span id="char-location" class="text-white tracking-wider">Unknown</span>
-                                    </div>
-                                    <div class="p-3 border border-white/5 bg-black/20">
-                                        <span class="text-gray-200 block text-xs uppercase mb-1" data-i18n="character_detail_page.role_rank">Role / Rank</span>
-                                        <span id="char-role" class="text-white tracking-wider">TBD</span>
-                                    </div>
+                                <p id="char-alias" class="text-2xl text-gold/80 italic font-serif opacity-70">
+                                    "Alias Placeholder"
+                                </p>
+                            </header>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-8 border-t border-white/10 pt-10">
+                                <div class="space-y-1">
+                                    <h4 class="font-mono text-[10px] text-white/30 uppercase tracking-widest" data-i18n="character_detail_page.affiliation">Primary Affiliation</h4>
+                                    <p id="char-faction" class="text-lg text-white font-serif tracking-wide border-l-2 border-gold/30 pl-4">Verified</p>
+                                </div>
+                                <div class="space-y-1">
+                                    <h4 class="font-mono text-[10px] text-white/30 uppercase tracking-widest" data-i18n="character_detail_page.role_rank">Official Designation</h4>
+                                    <p id="char-role" class="text-lg text-white font-serif tracking-wide border-l-2 border-white/10 pl-4">Classified</p>
+                                </div>
+                                <div class="space-y-1">
+                                    <h4 class="font-mono text-[10px] text-white/30 uppercase tracking-widest" data-i18n="character_detail_page.place_of_origin">Sector of Origin</h4>
+                                    <p id="char-location" class="text-lg text-white font-serif tracking-wide border-l-2 border-white/10 pl-4">Earth Central</p>
+                                </div>
+                                <div class="space-y-1">
+                                    <h4 class="font-mono text-[10px] text-white/30 uppercase tracking-widest">Threat Assessment</h4>
+                                    <p class="text-lg text-red-500 font-mono tracking-widest flex items-center gap-2">
+                                        <i class="fas fa-exclamation-triangle text-xs opacity-50"></i> CRITICAL
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -200,25 +227,61 @@
                 </div>
             </div>
 
-            <!-- Bottom Section: Biography & Network -->
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+            <!-- Bottom Section: Biography & Intelligence Network -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start mt-20">
                 
-                <!-- Narrative Record -->
-                <div class="lg:col-span-3 space-y-8">
-                    <div class="border border-white/5 bg-transparent p-6 relative">
-                        <h3 class="text-lg font-mono text-gold mb-4 border-b border-gold/20 pb-2 uppercase tracking-widest">
-                            <i class="fas fa-align-left mr-2"></i> <span data-i18n="character_detail_page.narrative_record">Narrative Record</span>
-                        </h3>
-                        <div id="char-bio" class="prose prose-invert prose-p:text-gray-400 prose-p:font-light prose-p:leading-relaxed font-sans max-w-none text-justify">
-                            <p data-i18n="character_detail_page.accessing_archives">Accessing secure archives...</p>
+                <!-- Detailed Record -->
+                <div class="lg:col-span-12">
+                    <div class="relative mb-20">
+                        <div class="flex items-center gap-4 mb-8">
+                            <h3 class="text-xl font-mono text-white/80 uppercase tracking-[0.3em] flex items-center gap-3">
+                                <span class="w-1.5 h-6 bg-gold"></span>
+                                <span data-i18n="character_detail_page.narrative_record">Narrative Record</span>
+                            </h3>
+                            <div class="h-px bg-white/5 grow"></div>
+                        </div>
+                        
+                        <div id="char-bio" class="max-w-4xl mx-auto prose prose-invert prose-p:text-gray-300 prose-p:font-light prose-p:text-lg prose-p:leading-relaxed font-sans text-justify drop-shadow-md">
+                            <p data-i18n="character_detail_page.accessing_archives">Accessing highly secure archives... Authorization verified.</p>
+                        </div>
+
+                        <div class="max-w-2xl mx-auto mt-16 text-center">
+                            <i class="fas fa-quote-left text-4xl text-gold/10 mb-6"></i>
+                            <blockquote id="char-quote" class="text-2xl md:text-3xl font-serif text-white italic leading-snug drop-shadow-lg">
+                                "Waiting for transcript decryption..."
+                            </blockquote>
                         </div>
                     </div>
+                </div>
 
-                    <!-- Notable Quote -->
-                    <blockquote class="border-l-4 border-gold pl-6 py-2 my-8 italic text-xl text-gray-300 font-serif relative">
-                        <span class="absolute -top-4 -left-2 text-6xl text-gold/10 font-serif">"</span>
-                        <p id="char-quote" data-i18n="character_detail_page.waiting_transcript">Waiting for transcript...</p>
-                    </blockquote>
+                <!-- Network Graph Container (Centered below Bio) -->
+                <div class="lg:col-span-12 mt-12">
+                    <div class="bg-white/[0.02] border border-white/5 p-10 rounded-sm relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-1 bg-linear-to-r from-transparent via-gold/20 to-transparent"></div>
+                        
+                        <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+                            <div>
+                                <h3 class="text-lg font-mono text-gold uppercase tracking-[0.4rem] mb-2 font-bold">Network Analysis</h3>
+                                <p class="text-xs font-mono text-white/30 uppercase tracking-widest">Social & Familial Connectivity Mapping</p>
+                            </div>
+                            <div class="flex gap-4 font-mono text-[10px]">
+                                <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-gold shadow-[0_0_5px_gold]"></span> Subject</div>
+                                <div class="flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-white/40"></span> Contact</div>
+                            </div>
+                        </div>
+
+                        <!-- Graph Placeholder -->
+                        <div id="family-graph" class="w-full aspect-16/9 lg:aspect-21/9 min-h-[400px] border border-white/5 bg-black/40 rounded-sm relative overflow-hidden flex items-center justify-center">
+                             <div class="d3-loading flex flex-col items-center gap-4 font-mono text-xs text-gold/40">
+                                 <div class="w-8 h-8 border-2 border-gold/30 border-t-gold animate-spin rounded-full"></div>
+                                 GENERATING TOPOLOGY...
+                             </div>
+                             <div class="d3-empty hidden flex flex-col items-center gap-2 text-white/20 font-mono text-xs">
+                                 <i class="fas fa-network-wired text-4xl mb-4 opacity-10"></i>
+                                 NO CONNECTIVITY RECORDED
+                             </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -505,6 +505,21 @@ html.lenis {
   100% { opacity: 1; }
 }
 
+@keyframes scan {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(100%); }
+}
+
+.loading-cursor {
+    display: inline-block;
+    width: 8px;
+    height: 1.2em;
+    background: #D4AF37;
+    margin-left: 4px;
+    vertical-align: middle;
+    animation: blink 1s step-end infinite;
+}
+
 /* Glitch Text Layering */
 .glitch-text {
   position: relative;

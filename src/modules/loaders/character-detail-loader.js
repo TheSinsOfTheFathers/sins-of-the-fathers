@@ -8,9 +8,27 @@ import { injectSchema, generateCharacterSchema } from '../../lib/seo.js';
 
 
 
+import gsap from 'gsap';
+
 /* --------------------------------------------------------------------------
    HELPER FUNCTIONS (Cognitive Complexity Reduction)
    -------------------------------------------------------------------------- */
+
+/**
+ * Simple Typewriter effect for text
+ */
+const typeWriter = (element, text, speed = 20) => {
+    element.innerHTML = '';
+    let i = 0;
+    const inner = () => {
+        if (i < text.length) {
+            element.innerHTML += text.charAt(i);
+            i++;
+            setTimeout(inner, speed);
+        }
+    };
+    inner();
+};
 
 /**
  * Updates character image with blur hash effect
@@ -55,15 +73,22 @@ const updateTextFields = (els, character) => {
 
     if (els.faction) els.faction.textContent = character.faction?.title || i18next.t('character_detail_page.unknown');
     if (els.location) els.location.textContent = character.origin || (character.faction ? i18next.t('character_detail_page.affiliated_territory') : i18next.t('character_detail_page.unknown'));
-    if (els.role) els.role.textContent = character.role || character.title || 'Operative';
+    const roleText = character.role || character.title || 'Operative';
+    if (els.role) els.role.textContent = roleText;
 
     if (els.bio) {
-        els.bio.innerHTML = DOMPurify.sanitize(character.description
-            ? character.description.split('\n').map(p => `<p>${p}</p>`).join('')
-            : `<p class='text-red-500'>${i18next.t('character_detail_page.bio_error')}</p>`);
+        const bioText = character.description || i18next.t('character_detail_page.bio_error');
+        // Sanitizing and then typewriting
+        const sanitizedBio = DOMPurify.sanitize(bioText);
+        // We use a simplified version for typewriter: no HTML tags inner
+        els.bio.innerHTML = '<span class="loading-cursor"></span>';
+        typeWriter(els.bio, bioText.replace(/<\/?[^>]+(>|$)/g, ""), 5);
     }
 
-    if (els.quote) els.quote.textContent = character.quote ? `"${character.quote}"` : "...";
+    if (els.quote) {
+        const quoteText = character.quote ? `"${character.quote}"` : "...";
+        typeWriter(els.quote, quoteText, 30);
+    }
 };
 
 /**
@@ -218,12 +243,27 @@ const renderCharacterDetails = async (character, container) => {
     updateTextFields(els, character);
 
     /* ------------------------------------------------------
-       2. YÜKLEME EKRANINI KALDIR
+       2. YÜKLEME EKRANINI KALDIR VE ANİMASYONLARI BAŞLAT
     ------------------------------------------------------ */
     setTimeout(() => {
-        if (els.loader) els.loader.classList.add('opacity-0', 'pointer-events-none');
-        if (els.dossier) els.dossier.classList.remove('opacity-0');
-    }, 800);
+        if (els.loader) {
+            gsap.to(els.loader, { opacity: 0, pointerEvents: 'none', duration: 1 });
+        }
+        if (els.dossier) {
+            gsap.to(els.dossier, { 
+                opacity: 1, 
+                y: 0, 
+                duration: 1.5, 
+                ease: "power4.out",
+                onStart: () => {
+                    // Start sub-animations
+                    gsap.from('#char-image', { scale: 1.2, filter: 'blur(20px) grayscale(1)', duration: 2 });
+                    gsap.from('#char-name', { x: -50, opacity: 0, duration: 1, delay: 0.5 });
+                    gsap.from('#char-alias', { x: -30, opacity: 0, duration: 1, delay: 0.8 });
+                }
+            });
+        }
+    }, 1200);
 
     /* ------------------------------------------------------
        3. NETWORK (AİLE AĞACI) - D3 LOGIC
