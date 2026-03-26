@@ -6,7 +6,7 @@ interface Props {
   description?: string;
 }
 
-const { title, description = "Writing notes, decisions, and upcoming books for the Ravenwood & Havi saga." } = Astro.props;
+const { title, description = "Development journal and author notes for the Ravenwood & Havi saga." } = Astro.props;
 const isPostPage = Astro.url.pathname.startsWith('/post/');
 const returnUrl = isPostPage ? '/' : 'https://thesinsofthefathers.com';
 const pageUrl = Astro.url.href;
@@ -86,7 +86,7 @@ const pageUrl = Astro.url.href;
           </div>
 
           <a href={returnUrl} class="flex items-center gap-2 text-[10px] font-mono text-gray-400 hover:text-[#c5a059] border border-white/10 hover:border-[#c5a059]/40 px-4 py-2 transition-all">
-            {isPostPage ? '← Archives' : '← Main Site'}
+            ← Main Site
           </a>
         </div>
       </div>
@@ -111,7 +111,6 @@ const pageUrl = Astro.url.href;
         <div>
           <p class="text-[10px] font-mono text-[#c5a059] uppercase tracking-widest mb-3">Navigation</p>
           <ul class="space-y-2 text-xs text-gray-500 font-mono">
-            <li><a href="/" class="hover:text-white transition-colors">// Archives</a></li>
             <li><a href="/rss.xml" class="hover:text-[#c5a059] transition-colors">// RSS Feed</a></li>
           </ul>
         </div>
@@ -174,13 +173,31 @@ const pageUrl = Astro.url.href;
             localStorage.setItem('blog_uid', user.uid);
             localStorage.setItem('blog_auth_checked', 'true');
           } else {
+            // Check for cross-subdomain sync cookie
+            const hasActiveSession = document.cookie.includes('tsof_session_active=true');
+            
             if (dot) { dot.className = 'w-2 h-2 rounded-full bg-gray-600'; }
             if (label) { 
-              label.textContent = 'Guest'; 
-              label.className = 'text-gray-600 font-mono';
+              if (hasActiveSession) {
+                label.textContent = 'Sync Required';
+                label.className = 'text-gold/50 font-mono animate-pulse';
+              } else {
+                label.textContent = 'Guest'; 
+                label.className = 'text-gray-600 font-mono';
+              }
             }
             if (actions) actions.classList.remove('hidden');
             if (userActions) userActions.classList.add('hidden');
+            
+            // If they are logged in on main site, suggest login here
+            if (hasActiveSession && actions) {
+              const loginBtn = actions.querySelector('a');
+              if (loginBtn) {
+                loginBtn.textContent = 'Sync Vault';
+                loginBtn.classList.add('border-gold', 'text-gold');
+              }
+            }
+
             localStorage.removeItem('blog_uid');
             localStorage.setItem('blog_auth_checked', 'true');
           }

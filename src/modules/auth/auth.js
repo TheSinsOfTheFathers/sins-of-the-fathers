@@ -402,6 +402,18 @@ export function initAuth() {
   onAuthStateChanged(auth, (user) => {
     console.log(" > Auth State Changed:", user ? user.email : "Logged Out"); // DEBUG
 
+    // --- CROSS-SUBDOMAIN SYNC ---
+    try {
+      if (user) {
+        document.cookie = `tsof_session_active=true; domain=.thesinsofthefathers.com; path=/; max-age=31536000; SameSite=Lax; Secure`;
+      } else {
+        document.cookie = `tsof_session_active=; domain=.thesinsofthefathers.com; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+      }
+    } catch (e) {
+      console.warn("Cookie sync failed (likely local environment):", e);
+    }
+    // ----------------------------
+
     const signinLink = document.getElementById("auth-signin-link");
     const guestLocks = document.querySelectorAll(".guest-only, .guest-lock");
 
