@@ -15,11 +15,11 @@ interface Post {
 const client = createClient({
   projectId: "8cfeoaz2", 
   dataset: "production",         
-  useCdn: true,                  
-  apiVersion: "2023-05-03",      
+  useCdn: false,                  
+  apiVersion: "2023-05-03",
 });
 
-const posts: Post[] = await client.fetch(`*[_type == "post"] | order(publishedAt desc) {
+const posts: Post[] = await client.fetch(`*[_type == "post" && defined(slug.current)] | order(publishedAt desc) {
   title,
   slug,
   publishedAt,
@@ -33,7 +33,7 @@ const remainingPosts = posts.slice(1);
 
 function formatDate(dateString: string | null) {
   if (!dateString) return 'Undated';
-  return new Date(dateString).toLocaleDateString('tr-TR', {
+  return new Date(dateString).toLocaleDateString('en-US', {
     year: "numeric",
     month: "long",
     day: "numeric",
@@ -49,21 +49,16 @@ function formatDate(dateString: string | null) {
       <div class="animate-fade-up">
         <div class="flex items-center gap-3 mb-6">
           <span class="status-dot"></span>
-          <span class="hud-badge">YAZIM DEVAM EDİYOR</span>
+          <span class="hud-badge">WRITING IN PROGRESS</span>
         </div>
         <h1 class="font-serif text-5xl md:text-7xl text-white leading-tight tracking-tight mb-4">
           Author's <span class="text-[#c5a059]">Log</span>
         </h1>
         <p class="text-gray-400 text-lg md:text-xl max-w-2xl font-light leading-relaxed mb-8">
-          Ravenwood & Havi Saga'nın perde arkası. Yazım kararları, karakter notları ve okuyucularla paylaşılan gelişmeler.
+          Behind the scenes of the Ravenwood & Havi Saga. Writing decisions, character notes, and updates shared with readers.
         </p>
-        <div class="flex flex-wrap gap-3">
-          <a href="/decisions" class="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-[#c5a059] border border-[#c5a059]/40 px-5 py-2.5 hover:bg-[#c5a059] hover:text-black transition-all">
-            Kararlar & Anketler →
-          </a>
-          <a href="/upcoming-books" class="inline-flex items-center gap-2 text-xs font-mono uppercase tracking-widest text-gray-400 border border-white/10 px-5 py-2.5 hover:border-white/40 hover:text-white transition-all">
-            Gelecek Kitaplar →
-          </a>
+        <div class="flex flex-wrap gap-4 pt-4">
+          <!-- Standalone decisions removed -->
         </div>
       </div>
     </div>
@@ -78,7 +73,7 @@ function formatDate(dateString: string | null) {
     {posts.length === 0 ? (
       <div class="py-32 text-center border border-dashed border-white/10">
         <p class="font-mono text-[#c5a059] text-xl mb-2">DATABASE EMPTY</p>
-        <p class="text-gray-600 text-sm font-mono">İlk yazı henüz eklenmedi.</p>
+        <p class="text-gray-600 text-sm font-mono">The first post has not been added yet.</p>
       </div>
     ) : (
       <>
@@ -87,7 +82,7 @@ function formatDate(dateString: string | null) {
           <section class="mb-20 animate-fade-up-delay-1">
             <div class="flex items-center gap-3 mb-6">
               <span class="gold-line"></span>
-              <span class="text-[10px] font-mono text-[#c5a059] uppercase tracking-[0.3em]">Son Kayıt</span>
+              <span class="text-[10px] font-mono text-[#c5a059] uppercase tracking-[0.3em]">Latest Entry</span>
             </div>
             
             <a href={`/post/${featuredPost.slug.current}`} class="featured-card group block md:flex">
@@ -121,7 +116,7 @@ function formatDate(dateString: string | null) {
                   </p>
                 )}
                 <span class="text-xs font-mono uppercase tracking-widest text-[#c5a059] flex items-center gap-2 group-hover:gap-4 transition-all">
-                  Dosyayı Aç <span>→</span>
+                  Open File <span>→</span>
                 </span>
               </div>
             </a>
@@ -133,7 +128,7 @@ function formatDate(dateString: string | null) {
           <section class="animate-fade-up-delay-2">
             <div class="flex items-center gap-3 mb-8">
               <span class="gold-line"></span>
-              <span class="text-[10px] font-mono text-[#c5a059] uppercase tracking-[0.3em]">Arşiv</span>
+              <span class="text-[10px] font-mono text-[#c5a059] uppercase tracking-[0.3em]">Archives</span>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -169,7 +164,7 @@ function formatDate(dateString: string | null) {
                       </p>
                     )}
                     <a href={`/post/${post.slug.current}`} class="text-[10px] font-mono uppercase tracking-widest text-gray-600 hover:text-[#c5a059] transition-colors flex items-center gap-2 group-hover:gap-3">
-                      Oku <span>→</span>
+                      Read <span>→</span>
                     </a>
                   </div>
                 </article>

@@ -3,6 +3,7 @@ import { createClient } from "@sanity/client";
 import { urlFor } from "../../lib/urlFor";
 import { PortableText } from "astro-portabletext";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import Poll from "../../components/Poll.astro";
 
 interface Post {
   title: string;
@@ -11,6 +12,7 @@ interface Post {
   body: any;
   authorName?: string;
   excerpt?: string;
+  poll?: any;
 }
 
 interface Props {
@@ -21,7 +23,7 @@ export async function getStaticPaths() {
   const client = createClient({
     projectId: "8cfeoaz2", 
     dataset: "production",
-    useCdn: true,
+    useCdn: false,
     apiVersion: "2023-05-03",
   });
 
@@ -32,7 +34,14 @@ export async function getStaticPaths() {
     mainImage,
     body,
     authorName,
-    excerpt
+    excerpt,
+    poll->{
+      pollId,
+      question,
+      options,
+      context,
+      title
+    }
   }`);
 
   return posts.map((post: Post) => ({
@@ -104,9 +113,21 @@ function formatDate(dateString: string) {
       </p>
     )}
 
-    <article class="prose-dark">
+    <article class="prose-dark mb-16">
       <PortableText value={post.body} />
     </article>
+ 
+    {post.poll && (
+      <div class="mb-16">
+        <Poll 
+          pollId={post.poll.pollId.current} 
+          question={post.poll.question} 
+          options={post.poll.options} 
+          context={post.poll.context}
+          title={post.poll.title}
+        />
+      </div>
+    )}
 
     <!-- Author Card -->
     <div class="mt-16 pt-8 border-t border-white/5 flex items-center gap-5">
@@ -114,7 +135,7 @@ function formatDate(dateString: string) {
         {(post.authorName || 'A')[0].toUpperCase()}
       </div>
       <div>
-        <p class="text-[10px] text-gray-600 font-mono uppercase tracking-widest mb-1">RAPORU HAZIRLAYAN</p>
+        <p class="text-[10px] text-gray-600 font-mono uppercase tracking-widest mb-1">REPORT PREPARED BY</p>
         <p class="text-white font-serif tracking-wide">{post.authorName || 'Unknown Agent'}</p>
       </div>
     </div>
@@ -122,7 +143,7 @@ function formatDate(dateString: string) {
     <!-- Back Link -->
     <div class="mt-12 text-center">
       <a href="/" class="text-xs font-mono uppercase tracking-widest text-gray-600 hover:text-[#c5a059] border border-white/5 hover:border-[#c5a059]/30 px-8 py-3 transition-all inline-block">
-        ← Arşive Dön
+        ← Return to Archives
       </a>
     </div>
     

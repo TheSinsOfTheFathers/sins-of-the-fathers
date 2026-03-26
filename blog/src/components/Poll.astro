@@ -9,18 +9,22 @@ interface Props {
   pollId: string;
   question: string;
   options: string[];
+  title?: string;
+  context?: string;
 }
 
-const { pollId, question, options } = Astro.props;
+const { pollId, question, options, title, context } = Astro.props;
 ---
 
 <div class="poll-card p-6 md:p-8" data-poll-id={pollId}>
   
   <div class="flex items-center gap-3 mb-5">
-    <span class="hud-badge">OKUYUCU ANKETİ</span>
-    <span id={`poll-status-${pollId}`} class="text-[10px] font-mono text-gray-600">Yükleniyor...</span>
+    <span class="hud-badge">READER POLL</span>
+    <span id={`poll-status-${pollId}`} class="text-[10px] font-mono text-gray-600">Loading...</span>
   </div>
 
+  {title && <h3 class="font-serif text-2xl text-[#c5a059] mb-2 leading-tight uppercase tracking-wide">{title}</h3>}
+  {context && <p class="text-gray-400 text-sm mb-6 font-light leading-relaxed italic">{context}</p>}
   <p class="font-serif text-xl text-white mb-6 leading-snug">{question}</p>
 
   <div id={`poll-options-${pollId}`} class="space-y-3">
@@ -86,8 +90,8 @@ document.querySelectorAll('[data-poll-id]').forEach(async (pollEl) => {
   const getVoteKey = () => `poll_voted_${pollId}`;
 
   const getUserId = (): string | null => {
-    // Prefer Firebase UID, fallback to anonymous localStorage ID
-    return sessionStorage.getItem('blog_uid') || localStorage.getItem('anon_uid');
+    // Prefer Firebase UID (synced via localStorage in BaseLayout), fallback to anonymous localStorage ID
+    return localStorage.getItem('blog_uid') || localStorage.getItem('anon_uid');
   };
 
   // Create anonymous ID if needed
@@ -133,11 +137,11 @@ document.querySelectorAll('[data-poll-id]').forEach(async (pollEl) => {
     if (statusEl) {
       const uid = getUserId();
       statusEl.textContent = voted
-        ? '✓ Oy verildi'
-        : (uid?.startsWith('anon_') ? 'Anonim' : 'Bağlı');
+        ? '✓ Voted'
+        : (uid?.startsWith('anon_') ? 'Anonymous' : 'Linked');
     }
     if (totalEl) {
-      totalEl.textContent = total > 0 ? `${total} toplam oy` : '';
+      totalEl.textContent = total > 0 ? `${total} total votes` : '';
     }
   };
 

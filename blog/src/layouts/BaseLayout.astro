@@ -6,14 +6,14 @@ interface Props {
   description?: string;
 }
 
-const { title, description = "Ravenwood & Havi saga için yazım notları, kararlar ve gelecek kitaplar." } = Astro.props;
+const { title, description = "Writing notes, decisions, and upcoming books for the Ravenwood & Havi saga." } = Astro.props;
 const isPostPage = Astro.url.pathname.startsWith('/post/');
 const returnUrl = isPostPage ? '/' : 'https://thesinsofthefathers.com';
 const pageUrl = Astro.url.href;
 ---
 
 <!doctype html>
-<html lang="tr">
+<html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -66,20 +66,20 @@ const pageUrl = Astro.url.href;
           <a href="/" class="h-full flex items-center px-5 text-gray-500 hover:text-white hover:bg-white/5 transition-all border-r border-white/5 py-4">
             Archives
           </a>
-          <a href="/decisions" class="h-full flex items-center px-5 text-gray-500 hover:text-white hover:bg-white/5 transition-all border-r border-white/5 py-4">
-            Kararlar
-          </a>
-          <a href="/upcoming-books" class="h-full flex items-center px-5 text-gray-500 hover:text-white hover:bg-white/5 transition-all border-r border-white/5 py-4">
-            Kitaplar
-          </a>
+          <!-- No standalone decisions page -->
         </nav>
 
         <!-- Right side: Return + Auth Status -->
         <div class="flex items-center gap-3">
           <!-- Auth Status (populated by client JS) -->
-          <div id="blog-auth-status" class="hidden md:flex items-center gap-2 text-[10px] font-mono text-gray-600">
-            <span class="w-2 h-2 rounded-full bg-gray-700"></span>
-            <span>Checking...</span>
+          <div id="blog-auth-status" class="hidden md:flex items-center gap-3">
+            <div class="flex items-center gap-2 text-[10px] font-mono text-gray-600">
+              <span class="w-2 h-2 rounded-full bg-gray-700"></span>
+              <span id="auth-label">Checking...</span>
+            </div>
+            <div id="auth-actions" class="hidden">
+              <a href="https://thesinsofthefathers.com/pages/login.html" class="text-[9px] font-mono text-[#c5a059] border border-[#c5a059]/30 px-2 py-1 hover:bg-[#c5a059]/10 transition-all uppercase tracking-widest">Sign In</a>
+            </div>
           </div>
 
           <a href={returnUrl} class="flex items-center gap-2 text-[10px] font-mono text-gray-400 hover:text-[#c5a059] border border-white/10 hover:border-[#c5a059]/40 px-4 py-2 transition-all">
@@ -101,7 +101,7 @@ const pageUrl = Astro.url.href;
         <div>
           <p class="font-serif text-white text-sm mb-2 tracking-widest uppercase">TSOF — Author's Log</p>
           <p class="text-xs text-gray-600 font-light leading-relaxed">
-            Ravenwood & Havi saga'nın perde arkası. Yazım kararları, karakter notları ve güncel gelişmeler.
+            Behind the scenes of the Ravenwood & Havi saga. Writing decisions, character notes, and latest updates.
           </p>
         </div>
 
@@ -109,8 +109,7 @@ const pageUrl = Astro.url.href;
           <p class="text-[10px] font-mono text-[#c5a059] uppercase tracking-widest mb-3">Navigation</p>
           <ul class="space-y-2 text-xs text-gray-500 font-mono">
             <li><a href="/" class="hover:text-white transition-colors">// Archives</a></li>
-            <li><a href="/decisions" class="hover:text-white transition-colors">// Kararlar</a></li>
-            <li><a href="/upcoming-books" class="hover:text-white transition-colors">// Kitaplar</a></li>
+            <li><a href="/" class="hover:text-white transition-colors">// Archives</a></li>
             <li><a href="/rss.xml" class="hover:text-[#c5a059] transition-colors">// RSS Feed</a></li>
           </ul>
         </div>
@@ -133,8 +132,13 @@ const pageUrl = Astro.url.href;
 
     <!-- Auth State Sync -->
     <script>
-      import { initializeApp, getApps } from 'firebase/app';
-      import { getAuth, onAuthStateChanged } from 'firebase/auth';
+      import { 
+        getAuth, 
+        onAuthStateChanged, 
+        setPersistence, 
+        browserLocalPersistence 
+      } from "firebase/auth";
+      import { getApps, initializeApp } from "firebase/app";
 
       const firebaseConfig = {
         apiKey: "AIzaSyB7Xa5tZYVenPEkkjB0KVJDkoV7pQ7_QcQ",
@@ -150,29 +154,45 @@ const pageUrl = Astro.url.href;
 
       const statusEl = document.getElementById('blog-auth-status');
 
-      onAuthStateChanged(auth, (user) => {
-        if (!statusEl) return;
-        statusEl.classList.remove('hidden');
-        statusEl.classList.add('flex');
-
-        if (user) {
-          const dot = statusEl.querySelector('span:first-child');
-          const label = statusEl.querySelector('span:last-child');
-          if (dot) { dot.className = 'w-2 h-2 rounded-full bg-green-500'; }
-          if (label) {
-            label.textContent = user.displayName || user.email || 'Connected';
-            label.className = 'text-green-400/70';
-          }
-          // Store UID for poll voting
-          sessionStorage.setItem('blog_uid', user.uid);
-        } else {
-          const dot = statusEl.querySelector('span:first-child');
-          const label = statusEl.querySelector('span:last-child');
-          if (dot) { dot.className = 'w-2 h-2 rounded-full bg-gray-600'; }
-          if (label) { label.textContent = 'Guest'; }
-          sessionStorage.removeItem('blog_uid');
+      // Set persistence and then handle auth state
+      (async () => {
+        try {
+          await setPersistence(auth, browserLocalPersistence);
+          console.log(" > Auth: Persistence set to LOCAL.");
+        } catch (e) {
+          console.error(" > Auth: Persistence error:", e);
         }
-      });
+
+        onAuthStateChanged(auth, (user) => {
+          if (!statusEl) return;
+          statusEl.classList.remove('hidden');
+          statusEl.classList.add('flex');
+
+          const dot = statusEl.querySelector('.rounded-full');
+          const label = document.getElementById('auth-label');
+          const actions = document.getElementById('auth-actions');
+
+          if (user) {
+            if (dot) { dot.className = 'w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]'; }
+            if (label) {
+              label.textContent = user.displayName || user.email || 'Connected';
+              label.className = 'text-green-400/70 font-mono';
+            }
+            if (actions) actions.classList.add('hidden');
+            localStorage.setItem('blog_uid', user.uid);
+            localStorage.setItem('blog_auth_checked', 'true');
+          } else {
+            if (dot) { dot.className = 'w-2 h-2 rounded-full bg-gray-600'; }
+            if (label) { 
+              label.textContent = 'Guest'; 
+              label.className = 'text-gray-600 font-mono';
+            }
+            if (actions) actions.classList.remove('hidden');
+            localStorage.removeItem('blog_uid');
+            localStorage.setItem('blog_auth_checked', 'true');
+          }
+        });
+      })();
     </script>
 
   </body>
