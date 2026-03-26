@@ -9,7 +9,6 @@ service cloud.firestore {
     }
     
     function isAdmin() {
-      // Admin kullanıcıların custom claim'lerinde 'admin: true' olduğunu varsayar
       return isSignedIn() && request.auth.token.admin == true;
     }
     
@@ -39,15 +38,11 @@ service cloud.firestore {
       allow write: if isAdmin();
     }
     
-    // --- Aboneler Koleksiyonu ---
-    // Herkesin yeni doküman oluşturmasına izin ver (abonelik formu için),
-    // ancak kimsenin okumasına, güncellemesine veya silmesine izin verme.
     match /subscribers/{subscriberId} {
       allow read, update, delete: if false;
       allow create: if true;
     }
     
-    // --- Kullanıcı ve Admin Koleksiyonları ---
     match /users/{userId} {
       allow read, write: if isSignedIn() && request.auth.uid == userId; 
     }
@@ -62,13 +57,10 @@ service cloud.firestore {
     }
 
     // --- Blog Poll Koleksiyonu ---
-    // Okuma: Herkese açık
-    // Oy verme: Giriş yapmış kullanıcılar (increment ile güncelleme)
-    // Yönetim: Sadece admin
     match /polls/{pollId} {
       allow read: if true;
-      allow create: if isAdmin();
-      allow update: if isSignedIn() || true; // Allow anonymous votes too
+      allow create: if true; // Allow anyone to initialize a poll (required for zero-admin setup)
+      allow update: if true; // Allow votes
       allow delete: if isAdmin();
     }
   }

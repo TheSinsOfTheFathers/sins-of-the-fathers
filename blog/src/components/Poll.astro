@@ -48,22 +48,9 @@ const { pollId, question, options, title, context } = Astro.props;
 </div>
 
 <script>
-import { initializeApp, getApps } from 'firebase/app';
-import { getFirestore, doc, getDoc, setDoc, updateDoc, increment, onSnapshot } from 'firebase/firestore';
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
-
-const firebaseConfig = {
-  apiKey: "AIzaSyB7Xa5tZYVenPEkkjB0KVJDkoV7pQ7_QcQ",
-  authDomain: "sins-of-the-fathers.firebaseapp.com",
-  projectId: "sins-of-the-fathers",
-  storageBucket: "sins-of-the-fathers.firebasestorage.app",
-  messagingSenderId: "287213062167",
-  appId: "1:287213062167:web:1f863b4e96641570f5b452",
-};
-
-const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
-const db = getFirestore(app);
-const auth = getAuth(app);
+import { db, auth } from '../lib/firebase';
+import { doc, getDoc, setDoc, updateDoc, increment, onSnapshot } from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
 
 // Initialize all polls on the page
 document.querySelectorAll('[data-poll-id]').forEach(async (pollEl) => {
