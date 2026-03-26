@@ -1,0 +1,102 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+---
+
+<BaseLayout title="Central Access | TSOF Blog">
+  <div class="min-h-[70vh] flex items-center justify-center px-6">
+    <div class="max-w-md w-full animate-fade-up">
+      <div class="text-center mb-12">
+        <div class="inline-block p-3 rounded-sm bg-[#c5a059]/10 border border-[#c5a059]/20 mb-6">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#c5a059" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+        <h1 class="font-serif text-3xl text-white mb-3 tracking-tight">Central Access</h1>
+        <p class="text-gray-500 text-sm font-mono uppercase tracking-[0.2em]">Sins of the Fathers Identity Service</p>
+      </div>
+
+      <div class="bg-[#070707] border border-white/5 p-8 md:p-10 shadow-2xl relative">
+        <div class="absolute top-0 left-0 w-1 h-full bg-[#c5a059]/40"></div>
+        
+        <div id="login-container" class="space-y-6">
+          <p class="text-gray-400 text-sm leading-relaxed mb-8 font-light">
+            Please sign in to participate in reader decisions and access restricted archive materials.
+          </p>
+
+          <button id="google-login-btn" class="w-full flex items-center justify-center gap-3 bg-white text-black py-3 px-4 rounded-sm font-mono text-xs uppercase tracking-widest hover:bg-gray-200 transition-all">
+            <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.707c-.18-.54-.282-1.114-.282-1.707s.102-1.167.282-1.707V4.961H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.039l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.582C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.961L3.964 7.294C4.672 5.167 6.656 3.58 9 3.58z"/></svg>
+            Sign in with Google
+          </button>
+
+          <div class="relative py-4">
+            <div class="absolute inset-0 flex items-center"><span class="w-full border-t border-white/5"></span></div>
+            <div class="relative flex justify-center text-[10px] font-mono uppercase tracking-widest"><span class="bg-[#070707] px-4 text-gray-700">or use main site</span></div>
+          </div>
+
+          <a href="https://thesinsofthefathers.com/pages/login.html" class="w-full block text-center border border-white/10 text-gray-400 py-3 px-4 rounded-sm font-mono text-xs uppercase tracking-widest hover:border-[#c5a059]/40 hover:text-white transition-all">
+            Go to Main Terminal
+          </a>
+        </div>
+
+        <div id="success-container" class="hidden text-center py-4">
+          <div class="text-green-500 mb-4 flex justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <h2 class="text-white text-xl mb-2 font-serif">Access Granted</h2>
+          <p class="text-gray-500 text-sm font-mono mb-6">Synchronization complete. Redirecting...</p>
+        </div>
+      </div>
+
+      <div class="mt-8 text-center text-[10px] font-mono text-gray-700 uppercase tracking-widest">
+        Secure Handshake Required // TSOF-AUTH-v2
+      </div>
+    </div>
+  </div>
+
+  <script>
+    import { initializeApp, getApps } from 'firebase/app';
+    import { getAuth, GoogleAuthProvider, signInWithPopup, setPersistence, browserLocalPersistence } from 'firebase/auth';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB7Xa5tZYVenPEkkjB0KVJDkoV7pQ7_QcQ",
+      authDomain: "sins-of-the-fathers.firebaseapp.com",
+      projectId: "sins-of-the-fathers",
+      storageBucket: "sins-of-the-fathers.firebasestorage.app",
+      messagingSenderId: "287213062167",
+      appId: "1:287213062167:web:1f863b4e96641570f5b452",
+    };
+
+    const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+
+    const googleBtn = document.getElementById('google-login-btn');
+    const loginContainer = document.getElementById('login-container');
+    const successContainer = document.getElementById('success-container');
+
+    googleBtn?.addEventListener('click', async () => {
+      try {
+        await setPersistence(auth, browserLocalPersistence);
+        const result = await signInWithPopup(auth, provider);
+        const user = result.user;
+        
+        // Save to local storage for quick sync in layouts
+        localStorage.setItem('blog_uid', user.uid);
+        localStorage.setItem('blog_auth_checked', 'true');
+
+        // Show success and redirect
+        loginContainer?.classList.add('hidden');
+        successContainer?.classList.remove('hidden');
+
+        setTimeout(() => {
+          const urlParams = new URLSearchParams(window.location.search);
+          const redirect = urlParams.get('redirect') || '/';
+          window.location.href = redirect;
+        }, 1500);
+
+      } catch (error) {
+        console.error("Login failed:", error);
+        alert("Authentication failed. Please try again.");
+      }
+    });
+  </script>
+</BaseLayout>

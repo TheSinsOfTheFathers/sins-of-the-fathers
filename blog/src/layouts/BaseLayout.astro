@@ -77,8 +77,11 @@ const pageUrl = Astro.url.href;
               <span class="w-2 h-2 rounded-full bg-gray-700"></span>
               <span id="auth-label">Checking...</span>
             </div>
-            <div id="auth-actions" class="hidden">
-              <a href="https://thesinsofthefathers.com/pages/login.html" class="text-[9px] font-mono text-[#c5a059] border border-[#c5a059]/30 px-2 py-1 hover:bg-[#c5a059]/10 transition-all uppercase tracking-widest">Sign In</a>
+            <div id="auth-actions" class="hidden flex items-center gap-2">
+              <a href="/login" class="text-[9px] font-mono text-[#c5a059] border border-[#c5a059]/30 px-2 py-1 hover:bg-[#c5a059]/10 transition-all uppercase tracking-widest">Sign In</a>
+            </div>
+            <div id="auth-user-actions" class="hidden flex items-center gap-2">
+              <button id="logout-btn" class="text-[9px] font-mono text-gray-500 hover:text-white transition-all uppercase tracking-widest">Logout</button>
             </div>
           </div>
 
@@ -108,7 +111,6 @@ const pageUrl = Astro.url.href;
         <div>
           <p class="text-[10px] font-mono text-[#c5a059] uppercase tracking-widest mb-3">Navigation</p>
           <ul class="space-y-2 text-xs text-gray-500 font-mono">
-            <li><a href="/" class="hover:text-white transition-colors">// Archives</a></li>
             <li><a href="/" class="hover:text-white transition-colors">// Archives</a></li>
             <li><a href="/rss.xml" class="hover:text-[#c5a059] transition-colors">// RSS Feed</a></li>
           </ul>
@@ -171,6 +173,7 @@ const pageUrl = Astro.url.href;
           const dot = statusEl.querySelector('.rounded-full');
           const label = document.getElementById('auth-label');
           const actions = document.getElementById('auth-actions');
+          const userActions = document.getElementById('auth-user-actions');
 
           if (user) {
             if (dot) { dot.className = 'w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]'; }
@@ -179,6 +182,7 @@ const pageUrl = Astro.url.href;
               label.className = 'text-green-400/70 font-mono';
             }
             if (actions) actions.classList.add('hidden');
+            if (userActions) userActions.classList.remove('hidden');
             localStorage.setItem('blog_uid', user.uid);
             localStorage.setItem('blog_auth_checked', 'true');
           } else {
@@ -188,9 +192,19 @@ const pageUrl = Astro.url.href;
               label.className = 'text-gray-600 font-mono';
             }
             if (actions) actions.classList.remove('hidden');
+            if (userActions) userActions.classList.add('hidden');
             localStorage.removeItem('blog_uid');
             localStorage.setItem('blog_auth_checked', 'true');
           }
+        });
+
+        // Logout listener
+        document.getElementById('logout-btn')?.addEventListener('click', async () => {
+          const { getAuth, signOut } = await import('firebase/auth');
+          const auth = getAuth();
+          await signOut(auth);
+          localStorage.removeItem('blog_uid');
+          window.location.reload();
         });
       })();
     </script>

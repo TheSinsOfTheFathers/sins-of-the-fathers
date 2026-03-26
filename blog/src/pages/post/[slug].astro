@@ -54,11 +54,15 @@ const { post } = Astro.props as Props;
 
 function formatDate(dateString: string) {
   if (!dateString) return 'Undated';
-  return new Date(dateString).toLocaleDateString('tr-TR', { 
+  return new Date(dateString).toLocaleDateString('en-US', { 
     year: "numeric", month: "long", day: "numeric"
   });
 }
 ---
+
+<script define:vars={{ pollData: post.poll }}>
+  console.log('TSOF Debug - Poll Data:', pollData);
+</script>
 
 <BaseLayout title={post.title} description={post.excerpt || post.title}>
   
