@@ -155,16 +155,27 @@
     </section>
 
     <!-- THE TIMELINE CONTAINER -->
-    <section id="timeline-wrapper" class="w-full min-h-screen border-t border-b border-white/10 relative overflow-hidden" data-module="timeline-loader.js">
+    <section id="timeline-wrapper" class="w-full min-h-[500vh] border-t border-b border-white/10 relative" data-module="timeline-loader.js">
         
         <!-- Loading State -->
-        <div id="timeline-loading" class="absolute inset-0 flex flex-col items-center justify-center bg-obsidian z-20">
+        <div id="timeline-loading" class="fixed inset-0 flex flex-col items-center justify-center bg-obsidian z-[60]">
             <div class="loading-ring mb-4"></div>
             <p class="font-mono text-gold text-sm uppercase tracking-widest animate-pulse" data-i18n="timeline_page.loader_text">Synchronizing Chronology...</p>
         </div>
 
-        <!-- The Embed Div (Targeted by JS) -->
-        <div id="timeline-embed" style="width: 100%; height: 100%;"></div>
+        <!-- The Chrono-Stream Axis (Sticky) -->
+        <div id="timeline-axis" class="fixed top-1/2 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-gold/30 to-transparent z-10 pointer-events-none transform -translate-y-1/2 opacity-0 transition-opacity duration-1000">
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-gold rounded-full blur-[4px] opacity-50 shadow-[0_0_15px_rgba(197,160,89,0.8)]"></div>
+            <!-- Tactical scanline -->
+            <div class="timeline-scanline absolute top-0 left-0 w-[200px] h-full bg-gradient-to-r from-transparent via-gold to-transparent opacity-20"></div>
+        </div>
+
+        <!-- Horizontal Scroll Container -->
+        <div id="timeline-pin-container" class="sticky top-0 h-screen overflow-hidden flex items-center">
+            <div id="timeline-embed" class="flex flex-nowrap items-center px-[20vw] relative h-full">
+                <!-- Content injected by timeline-loader.js -->
+            </div>
+        </div>
     </section>
     
     <footer aria-label="Site footer" class="py-12 bg-obsidian border-t border-white/5 text-center relative z-10">

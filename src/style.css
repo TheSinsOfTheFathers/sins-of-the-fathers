@@ -1117,3 +1117,116 @@ input:-webkit-autofill:active {
         font-size: 3vw;
     }
 }
+/* =========================================
+   Timeline Page: Chrono-Stream
+   ========================================= */
+
+#timeline-wrapper {
+  background: radial-gradient(circle at center, rgba(197, 160, 89, 0.03) 0%, transparent 70%);
+}
+
+#timeline-axis {
+    display: flex;
+    align-items: center;
+}
+
+.timeline-scanline {
+    height: 100%;
+    z-index: 11;
+}
+
+.chrono-event {
+    transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), 
+                filter 0.8s ease, 
+                opacity 0.8s ease,
+                scale 0.8s ease;
+    will-change: transform, opacity, filter, scale;
+    scale: 0.8;
+}
+
+.chrono-event.is-active {
+    z-index: 50;
+    opacity: 1 !important;
+    filter: blur(0px) !important;
+    scale: 1.1;
+}
+
+.chrono-event.is-active img {
+    filter: grayscale(0) !important;
+}
+
+.chrono-event.is-active > div:first-child {
+    opacity: 1 !important;
+    height: 32px;
+}
+
+.era-title {
+    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.05);
+    text-shadow: 0 0 40px rgba(0,0,0,0.5);
+    font-family: 'Cinzel', serif;
+}
+
+.chrono-media img {
+    mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+}
+
+/* Mobile Fallback: Vertical Stack */
+@media (max-width: 1024px) {
+    #timeline-wrapper {
+        min-height: auto !important;
+        height: auto !important;
+    }
+    #timeline-pin-container {
+        position: relative !important;
+        height: auto !important;
+        overflow: visible !important;
+        display: block !important;
+    }
+    #timeline-embed {
+        flex-direction: column !important;
+        padding: 4rem 1.5rem !important;
+        transform: none !important;
+        display: flex !important;
+        height: auto !important;
+    }
+    .chrono-event {
+        width: 100% !important;
+        transform: translate(0, 0) !important;
+        margin-bottom: 6rem;
+        opacity: 1 !important;
+        filter: none !important;
+        scale: 1 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+    }
+    .chrono-event::before {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: -3rem;
+        width: 1px;
+        height: 3rem;
+        background: var(--theme-color);
+        opacity: 0.3;
+    }
+    #timeline-axis {
+        display: none !important;
+    }
+    .era-bg-container {
+        width: 100% !important;
+        text-align: center;
+        margin-bottom: 4rem;
+        position: relative !important;
+        height: auto !important;
+    }
+    .era-title {
+        font-size: 15vw !important;
+        color: var(--theme-color) !important;
+        opacity: 0.2 !important;
+        -webkit-text-stroke: 0 !important;
+    }
+    .era-section {
+        flex-direction: column !important;
+        width: 100% !important;
+    }
+}

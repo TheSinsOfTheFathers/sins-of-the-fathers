@@ -1,16 +1,20 @@
 import { client, urlFor } from "../../lib/sanityClient.js";
 import i18next from "../../lib/i18n.js";
 import { injectSchema } from "../../lib/seo.js";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 /* --------------------------------------------------------------------------
-   RENDER LOGIC (Vertical Timeline)
+   RENDER LOGIC (Horizontal Chrono-Stream)
    -------------------------------------------------------------------------- */
 
-const renderEventCard = (evt, index, groupName) => {
-    // Advanced staggered grid approach for the new design
+const renderEventCard = (evt, index) => {
+    // Stagger items above and below the line
     const isEven = index % 2 === 0;
-    const animClass = "fade-up-stagger";
-
+    const yOffset = isEven ? '-40%' : '40%';
+    
     // Date formatting
     let dateDisplay = evt.date || "Unknown Date";
     if (evt.date) {
@@ -32,27 +36,26 @@ const renderEventCard = (evt, index, groupName) => {
     }
 
     const imageHtml = imageUrl 
-        ? `<div class="timeline-media relative overflow-hidden h-48 md:h-64 mb-6">
-             <div class="absolute inset-0 bg-obsidian/40 z-10 hover:bg-transparent transition-all duration-500"></div>
-             <img src="${imageUrl}" alt="${evt.title_en || 'Event Image'}" class="w-full h-full object-cover transform transition-transform duration-1000 hover:scale-110 grayscale hover:grayscale-0" loading="lazy">
-             <div class="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-obsidian to-transparent z-10"></div>
+        ? `<div class="chrono-media relative overflow-hidden h-32 md:h-48 mb-4 border border-white/10 group-hover:border-gold/50 transition-colors duration-500">
+             <img src="${imageUrl}" alt="${evt.title_en || 'Event'}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transform transition-transform duration-1000 group-hover:scale-110" loading="lazy">
+             <div class="absolute inset-0 bg-obsidian/40 mix-blend-multiply group-hover:bg-transparent transition-all"></div>
            </div>` 
         : "";
 
     const linkUrl = evt.slug ? `event.html?slug=${evt.slug}` : "#";
-    const cursorClass = evt.slug ? "cursor-pointer" : "cursor-default";
 
     return `
-        <div class="timeline-event-card relative group ${animClass} col-span-1 border border-white/5 bg-obsidian/30 p-1 hover:border-gold/30 transition-all duration-500 hover:-translate-y-2">
-            <a href="${linkUrl}" class="block h-full bg-white/5 p-6 md:p-8 backdrop-blur-sm relative z-20 ${cursorClass} text-decoration-none border-t-2 border-transparent hover:border-gold/80 transition-all duration-300">
-                
-                <!-- Accents -->
-                <div class="absolute top-0 right-0 w-8 h-8 border-t border-r border-gold/40 m-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div class="absolute bottom-0 left-0 w-8 h-8 border-b border-l border-gold/40 m-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        <div class="chrono-event relative flex-shrink-0 w-[400px] md:w-[600px] px-12 group" style="transform: translateY(${yOffset})">
+            <!-- Connection Line to Axis -->
+            <div class="absolute ${isEven ? 'bottom-0' : 'top-0'} left-1/2 -translate-x-1/2 w-px h-24 bg-gradient-to-${isEven ? 't' : 'b'} from-gold/50 to-transparent opacity-30 group-hover:opacity-100 transition-opacity"></div>
+            
+            <a href="${linkUrl}" class="block bg-obsidian/60 backdrop-blur-md border border-white/5 p-8 hover:border-gold/40 transition-all duration-500 relative group/card">
+                <!-- Tactical Corner Accents -->
+                <div class="absolute top-0 right-0 w-6 h-6 border-t border-r border-gold/20 m-2 group-hover/card:border-gold/60 transition-colors"></div>
+                <div class="absolute bottom-0 left-0 w-6 h-6 border-b border-l border-gold/20 m-2 group-hover/card:border-gold/60 transition-colors"></div>
 
-                <!-- Date Badge -->
-                <div class="flex items-center gap-4 mb-6">
-                    <span class="text-gold font-mono text-xs xl:text-sm tracking-[0.2em] uppercase bg-black/50 px-3 py-1 border-l border-gold">
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="text-gold font-mono text-[10px] tracking-widest uppercase border-l-2 border-gold pl-2">
                         ${dateDisplay}
                     </span>
                     <div class="h-px bg-white/10 flex-grow"></div>
@@ -60,119 +63,132 @@ const renderEventCard = (evt, index, groupName) => {
 
                 ${imageHtml}
 
-                <h3 class="text-xl md:text-2xl font-serif text-gray-200 mb-4 uppercase tracking-wider group-hover:text-white transition-colors leading-tight">
+                <h3 class="text-xl md:text-2xl font-serif text-white uppercase tracking-wider mb-3 leading-tight group-hover/card:text-gold transition-colors">
                     ${evt.title_en || i18next.t("timeline_loader.untitled_event")}
                 </h3>
                 
-                <div class="text-gray-400 font-lato text-sm leading-relaxed wysiwyg-content line-clamp-4">
+                <div class="text-gray-400 font-lato text-sm leading-relaxed line-clamp-3">
                     ${evt.text_en || ""}
                 </div>
 
-                <div class="mt-8 flex justify-end">
-                    <span class="text-gold uppercase tracking-widest text-[10px] font-mono group-hover:tracking-[0.3em] transition-all duration-300">Details <i class="fas fa-arrow-right ml-1"></i></span>
+                <div class="mt-6 flex justify-between items-center">
+                    <span class="text-[8px] font-mono text-gray-600 tracking-[3px] uppercase">ID: ${index.toString().padStart(4, '0')}</span>
+                    <span class="text-gold text-[10px] font-mono tracking-widest opacity-0 group-hover/card:opacity-100 transition-opacity">
+                        INTEL <i class="fas fa-chevron-right ml-1"></i>
+                    </span>
                 </div>
             </a>
         </div>
     `;
 };
 
-const renderEraHeader = (eraTitle) => {
+const renderEraBackground = (eraTitle) => {
     return `
-        <div class="timeline-era-header col-span-1 md:col-span-2 lg:col-span-3 mt-16 md:mt-32 mb-12 relative z-10 flex items-center justify-center">
-            <div class="h-px bg-white/10 flex-grow max-w-xs md:max-w-md hidden md:block"></div>
-            <span class="mx-6 px-8 py-4 bg-obsidian/80 backdrop-blur-sm border border-gold text-2xl md:text-4xl font-serif text-white uppercase tracking-[0.3em] shadow-[0_0_30px_rgba(197,160,89,0.15)] flex flex-col items-center">
-                <span class="text-gold/50 text-xs font-mono tracking-widest mb-2 block">— ERA RECONSTRUCTED —</span>
+        <div class="era-bg-container flex-shrink-0 relative pointer-events-none select-none">
+            <h2 class="era-title whitespace-nowrap text-[20vh] md:text-[35vh] font-serif font-bold text-white/[0.02] uppercase tracking-[0.2em] leading-none">
                 ${eraTitle}
-            </span>
-            <div class="h-px bg-white/10 flex-grow max-w-xs md:max-w-md hidden md:block"></div>
+            </h2>
+            <div class="absolute inset-0 flex items-center justify-center">
+                <div class="w-px h-[60vh] bg-white/[0.05]"></div>
+            </div>
         </div>
     `;
 };
 
-const buildVerticalTimeline = (eras, container) => {
-    // Using a CSS grid approach instead of the vertical snake line for a premium editorial layout
-    let html = `<div class="modern-timeline-grid max-w-7xl mx-auto py-12 px-4 md:px-8 relative z-20">`;
-    html += `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 relative">`;
-
+const buildHorizontalTimeline = (eras, container) => {
+    let html = '';
     let globalIndex = 0;
 
     eras.forEach((era) => {
         const eraTitle = era.title_en || i18next.t("timeline_loader.unknown_era");
-        html += renderEraHeader(eraTitle);
+        
+        // Start Era Section
+        html += `<div class="era-section flex items-center relative gap-0">`;
+        
+        // Era Background Label
+        html += renderEraBackground(eraTitle);
 
         if (era.events && Array.isArray(era.events)) {
             era.events.forEach((evt) => {
-                html += renderEventCard(evt, globalIndex, eraTitle);
+                html += renderEventCard(evt, globalIndex);
                 globalIndex++;
             });
         }
+        
+        html += `</div>`; // End Era Section
     });
-
-    html += `</div></div>`;
-    
-    // Premium ambient background instead of heavy text watermark
-    html += `
-        <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-            <div class="absolute top-[10%] right-[5%] w-[600px] h-[600px] bg-gold/5 rounded-full blur-[120px] mix-blend-screen opacity-40"></div>
-            <div class="absolute bottom-[20%] left-[5%] w-[800px] h-[800px] bg-gold/5 rounded-full blur-[150px] mix-blend-screen opacity-20"></div>
-            <!-- Vintage film lines effect -->
-            <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSJ0cmFuc3BhcmVudCI+PC9yZWN0Pgo8cGF0aCBkPSJNMCA0TDRgMCIgc3Ryb2tlPSJyZ2JhKDE5NywgMTYwLCA4OSwgMC4wNSkiIHN0cm9rZS13aWR0aD0iMSI+PC9wYXRoPgo8L3N2Zz4=')] opacity-30 mix-blend-overlay"></div>
-        </div>
-    `;
 
     container.innerHTML = html;
 
+    // Reveal Axis
+    const axis = document.getElementById('timeline-axis');
+    if (axis) axis.style.opacity = '1';
+
     // Initialize Animations
-    initScrollAnimations();
+    initChronoAnimations();
 };
 
 /* --------------------------------------------------------------------------
-   ANIMATION LOGIC (GSAP)
+   ANIMATION LOGIC (GSAP Horizontal Scroll)
    -------------------------------------------------------------------------- */
-const initScrollAnimations = () => {
+const initChronoAnimations = () => {
     if (!window.gsap || !window.ScrollTrigger) {
-        console.warn("GSAP/ScrollTrigger not loaded. Animations disabled.");
+        console.warn("GSAP/ScrollTrigger not loaded.");
         return;
     }
 
     gsap.registerPlugin(ScrollTrigger);
 
-    // Animate Era Headers (Fade up)
-    gsap.utils.toArray('.timeline-era-header').forEach(header => {
-        gsap.fromTo(header, 
-            { y: 50, opacity: 0, scale: 0.95 },
+    const container = document.getElementById('timeline-embed');
+    const wrapper = document.getElementById('timeline-wrapper');
+    
+    // Calculate total width to scroll
+    const totalWidth = container.scrollWidth - window.innerWidth + (window.innerWidth * 0.4); // Added offset for padding
+
+    // 1. Horizontal Scroll Animation
+    gsap.to(container, {
+        x: () => -(container.scrollWidth - window.innerWidth),
+        ease: "none",
+        scrollTrigger: {
+            trigger: wrapper,
+            start: "top top",
+            end: () => `+=${container.scrollWidth}`, // Scroll duration based on content width
+            scrub: 1,
+            pin: true,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+        }
+    });
+
+    // 2. Event Focus Effects (Parallax & Scale)
+    gsap.utils.toArray('.chrono-event').forEach(event => {
+        gsap.fromTo(event, 
+            { scale: 0.8, opacity: 0.3, filter: 'blur(10px)' },
             {
-                scrollTrigger: {
-                    trigger: header,
-                    start: "top 90%",
-                    toggleActions: "play none none reverse"
-                },
-                y: 0,
-                opacity: 1,
                 scale: 1,
-                duration: 1.2,
-                ease: "power3.out"
+                opacity: 1,
+                filter: 'blur(0px)',
+                scrollTrigger: {
+                    trigger: event,
+                    containerAnimation: gsap.getById('mainScroll'), // Fix if using ScrollTrigger on container
+                    // Since it's nested in a pinned container, we use containerAnimation if we had multiple
+                    // But here we can use a simpler approach: check horizontal center
+                    start: "left 80%",
+                    end: "left 20%",
+                    scrub: true,
+                    // Use toggleClass for CSS effects
+                    toggleClass: { targets: event, className: "is-active" }
+                }
             }
         );
     });
 
-    // Animate Event Cards (Staggered Grid Entry)
-    gsap.utils.toArray('.timeline-event-card').forEach((card, i) => {
-        gsap.fromTo(card,
-            { y: 80, opacity: 0 },
-            {
-                scrollTrigger: {
-                    trigger: card,
-                    start: "top 90%",
-                    toggleActions: "play none none reverse"
-                },
-                y: 0,
-                opacity: 1,
-                duration: 1,
-                delay: i % 3 * 0.15, // Stagger based on column position
-                ease: "power2.out"
-            }
-        );
+    // 3. Scanline Animation on Axis
+    gsap.to('.timeline-scanline', {
+        x: window.innerWidth,
+        repeat: -1,
+        duration: 8,
+        ease: "none"
     });
 };
 
@@ -187,22 +203,17 @@ export default async function (container, props) {
   if (!loaderEl) loaderEl = container.querySelector("#timeline-loading");
 
   try {
-    console.log("> Fetching Historical Data for GSAP Timeline...");
-
     const query = `*[_type == "timelineEra"] | order(order asc) {
             title_en,
             "events": events[] {
                 title_en,
                 text_en,
                 date,
-                caption,
-                credit,
                 external_image_url,
                 "slug": slug.current,
                 image {
                     asset->{
-                        url,
-                        "blurHash": metadata.blurHash
+                        url
                     }
                 }
             }
@@ -211,21 +222,34 @@ export default async function (container, props) {
     const eras = await client.fetch(query);
 
     if (eras && eras.length > 0) {
-      buildVerticalTimeline(eras, embedEl);
-      if (loaderEl) loaderEl.style.display = "none";
+      // Build the Horizontal view
+      buildHorizontalTimeline(eras, embedEl);
       
-      // SEO Injection
+      // Hide loader with a delay for smoothness
+      setTimeout(() => {
+          if (loaderEl) {
+              gsap.to(loaderEl, { 
+                  opacity: 0, 
+                  duration: 1, 
+                  onComplete: () => loaderEl.style.display = "none" 
+              });
+          }
+      }, 500);
+      
+      // SEO Injection (keeping same logic but optional)
       const allEvents = eras.flatMap(e => e.events || []);
-      const seoData = {
-          title: { text: { headline: "The Ravenwood Chronicles", text: "A history of power." } },
-          events: allEvents.map(e => ({
-              start_date: { year: e.date },
-              text: { headline: e.title_en, text: e.text_en },
-              _raw_date: e.date
+      injectSchema({
+          "@context": "https://schema.org",
+          "@type": "Timeline",
+          "name": "The Chronology of Sins",
+          "description": "Historical records of the Ravenwood and Macpherson bloodlines.",
+          "event": allEvents.map(e => ({
+              "@type": "Event",
+              "name": e.title_en,
+              "startDate": e.date,
+              "description": e.text_en
           }))
-      };
-      // Reuse old SEO logic or simple mock for now as we changed data structure
-      // injectSchema(...) - skipped for brevity in this refactor step, but keeping function structure is good.
+      });
       
     } else {
       if (loaderEl) loaderEl.style.display = "none";
