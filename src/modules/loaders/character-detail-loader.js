@@ -141,109 +141,7 @@ const injectCharacterSeo = (character, imgUrl) => {
     }
 };
 
-/**
- * Renders the family network graph using D3
- */
-const renderFamilyNetworkGraph = async (character, container) => {
-    const familyContainer = container.querySelector('#family-graph');
-    if (!familyContainer) return;
 
-    const loadingEl = familyContainer.querySelector('.d3-loading');
-    const emptyEl = familyContainer.querySelector('.d3-empty');
-
-    if (loadingEl) loadingEl.style.display = 'flex';
-
-    const nodesMap = new Map();
-
-    const addNode = (obj, isMain = false) => {
-        if (!obj) return;
-
-        let id = obj.slug || obj._id || obj._ref || null;
-        let label = obj.name || obj.label || id;
-        let img = obj.image?.url || (obj.image && obj.image.asset && obj.image.asset.url) || null;
-
-        if (typeof obj === 'string') { id = obj.toLowerCase(); label = obj; }
-
-        if (obj.character) {
-            const inner = obj.character;
-            id = inner.slug || inner._ref || inner._id;
-            label = inner.name || label;
-            img = inner.image?.url || img;
-        }
-
-        if (!id) return;
-
-        id = String(id).replaceAll(/\s+/g, '-').toLowerCase();
-
-        if (!nodesMap.has(id)) {
-            nodesMap.set(id, {
-                id,
-                label,
-                image: img,
-                isMain,
-                group: isMain ? 'protagonist' : 'associate'
-            });
-        } else if (isMain) {
-            nodesMap.get(id).isMain = true;
-        }
-        return id;
-    };
-
-    const mainId = addNode(character, true);
-    const links = [];
-
-    if (character.relationships && Array.isArray(character.relationships)) {
-        character.relationships.forEach(rel => {
-            const targetId = addNode(rel.character || rel);
-            if (mainId && targetId && mainId !== targetId) {
-                links.push({
-                    source: mainId,
-                    target: targetId,
-                    label: rel.status || rel.type || '',
-                    strength: 1
-                });
-            }
-        });
-    }
-
-    if (character.family && Array.isArray(character.family)) {
-        character.family.forEach(fam => {
-            const targetId = addNode(fam.character || fam);
-            if (mainId && targetId && mainId !== targetId) {
-                links.push({
-                    source: mainId,
-                    target: targetId,
-                    label: fam.relation || 'Family',
-                    strength: 1.5
-                });
-            }
-        });
-    }
-
-    const nodes = Array.from(nodesMap.values());
-
-    if (nodes.length > 0) {
-        try {
-            const module = await import('./d3-family-tree.js');
-            const width = familyContainer.clientWidth || 300;
-            const height = familyContainer.clientHeight || 400;
-
-            await module.renderFamilyGraph(familyContainer, { nodes, links }, { width, height, layout: 'force' });
-
-            if (loadingEl) loadingEl.style.display = 'none';
-        } catch (err) {
-            console.error('D3 Render Failed:', err);
-            if (emptyEl) {
-                emptyEl.style.display = 'flex';
-                emptyEl.innerHTML = 'Error rendering network.<br>System failure.';
-            }
-        }
-    } else {
-        if (loadingEl) loadingEl.style.display = 'none';
-        if (emptyEl) emptyEl.style.display = 'flex';
-        if (emptyEl) emptyEl.classList.remove('hidden');
-    }
-};
 
 /**
  * KARAKTER DETAYLARINI GÖRSELLEŞTİRİR
@@ -304,10 +202,7 @@ const renderCharacterDetails = async (character, container) => {
         }
     }, 1200);
 
-    /* ------------------------------------------------------
-       3. NETWORK (AİLE AĞACI) - D3 LOGIC
-    ------------------------------------------------------ */
-    await renderFamilyNetworkGraph(character, container);
+
 };
 
 /**
@@ -336,23 +231,8 @@ export default async function (container, props) {
                 "blurHash": metadata.blurHash,
                 "lqip": metadata.lqip
             },
-            faction->{title, color}, 
-            family[] {
-                relation,
-                character->{
-                    name, 
-                    "slug": slug.current,
-                    "image": image.asset->{ url, "blurHash": metadata.blurHash }
-                }
-            },
-            relationships[] {
-                status,
-                character->{
-                    name,
-                    "slug": slug.current,
-                    "image": image.asset->{ url, "blurHash": metadata.blurHash }
-                }
-            }
+            faction->{title, color}
+
         }`;
 
         const sanityParams = { slug: characterSlug };
