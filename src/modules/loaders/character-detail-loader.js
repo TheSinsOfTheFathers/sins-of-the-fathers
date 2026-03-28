@@ -89,7 +89,15 @@ const updateTextFields = (els, character) => {
         const quoteText = character.quote ? `"${character.quote}"` : "...";
         typeWriter(els.quote, quoteText, 30);
     }
+
+    if (els.artistName && character.illustrator) {
+        els.artistName.textContent = character.illustrator;
+        if (els.artistTag) els.artistTag.classList.remove('opacity-0');
+    } else if (els.artistTag) {
+        els.artistTag.classList.add('hidden');
+    }
 };
+
 
 /**
  * Injects SEO schema for character
@@ -231,7 +239,10 @@ const renderCharacterDetails = async (character, container) => {
         role: container.querySelector('#char-role'),
         bio: container.querySelector('#char-bio'),
         quote: container.querySelector('#char-quote'),
+        artistTag: container.querySelector('#char-artist-tag'),
+        artistName: container.querySelector('#char-artist-name'),
         title: document.title
+
     };
 
     if (!els.name) { console.error("ERROR: Dossier layout corrupted. Missing DOM elements."); return; }
@@ -288,7 +299,9 @@ export default async function (container, props) {
 
         const query = `*[_type == "character" && slug.current == $slug][0]{
             ...,
+            illustrator,
             "image": image.asset->{
+
                 url,
                 "blurHash": metadata.blurHash,
                 "lqip": metadata.lqip

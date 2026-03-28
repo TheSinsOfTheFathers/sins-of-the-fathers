@@ -93,7 +93,9 @@
     "affiliation": "Bağlılık",
     "place_of_origin": "Köken Yeri",
     "role_rank": "Rol / Rütbe",
+    "illustrator": "Çizer",
     "narrative_record": "Hikaye Kaydı",
+
     "accessing_archives": "Güvenli arşivlere erişiliyor...",
     "waiting_transcript": "Döküm bekleniyor...",
     "network_analysis": "Ağ Analizi",

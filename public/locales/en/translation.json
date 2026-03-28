@@ -93,7 +93,9 @@
     "affiliation": "Affiliation",
     "place_of_origin": "Place of Origin",
     "role_rank": "Role / Rank",
+    "illustrator": "Artist",
     "narrative_record": "Narrative Record",
+
     "accessing_archives": "Accessing secure archives...",
     "waiting_transcript": "Waiting for transcript...",
     "network_analysis": "Network Analysis",
