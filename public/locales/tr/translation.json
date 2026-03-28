@@ -427,5 +427,16 @@
     "accept": "YETKİ VER",
     "decline": "REDDET",
     "policy_link": "Protokolü İncele"
+  },
+  "bloodline_relations": {
+    "BLOOD_RELATION": "Kan Bağı",
+    "BLOOD_OATH": "Kan Yemini",
+    "RIVAL": "Rakip",
+    "COMMANDER": "Komutanı",
+    "ALLIANCE": "Müttefiki",
+    "FINANCE_RING": "Finans Ağı",
+    "LEGAL_SHIELD": "Yasal Kalkan",
+    "LOGISTICS": "Lojistik",
+    "BLINDSPOT": "Kör Nokta"
   }
 }

@@ -198,15 +198,32 @@ const setupD3Graph = (container, containerSelector, nodesData, linksData, sanity
         .force("x", d3.forceX(0).strength(0.05))
         .force("y", d3.forceY(d => d.tier * 180).strength(0.8));
 
-    let nodeElements, linkElements;
+    let nodeElements, linkElements, linkHitAreas;
 
     function render() {
-        linkElements = linkGroup.selectAll('path')
+        linkHitAreas = linkGroup.selectAll('.link-hit-area')
+            .data(activeLinks, d => d.source.id + "-" + d.target.id);
+        
+        linkHitAreas.exit().remove();
+        
+        const hitEnter = linkHitAreas.enter().append('path')
+            .attr('class', 'link-hit-area')
+            .attr('fill', 'none')
+            .attr('stroke', 'transparent')
+            .attr('stroke-width', 15)
+            .on("mouseenter", (event, d) => showRelationshipTooltip(event, d))
+            .on("mousemove", (event) => positionRelationshipTooltip(event))
+            .on("mouseleave", () => hideRelationshipTooltip());
+            
+        linkHitAreas = hitEnter.merge(linkHitAreas);
+
+        linkElements = linkGroup.selectAll('path.link-line')
             .data(activeLinks, d => d.source.id + "-" + d.target.id);
         
         linkElements.exit().transition().duration(300).attr('opacity', 0).remove();
         
         const linkEnter = linkElements.enter().append('path')
+            .attr('class', 'link-line')
             .attr('fill', 'none')
             .attr('stroke', d => {
                 if (d.relationType === 'BLOOD_RELATION') return '#c5a059'; // Gold
@@ -297,12 +314,8 @@ const setupD3Graph = (container, containerSelector, nodesData, linksData, sanity
     }
 
     function ticked() {
-        linkElements.attr("d", d => {
-            const dx = d.target.x - d.source.x,
-                  dy = d.target.y - d.source.y,
-                  dr = Math.sqrt(dx * dx + dy * dy); 
-            return `M${d.source.x},${d.source.y}A${dr},${dr} 0 0,1 ${d.target.x},${d.target.y}`;
-        });
+        linkElements.attr("d", d => `M${d.source.x},${d.source.y}L${d.target.x},${d.target.y}`);
+        linkHitAreas.attr("d", d => `M${d.source.x},${d.source.y}L${d.target.x},${d.target.y}`);
         nodeElements.attr("transform", d => `translate(${d.x},${d.y})`);
     }
 
@@ -328,3 +341,84 @@ const setupD3Graph = (container, containerSelector, nodesData, linksData, sanity
     render();
     svg.call(zoom.transform, d3.zoomIdentity.translate(width/2, 100).scale(1));
 };
+
+// --- HELPER FUNCTIONS FOR RELATIONSHIPS ---
+
+function showRelationshipTooltip(event, d) {
+    const tooltip = d3.select('#bloodline-tooltip');
+    const content = d3.select('#tooltip-content');
+    
+    // Get language (default to en)
+    const currentLang = localStorage.getItem('app_language') || 'en';
+    
+    // Get translations for relation names from the window.i18next or a local fallback if needed
+    let relationLabel = d.relationType;
+    if (window.i18next && window.i18next.exists(`bloodline_relations.${d.relationType}`)) {
+        relationLabel = window.i18next.t(`bloodline_relations.${d.relationType}`);
+    }
+
+    const sourceName = d.source.name || d.source.id;
+    const targetName = d.target.name || d.target.id;
+
+    if (currentLang === 'tr') {
+        const suffix = getTurkishSuffix(targetName);
+        content.html(`
+            <div class="text-white font-serif tracking-widest uppercase text-[11px] mb-1">
+                ${sourceName}, ${targetName}${suffix} ${relationLabel}
+            </div>
+            <div class="text-gold/60 text-[8px] uppercase tracking-tighter">
+                Güven Aralığı: %98.4 // İstihbarat Aktif
+            </div>
+        `);
+    } else {
+        content.html(`
+            <div class="text-white font-serif tracking-widest uppercase text-[11px] mb-1">
+                ${sourceName}: ${relationLabel} of ${targetName}
+            </div>
+            <div class="text-gold/60 text-[8px] uppercase tracking-tighter">
+                Confidence Level: 98.4% // Intel Active
+            </div>
+        `);
+    }
+
+    tooltip.style('opacity', 1);
+    positionRelationshipTooltip(event);
+}
+
+function positionRelationshipTooltip(event) {
+    const tooltip = d3.select('#bloodline-tooltip');
+    tooltip
+        .style('left', (event.pageX + 15) + 'px')
+        .style('top', (event.pageY + 15) + 'px');
+}
+
+function hideRelationshipTooltip() {
+    d3.select('#bloodline-tooltip').style('opacity', 0);
+}
+
+// Simple rule-based Turkish possessive suffix helper
+function getTurkishSuffix(name) {
+    if (!name) return "";
+    const vowels = "aeıioöuüAEIİOÖUÜ";
+    const lastChar = name[name.length - 1];
+    
+    // Determine the "type" based on the last vowel in the word
+    let lastVowel = 'e';
+    for (let i = name.length - 1; i >= 0; i--) {
+        if (vowels.includes(name[i])) {
+            lastVowel = name[i].toLowerCase();
+            break;
+        }
+    }
+
+    // Is it a vowel?
+    const isVowelEnding = vowels.includes(lastChar);
+    
+    let suffix = "";
+    if ("aı".includes(lastVowel)) suffix = isVowelEnding ? "nın" : "ın";
+    else if ("ei".includes(lastVowel)) suffix = isVowelEnding ? "nin" : "in";
+    else if ("ou".includes(lastVowel)) suffix = isVowelEnding ? "nun" : "un";
+    else if ("öü".includes(lastVowel)) suffix = isVowelEnding ? "nün" : "ün";
+
+    return "'" + suffix;
+}

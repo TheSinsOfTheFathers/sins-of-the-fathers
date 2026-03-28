@@ -427,5 +427,16 @@
     "accept": "AUTHORIZE",
     "decline": "DECLINE",
     "policy_link": "View Protocol"
+  },
+  "bloodline_relations": {
+    "BLOOD_RELATION": "Blood Relation",
+    "BLOOD_OATH": "Blood Oath",
+    "RIVAL": "Rival",
+    "COMMANDER": "Commander",
+    "ALLIANCE": "Alliance",
+    "FINANCE_RING": "Finance Ring",
+    "LEGAL_SHIELD": "Legal Shield",
+    "LOGISTICS": "Logistics",
+    "BLINDSPOT": "Blindspot"
   }
 }

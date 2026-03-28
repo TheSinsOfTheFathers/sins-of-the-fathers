@@ -41,6 +41,17 @@
         #character-popup.active .popup-content { opacity: 1; transform: scale(1); }
         .popup-content { transition: all 0.2s ease-out; pointer-events: auto; }
         #character-popup { pointer-events: none; }
+        
+        /* Relationship Tooltip */
+        #bloodline-tooltip {
+            transition: opacity 0.1s ease-out;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            text-shadow: 0 0 5px rgba(197, 160, 89, 0.5);
+        }
+        .link-hit-area {
+            cursor: pointer;
+            pointer-events: stroke;
+        }
     </style>
 </head>
 <body class="flex flex-col h-screen bg-obsidian selection:bg-gold selection:text-black relative overflow-hidden">
@@ -138,6 +149,14 @@
                 <span class="flex items-center gap-2"><div class="w-4 h-[1px] bg-red-900 border-b border-dashed border-red-900"></div> RIVALRY / BLOOD OATH</span>
                 <span class="flex items-center gap-2"><div class="w-4 h-[2px] bg-gold"></div> BLOOD RELATION</span>
                 <span class="flex items-center gap-2"><div class="w-4 h-[1px] bg-gray-600"></div> HIERARCHY / ALLIANCE</span>
+            </div>
+
+            <!-- New: Relationship Tooltip -->
+            <div id="bloodline-tooltip" class="absolute pointer-events-none opacity-0 bg-black/90 border border-gold/30 p-3 text-[10px] font-mono text-gold rounded z-[9999] backdrop-blur-md min-w-[150px]">
+                <div class="flex flex-col gap-1">
+                    <span class="text-[7px] uppercase tracking-widest text-white/40">Intel Connection</span>
+                    <div id="tooltip-content" class="leading-relaxed"></div>
+                </div>
             </div>
 
             <!-- The canvas -->
