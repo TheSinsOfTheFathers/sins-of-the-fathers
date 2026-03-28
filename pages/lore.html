@@ -206,12 +206,12 @@
             <div class="flex flex-col md:flex-row justify-between items-end border-b border-white/10 pb-4 mb-10">
                 <div>
                     <h2 class="font-mono text-gray-200 text-sm tracking-widest uppercase mb-1" data-i18n="archive_page.section_title">Active Case Files</h2>
-                    <p class="text-[10px] font-mono text-gray-500 uppercase" data-i18n="archive_page.section_sub">Scanning encrypted records...</p>
+                    <p id="archive-status-sub" class="text-[10px] font-mono text-gray-500 uppercase" data-i18n="archive_page.section_sub">Scanning encrypted records...</p>
                 </div>
             </div>
 
             <!-- LOADING STATE -->
-            <div id="archive-loader-inner" class="flex flex-col items-center justify-center py-24">
+            <div id="archive-loader" class="flex flex-col items-center justify-center py-24">
                 <div class="relative w-24 h-24 mb-6">
                     <div class="absolute inset-0 border border-gold/20 rounded-full animate-[spin_4s_linear_infinite]"></div>
                     <div class="absolute inset-2 border border-dashed border-gold/40 rounded-full animate-[spin_8s_linear_infinite_reverse]"></div>

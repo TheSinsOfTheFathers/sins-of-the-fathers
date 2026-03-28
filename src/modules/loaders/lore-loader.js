@@ -256,6 +256,8 @@ export default async function (container, props) {
 
     // Loader'ı kapat ve Grid'i göster
     if (loader) loader.style.display = "none";
+    const statusSub = document.getElementById("archive-status-sub");
+    if (statusSub) statusSub.style.display = "none";
 
     // Grid'i görünür yap (İçindeki kartlar henüz opacity-0)
     gsap.to(gridContainer, { autoAlpha: 1, duration: 0.3 });
