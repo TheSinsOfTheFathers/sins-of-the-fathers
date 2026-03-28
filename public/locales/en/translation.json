@@ -430,7 +430,9 @@
   },
   "bloodline_relations": {
     "BLOOD_RELATION": "Blood Relation",
+    "RELATION": "Blood Relation",
     "BLOOD_OATH": "Blood Oath",
+    "BLOOD_OAT": "Blood Oath",
     "RIVAL": "Rival",
     "COMMANDER": "Commander",
     "ALLIANCE": "Alliance",

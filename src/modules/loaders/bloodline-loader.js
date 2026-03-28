@@ -1,5 +1,6 @@
 import * as d3 from 'd3';
 import { client } from '../../lib/sanityClient.js';
+import i18next from '../../lib/i18n.js';
 
 // Depth/Tier mapping to force a hierarchical Tree-like Top-Down layout
 const TIER_MAP = {
@@ -351,10 +352,12 @@ function showRelationshipTooltip(event, d) {
     // Get language (default to en)
     const currentLang = localStorage.getItem('app_language') || 'en';
     
-    // Get translations for relation names from the window.i18next or a local fallback if needed
+    // Get translations for relation names from the imported i18next
     let relationLabel = d.relationType;
-    if (window.i18next && window.i18next.exists(`bloodline_relations.${d.relationType}`)) {
-        relationLabel = window.i18next.t(`bloodline_relations.${d.relationType}`);
+    const i18nKey = `bloodline_relations.${d.relationType}`;
+    
+    if (i18next.exists(i18nKey)) {
+        relationLabel = i18next.t(i18nKey);
     }
 
     const sourceName = d.source.name || d.source.id;
