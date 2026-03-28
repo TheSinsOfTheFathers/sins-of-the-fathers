@@ -24,8 +24,9 @@ const updateLoreText = (doc, container) => {
 
     const dateEl = container.querySelector('#lore-date');
     if (dateEl) {
+        const locale = i18next.language === 'tr' ? 'tr-TR' : 'en-US';
         const dateStr = doc.date
-            ? new Date(doc.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+            ? new Date(doc.date).toLocaleDateString(locale, { year: 'numeric', month: 'short', day: 'numeric' })
             : i18next.t('lore_detail.undated');
         dateEl.textContent = dateStr;
     }
@@ -112,9 +113,8 @@ const handleAudioMedia = (doc, wrappers, container) => {
         };
     }
 
-    if (paperWrapper) {
-        paperWrapper.style.display = 'none';
-    }
+    // REMOVED: paperWrapper.style.display = 'none'; 
+    // We want the text to be visible even if audio is present.
 };
 
 const handleImageAndBody = (doc, wrappers, container) => {
@@ -175,16 +175,21 @@ const renderLoreIntel = (doc, container) => {
 
     if (doc.audioURL) {
         handleAudioMedia(doc, wrappers, container);
-    } else {
-        handleImageAndBody(doc, wrappers, container);
     }
+    
+    // Always call handleImageAndBody to ensure text/images are rendered 
+    // regardless of audio presence.
+    handleImageAndBody(doc, wrappers, container);
 
     // Loader Kapat & Tags Animasyonu
     setTimeout(() => {
         const loader = container.querySelector('#doc-loader');
         const content = container.querySelector('#doc-content');
+        const sidebar = container.querySelector('#sidebar-content');
+
         if (loader) loader.classList.add('hidden');
         if (content) content.classList.remove('opacity-0');
+        if (sidebar) sidebar.classList.remove('opacity-0');
 
         // Noir Motion: Tags
         const tags = container.querySelectorAll('.gsap-tag');
@@ -241,6 +246,10 @@ export default async function (container, props) {
                 }
                 return;
             }
+            // Update Page Title
+            const baseTitle = i18next.t('lore_detail.page_title') || "Evidence Record";
+            document.title = `${loreDoc.title} | ${baseTitle}`;
+
             renderLoreIntel(loreDoc, container);
         } else {
             console.error("Doküman bulunamadı.");
