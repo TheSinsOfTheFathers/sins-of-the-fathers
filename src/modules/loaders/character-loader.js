@@ -58,14 +58,13 @@ const createProtagonistCard = (character) => {
              FILE_ID: PX-${Math.floor(Math.random() * 9000) + 1000}
         </div>
 
-        ${character.illustrator ? `
         <div class="absolute top-1/2 -right-4 -translate-y-1/2 rotate-90 z-30 pointer-events-none">
             <span class="font-mono text-[8px] text-gold/30 uppercase tracking-[0.5em] whitespace-nowrap">
-                Art By: ${character.illustrator}
+                Art By: ${character.illustrator || 'Classified'}
             </span>
         </div>
-        ` : ''}
     `);
+
 
 
     const canvas = cardLink.querySelector('.blur-canvas');
@@ -105,15 +104,14 @@ const createOperativeCard = (character) => {
                  <div class="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(212,175,55,0.05)_100%)]"></div>
             </div>
 
-            ${character.illustrator ? `
             <div class="absolute bottom-2 left-2 z-30 pointer-events-none flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                 <div class="w-2 h-px bg-gold/50"></div>
                 <span class="font-mono text-[7px] text-gold/60 uppercase tracking-widest whitespace-nowrap">
-                    Art: ${character.illustrator}
+                    Art: ${character.illustrator || 'Classified'}
                 </span>
             </div>
-            ` : ''}
         </div>
+
 
         <div class="p-6 relative overflow-hidden">
             <div class="relative z-10">

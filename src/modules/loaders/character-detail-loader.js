@@ -90,15 +90,17 @@ const updateTextFields = (els, character) => {
         typeWriter(els.quote, quoteText, 30);
     }
 
-    if (els.artistName && character.illustrator) {
-        els.artistName.textContent = character.illustrator;
-        if (els.artistField) els.artistField.textContent = character.illustrator;
-        if (els.artistTag) els.artistTag.classList.remove('opacity-0');
-    } else if (els.artistTag) {
-        els.artistTag.classList.add('hidden');
-        if (els.artistField) els.artistField.textContent = "Classified";
+    if (els.artistName) {
+        els.artistName.textContent = character.illustrator || "Classified";
+    }
+    if (els.artistField) {
+        els.artistField.textContent = character.illustrator || "Classified";
+    }
+    if (els.artistTag) {
+        els.artistTag.classList.remove('opacity-0');
     }
 };
+
 
 
 
