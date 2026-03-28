@@ -182,12 +182,13 @@
                             </div>
 
                             <!-- Artist Credit Tag -->
-                            <div id="char-artist-tag" class="absolute bottom-4 right-4 z-30 opacity-0 transition-opacity duration-1000 flex items-center gap-2 pointer-events-none">
-                                <div class="h-px w-4 bg-gold/50"></div>
-                                <span class="font-mono text-[9px] text-gold/60 uppercase tracking-widest whitespace-nowrap">
-                                    <span data-i18n="character_detail_page.illustrator">Art</span>: <span id="char-artist-name" class="text-gold">Classified</span>
-                                </span>
+                            <div id="char-artist-tag" class="absolute bottom-4 right-4 z-30 opacity-0 transition-opacity duration-1000 flex items-center gap-2 group/artist cursor-pointer">
+                                <div class="h-px w-4 bg-gold/50 group-hover/artist:w-8 transition-all duration-300"></div>
+                                <a id="char-artist-link-tag" href="#" target="_blank" class="font-mono text-[11px] text-gold/60 uppercase tracking-widest whitespace-nowrap group-hover/artist:text-gold transition-colors duration-300">
+                                    <span data-i18n="character_detail_page.illustrator">Art</span>: <span id="char-artist-name" class="text-gold font-bold">Classified</span>
+                                </a>
                             </div>
+
                         </div>
                     </div>
 
@@ -230,7 +231,10 @@
                                     </h4>
 
 
-                                    <p id="char-artist" class="text-lg text-white font-serif tracking-wide border-l-2 border-white/10 pl-4">Classified</p>
+                                    <a id="char-artist-link" href="#" target="_blank" class="group/link block">
+                                        <p id="char-artist" class="text-xl text-white font-serif tracking-wide border-l-2 border-white/10 pl-4 group-hover/link:border-gold group-hover/link:text-gold transition-all duration-300">Classified</p>
+                                    </a>
+
                                 </div>
                                 <div class="space-y-1">
                                     <h4 class="font-mono text-[10px] text-white/30 uppercase tracking-widest">Threat Assessment</h4>

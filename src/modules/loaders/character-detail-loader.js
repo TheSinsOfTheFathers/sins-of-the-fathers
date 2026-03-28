@@ -96,10 +96,28 @@ const updateTextFields = (els, character) => {
     if (els.artistField) {
         els.artistField.textContent = character.illustrator || "Classified";
     }
+
+    const artistNick = character.instagram_nick || character.illustrator_nick;
+    if (artistNick) {
+        const url = `https://instagram.com/${artistNick}`;
+        if (els.artistLink) els.artistLink.href = url;
+        if (els.artistLinkTag) els.artistLinkTag.href = url;
+    } else {
+        if (els.artistLink) {
+            els.artistLink.style.pointerEvents = 'none';
+            els.artistLink.removeAttribute('href');
+        }
+        if (els.artistLinkTag) {
+            els.artistLinkTag.style.pointerEvents = 'none';
+            els.artistLinkTag.removeAttribute('href');
+        }
+    }
+
     if (els.artistTag) {
         els.artistTag.classList.remove('opacity-0');
     }
 };
+
 
 
 
@@ -247,6 +265,9 @@ const renderCharacterDetails = async (character, container) => {
         artistTag: container.querySelector('#char-artist-tag'),
         artistName: container.querySelector('#char-artist-name'),
         artistField: container.querySelector('#char-artist'),
+        artistLink: container.querySelector('#char-artist-link'),
+        artistLinkTag: container.querySelector('#char-artist-link-tag'),
+
         title: document.title
 
 
@@ -307,6 +328,8 @@ export default async function (container, props) {
         const query = `*[_type == "character" && slug.current == $slug][0]{
             ...,
             illustrator,
+            "instagram_nick": illustrator_nick,
+
             "image": image.asset->{
 
                 url,
