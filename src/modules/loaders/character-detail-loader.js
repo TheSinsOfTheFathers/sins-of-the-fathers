@@ -92,11 +92,14 @@ const updateTextFields = (els, character) => {
 
     if (els.artistName && character.illustrator) {
         els.artistName.textContent = character.illustrator;
+        if (els.artistField) els.artistField.textContent = character.illustrator;
         if (els.artistTag) els.artistTag.classList.remove('opacity-0');
     } else if (els.artistTag) {
         els.artistTag.classList.add('hidden');
+        if (els.artistField) els.artistField.textContent = "Classified";
     }
 };
+
 
 
 /**
@@ -241,7 +244,9 @@ const renderCharacterDetails = async (character, container) => {
         quote: container.querySelector('#char-quote'),
         artistTag: container.querySelector('#char-artist-tag'),
         artistName: container.querySelector('#char-artist-name'),
+        artistField: container.querySelector('#char-artist'),
         title: document.title
+
 
     };
 
