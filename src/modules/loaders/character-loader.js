@@ -17,7 +17,8 @@ const createProtagonistCard = (character) => {
     const cardLink = document.createElement('a');
     cardLink.href = `character-detail.html?slug=${character.slug.current}`;
 
-    cardLink.className = 'group relative w-full h-[600px] overflow-hidden border border-white/10 bg-black hover:border-gold/50 transition-all duration-1000 block shadow-2xl opacity-0 scale-95';
+    cardLink.className = 'group relative w-full h-[450px] overflow-hidden border border-white/10 bg-black hover:border-gold/50 transition-all duration-1000 block shadow-2xl opacity-0 scale-95';
+
 
     const imageUrl = character.image?.url || 'https://placehold.co/800x1200/0a0a0a/333333?text=CLASSIFIED';
     const blurHash = character.image?.blurHash;
@@ -42,12 +43,14 @@ const createProtagonistCard = (character) => {
 
         <div class="absolute inset-0 bg-linear-to-t from-black via-black/40 to-transparent z-25 pointer-events-none group-hover:opacity-60 transition-opacity duration-1000"></div>
         
-        <div class="absolute bottom-0 left-0 w-full p-10 z-30 pointer-events-none transform translate-y-4 group-hover:translate-y-0 transition-transform duration-700">
+        <div class="absolute bottom-0 left-0 w-full p-6 z-30 pointer-events-none transform translate-y-4 group-hover:translate-y-0 transition-transform duration-700">
+
             <div class="flex items-center gap-3 mb-4">
                 <div class="h-[2px] w-8 bg-gold shadow-[0_0_10px_gold]"></div>
                 <p class="font-mono text-gold text-[10px] uppercase tracking-[0.4em] font-bold">${alias}</p>
             </div>
-            <h3 class="font-serif text-5xl md:text-6xl text-white uppercase tracking-tighter leading-none mb-2 drop-shadow-2xl group-hover:text-gold transition-colors duration-500">${character.name}</h3>
+            <h3 class="font-serif text-4xl md:text-5xl text-white uppercase tracking-tighter leading-none mb-2 drop-shadow-2xl group-hover:text-gold transition-colors duration-500">${character.name}</h3>
+
             <p class="font-mono text-[9px] text-white/40 uppercase tracking-widest">Architect Verified // Status: ACTIVE</p>
         </div>
 
