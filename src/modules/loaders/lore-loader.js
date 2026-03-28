@@ -83,7 +83,7 @@ const createImageCard = (lore) => {
         month: "short",
         day: "numeric",
       })
-    : i18next.t("lore_archive.undated");
+    : i18next.t("lore_detail.undated");
 
   const cardDiv = document.createElement("div");
   cardDiv.className =

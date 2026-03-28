@@ -244,6 +244,11 @@
     "dynamic_title_login": "Sistem Erişimi"
   },
   "lore_detail": {
+    "page_title": "Kanıt Kaydı | Babaların Günahları",
+    "breadcrumb_archives": "Arşivler",
+    "breadcrumb_record": "Kanıt Kaydı",
+    "header_badge": "Vaka Dosyası",
+    "uplink_status": "DOSYA ALINDI",
     "header_reader": "// OKUYUCU",
     "back_to_archives": "Arşive Dön",
     "metadata_title": "Dosya Meta Verisi",
@@ -268,7 +273,9 @@
     "audio_ended": "İLETİM SONA ERDİ",
     "classified_tooltip": "Gizli Bilgi",
     "error_not_found": "HATA 404: DOSYA ARŞİVDE BULUNAMADI",
-    "error_system": "SİSTEM HATASI: VERİ AKIŞI OKUNAMIYOR"
+    "error_system": "SİSTEM HATASI: VERİ AKIŞI OKUNAMIYOR",
+    "restricted_title": "ERİŞİM ENGELLENDİ",
+    "restricted_msg": "Bu şifreli kayda erişmek için üst düzey yetki gereklidir."
   },
   "lore_loader": {
     "accessing_archives": "Arşivler Taranıyor...",
@@ -405,7 +412,12 @@
     "error_uplink": "BAĞLANTI HATASI: UYDU ÇEVRİMDIŞI"
   },
   "archive_page": {
-    "meta_title": "Gizli Arşivler | The Sins of the Fathers"
+    "meta_title": "Gizli Arşivler | Babaların Günahları",
+    "title": "Arşivler",
+    "subtitle": "\"Gerçek nadiren saf ve asla basit değildir.\"",
+    "uplink_status": "BAĞLANTI STABİL",
+    "section_title": "Aktif Vaka Dosyaları",
+    "section_sub": "Şifreli kayıtlar taranıyor..."
   },
   "cookie_consent": {
     "title": "GÖZETİM PROTOKOLÜ",

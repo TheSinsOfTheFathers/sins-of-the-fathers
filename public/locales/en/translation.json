@@ -244,6 +244,11 @@
     "dynamic_title_login": "System Access"
   },
   "lore_detail": {
+    "page_title": "Evidence Record | The Sins of the Fathers",
+    "breadcrumb_archives": "Archives",
+    "breadcrumb_record": "Evidence Record",
+    "header_badge": "Case File",
+    "uplink_status": "FILE RETRIEVED",
     "header_reader": "// READER",
     "back_to_archives": "Back to Archives",
     "metadata_title": "File Metadata",
@@ -268,7 +273,9 @@
     "audio_ended": "TRANSMISSION ENDED",
     "classified_tooltip": "Classified Info",
     "error_not_found": "ERROR 404: FILE NOT FOUND IN ARCHIVE",
-    "error_system": "SYSTEM ERROR: CANNOT READ DATA STREAM"
+    "error_system": "SYSTEM ERROR: CANNOT READ DATA STREAM",
+    "restricted_title": "ACCESS DENIED",
+    "restricted_msg": "In-depth clearance is required to access this encrypted record."
   },
   "lore_loader": {
     "accessing_archives": "Searching Archives...",
@@ -405,7 +412,12 @@
     "error_uplink": "UPLINK FAILED: SATELLITE OFFLINE"
   },
   "archive_page": {
-    "meta_title": "Classified Archives | The Sins of the Fathers"
+    "meta_title": "Classified Archives | The Sins of the Fathers",
+    "title": "The Archives",
+    "subtitle": "\"The truth is rarely pure and never simple.\"",
+    "uplink_status": "UPLINK STABLE",
+    "section_title": "Active Case Files",
+    "section_sub": "Scanning encrypted records..."
   },
   "cookie_consent": {
     "title": "SURVEILLANCE PROTOCOL",
