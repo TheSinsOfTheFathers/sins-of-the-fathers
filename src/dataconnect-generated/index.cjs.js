@@ -7,6 +7,21 @@ const connectorConfig = {
 };
 exports.connectorConfig = connectorConfig;
 
+const listBloodlineRef = (dc) => {
+  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'ListBloodline');
+}
+listBloodlineRef.operationName = 'ListBloodline';
+exports.listBloodlineRef = listBloodlineRef;
+
+exports.listBloodline = function listBloodline(dcOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
+  return executeQuery(listBloodlineRef(dcInstance, inputVars), inputOpts && inputOpts.fetchPolicy);
+}
+;
+
 const createEntityRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();
@@ -32,20 +47,5 @@ exports.createLinkRef = createLinkRef;
 exports.createLink = function createLink(dcOrVars, vars) {
   const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
   return executeMutation(createLinkRef(dcInstance, inputVars));
-}
-;
-
-const listBloodlineRef = (dc) => {
-  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
-  dcInstance._useGeneratedSdk();
-  return queryRef(dcInstance, 'ListBloodline');
-}
-listBloodlineRef.operationName = 'ListBloodline';
-exports.listBloodlineRef = listBloodlineRef;
-
-exports.listBloodline = function listBloodline(dcOrOptions, options) {
-  
-  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
-  return executeQuery(listBloodlineRef(dcInstance, inputVars), inputOpts && inputOpts.fetchPolicy);
 }
 ;

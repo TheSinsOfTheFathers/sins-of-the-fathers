@@ -6,6 +6,12 @@ export const connectorConfig = {
   location: 'europe-west1'
 };
 
+export function listBloodline(dcOrOptions, options) {
+  const { dc: dcInstance, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrOptions, options, undefined);
+  dcInstance.useGen(true);
+  return dcInstance.executeQuery('ListBloodline', undefined, inputOpts);
+}
+
 export function createEntity(dcOrVarsOrOptions, varsOrOptions, options) {
   const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
   dcInstance.useGen(true);
@@ -16,11 +22,5 @@ export function createLink(dcOrVarsOrOptions, varsOrOptions, options) {
   const { dc: dcInstance, vars: inputVars, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrVarsOrOptions, varsOrOptions, options, true, true);
   dcInstance.useGen(true);
   return dcInstance.executeMutation('CreateLink', inputVars, inputOpts);
-}
-
-export function listBloodline(dcOrOptions, options) {
-  const { dc: dcInstance, options: inputOpts} = validateAdminArgs(connectorConfig, dcOrOptions, options, undefined);
-  dcInstance.useGen(true);
-  return dcInstance.executeQuery('ListBloodline', undefined, inputOpts);
 }
 

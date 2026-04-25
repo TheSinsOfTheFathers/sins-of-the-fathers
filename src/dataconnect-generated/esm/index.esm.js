@@ -5,6 +5,19 @@ export const connectorConfig = {
   service: 'sins-of-the-fathers',
   location: 'europe-west1'
 };
+export const listBloodlineRef = (dc) => {
+  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'ListBloodline');
+}
+listBloodlineRef.operationName = 'ListBloodline';
+
+export function listBloodline(dcOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
+  return executeQuery(listBloodlineRef(dcInstance, inputVars), inputOpts && inputOpts.fetchPolicy);
+}
+
 export const createEntityRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
   dcInstance._useGeneratedSdk();
@@ -27,18 +40,5 @@ createLinkRef.operationName = 'CreateLink';
 export function createLink(dcOrVars, vars) {
   const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
   return executeMutation(createLinkRef(dcInstance, inputVars));
-}
-
-export const listBloodlineRef = (dc) => {
-  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
-  dcInstance._useGeneratedSdk();
-  return queryRef(dcInstance, 'ListBloodline');
-}
-listBloodlineRef.operationName = 'ListBloodline';
-
-export function listBloodline(dcOrOptions, options) {
-  
-  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
-  return executeQuery(listBloodlineRef(dcInstance, inputVars), inputOpts && inputOpts.fetchPolicy);
 }
 

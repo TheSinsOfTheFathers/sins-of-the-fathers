@@ -70,6 +70,11 @@ export interface ListBloodlineData {
     } & BloodlineLink_Key)[];
 }
 
+/** Generated Node Admin SDK operation action function for the 'ListBloodline' Query. Allow users to execute without passing in DataConnect. */
+export function listBloodline(dc: DataConnect, options?: OperationOptions): Promise<ExecuteOperationResponse<ListBloodlineData>>;
+/** Generated Node Admin SDK operation action function for the 'ListBloodline' Query. Allow users to pass in custom DataConnect instances. */
+export function listBloodline(options?: OperationOptions): Promise<ExecuteOperationResponse<ListBloodlineData>>;
+
 /** Generated Node Admin SDK operation action function for the 'CreateEntity' Mutation. Allow users to execute without passing in DataConnect. */
 export function createEntity(dc: DataConnect, vars: CreateEntityVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<CreateEntityData>>;
 /** Generated Node Admin SDK operation action function for the 'CreateEntity' Mutation. Allow users to pass in custom DataConnect instances. */
@@ -79,9 +84,4 @@ export function createEntity(vars: CreateEntityVariables, options?: OperationOpt
 export function createLink(dc: DataConnect, vars: CreateLinkVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<CreateLinkData>>;
 /** Generated Node Admin SDK operation action function for the 'CreateLink' Mutation. Allow users to pass in custom DataConnect instances. */
 export function createLink(vars: CreateLinkVariables, options?: OperationOptions): Promise<ExecuteOperationResponse<CreateLinkData>>;
-
-/** Generated Node Admin SDK operation action function for the 'ListBloodline' Query. Allow users to execute without passing in DataConnect. */
-export function listBloodline(dc: DataConnect, options?: OperationOptions): Promise<ExecuteOperationResponse<ListBloodlineData>>;
-/** Generated Node Admin SDK operation action function for the 'ListBloodline' Query. Allow users to pass in custom DataConnect instances. */
-export function listBloodline(options?: OperationOptions): Promise<ExecuteOperationResponse<ListBloodlineData>>;
 
