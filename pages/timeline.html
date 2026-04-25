@@ -135,47 +135,71 @@
         </div>
     </div>
 
-    <!-- Intro Section -->
-    <section class="pt-28 pb-10 container mx-auto px-6 text-center z-10 relative">
-        <div class="inline-block border-b border-gold mb-6 pb-2">
-            <h1 class="text-4xl md:text-6xl font-serif text-white uppercase tracking-wider" data-i18n="timeline_page.title">
-                The History
-            </h1>
-        </div>
+    <!-- THE CRIME BOARD CONTAINER -->
+    <section id="timeline-wrapper" class="w-full h-screen relative overflow-hidden bg-obsidian cursor-grab active:cursor-grabbing select-none" data-module="timeline-loader.js">
         
-        <div class="max-w-3xl mx-auto bg-white/5 border border-white/10 p-6 md:p-8 backdrop-blur-sm">
-            <i class="fas fa-quote-left text-gold text-2xl mb-4 block"></i>
-            <p class="text-lg md:text-xl font-serif text-gray-300 leading-relaxed italic" data-i18n="timeline_page.quote">
-                "Time is a flat circle. Everything we have done or will do we will do over and over and over again."
-            </p>
-            <p class="text-right text-xs font-mono text-gold mt-4 uppercase tracking-widest" data-i18n="timeline_page.quote_source">
-                - ARCHIVE RECORD
-            </p>
-        </div>
-    </section>
-
-    <!-- THE TIMELINE CONTAINER -->
-    <section id="timeline-wrapper" class="w-full min-h-[500vh] border-t border-b border-white/10 relative" data-module="timeline-loader.js">
+        <!-- Board Background (CSS Texture) -->
+        <div class="absolute inset-0 z-0 pointer-events-none opacity-40 mix-blend-overlay mesh-grain"></div>
         
-        <!-- Loading State -->
-        <div id="timeline-loading" class="fixed inset-0 flex flex-col items-center justify-center bg-obsidian z-[60]">
-            <div class="loading-ring mb-4"></div>
-            <p class="font-mono text-gold text-sm uppercase tracking-widest animate-pulse" data-i18n="timeline_page.loader_text">Synchronizing Chronology...</p>
-        </div>
-
-        <!-- The Chrono-Stream Axis (Sticky) -->
-        <div id="timeline-axis" class="fixed top-1/2 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-gold/30 to-transparent z-10 pointer-events-none transform -translate-y-1/2 opacity-0 transition-opacity duration-1000">
-            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 bg-gold rounded-full blur-[4px] opacity-50 shadow-[0_0_15px_rgba(197,160,89,0.8)]"></div>
-            <!-- Tactical scanline -->
-            <div class="timeline-scanline absolute top-0 left-0 w-[200px] h-full bg-gradient-to-r from-transparent via-gold to-transparent opacity-20"></div>
-        </div>
-
-        <!-- Horizontal Scroll Container -->
-        <div id="timeline-pin-container" class="sticky top-0 h-screen overflow-hidden flex items-center">
-            <div id="timeline-embed" class="flex flex-nowrap items-center px-[20vw] relative h-full">
-                <!-- Content injected by timeline-loader.js -->
+        <!-- Ambient HUD Overlays -->
+        <div class="absolute top-32 left-8 z-30 pointer-events-none hidden md:block">
+            <div class="font-mono text-[10px] text-gold/40 border-l border-gold/20 pl-3 py-2 uppercase tracking-[0.3em]">
+                System: Chronos_v4.2<br>
+                Status: Archive Reconstruction<br>
+                Encryption: Level 9
             </div>
         </div>
+
+        <!-- Zoom/Pan Controls (Floating HUD) -->
+        <div class="fixed bottom-8 right-8 z-40 flex flex-col gap-2">
+            <button id="zoom-in" class="w-10 h-10 bg-black/60 border border-gold/30 text-gold hover:bg-gold hover:text-black transition-all flex items-center justify-center backdrop-blur-md" title="Zoom In">
+                <i class="fas fa-plus"></i>
+            </button>
+            <button id="zoom-out" class="w-10 h-10 bg-black/60 border border-gold/30 text-gold hover:bg-gold hover:text-black transition-all flex items-center justify-center backdrop-blur-md" title="Zoom Out">
+                <i class="fas fa-minus"></i>
+            </button>
+            <button id="zoom-reset" class="w-10 h-10 bg-black/60 border border-gold/30 text-gold hover:bg-gold hover:text-black transition-all flex items-center justify-center backdrop-blur-md" title="Reset View">
+                <i class="fas fa-expand-arrows-alt"></i>
+            </button>
+        </div>
+
+        <!-- Legend / Info -->
+        <div class="fixed bottom-8 left-8 z-40 max-w-xs pointer-events-none hidden md:block">
+            <div class="bg-black/40 border border-white/5 p-4 backdrop-blur-md">
+                <h4 class="text-gold font-serif text-sm uppercase tracking-widest mb-3 border-b border-gold/20 pb-1">Archive Legend</h4>
+                <div class="space-y-2">
+                    <div class="flex items-center gap-2">
+                        <span class="w-3 h-3 bg-white border border-gray-400 rotate-3"></span>
+                        <span class="text-[10px] text-gray-300 uppercase tracking-widest">Polaroid: Key Evidence</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-3 h-3 bg-yellow-100/80 -rotate-2"></span>
+                        <span class="text-[10px] text-gray-300 uppercase tracking-widest">Note: Field Intelligence</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="w-full h-[1px] bg-red-800 shadow-[0_0_5px_rgba(153,27,27,0.8)]"></span>
+                        <span class="text-[10px] text-gray-300 uppercase tracking-widest">String: Causal Link</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading State -->
+        <div id="timeline-loading" class="absolute inset-0 flex flex-col items-center justify-center bg-obsidian z-50 transition-opacity duration-1000">
+            <div class="loading-ring mb-4"></div>
+            <p class="font-mono text-gold text-sm uppercase tracking-widest animate-pulse" data-i18n="timeline_page.loader_text">Restoring Archives...</p>
+        </div>
+
+        <!-- The SVG Board (Targeted by D3) -->
+        <svg id="timeline-board" class="w-full h-full block">
+            <g id="main-group">
+                <!-- Links (Red Strings) will be rendered here -->
+                <g id="links-layer"></g>
+                <!-- Event Cards will be rendered here -->
+                <g id="cards-layer"></g>
+            </g>
+        </svg>
+
     </section>
     
     <footer aria-label="Site footer" class="py-12 bg-obsidian border-t border-white/5 text-center relative z-10">

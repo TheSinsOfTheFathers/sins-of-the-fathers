@@ -1,208 +1,275 @@
 import { client, urlFor } from "../../lib/sanityClient.js";
 import i18next from "../../lib/i18n.js";
-import { injectSchema } from "../../lib/seo.js";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import * as d3 from 'd3';
 
-gsap.registerPlugin(ScrollTrigger);
+/**
+ * INTERACTIVE CRIME BOARD (TIMELINE v2)
+ * Using D3.js to create a zoomable, draggable board of evidence.
+ */
 
-/* --------------------------------------------------------------------------
-   RENDER LOGIC (Horizontal Chrono-Stream)
-   -------------------------------------------------------------------------- */
+// Configuration for the board
+const BOARD_WIDTH = 5000;
+const BOARD_HEIGHT = 4000;
+const CARD_WIDTH = 340;
+const CARD_HEIGHT = 420;
 
-const renderEventCard = (evt, index) => {
-    // Stagger items above and below the line
-    const isEven = index % 2 === 0;
-    const yOffset = isEven ? '-40%' : '40%';
+const getEventCardType = (evt) => {
+    if (evt.external_image_url || evt.image?.asset?.url) return 'polaroid';
+    if (evt.text_en?.length > 300) return 'clipping';
+    return 'note';
+};
+
+const renderCardContent = (selection, evt, type) => {
+    // Base shadows and backgrounds are handled via CSS classes
     
-    // Date formatting
-    let dateDisplay = evt.date || "Unknown Date";
-    if (evt.date) {
+    // Header/Pin
+    selection.append("circle")
+        .attr("cx", CARD_WIDTH / 2)
+        .attr("cy", 15)
+        .attr("r", 6)
+        .attr("class", "board-pin shadow-lg");
+
+    // Background rect based on type
+    selection.append("rect")
+        .attr("x", 0)
+        .attr("y", 30)
+        .attr("width", CARD_WIDTH)
+        .attr("height", CARD_HEIGHT - 30)
+        .attr("class", `${type}-bg timeline-card`);
+
+    // Date
+    let dateDisplay = evt.date || "UNKNOWN";
+    if (evt.date && evt.date.includes("-")) {
         const parts = evt.date.split("-");
-        if (parts.length === 3) {
-            dateDisplay = `${parts[2]}-${parts[1]}-${parts[0]}`;
+        if (parts.length === 3) dateDisplay = `${parts[2]}.${parts[1]}.${parts[0]}`;
+    }
+
+    selection.append("text")
+        .attr("x", 20)
+        .attr("y", 60)
+        .attr("class", "card-date")
+        .text(`[ RECORD_${dateDisplay} ]`);
+
+    // Image for Polaroids
+    if (type === 'polaroid') {
+        let imageUrl = evt.external_image_url || evt.image?.asset?.url;
+        if (!imageUrl && evt.image) {
+            try { imageUrl = urlFor(evt.image)?.url(); } catch(e) {}
         }
-    }
 
-    // Image handling
-    let imageUrl = evt.external_image_url;
-    if (!imageUrl && evt.image?.asset?.url) {
-        imageUrl = evt.image.asset.url;
-    }
-    if (!imageUrl && evt.image) {
-         try {
-            imageUrl = urlFor(evt.image)?.url();
-         } catch(e) { console.warn("Image builder failed", e); }
-    }
+        if (imageUrl) {
+            // Clip path for image
+            const clipId = `clip-${Math.random().toString(36).substr(2, 9)}`;
+            selection.append("clipPath")
+                .attr("id", clipId)
+                .append("rect")
+                .attr("x", 20)
+                .attr("y", 75)
+                .attr("width", CARD_WIDTH - 40)
+                .attr("height", 240);
 
-    const imageHtml = imageUrl 
-        ? `<div class="chrono-media relative overflow-hidden h-32 md:h-48 mb-4 border border-white/10 group-hover:border-gold/50 transition-colors duration-500">
-             <img src="${imageUrl}" alt="${evt.title_en || 'Event'}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transform transition-transform duration-1000 group-hover:scale-110" loading="lazy">
-             <div class="absolute inset-0 bg-obsidian/40 mix-blend-multiply group-hover:bg-transparent transition-all"></div>
-           </div>` 
-        : "";
-
-    const linkUrl = evt.slug ? `event.html?slug=${evt.slug}` : "#";
-
-    return `
-        <div class="chrono-event relative flex-shrink-0 w-[400px] md:w-[600px] px-12 group" style="transform: translateY(${yOffset})">
-            <!-- Connection Line to Axis -->
-            <div class="absolute ${isEven ? 'bottom-0' : 'top-0'} left-1/2 -translate-x-1/2 w-px h-24 bg-gradient-to-${isEven ? 't' : 'b'} from-gold/50 to-transparent opacity-30 group-hover:opacity-100 transition-opacity"></div>
+            selection.append("image")
+                .attr("xlink:href", imageUrl)
+                .attr("x", 20)
+                .attr("y", 75)
+                .attr("width", CARD_WIDTH - 40)
+                .attr("height", 240)
+                .attr("preserveAspectRatio", "xMidYMid slice")
+                .attr("clip-path", `url(#${clipId})`)
+                .attr("filter", "grayscale(100%) contrast(1.2)");
             
-            <a href="${linkUrl}" class="block bg-obsidian/60 backdrop-blur-md border border-white/5 p-8 hover:border-gold/40 transition-all duration-500 relative group/card">
-                <!-- Tactical Corner Accents -->
-                <div class="absolute top-0 right-0 w-6 h-6 border-t border-r border-gold/20 m-2 group-hover/card:border-gold/60 transition-colors"></div>
-                <div class="absolute bottom-0 left-0 w-6 h-6 border-b border-l border-gold/20 m-2 group-hover/card:border-gold/60 transition-colors"></div>
-
-                <div class="flex items-center gap-3 mb-4">
-                    <span class="text-gold font-mono text-[10px] tracking-widest uppercase border-l-2 border-gold pl-2">
-                        ${dateDisplay}
-                    </span>
-                    <div class="h-px bg-white/10 flex-grow"></div>
-                </div>
-
-                ${imageHtml}
-
-                <h3 class="text-xl md:text-2xl font-serif text-white uppercase tracking-wider mb-3 leading-tight group-hover/card:text-gold transition-colors">
-                    ${evt.title_en || i18next.t("timeline_loader.untitled_event")}
-                </h3>
-                
-                <div class="text-gray-400 font-lato text-sm leading-relaxed line-clamp-3">
-                    ${evt.text_en || ""}
-                </div>
-
-                <div class="mt-6 flex justify-between items-center">
-                    <span class="text-[8px] font-mono text-gray-600 tracking-[3px] uppercase">ID: ${index.toString().padStart(4, '0')}</span>
-                    <span class="text-gold text-[10px] font-mono tracking-widest opacity-0 group-hover/card:opacity-100 transition-opacity">
-                        INTEL <i class="fas fa-chevron-right ml-1"></i>
-                    </span>
-                </div>
-            </a>
-        </div>
-    `;
-};
-
-const renderEraBackground = (eraTitle) => {
-    return `
-        <div class="era-bg-container flex-shrink-0 relative pointer-events-none select-none">
-            <h2 class="era-title whitespace-nowrap text-[20vh] md:text-[35vh] font-serif font-bold text-white/[0.02] uppercase tracking-[0.2em] leading-none">
-                ${eraTitle}
-            </h2>
-            <div class="absolute inset-0 flex items-center justify-center">
-                <div class="w-px h-[60vh] bg-white/[0.05]"></div>
-            </div>
-        </div>
-    `;
-};
-
-const buildHorizontalTimeline = (eras, container) => {
-    let html = '';
-    let globalIndex = 0;
-
-    eras.forEach((era) => {
-        const eraTitle = era.title_en || i18next.t("timeline_loader.unknown_era");
-        
-        // Start Era Section
-        html += `<div class="era-section flex items-center relative gap-0">`;
-        
-        // Era Background Label
-        html += renderEraBackground(eraTitle);
-
-        if (era.events && Array.isArray(era.events)) {
-            era.events.forEach((evt) => {
-                html += renderEventCard(evt, globalIndex);
-                globalIndex++;
-            });
+            // Image border/overlay
+            selection.append("rect")
+                .attr("x", 20)
+                .attr("y", 75)
+                .attr("width", CARD_WIDTH - 40)
+                .attr("height", 240)
+                .attr("fill", "none")
+                .attr("stroke", "rgba(0,0,0,0.1)")
+                .attr("stroke-width", 1);
         }
-        
-        html += `</div>`; // End Era Section
-    });
-
-    container.innerHTML = html;
-
-    // Reveal Axis
-    const axis = document.getElementById('timeline-axis');
-    if (axis) axis.style.opacity = '1';
-
-    // Initialize Animations
-    initChronoAnimations();
-};
-
-/* --------------------------------------------------------------------------
-   ANIMATION LOGIC (GSAP Horizontal Scroll)
-   -------------------------------------------------------------------------- */
-const initChronoAnimations = () => {
-    if (!window.gsap || !window.ScrollTrigger) {
-        console.warn("GSAP/ScrollTrigger not loaded.");
-        return;
     }
 
-    gsap.registerPlugin(ScrollTrigger);
-
-    const container = document.getElementById('timeline-embed');
-    const wrapper = document.getElementById('timeline-wrapper');
+    // Title
+    const title = evt.title_en || "UNTITLED_RECORD";
+    const textY = type === 'polaroid' ? 345 : 90;
     
-    // Calculate total width to scroll
-    const totalWidth = container.scrollWidth - window.innerWidth + (window.innerWidth * 0.4); // Added offset for padding
+    selection.append("text")
+        .attr("x", 20)
+        .attr("y", textY)
+        .attr("class", "card-title")
+        .style("font-size", "18px")
+        .text(title.length > 25 ? title.substring(0, 22) + "..." : title);
 
-    // 1. Horizontal Scroll Animation
-    gsap.to(container, {
-        x: () => -(container.scrollWidth - window.innerWidth),
-        ease: "none",
-        scrollTrigger: {
-            trigger: wrapper,
-            start: "top top",
-            end: () => `+=${container.scrollWidth}`, // Scroll duration based on content width
-            scrub: 1,
-            pin: true,
-            anticipatePin: 1,
-            invalidateOnRefresh: true,
+    // Text Content (Wrapped)
+    const rawText = evt.text_en || "";
+    const cleanText = rawText.replace(/<[^>]*>/g, '').substring(0, 200) + "...";
+    
+    const textElement = selection.append("text")
+        .attr("x", 20)
+        .attr("y", textY + 25)
+        .attr("class", "card-text")
+        .attr("width", CARD_WIDTH - 40);
+
+    // Simple manual wrapping
+    const words = cleanText.split(/\s+/);
+    let line = [];
+    let lineNumber = 0;
+    const lineHeight = 1.4; // ems
+    const y = textElement.attr("y");
+    const x = textElement.attr("x");
+    let tspan = textElement.append("tspan").attr("x", x).attr("y", y).attr("dy", "1em");
+    
+    for (let n = 0; n < words.length; n++) {
+        line.push(words[n]);
+        tspan.text(line.join(" "));
+        if (tspan.node().getComputedTextLength() > CARD_WIDTH - 50) {
+            line.pop();
+            tspan.text(line.join(" "));
+            line = [words[n]];
+            tspan = textElement.append("tspan").attr("x", x).attr("y", y).attr("dy", ++lineNumber * lineHeight + 1 + "em").text(words[n]);
+            if (lineNumber > 5) break; // Limit lines
         }
-    });
+    }
 
-    // 2. Event Focus Effects (Parallax & Scale)
-    gsap.utils.toArray('.chrono-event').forEach(event => {
-        gsap.fromTo(event, 
-            { scale: 0.8, opacity: 0.3, filter: 'blur(10px)' },
-            {
-                scale: 1,
-                opacity: 1,
-                filter: 'blur(0px)',
-                scrollTrigger: {
-                    trigger: event,
-                    containerAnimation: gsap.getById('mainScroll'), // Fix if using ScrollTrigger on container
-                    // Since it's nested in a pinned container, we use containerAnimation if we had multiple
-                    // But here we can use a simpler approach: check horizontal center
-                    start: "left 80%",
-                    end: "left 20%",
-                    scrub: true,
-                    // Use toggleClass for CSS effects
-                    toggleClass: { targets: event, className: "is-active" }
-                }
-            }
-        );
-    });
-
-    // 3. Scanline Animation on Axis
-    gsap.to('.timeline-scanline', {
-        x: window.innerWidth,
-        repeat: -1,
-        duration: 8,
-        ease: "none"
-    });
+    // Focus ring
+    selection.append("rect")
+        .attr("x", -5)
+        .attr("y", 25)
+        .attr("width", CARD_WIDTH + 10)
+        .attr("height", CARD_HEIGHT - 20)
+        .attr("class", "card-focus-ring")
+        .attr("rx", 5);
 };
 
+const buildCrimeBoard = (eras, svg) => {
+    const mainGroup = svg.select("#main-group");
+    const linksLayer = svg.select("#links-layer");
+    const cardsLayer = svg.select("#cards-layer");
+    
+    const allEvents = eras.flatMap(e => e.events || []);
+    const eventNodes = [];
 
-/* --------------------------------------------------------------------------
-   MAIN EXPORT
-   -------------------------------------------------------------------------- */
+    // Layout Logic: Spiral path or Zig-zag path for events
+    // Let's use a semi-random zig-zag path from top-left to bottom-right
+    allEvents.forEach((evt, i) => {
+        const stepX = 500;
+        const col = i % 8;
+        const row = Math.floor(i / 8);
+        
+        const baseX = 400 + (col * stepX);
+        const baseY = 400 + (row * 600);
+        
+        // Add random jitter
+        const x = baseX + (Math.random() * 200 - 100);
+        const y = baseY + (Math.random() * 150 - 75);
+        const rotation = (Math.random() * 10 - 5);
+
+        eventNodes.push({ ...evt, x, y, rotation, id: i });
+    });
+
+    // Draw Red Strings (Links)
+    const lineGenerator = d3.line()
+        .x(d => d.x + CARD_WIDTH / 2)
+        .y(d => d.y + 15) // Pin position
+        .curve(d3.curveBasis); // Smooth paths for organic feeling strings
+
+    // Draw lines between sequential events
+    for (let i = 0; i < eventNodes.length - 1; i++) {
+        const start = eventNodes[i];
+        const end = eventNodes[i+1];
+        
+        // Midpoint for curve jitter
+        const midX = (start.x + end.x) / 2 + (Math.random() * 100 - 50);
+        const midY = (start.y + end.y) / 2 + (Math.random() * 100 - 50);
+
+        linksLayer.append("path")
+            .datum([start, {x: midX - CARD_WIDTH/2, y: midY - 15}, end])
+            .attr("class", "red-string-path")
+            .attr("d", lineGenerator);
+    }
+
+    // Render Cards
+    const cardGroups = cardsLayer.selectAll(".timeline-card-group")
+        .data(eventNodes)
+        .enter()
+        .append("g")
+        .attr("class", "timeline-card-group")
+        .attr("transform", d => `translate(${d.x},${d.y}) rotate(${d.rotation})`)
+        .on("click", function(event, d) {
+            // Focus on clip
+            event.stopPropagation();
+            focusOnCard(d, svg);
+        });
+
+    cardGroups.each(function(d) {
+        const type = getEventCardType(d);
+        renderCardContent(d3.select(this), d, type);
+    });
+
+    // Zoom Functions
+    function focusOnCard(d, svg) {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        
+        const scale = 1.2;
+        const tx = width / 2 - (d.x + CARD_WIDTH / 2) * scale;
+        const ty = height / 2 - (d.y + CARD_HEIGHT / 2) * scale;
+
+        svg.transition()
+            .duration(1000)
+            .call(zoom.transform, d3.zoomIdentity.translate(tx, ty).scale(scale));
+            
+        cardsLayer.selectAll(".timeline-card-group").classed("is-focused", false);
+        d3.select(`.timeline-card-group:nth-child(${d.id + 1})`).classed("is-focused", true);
+    }
+
+    const zoom = d3.zoom()
+        .scaleExtent([0.1, 2.5])
+        .on("zoom", (event) => {
+            mainGroup.attr("transform", event.transform);
+        });
+
+    svg.call(zoom);
+
+    // Initial positioning: focus on first event
+    if (eventNodes.length > 0) {
+        const d = eventNodes[0];
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        const scale = 0.6;
+        const tx = width / 2 - (d.x + CARD_WIDTH / 2) * scale;
+        const ty = height / 2 - (d.y + CARD_HEIGHT / 2) * scale;
+        svg.call(zoom.transform, d3.zoomIdentity.translate(tx, ty).scale(scale));
+    }
+
+    // HUD Controls binding
+    document.getElementById("zoom-in").addEventListener("click", () => {
+        svg.transition().call(zoom.scaleBy, 1.3);
+    });
+    document.getElementById("zoom-out").addEventListener("click", () => {
+        svg.transition().call(zoom.scaleBy, 0.7);
+    });
+    document.getElementById("zoom-reset").addEventListener("click", () => {
+        if (eventNodes.length > 0) {
+            const d = eventNodes[0];
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            const scale = 0.5;
+            const tx = width / 2 - (d.x + CARD_WIDTH / 2) * scale;
+            const ty = height / 2 - (d.y + CARD_HEIGHT / 2) * scale;
+            svg.transition().duration(1000).call(zoom.transform, d3.zoomIdentity.translate(tx, ty).scale(scale));
+        }
+    });
+};
 
 export default async function (container, props) {
-  const embedEl = container.querySelector("#timeline-embed") || container;
-  let loaderEl = document.getElementById("timeline-loading");
-  if (!loaderEl) loaderEl = container.querySelector("#timeline-loading");
+  const svg = d3.select("#timeline-board");
+  const loaderEl = document.getElementById("timeline-loading");
 
   try {
+    console.log("> Accessing Classified Archives for Crime Board...");
+
     const query = `*[_type == "timelineEra"] | order(order asc) {
             title_en,
             "events": events[] {
@@ -222,41 +289,21 @@ export default async function (container, props) {
     const eras = await client.fetch(query);
 
     if (eras && eras.length > 0) {
-      // Build the Horizontal view
-      buildHorizontalTimeline(eras, embedEl);
+      buildCrimeBoard(eras, svg);
       
-      // Hide loader with a delay for smoothness
-      setTimeout(() => {
-          if (loaderEl) {
-              gsap.to(loaderEl, { 
-                  opacity: 0, 
-                  duration: 1, 
-                  onComplete: () => loaderEl.style.display = "none" 
-              });
-          }
-      }, 500);
-      
-      // SEO Injection (keeping same logic but optional)
-      const allEvents = eras.flatMap(e => e.events || []);
-      injectSchema({
-          "@context": "https://schema.org",
-          "@type": "Timeline",
-          "name": "The Chronology of Sins",
-          "description": "Historical records of the Ravenwood and Macpherson bloodlines.",
-          "event": allEvents.map(e => ({
-              "@type": "Event",
-              "name": e.title_en,
-              "startDate": e.date,
-              "description": e.text_en
-          }))
-      });
+      // Dramatic exit for loader
+      if (loaderEl) {
+          loaderEl.style.opacity = "0";
+          setTimeout(() => loaderEl.style.display = "none", 1000);
+      }
       
     } else {
       if (loaderEl) loaderEl.style.display = "none";
-      embedEl.innerHTML = `<div class="text-center text-red-500 py-10">${i18next.t("timeline_loader.archives_empty")}</div>`;
+      const wrapper = document.getElementById("timeline-wrapper");
+      wrapper.innerHTML = `<div class="flex items-center justify-center h-full text-red-800 font-mono uppercase tracking-widest">[ ERROR: ARCHIVES PURGED ]</div>`;
     }
   } catch (error) {
-    console.error("Timeline Load Error:", error);
-    if (loaderEl) loaderEl.innerHTML = `<span class='text-red-500'>Error loading archives.</span>`;
+    console.error("Crime Board Reconstruction Failed:", error);
+    if (loaderEl) loaderEl.innerHTML = `<span class='text-red-800 font-mono'>SYSTEM FAILURE: ${error.message}</span>`;
   }
 }

@@ -1,4 +1,4 @@
-import { ConnectorConfig, DataConnect, QueryRef, QueryPromise, MutationRef, MutationPromise } from 'firebase/data-connect';
+import { ConnectorConfig, DataConnect, QueryRef, QueryPromise, ExecuteQueryOptions, MutationRef, MutationPromise } from 'firebase/data-connect';
 
 export const connectorConfig: ConnectorConfig;
 
@@ -105,6 +105,6 @@ interface ListBloodlineRef {
 }
 export const listBloodlineRef: ListBloodlineRef;
 
-export function listBloodline(): QueryPromise<ListBloodlineData, undefined>;
-export function listBloodline(dc: DataConnect): QueryPromise<ListBloodlineData, undefined>;
+export function listBloodline(options?: ExecuteQueryOptions): QueryPromise<ListBloodlineData, undefined>;
+export function listBloodline(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListBloodlineData, undefined>;
 

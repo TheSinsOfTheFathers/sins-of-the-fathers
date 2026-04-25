@@ -1,6 +1,20 @@
 @import "tailwindcss";
 @config "../tailwind.config.js";
 
+:root {
+  --bg-obsidian: #050505;
+  --bg-charcoal: #1a1a1a;
+  --text-gold: #c5a059;
+  --text-alert: #8a1c1c;
+  --glass-border: rgba(197, 160, 89, 0.15);
+  --glass-bg: rgba(5, 5, 5, 0.7);
+  --font-display: 'Cinzel', serif;
+  --font-body: 'Lato', sans-serif;
+  --font-mono: 'Courier Prime', monospace;
+  --text-offwhite: #e5e5e5;
+  --text-mercury: #d1d1d1;
+}
+
 /* =========================================
    Base Styles & Scrollbar
    =========================================*/
@@ -16,7 +30,7 @@
     pointer-events: none;
     z-index: 50;
     opacity: 0.05;
-    background: url('data:image/svg+xml;utf8,%3Csvg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"%3E%3Cfilter id="noiseFilter"%3E%3CfeTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch"/%3E%3C/filter%3E%3Crect width="100%25" height="100%25" filter="url(%23noiseFilter)"/%3E%3C/svg%3E');
+    background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
     mix-blend-mode: overlay;
 }
 
@@ -1032,23 +1046,6 @@ input:-webkit-autofill:active {
   background: rgba(10, 10, 10, 0.95);
   border: 1px solid rgba(197, 160, 89, 0.3);
   border-radius: 0;
-  backdrop-filter: blur(8px);
-}
-*/
-
-:root {
-  --bg-obsidian: #050505;
-  --bg-charcoal: #1a1a1a;
-  --text-gold: #c5a059;
-  --text-alert: #8a1c1c;
-  --glass-border: rgba(197, 160, 89, 0.15);
-  --glass-bg: rgba(5, 5, 5, 0.7);
-  --font-display: 'Cinzel', serif;
-  --font-body: 'Lato', sans-serif;
-  --font-mono: 'Courier Prime', monospace;
-  --text-offwhite: #e5e5e5;
-  --text-mercury: #d1d1d1;
-}
 
 /* Atmospheric Overlays */
 .vignette-overlay {
@@ -1117,116 +1114,96 @@ input:-webkit-autofill:active {
         font-size: 3vw;
     }
 }
-/* =========================================
-   Timeline Page: Chrono-Stream
-   ========================================= */
 
-#timeline-wrapper {
-  background: radial-gradient(circle at center, rgba(197, 160, 89, 0.03) 0%, transparent 70%);
+/* --------------------------------------------------------------------------
+   CRIME BOARD (TIMELINE v2)
+   -------------------------------------------------------------------------- */
+.mesh-grain {
+    background-color: #050505;
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(197, 160, 89, 0.03) 0, transparent 50%), 
+        radial-gradient(at 50% 0%, rgba(197, 160, 89, 0.02) 0, transparent 50%),
+        url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
 }
 
-#timeline-axis {
-    display: flex;
-    align-items: center;
+.timeline-card-group {
+    pointer-events: all;
+    transition: transform 0.3s cubic-bezier(0.2, 0, 0.2, 1);
+    cursor: pointer;
 }
 
-.timeline-scanline {
-    height: 100%;
-    z-index: 11;
+.timeline-card {
+    filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
+    transition: filter 0.3s ease;
 }
 
-.chrono-event {
-    transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1), 
-                filter 0.8s ease, 
-                opacity 0.8s ease,
-                scale 0.8s ease;
-    will-change: transform, opacity, filter, scale;
-    scale: 0.8;
+.timeline-card-group:hover .timeline-card {
+    filter: drop-shadow(0 15px 25px rgba(197,160,89,0.2));
 }
 
-.chrono-event.is-active {
-    z-index: 50;
-    opacity: 1 !important;
-    filter: blur(0px) !important;
-    scale: 1.1;
+.polaroid-bg {
+    fill: #fdfdfd !important;
+    stroke: #ddd;
+    stroke-width: 1px;
 }
 
-.chrono-event.is-active img {
-    filter: grayscale(0) !important;
+.note-bg {
+    fill: #fef3c7 !important; /* yellow-100 */
+    stroke: #f59e0b; /* amber-500 */
+    stroke-width: 1px;
+    fill-opacity: 0.9;
 }
 
-.chrono-event.is-active > div:first-child {
-    opacity: 1 !important;
-    height: 32px;
+.clipping-bg {
+    fill: #e5e7eb !important; /* gray-200 */
+    stroke: #9ca3af; /* gray-400 */
+    stroke-width: 1px;
 }
 
-.era-title {
-    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.05);
-    text-shadow: 0 0 40px rgba(0,0,0,0.5);
+.red-string-path {
+    fill: none;
+    stroke: #991b1b; /* red-800 */
+    stroke-width: 3px;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    filter: drop-shadow(0 0 3px rgba(153, 27, 27, 0.8));
+    pointer-events: none;
+}
+
+.board-pin {
+    fill: #b91c1c; /* red-700 */
+    stroke: #450a0a;
+    stroke-width: 0.5px;
+}
+
+.card-title {
     font-family: 'Cinzel', serif;
+    font-weight: 700;
+    fill: #111;
 }
 
-.chrono-media img {
-    mask-image: linear-gradient(to bottom, black 80%, transparent 100%);
+.card-date {
+    font-family: 'Courier Prime', monospace;
+    font-size: 10px;
+    fill: #d97706; /* amber-600 */
 }
 
-/* Mobile Fallback: Vertical Stack */
-@media (max-width: 1024px) {
-    #timeline-wrapper {
-        min-height: auto !important;
-        height: auto !important;
-    }
-    #timeline-pin-container {
-        position: relative !important;
-        height: auto !important;
-        overflow: visible !important;
-        display: block !important;
-    }
-    #timeline-embed {
-        flex-direction: column !important;
-        padding: 4rem 1.5rem !important;
-        transform: none !important;
-        display: flex !important;
-        height: auto !important;
-    }
-    .chrono-event {
-        width: 100% !important;
-        transform: translate(0, 0) !important;
-        margin-bottom: 6rem;
-        opacity: 1 !important;
-        filter: none !important;
-        scale: 1 !important;
-        padding-left: 0 !important;
-        padding-right: 0 !important;
-    }
-    .chrono-event::before {
-        content: '';
-        position: absolute;
-        left: 50%;
-        top: -3rem;
-        width: 1px;
-        height: 3rem;
-        background: var(--theme-color);
-        opacity: 0.3;
-    }
-    #timeline-axis {
-        display: none !important;
-    }
-    .era-bg-container {
-        width: 100% !important;
-        text-align: center;
-        margin-bottom: 4rem;
-        position: relative !important;
-        height: auto !important;
-    }
-    .era-title {
-        font-size: 15vw !important;
-        color: var(--theme-color) !important;
-        opacity: 0.2 !important;
-        -webkit-text-stroke: 0 !important;
-    }
-    .era-section {
-        flex-direction: column !important;
-        width: 100% !important;
-    }
+.card-text {
+    font-family: 'Courier Prime', monospace;
+    font-size: 11px;
+    fill: #333;
+    line-height: 1.4;
+}
+
+.card-focus-ring {
+    fill: none;
+    stroke: #c5a059;
+    stroke-width: 2px;
+    stroke-dasharray: 4 2;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.timeline-card-group.is-focused .card-focus-ring {
+    opacity: 1;
 }

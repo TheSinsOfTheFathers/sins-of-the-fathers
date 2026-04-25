@@ -61,7 +61,7 @@ Below are examples of how to use the `example` connector's generated functions t
 ## ListBloodline
 You can execute the `ListBloodline` query using the following action shortcut function, or by calling `executeQuery()` after calling the following `QueryRef` function, both of which are defined in [dataconnect-generated/index.d.ts](./index.d.ts):
 ```typescript
-listBloodline(): QueryPromise<ListBloodlineData, undefined>;
+listBloodline(options?: ExecuteQueryOptions): QueryPromise<ListBloodlineData, undefined>;
 
 interface ListBloodlineRef {
   ...
@@ -72,7 +72,7 @@ export const listBloodlineRef: ListBloodlineRef;
 ```
 You can also pass in a `DataConnect` instance to the action shortcut function or `QueryRef` function.
 ```typescript
-listBloodline(dc: DataConnect): QueryPromise<ListBloodlineData, undefined>;
+listBloodline(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListBloodlineData, undefined>;
 
 interface ListBloodlineRef {
   ...
