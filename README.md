@@ -79,7 +79,7 @@ This platform is forged with a curated selection of modern, high-performance tec
 ### 🗺️ Interactive Modules
 
 <p>
-  <img src="https://img.shields.io/badge/Leaflet-FFD700?style=for-the-badge&logo=leaflet&logoColor=black" alt="Leaflet.js" />
+  <img src="https://img.shields.io/badge/Mapbox-000000?style=for-the-badge&logo=mapbox&logoColor=white" alt="Mapbox GL JS" />
   <img src="https://img.shields.io/badge/D3.js-36454F?style=for-the-badge&logo=d3.js&logoColor=white" alt="D3.js" />
   <img src="https://img.shields.io/badge/Timeline.js-880808?style=for-the-badge&logo=&logoColor=white" alt="Timeline.js" />
 </p>
@@ -120,7 +120,7 @@ This platform is forged with a curated selection of modern, high-performance tec
 ### 🛡️ Security & Legal
 
 <p>
-  <img src="https://img.shields.io/badge/reCAPTCHA_v3-880808?style=for-the-badge&logo=google&logoColor=white" alt="Google reCAPTCHA v3" />
+  <img src="https://img.shields.io/badge/Cloudflare-F38020?style=for-the-badge&logo=cloudflare&logoColor=white" alt="Cloudflare" />
   <img src="https://img.shields.io/badge/Security_Headers-FFD700?style=for-the-badge&logo=firebase&logoColor=black" alt="Security Headers" />
 </p>
 
@@ -139,13 +139,13 @@ This platform translates its powerful tech stack into a rich, multi-layered user
 - **⚡️ Blazing-Fast Performance:** With `Partytown` optimizing third-party scripts and `Sanity.io BlurHash` ensuring images load instantly, the user experience is seamless and immediate.
 - **🎭 Advanced Animations:** `GSAP (GreenSock Animation Platform)` is used to create sophisticated, story-driven animations that bring the universe to life.
 - **🌐 Global Reach (i18n):** The `i18next` framework provides the foundation for a fully internationalized platform, ready to deliver the story to a global audience.
-- **🗺️ Interactive World Map:** Explore the world of "The Sins of the Fathers" through a dynamic and data-rich map, powered by `Leaflet.js` and `GeoJSON`.
+- **🗺️ Interactive World Map:** Explore the world of "The Sins of the Fathers" through a dynamic and data-rich map, powered by `Mapbox GL JS`.
 - **📊 Rich Data Visualizations:** Complex relationships and historical data are made clear and compelling with visualizations from `D3.js`.
 - **⏳ Dynamic Historical Timeline:** Journey through the intricate history of the dynasties with an interactive timeline built with `Timeline.js`.
 - **🤖 Automated E2E Testing:** `Playwright` ensures a bug-free experience by running comprehensive automated tests across the entire platform.
 - **🔍 Continuous Code Quality:** `SonarCloud` and `ESLint` act as a "Code Quality Radar," ensuring the codebase remains clean, efficient, and maintainable.
 - **📈 Proactive Performance Monitoring:** `Google Lighthouse CI` and `Sentry` work in tandem to track performance metrics and catch errors before they impact users.
 - **🛍️ Integrated Merch Store:** A headless integration with `Fourthwall` provides a seamless on-site merchandise store, offering everything from apparel to custom glassware.
-- **🔒 Fortified Security:** User security is paramount, enforced with `Google reCAPTCHA v3` and robust `Security Headers` configured in Firebase.
+- **🔒 Fortified Security:** User security is paramount, enforced with `Cloudflare` and robust `Security Headers` configured in Firebase.
 
 ---

@@ -1,0 +1,66 @@
+TECHNICAL SPECIFICATIONS & TECH ARSENAL
+
+DNS & DOMAINS
+- Primary Registrar: Squarespace (formerly Google Domains)
+- Management: Google Domains
+
+HOSTING & CLOUD INFRASTRUCTURE
+- Core Platform: Firebase Hosting
+- Blog & SSR Engine: Vercel (Astro SSR)
+- Serverless Logic: Firebase Functions
+- Cloud Platform: Google Cloud Platform (GCP)
+- Asset Storage: Firebase Storage / Sanity CDN
+
+BACKEND & CMS
+- Headless CMS: Sanity.io (Content Lake)
+- Email API: Resend
+- Database: Sanity Content Lake / Firebase Firestore (optional)
+- Uptime Monitoring: UptimeRobot
+
+FRONTEND & DESIGN SYSTEM
+- Languages: HTML5, CSS3, JavaScript (ES6+)
+- Styling: Tailwind CSS (Compiled via PostCSS)
+- Frameworks: Astro v5 (for Blog/Lore), Vanilla JS (for Landing)
+- Typography: Google Fonts (Cinzel, Lato, Courier Prime)
+- Icons: Font Awesome Pro
+
+PERFORMANCE & UX
+- Smooth Scroll: Lenis
+- Third-Party Script Optimization: Partytown
+- Animation Engine: GSAP (GreenSock)
+- Audio System: Howler.js
+- Image Optimization: Sanity.io BlurHash
+- Internationalization: i18next
+
+INTERACTIVE MODULES
+- Maps: Mapbox GL JS
+- Visualizations: D3.js (Relationship webs)
+- Chronology: Timeline.js
+
+DEVOPS & QUALITY ASSURANCE
+- Version Control: GitHub
+- CI/CD: GitHub Actions
+- Dependency Management: Dependabot
+- Testing: Playwright (End-to-End)
+- Code Quality: SonarCloud, ESLint
+- Performance Audit: Lighthouse CI
+- Error Tracking: Sentry
+
+E-COMMERCE & INTEGRATIONS
+- Primary Merch Store: Fourthwall (Headless Integration)
+- Regional Sales: Shopier
+- Digital Assets: Gumroad
+- Book Distribution: Amazon KDP, Google Books
+- Community Support: Patreon
+
+MARKETING & ANALYTICS
+- Analytics: Google Analytics 4 (GA4)
+- Tag Management: Google Tag Manager (GTM)
+- User Behavior Tracking: Microsoft Clarity
+- Structured Data: Schema.org
+- Community: Goodreads
+
+SECURITY & COMPLIANCE
+- Bot Protection: Cloudflare
+- Infrastructure Security: Security Headers (Firebase Config)
+- Identity Management: Firebase Authentication
