@@ -77,6 +77,7 @@ export const initI18n = async () => {
             .use(i18nextBrowserLanguageDetector)
             .init({
                 fallbackLng: 'en',
+                supportedLngs: ['en', 'tr'],
                 load: 'languageOnly',
                 debug: false,
                 backend: {
