@@ -10,15 +10,15 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/node": "^9.5.4",
+    "@astrojs/node": "^10.0.5",
     "@astrojs/rss": "^4.0.14",
     "@portabletext/react": "^6.0.2",
-    "@sanity/astro": "^3.2.0",
+    "@sanity/astro": "^3.3.1",
     "@sanity/client": "^7.14.0",
     "@sanity/image-url": "^2.0.3",
     "@tailwindcss/typography": "^0.5.16",
     "@tailwindcss/vite": "^4.0.0",
-    "astro": "^5.1.1",
+    "astro": "^6.2.1",
     "astro-portabletext": "^0.10.1",
     "firebase-functions": "^6.0.0",
     "prismjs": "^1.30.0",
