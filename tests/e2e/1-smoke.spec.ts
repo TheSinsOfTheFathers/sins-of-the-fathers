@@ -14,7 +14,7 @@ test.describe('TSOF - Smoke Tests', () => {
   });
 
   test('Kritik UI elementleri görünür olmalı', async ({ page }) => {
-    const brand = page.locator('.nav-brand').filter({ hasText: 'TSOF' });
+    const brand = page.locator('header a').filter({ hasText: 'TSOF' }).first();
     await expect(brand).toBeVisible();
 
     const heroTitle = page.locator('h1');

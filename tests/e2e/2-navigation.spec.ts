@@ -7,8 +7,8 @@ test.describe('TSOF - Navigasyon ve i18n', () => {
 
     // Bloodline (Karakterler) sayfasına git
     await page.getByRole('link', { name: /bloodline/i }).first().click();
-    await expect(page).toHaveURL(/.*characters.html/);
-    await expect(page.locator('h1')).toContainText(/Bloodline/i);
+    await expect(page).toHaveURL(/.*bloodline.html/);
+    await expect(page).toHaveTitle(/Bloodline/i);
 
     // Geri dön ve History (Timeline) sayfasına git
     await page.goBack();
