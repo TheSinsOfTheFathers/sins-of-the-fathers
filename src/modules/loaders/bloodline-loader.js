@@ -1,177 +1,427 @@
 import * as d3 from 'd3';
-import { gsap } from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { client } from '../../lib/sanityClient.js';
+import i18next from '../../lib/i18n.js';
 
-gsap.registerPlugin(ScrollTrigger);
+// Depth/Tier mapping to force a hierarchical Tree-like Top-Down layout
+const TIER_MAP = {
+    "char_roland": 0, // Patriarch
+    "char_miranda": 1, // High Command
+    "char_lek": 1,
+    "char_julian": 1,
+    "char_gideon": 1,
+    "char_havi": 1,
+    "char_silvio_sezar": 2, // Europe / Finance heads
+    "char_menslier": 2,
+    "char_elias": 2,
+    "char_hamish": 3, // Logistics
+    "char_nathaniel": 4 // Ground rules
+};
 
-import { listBloodline, connectorConfig } from '@dataconnect/generated';
-import { initializeApp, getApps } from 'firebase/app';
-import { connectDataConnectEmulator, getDataConnect } from 'firebase/data-connect';
+// D1 and Sanity Name mismatches mapping (D1 Name -> Sanity Name)
+const NAME_MAP = {
+    "Silvio & Sezar Orsini": "Silvio"
+};
 
-// Connect to Local Emulator (Port 9400 as set in firebase.json)
-if (getApps().length === 0) {
-    initializeApp({ projectId: "sins-of-the-fathers" });
-}
-const dc = getDataConnect(connectorConfig);
-connectDataConnectEmulator(dc, '127.0.0.1', 9400);
-
-/**
- * Initializes and renders the Bloodline / Case File visualization.
- * @param {string} containerSelector - The CSS selector for the container element.
- */
 export const renderBloodline = async (containerSelector) => {
     const container = document.querySelector(containerSelector);
     if (!container) return;
 
     try {
-        const response = await listBloodline(dc);
-        const data = response.data;
+        // Fetch D1 Bloodline Data
+        const responseList = await Promise.all([
+            fetch('https://ai-brain.bbabacanbaba059.workers.dev/api/bloodline').then(r => r.json()),
+            client.fetch('*[_type == "faction"]{title, "slug": slug.current, color}'),
+            client.fetch('*[_type == "character"]{name, "slug": slug.current, faction->{title, "slug": slug.current}}')
+        ]);
+
+        const d1Data = responseList[0].data;
+        const sanityFactions = responseList[1];
+        const sanityCharacters = responseList[2];
+
+        // 1. Build Faction & Slug Maps from Sanity
+        const FACTION_MAP = {};
+        const SLUG_MAP = {};
+        sanityCharacters.forEach(c => {
+            const nameKey = c.name.toLowerCase();
+            if (c.faction) FACTION_MAP[nameKey] = c.faction.slug;
+            if (c.slug) SLUG_MAP[nameKey] = c.slug;
+        });
+
+        // 2. Generate Filter Buttons Dynamically
+        const filtersContainer = document.querySelector('.faction-filters');
         
-        const nodes = data.entities;
-        const links = data.bloodlineLinks.map(link => ({
+        const generateButtons = () => {
+            let html = `<button data-faction="ALL" class="active px-4 py-1.5 text-[10px] tracking-widest uppercase font-mono border border-white/10 hover:border-gold/50 text-white/70 transition-all rounded-full whitespace-nowrap">ALL</button>`;
+            sanityFactions.forEach(f => {
+                html += `<button data-faction="${f.slug}" class="px-4 py-1.5 text-[10px] tracking-widest uppercase font-mono border border-white/10 hover:border-gold/50 text-white/70 transition-all rounded-full whitespace-nowrap" style="--faction-color: ${f.color?.hex || '#c5a059'}">${f.title}</button>`;
+            });
+            return html;
+        };
+
+        if (filtersContainer) filtersContainer.innerHTML = generateButtons();
+
+        // 3. Process D1 Nodes
+        let nodes = d1Data.entities.map(n => {
+            const mappedName = NAME_MAP[n.name] || n.name;
+            const factionSlug = FACTION_MAP[mappedName.toLowerCase()] || "independent";
+            // Get color from sanity faction
+            const factionDetails = sanityFactions.find(f => f.slug === factionSlug);
+
+            return {
+                ...n, 
+                faction: factionSlug,
+                factionColor: factionDetails?.color?.hex || (factionSlug === 'independent' ? '#555' : '#c5a059'),
+                tier: TIER_MAP[n.id] !== undefined ? TIER_MAP[n.id] : 3
+            };
+        });
+
+        let links = d1Data.bloodlineLinks.map(link => ({
             ...link,
             source: link.source.id,
             target: link.target.id
         }));
 
-        renderGraph(container, containerSelector, nodes, links);
+        setupD3Graph(container, containerSelector, nodes, links, sanityFactions, SLUG_MAP);
     } catch (error) {
-        console.error("Error fetching Bloodline data:", error);
+        console.error("Error fetching or processing Bloodline + Sanity data:", error);
     }
 };
 
-const renderGraph = (container, containerSelector, nodes, links) => {
-
-    // Setup SVG Canvas
-    const width = container.clientWidth || 1000;
-    const height = 800; // Will be dynamic based on tree depth
+const setupD3Graph = (container, containerSelector, nodesData, linksData, sanityFactions, slugMap) => {
+    const width = container.clientWidth;
+    const height = container.clientHeight;
     
-    container.innerHTML = ''; // Clear previous
+    container.innerHTML = '';
+    
+    // Zoom behaviors
+    const zoom = d3.zoom()
+        .scaleExtent([0.2, 3])
+        .on("zoom", (e) => g.attr("transform", e.transform));
+
     const svg = d3.select(containerSelector)
         .append('svg')
         .attr('width', '100%')
-        .attr('height', height)
-        .attr('viewBox', [0, 0, width, height])
-        .style('background-color', 'transparent');
+        .attr('height', '100%')
+        .call(zoom)
+        .on("dblclick.zoom", null);
 
-    const g = svg.append('g').attr('class', 'bloodline-layer');
+    const g = svg.append('g').attr('class', 'bloodline-canvas');
 
-    // Setup Force Directed Graph or Tree Layout
-    // For a structured hierarchical case file, d3.tree() is preferred, but force topology is good for tangled webs.
-    // Let's use a force simulation tweaked for a top-down hierarchy
-    const simulation = d3.forceSimulation(nodes)
-        .force("link", d3.forceLink(links).id(d => d.id).distance(220)) // Increased distance to 220
-        .force("charge", d3.forceManyBody().strength(-2000)) // Increased repulsion to -2000
-        .force("center", d3.forceCenter(width / 2, height / 2 + 50)) // Pushed center down slightly
-        .force("collide", d3.forceCollide().radius(140).iterations(3)) // Added collide force based on node width
-        .force("y", d3.forceY().strength(0.1)); // encourage spread
+    // Filter controls logic
+    let currentFaction = "ALL";
+    let activeNodes = [...nodesData];
+    let activeLinks = [...linksData];
 
-    // Draw Links
-    const link = g.append('g')
-        .attr('class', 'links')
-        .selectAll('path')
-        .data(links)
-        .join('path')
-        .attr('fill', 'none')
-        .attr('stroke', d => d.relationType === 'RIVAL' || d.relationType === 'BLOOD_OATH' ? '#7f1d1d' : '#4b5563') // red-900 or gray-600
-        .attr('stroke-width', 2)
-        .attr('stroke-dasharray', d => d.relationType === 'RIVAL' ? '5,5' : 'none')
-        .attr('opacity', 0); // hidden for GSAP
+    document.querySelectorAll('.faction-filters button').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            document.querySelectorAll('.faction-filters button').forEach(b => {
+                b.classList.remove('active');
+                b.style.borderColor = "rgba(255,255,255,0.1)"; 
+                b.style.color = "rgba(255,255,255,0.7)";
+                b.style.background = "transparent";
+            });
+            e.target.classList.add('active');
+            
+            const pColor = e.target.style.getPropertyValue('--faction-color') || '#c5a059';
+            e.target.style.borderColor = pColor;
+            e.target.style.color = pColor;
+            e.target.style.background = `color-mix(in srgb, ${pColor} 10%, transparent)`;
 
-    // Draw Nodes
-    const node = g.append('g')
-        .attr('class', 'nodes')
-        .selectAll('g')
-        .data(nodes)
-        .join('g')
-        .attr('class', 'bloodline-node cursor-default')
-        .attr('opacity', 0); // hidden for GSAP
-
-    // Node Background (Obsidian)
-    node.append('rect')
-        .attr('width', 220)
-        .attr('height', 80)
-        .attr('x', -110)
-        .attr('y', -40)
-        .attr('fill', '#0a0a0b') // bg-obsidian
-        .attr('stroke', '#c5a059') // border-gold/40
-        .attr('stroke-width', 1)
-        .attr('rx', 4);
-
-    // Node Name (Serif)
-    node.append('text')
-        .attr('dy', -10)
-        .attr('text-anchor', 'middle')
-        .attr('class', 'fill-gold font-serif text-lg tracking-wider')
-        .text(d => d.name);
-
-    // Node Status/Threat (Terminal/Monospace)
-    node.append('text')
-        .attr('dy', 15)
-        .attr('text-anchor', 'middle')
-        .attr('class', 'fill-gray-500 font-mono text-[10px] uppercase tracking-widest')
-        .text(d => `STATUS: ${d.status}`);
-
-    node.append('text')
-        .attr('dy', 30)
-        .attr('text-anchor', 'middle')
-        .attr('class', d => `font-mono text-[10px] uppercase tracking-widest ${d.threatLevel === 'CRITICAL' || d.threatLevel === 'HIGH' ? 'fill-red-900' : 'fill-gray-600'}`)
-        .text(d => `THREAT: ${d.threatLevel}`);
-
-    // Simulation Tick
-    simulation.on("tick", () => {
-        link.attr("d", d => {
-            const dx = d.target.x - d.source.x,
-                  dy = d.target.y - d.source.y,
-                  dr = Math.sqrt(dx * dx + dy * dy);
-            return `M${d.source.x},${d.source.y}A${dr},${dr} 0 0,1 ${d.target.x},${d.target.y}`;
+            currentFaction = e.target.dataset.faction;
+            updateFilter();
         });
-        node.attr("transform", d => `translate(${d.x},${d.y})`);
     });
 
-    // --- GSAP Animations ---
-    const initAnimations = () => {
-        const tl = gsap.timeline({
-            scrollTrigger: {
-                trigger: containerSelector,
-                start: "top 70%",
-                once: true
-            }
-        });
+    // Map Controls
+    document.getElementById('zoom-in').addEventListener('click', () => svg.transition().call(zoom.scaleBy, 1.5));
+    document.getElementById('zoom-out').addEventListener('click', () => svg.transition().call(zoom.scaleBy, 0.75));
+    document.getElementById('zoom-reset').addEventListener('click', () => {
+        svg.transition().duration(750).call(zoom.transform, d3.zoomIdentity.translate(width/2, 100).scale(1));
+    });
 
-        // 1. Reveal Patriarch/Core Nodes
-        // Removed y:0 because it conflicted with D3 tick transform.
-        tl.fromTo('.bloodline-node', 
-            { opacity: 0, scale: 0.9 },
-            {
-                opacity: 1,
-                scale: 1,
-                duration: 1.5,
-                stagger: 0.3,
-                ease: "power3.out"
-            }
-        )
-        // 2. Animate connecting links
-        .to(link.nodes(), {
-            opacity: 0.6,
-            duration: 1,
-            stagger: 0.1,
-            ease: "power2.inOut"
-        }, "-=1");
+    // Popup Logic
+    const popup = document.getElementById('character-popup');
+    if (popup) popup.addEventListener('click', (e) => e.stopPropagation());
 
-        // Hover functionality (Vanilla JS + D3)
-        node.on('mouseenter', function() {
-            gsap.to(this, { scale: 1.05, duration: 0.3, ease: 'back.out(1.7)' });
-            d3.select(this).select('rect').attr('stroke', '#fff'); // Brighten border
-        }).on('mouseleave', function() {
-            gsap.to(this, { scale: 1, duration: 0.3, ease: 'power2.out' });
-            d3.select(this).select('rect').attr('stroke', '#c5a059'); // Reset border
-        });
+    const modalName = document.getElementById('modal-name');
+    const modalFaction = document.getElementById('modal-faction').querySelector('.faction-name');
+    const modalDot = document.getElementById('modal-faction').querySelector('.faction-dot');
+    const modalLink = document.getElementById('modal-dossier-link');
+
+    const showModal = (event, d) => {
+        if (event) event.stopPropagation();
+        
+        modalName.textContent = d.name;
+        modalFaction.textContent = d.faction?.replaceAll('_', ' ') || 'Independent';
+        modalDot.style.backgroundColor = d.factionColor;
+        
+        // Use the mapped slug from Sanity for the Dossier link
+        const nameKey = d.name.toLowerCase();
+        const charSlug = slugMap[nameKey] || d.id;
+        modalLink.href = `/pages/character-detail.html?slug=${charSlug}`;
+        
+        // Ensure the link click triggers navigation regardless of event interception
+        modalLink.onclick = (e) => {
+            e.preventDefault(); // Stop any other handlers
+            e.stopPropagation();
+            window.location.href = modalLink.href;
+        };
+        modalLink.style.pointerEvents = 'auto';
+        
+        // Use actual screen position of the clicked node element
+        const rect = event.currentTarget.getBoundingClientRect();
+        const mainRect = container.getBoundingClientRect();
+
+        popup.style.left = `${rect.right + 20 - mainRect.left}px`;
+        popup.style.top = `${rect.top - mainRect.top}px`;
+        
+        popup.classList.add('active');
+        popup.classList.remove('hidden');
     };
 
-    // Wait for simulation to cool down before animating
-    setTimeout(() => {
-        simulation.stop();
-        initAnimations();
-    }, 1000);
+    const closeModal = () => {
+        popup.classList.remove('active');
+        setTimeout(() => { if (!popup.classList.contains('active')) popup.classList.add('hidden'); }, 200);
+    };
+
+    document.getElementById('modal-close')?.addEventListener('click', closeModal);
+    svg.on('click', () => { closeModal(); });
+
+    // Layers
+    const linkGroup = g.append('g').attr('class', 'links');
+    const nodeGroup = g.append('g').attr('class', 'nodes');
+
+    // Force Simulation config
+    const simulation = d3.forceSimulation()
+        .force("link", d3.forceLink().id(d => d.id).distance(150).strength(0.3))
+        .force("charge", d3.forceManyBody().strength(-1200))
+        .force("collide", d3.forceCollide().radius(120).iterations(3))
+        .force("x", d3.forceX(0).strength(0.05))
+        .force("y", d3.forceY(d => d.tier * 180).strength(0.8));
+
+    let nodeElements, linkElements, linkHitAreas;
+
+    function render() {
+        linkHitAreas = linkGroup.selectAll('.link-hit-area')
+            .data(activeLinks, d => d.source.id + "-" + d.target.id);
+        
+        linkHitAreas.exit().remove();
+        
+        const hitEnter = linkHitAreas.enter().append('path')
+            .attr('class', 'link-hit-area')
+            .attr('fill', 'none')
+            .attr('stroke', 'transparent')
+            .attr('stroke-width', 15)
+            .on("mouseenter", (event, d) => showRelationshipTooltip(event, d))
+            .on("mousemove", (event) => positionRelationshipTooltip(event))
+            .on("mouseleave", () => hideRelationshipTooltip());
+            
+        linkHitAreas = hitEnter.merge(linkHitAreas);
+
+        linkElements = linkGroup.selectAll('path.link-line')
+            .data(activeLinks, d => d.source.id + "-" + d.target.id);
+        
+        linkElements.exit().transition().duration(300).attr('opacity', 0).remove();
+        
+        const linkEnter = linkElements.enter().append('path')
+            .attr('class', 'link-line')
+            .attr('fill', 'none')
+            .attr('stroke', d => {
+                if (d.relationType === 'BLOOD_RELATION') return '#c5a059'; // Gold
+                if (d.relationType === 'BLOOD_OATH' || d.relationType === 'RIVAL') return '#7f1d1d'; // Dark Red
+                return '#4b5563'; // Gray
+            })
+            .attr('stroke-width', d => d.relationType === 'BLOOD_RELATION' ? 3 : 2)
+            .attr('stroke-dasharray', d => d.relationType === 'RIVAL' ? '5,5' : 'none')
+            .attr('opacity', 0);
+            
+        linkElements = linkEnter.merge(linkElements);
+        linkElements.transition().duration(300).attr('opacity', 0.8);
+
+        nodeElements = nodeGroup.selectAll('g.bloodline-node')
+            .data(activeNodes, d => d.id);
+            
+        nodeElements.exit().transition().duration(300).attr('opacity', 0).remove();
+        
+        const nodeEnter = nodeElements.enter().append('g')
+            .attr('class', 'bloodline-node cursor-pointer')
+            .attr('opacity', 0)
+            .call(d3.drag()
+                .on("start", dragstarted)
+                .on("drag", dragged)
+                .on("end", dragended));
+
+        nodeElements = nodeEnter.merge(nodeElements);
+
+        // Add handler to merged selection to ensure all nodes have it
+        nodeElements.on('click', (event, d) => {
+            if (event.defaultPrevented) return;
+            showModal(event, d);
+        });
+
+        nodeElements.transition().duration(500).attr('opacity', 1);
+
+        nodeEnter.append('rect')
+            .attr('width', 200)
+            .attr('height', 70)
+            .attr('x', -100)
+            .attr('y', -35)
+            .attr('fill', '#0a0a0b')
+            .attr('stroke', d => d.factionColor)
+            .attr('stroke-width', 1.5)
+            .attr('rx', 4);
+
+        nodeEnter.append('text')
+            .attr('dy', -8)
+            .attr('text-anchor', 'middle')
+            .attr('class', 'font-serif text-[14px] tracking-wider fill-white')
+            .text(d => d.name);
+
+        nodeEnter.append('text')
+            .attr('dy', 12)
+            .attr('text-anchor', 'middle')
+            .attr('class', d => `font-mono text-[9px] uppercase tracking-widest fill-gray-500`)
+            .text(d => `STATUS: ${d.status}`);
+            
+        nodeEnter.append('text')
+            .attr('dy', 25)
+            .attr('text-anchor', 'middle')
+            .attr('class', d => `font-mono text-[9px] uppercase tracking-widest ${d.threatLevel === 'CRITICAL' ? 'fill-red-500' : 'fill-gray-600'}`)
+            .text(d => `THREAT: ${d.threatLevel}`);
+
+        nodeElements = nodeEnter.merge(nodeElements);
+        nodeElements.transition().duration(300).attr('opacity', 1);
+
+        simulation.nodes(activeNodes).on("tick", ticked);
+        simulation.force("link").links(activeLinks);
+        simulation.alpha(1).restart();
+    }
+
+    function updateFilter() {
+        if (currentFaction === "ALL") {
+            activeNodes = nodesData;
+        } else {
+            activeNodes = nodesData.filter(d => d.faction === currentFaction);
+        }
+        
+        const activeNodeIds = new Set(activeNodes.map(n => n.id));
+        activeLinks =  linksData.filter(l => {
+            const sourceId = typeof l.source === 'object' ? l.source.id : l.source;
+            const targetId = typeof l.target === 'object' ? l.target.id : l.target;
+            return activeNodeIds.has(sourceId) && activeNodeIds.has(targetId);
+        });
+        
+        render();
+    }
+
+    function ticked() {
+        linkElements.attr("d", d => `M${d.source.x},${d.source.y}L${d.target.x},${d.target.y}`);
+        linkHitAreas.attr("d", d => `M${d.source.x},${d.source.y}L${d.target.x},${d.target.y}`);
+        nodeElements.attr("transform", d => `translate(${d.x},${d.y})`);
+    }
+
+    function dragstarted(event, d) {
+        if (!event.active) simulation.alphaTarget(0.3).restart();
+        d.fx = d.x;
+        d.fy = d.y;
+        d3.select(this).select('rect').attr('stroke', '#fff');
+    }
+
+    function dragged(event, d) {
+        d.fx = event.x;
+        d.fy = event.y;
+    }
+
+    function dragended(event, d) {
+        if (!event.active) simulation.alphaTarget(0);
+        d.fx = null;
+        d.fy = null;
+        d3.select(this).select('rect').attr('stroke', d => d.factionColor);
+    }
+
+    render();
+    svg.call(zoom.transform, d3.zoomIdentity.translate(width/2, 100).scale(1));
 };
+
+// --- HELPER FUNCTIONS FOR RELATIONSHIPS ---
+
+function showRelationshipTooltip(event, d) {
+    const tooltip = d3.select('#bloodline-tooltip');
+    const content = d3.select('#tooltip-content');
+    
+    // Get language (default to en)
+    const currentLang = localStorage.getItem('app_language') || 'en';
+    
+    // Get translations for relation names from the imported i18next
+    let relationLabel = d.relationType;
+    const i18nKey = `bloodline_relations.${d.relationType}`;
+    
+    if (i18next.exists(i18nKey)) {
+        relationLabel = i18next.t(i18nKey);
+    }
+
+    const sourceName = d.source.name || d.source.id;
+    const targetName = d.target.name || d.target.id;
+
+    if (currentLang === 'tr') {
+        const suffix = getTurkishSuffix(targetName);
+        content.html(`
+            <div class="text-white font-serif tracking-widest uppercase text-[11px] mb-1">
+                ${sourceName}, ${targetName}${suffix} ${relationLabel}
+            </div>
+            <div class="text-gold/60 text-[8px] uppercase tracking-tighter">
+                Güven Aralığı: %98.4 // İstihbarat Aktif
+            </div>
+        `);
+    } else {
+        content.html(`
+            <div class="text-white font-serif tracking-widest uppercase text-[11px] mb-1">
+                ${sourceName}: ${relationLabel} of ${targetName}
+            </div>
+            <div class="text-gold/60 text-[8px] uppercase tracking-tighter">
+                Confidence Level: 98.4% // Intel Active
+            </div>
+        `);
+    }
+
+    tooltip.style('opacity', 1);
+    positionRelationshipTooltip(event);
+}
+
+function positionRelationshipTooltip(event) {
+    const tooltip = d3.select('#bloodline-tooltip');
+    tooltip
+        .style('left', (event.pageX + 15) + 'px')
+        .style('top', (event.pageY + 15) + 'px');
+}
+
+function hideRelationshipTooltip() {
+    d3.select('#bloodline-tooltip').style('opacity', 0);
+}
+
+// Simple rule-based Turkish possessive suffix helper
+function getTurkishSuffix(name) {
+    if (!name) return "";
+    const vowels = "aeıioöuüAEIİOÖUÜ";
+    const lastChar = name[name.length - 1];
+    
+    // Determine the "type" based on the last vowel in the word
+    let lastVowel = 'e';
+    for (let i = name.length - 1; i >= 0; i--) {
+        if (vowels.includes(name[i])) {
+            lastVowel = name[i].toLowerCase();
+            break;
+        }
+    }
+
+    // Is it a vowel?
+    const isVowelEnding = vowels.includes(lastChar);
+    
+    let suffix = "";
+    if ("aı".includes(lastVowel)) suffix = isVowelEnding ? "nın" : "ın";
+    else if ("ei".includes(lastVowel)) suffix = isVowelEnding ? "nin" : "in";
+    else if ("ou".includes(lastVowel)) suffix = isVowelEnding ? "nun" : "un";
+    else if ("öü".includes(lastVowel)) suffix = isVowelEnding ? "nün" : "ün";
+
+    return "'" + suffix;
+}

@@ -78,8 +78,12 @@ const createImageCard = (lore) => {
   const imgUrl = lore.image?.url || "https://via.placeholder.com/400";
   const blurHash = lore.image?.blurHash;
   const dateStr = lore.date
-    ? new Date(lore.date).toLocaleDateString(i18next.language)
-    : i18next.t("lore_loader.no_date");
+    ? new Date(lore.date).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      })
+    : i18next.t("lore_detail.undated");
 
   const cardDiv = document.createElement("div");
   cardDiv.className =
@@ -113,8 +117,11 @@ const createImageCard = (lore) => {
   return cardDiv;
 };
 
+import { auth } from "../firebase-config.js";
+
 const generateCard = (lore) => {
-  if (lore.restricted) return createRestrictedCard(lore);
+  const user = auth.currentUser;
+  if (lore.restricted && !user) return createRestrictedCard(lore);
 
   const type = lore.loreType || "document";
 
@@ -249,6 +256,8 @@ export default async function (container, props) {
 
     // Loader'ı kapat ve Grid'i göster
     if (loader) loader.style.display = "none";
+    const statusSub = document.getElementById("archive-status-sub");
+    if (statusSub) statusSub.style.display = "none";
 
     // Grid'i görünür yap (İçindeki kartlar henüz opacity-0)
     gsap.to(gridContainer, { autoAlpha: 1, duration: 0.3 });

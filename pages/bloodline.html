@@ -1,64 +1,65 @@
 <!DOCTYPE html>
 <html lang="en"> 
 <head>
-    <!-- Google Tag Manager -->
-    <script type="text/partytown">
-        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-        })(window,document,'script','dataLayer','GTM-PVH59MXZ');
-    </script>
-    <!-- End Google Tag Manager -->
-     
-    <!-- Meta Tags -->
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="description" content="The Bloodline Case File: An intelligence web of all major operatives, architects, and associates in the Ravenwood & Havi saga.">
-    
-    <!-- Title -->
     <title>Bloodline Case File | TSOF Archives</title>
 
-    <!-- Preconnects for Performance -->
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <!-- External Fonts -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&family=Courier+Prime&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-    
-    <!-- Internal Styles -->
     <link rel="stylesheet" href="../src/style.css">
 
-    <!-- Internal Scripts -->
     <script type="module" src="../src/main.js"></script>
 
-    <!-- Partytown Configuration -->
-    <script>
-        partytown = {
-            forward: ['dataLayer.push', 'gtag', 'fbq'], 
-            lib: '/~partytown/'
-        };
-    </script>
-    
-    <!-- Partytown Script -->
-    <script type="module" src="../src/modules/loaders/partytown-loader.js"></script>
-
     <style>
-        /* Small inline tweaks for SVG tuval overlap */
+        body, html {
+            overflow: hidden; /* Prevent native scroll, use pan/zoom */
+            touch-action: none;
+        }
         #bloodline-container {
-            min-height: 800px;
+            width: 100vw;
+            height: calc(100vh - 80px); /* Fill screen minus header */
+            cursor: grab;
+        }
+        #bloodline-container:active {
+            cursor: grabbing;
+        }
+        .faction-filters button.active {
+            border-color: var(--faction-color, #c5a059) !important;
+            color: var(--faction-color, #c5a059) !important;
+            background: color-mix(in srgb, var(--faction-color, #c5a059) 15%, transparent) !important;
+            box-shadow: 0 0 15px color-mix(in srgb, var(--faction-color, #c5a059) 30%, transparent);
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Popup Styles */
+        #character-popup.active { display: block; }
+        #character-popup.active .popup-content { opacity: 1; transform: scale(1); }
+        .popup-content { transition: all 0.2s ease-out; pointer-events: auto; }
+        #character-popup { pointer-events: none; }
+        
+        /* Relationship Tooltip */
+        #bloodline-tooltip {
+            transition: opacity 0.1s ease-out;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            text-shadow: 0 0 5px rgba(197, 160, 89, 0.5);
+        }
+        .link-hit-area {
+            cursor: pointer;
+            pointer-events: stroke;
         }
     </style>
 </head>
-<body class="flex flex-col min-h-screen bg-obsidian selection:bg-gold selection:text-black relative overflow-x-hidden">
+<body class="flex flex-col h-screen bg-obsidian selection:bg-gold selection:text-black relative overflow-hidden">
 
     <!-- Visual Effects -->
     <div class="fixed inset-0 pointer-events-none z-0">
-        <!-- Ambient Glow -->
         <div class="absolute top-1/4 left-1/4 w-[800px] h-[800px] bg-gold/5 rounded-full blur-[120px] mix-blend-screen opacity-50"></div>
         <div class="absolute bottom-1/4 right-1/4 w-[600px] h-[600px] bg-red-900/5 rounded-full blur-[150px] mix-blend-screen opacity-30"></div>
-        <!-- Noise -->
         <div class="noise-overlay absolute inset-0 opacity-40"></div>
     </div>
 
@@ -72,7 +73,7 @@
             
             <!-- Desktop Menu (Absolute Center) -->
             <div class="hidden md:flex absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 items-center space-x-6 xl:space-x-8 text-xs xl:text-sm uppercase tracking-widest font-semibold whitespace-nowrap">
-                <a href="/pages/bloodline.html" aria-label="Navigate to The Bloodline: Intelligence Web" class="text-gray-400 hover:text-gold transition-colors block border-b border-transparent hover:border-gold" data-i18n="nav.bloodline">THE BLOODLINE</a>
+                <a href="/pages/bloodline.html" aria-label="Navigate to The Bloodline: Intelligence Web" class="text-gold hover:text-gold transition-colors block border-b border-gold" data-i18n="nav.bloodline">THE BLOODLINE</a>
                 <a href="/pages/characters.html" aria-label="Navigate to The Dossier: Characters" class="text-gray-400 hover:text-gold transition-colors block border-b border-transparent hover:border-gold" data-i18n="nav.dossier">DOSSIER</a>
                 <a href="/pages/timeline.html" aria-label="Navigate to History: Timeline" class="text-gray-400 hover:text-gold transition-colors block border-b border-transparent hover:border-gold" data-i18n="nav.history">HISTORY</a>
                 <a href="/pages/factions.html" aria-label="Navigate to Power Dynamics: Factions" class="text-gray-400 hover:text-gold transition-colors block border-b border-transparent hover:border-gold" data-i18n="nav.factions">FACTIONS</a>
@@ -83,7 +84,7 @@
                 
                 <!-- Auth Controls -->
                 <div class="border-l border-white/20 pl-6 ml-4 flex items-center gap-4" id="auth-controls">
-                    <a href="/pages/lore.html" aria-label="Access classified lore archive" id="nav-link-classified" class="text-gold hover:text-white transition-colors flex items-center gap-2">
+                    <a href="/pages/lore.html" aria-label="Access classified lore archive" id="nav-link-classified" class="nav-link-classified text-gold hover:text-white transition-colors flex items-center gap-2">
                         <i class="fas fa-lock text-xs guest-lock"></i> <span data-i18n="nav.classified">Classified</span>
                     </a>
                     <a href="/pages/login.html" aria-label="Sign in to your account" class="hover:text-gold transition-colors guest-only" id="auth-signin-link" data-i18n="auth.login"><span data-i18n="auth.login">Sign in</span></a>
@@ -108,73 +109,88 @@
         </nav>
     </header>
 
-    <!-- Main Content Area -->
-    <main class="pt-32 min-h-screen relative z-10">
-        
-        <!-- Page Title -->
-        <div class="container mx-auto px-6 mb-16 text-center animate-fade-in-up">
-            <h1 class="text-5xl md:text-7xl font-serif text-white mb-4 tracking-wider uppercase drop-shadow-lg text-shadow-lg">
-                The Bloodline
-            </h1>
-            <div class="inline-flex items-center gap-4">
-                <div class="h-px bg-gold/50 w-12"></div>
-                <p class="font-mono text-xs text-gold uppercase tracking-[0.3em] bg-gold/5 border border-gold/20 px-4 py-1">
-                    INTELLIGENCE WEB & CASE FILES
-                </p>
-                <div class="h-px bg-gold/50 w-12"></div>
-            </div>
-        </div>
+    <!-- MOBILE MENU OVERLAY (Z-Index 60) -->
+    <div id="mobile-menu" class="hidden fixed inset-0 z-40 bg-black/95 flex-col items-center justify-center space-y-8 transition-opacity duration-300 backdrop-blur-xl font-mono text-sm uppercase tracking-widest">
+        <a href="/pages/bloodline.html" class="text-2xl text-white font-serif hover:text-gold tracking-widest" data-i18n="nav.bloodline">Bloodline</a>
+        <a href="/pages/characters.html" class="text-2xl text-white font-serif hover:text-gold tracking-widest" data-i18n="nav.dossier">Dossier</a>
+        <a href="/pages/timeline.html" class="text-2xl text-white font-serif hover:text-gold tracking-widest" data-i18n="nav.history">History</a>
+        <a href="/pages/factions.html" class="text-2xl text-white font-serif hover:text-gold tracking-widest" data-i18n="nav.factions">Factions</a>
+        <a href="/pages/locations.html" class="text-2xl text-white font-serif hover:text-gold tracking-widest" data-i18n="nav.territories">Territories</a>
 
-        <!-- Notification Banner -->
-        <div class="container mx-auto px-6 mb-8 hidden" id="dataconnect-warning">
-            <div class="bg-red-900/10 border border-red-900/30 p-4 rounded text-center">
-                <p class="font-mono text-xs text-red-500 tracking-widest uppercase"><i class="fas fa-exclamation-triangle mr-2"></i> ERROR: Data Connect backend not initialized. Displaying mock archive data.</p>
-            </div>
-        </div>
+        <a href="https://shop.thesinsofthefathers.com" class="text-2xl text-white font-serif hover:text-gold transition-colors" target="_blank" data-i18n="nav.merch">Merch</a>
+        <a href="https://blog.thesinsofthefathers.com" class="text-2xl text-white font-serif hover:text-gold" data-i18n="nav.blog">Blog</a>
+        <a href="/pages/lore.html" class="nav-link-classified text-xl text-gold font-serif hover:text-white" data-i18n="nav.classified"><span>Classified</span></a>
+        <a href="/pages/login.html" class="text-xs text-gray-400 hover:text-white mt-8" data-i18n="auth.login">Sign in</a>
 
-        <!-- D3.js SVG Container -->
-        <section class="w-full relative" aria-label="Intelligence web visualization">
-            <!-- Scroll instructions -->
-            <div class="absolute top-4 left-6 z-20 flex flex-col gap-2 font-mono text-[10px] text-gray-400 uppercase tracking-widest">
-                <span class="flex items-center gap-2"><div class="w-4 h-[1px] bg-red-900"></div> RIVALRY / BLOOD OATH</span>
-                <span class="flex items-center gap-2"><div class="w-4 h-[1px] bg-gray-600"></div> BIOLOGICAL / ALLIANCE</span>
+        <!-- Mobile Language -->
+        <div class="flex gap-4 text-xs mt-4">
+            <button class="lang-btn hover:text-gold transition-colors text-gray-200" data-lang="en" onclick="window.changeAppLanguage('en')">EN</button>
+            <span class="text-gray-600">/</span>
+            <button class="lang-btn hover:text-gold transition-colors text-gray-200" data-lang="tr" onclick="window.changeAppLanguage('tr')">TR</button>
+        </div>
+    </div>
+
+    <!-- Main Content Area strictly fitted -->
+    <main class="pt-[80px] h-screen relative z-10 w-full">
+        <section class="w-full h-full relative" aria-label="Intelligence web visualization">
+            <!-- NEW: Floating Faction Filters at Bottom -->
+            <div class="faction-filters fixed bottom-8 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2 p-1.5 bg-obsidian/80 backdrop-blur-xl border border-white/10 rounded-full shadow-2xl overflow-x-auto max-w-[90vw] no-scrollbar">
+                <!-- Data populated by JS -->
+            </div>
+
+            <!-- Map Controls -->
+            <div class="absolute bottom-6 right-6 z-30 flex flex-col gap-2 font-mono text-xs">
+                <button id="zoom-in" class="w-8 h-8 bg-black/80 border border-white/10 text-white/70 hover:text-gold hover:border-gold transition-colors rounded flex items-center justify-center"><i class="fas fa-plus"></i></button>
+                <button id="zoom-out" class="w-8 h-8 bg-black/80 border border-white/10 text-white/70 hover:text-gold hover:border-gold transition-colors rounded flex items-center justify-center"><i class="fas fa-minus"></i></button>
+                <button id="zoom-reset" class="w-8 h-8 bg-black/80 border border-white/10 text-white/70 hover:text-gold hover:border-gold transition-colors rounded flex items-center justify-center mt-2" title="Reset"><i class="fas fa-compress"></i></button>
+            </div>
+
+            <div class="absolute bottom-6 left-6 z-20 flex flex-col gap-2 font-mono text-[10px] text-gray-400 uppercase tracking-widest bg-black/80 backdrop-blur p-4 border border-white/10 rounded pointer-events-none">
+                <span class="flex items-center gap-2"><div class="w-4 h-[1px] bg-red-900 border-b border-dashed border-red-900"></div> RIVALRY / BLOOD OATH</span>
+                <span class="flex items-center gap-2"><div class="w-4 h-[2px] bg-gold"></div> BLOOD RELATION</span>
+                <span class="flex items-center gap-2"><div class="w-4 h-[1px] bg-gray-600"></div> HIERARCHY / ALLIANCE</span>
+            </div>
+
+            <!-- New: Relationship Tooltip -->
+            <div id="bloodline-tooltip" class="absolute pointer-events-none opacity-0 bg-black/90 border border-gold/30 p-3 text-[10px] font-mono text-gold rounded z-[9999] backdrop-blur-md min-w-[150px]">
+                <div class="flex flex-col gap-1">
+                    <span class="text-[7px] uppercase tracking-widest text-white/40">Intel Connection</span>
+                    <div id="tooltip-content" class="leading-relaxed"></div>
+                </div>
             </div>
 
             <!-- The canvas -->
-            <div id="bloodline-container" class="w-full overflow-hidden border-y border-white/5 bg-black/20">
-                <!-- SVG injected via JS -->
-            </div>
+            <div id="bloodline-container" class="bg-black/20"></div>
         </section>
-
     </main>
 
-    <footer aria-label="Site footer" class="py-12 bg-obsidian border-t border-white/5 text-center relative z-10">
-        <p class="font-serif text-gold text-2xl mb-4">TSOF</p>
-        <div class="flex justify-center space-x-6 mb-6">
-            <a href="https://x.com/sotfathersbook" aria-label="Follow us on X (Twitter)" target="_blank" rel="noopener noreferrer" class="text-gray-200 hover:text-gold transition-colors"><i class="fab fa-x-twitter fa-lg"></i></a>
-            <a href="https://bsky.app/profile/thesinsofthefathers.com" aria-label="Follow us on Bluesky" target="_blank" rel="noopener noreferrer" class="text-gray-200 hover:text-gold transition-colors"><i class="fab fa-bluesky fa-lg"></i></a>
-            <a href="https://www.instagram.com/sotfathersbook/" aria-label="Follow us on Instagram" target="_blank" rel="noopener noreferrer" class="text-gray-200 hover:text-gold transition-colors"><i class="fab fa-instagram fa-lg"></i></a>
-            <a href="https://www.reddit.com/r/RavenwoodArchives/" aria-label="Follow us on Reddit" target="_blank" rel="noopener noreferrer" class="text-gray-200 hover:text-gold transition-colors"><i class="fab fa-reddit fa-lg"></i></a>
-            <a href="https://discord.gg/aDuzq7jKKn" aria-label="Join us on Discord" target="_blank" rel="noopener noreferrer" class="text-gray-200 hover:text-gold transition-colors"><i class="fab fa-discord fa-lg"></i></a>
-            <a href="https://www.patreon.com/c/TheSinsoftheFathers" aria-label="Support us on Patreon" target="_blank" rel="noopener noreferrer" class="text-gray-200 hover:text-gold transition-colors"><i class="fab fa-patreon fa-lg"></i></a>
-        </div>
-        
-        <div class="flex justify-center flex-wrap gap-4 md:gap-6 mb-6 text-[10px] font-mono uppercase text-gray-200 px-6">
-            <a href="/pages/privacy.html" aria-label="Read privacy policy" class="hover:text-gold transition-colors" data-i18n="footer.privacy">Privacy</a>
-            <span class="hidden md:inline">|</span>
-            <a href="/pages/terms.html" aria-label="Read terms of operation" class="hover:text-gold transition-colors" data-i18n="footer.terms">Terms</a>
-            <span class="hidden md:inline">|</span>
-            <span class="whitespace-nowrap text-white/50">© <a href="https://www.mapbox.com/" target="_blank" class="text-white hover:text-gold transition-colors">Mapbox</a> | © <a href="http://www.openstreetmap.org/copyright" target="_blank" class="text-white hover:text-gold transition-colors">OpenStreetMap</a></span>
-        </div>
-        <p class="text-gray-600 text-xs uppercase tracking-widest px-6">
-            <span data-i18n="footer.copyright_slogan">Roland Ravenwood & Havi are watching.</span>
-        </p>
-    </footer>
+    <!-- Character Info Popup (Attached to Node) -->
+    <div id="character-popup" class="absolute z-[9999] hidden">
+        <div class="popup-content bg-obsidian/95 border border-gold/30 p-6 rounded-lg shadow-[0_0_30px_rgba(0,0,0,0.8)] transform scale-95 opacity-0 w-64 backdrop-blur-xl">
+            <button id="modal-close" class="absolute top-3 right-3 text-white/40 hover:text-white transition-colors">
+                <i class="fas fa-times text-xs"></i>
+            </button>
 
-    <!-- Initialize Bloodline Script -->
+            <div class="text-left">
+                <span class="text-[7px] font-mono tracking-[0.3em] uppercase text-gold/60 mb-1 block">Record Identified</span>
+                <h2 id="modal-name" class="font-serif text-lg text-white tracking-widest uppercase mb-1 leading-tight">RECORD NAME</h2>
+                <div id="modal-faction" class="font-mono text-[9px] tracking-widest text-gray-400 uppercase mb-4 flex items-center gap-2">
+                    <span class="w-1.5 h-1.5 rounded-full faction-dot"></span>
+                    <span class="faction-name">FACTION</span>
+                </div>
+
+                <div class="space-y-2">
+                    <a id="modal-dossier-link" href="#" class="block w-full py-2 bg-gold/5 border border-gold/30 hover:bg-gold/10 text-gold text-[9px] font-mono tracking-[0.2em] uppercase transition-all rounded text-center">
+                        View Dossier
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Init -->
     <script type="module">
         import { renderBloodline } from '../src/modules/loaders/bloodline-loader.js';
-        
         document.addEventListener('DOMContentLoaded', () => {
             renderBloodline('#bloodline-container');
         });

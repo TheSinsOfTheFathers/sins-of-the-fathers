@@ -93,7 +93,9 @@
     "affiliation": "Bağlılık",
     "place_of_origin": "Köken Yeri",
     "role_rank": "Rol / Rütbe",
+    "illustrator": "Çizer",
     "narrative_record": "Hikaye Kaydı",
+
     "accessing_archives": "Güvenli arşivlere erişiliyor...",
     "waiting_transcript": "Döküm bekleniyor...",
     "network_analysis": "Ağ Analizi",
@@ -244,6 +246,11 @@
     "dynamic_title_login": "Sistem Erişimi"
   },
   "lore_detail": {
+    "page_title": "Kanıt Kaydı | Babaların Günahları",
+    "breadcrumb_archives": "Arşivler",
+    "breadcrumb_record": "Kanıt Kaydı",
+    "header_badge": "Vaka Dosyası",
+    "uplink_status": "DOSYA ALINDI",
     "header_reader": "// OKUYUCU",
     "back_to_archives": "Arşive Dön",
     "metadata_title": "Dosya Meta Verisi",
@@ -268,7 +275,9 @@
     "audio_ended": "İLETİM SONA ERDİ",
     "classified_tooltip": "Gizli Bilgi",
     "error_not_found": "HATA 404: DOSYA ARŞİVDE BULUNAMADI",
-    "error_system": "SİSTEM HATASI: VERİ AKIŞI OKUNAMIYOR"
+    "error_system": "SİSTEM HATASI: VERİ AKIŞI OKUNAMIYOR",
+    "restricted_title": "ERİŞİM ENGELLENDİ",
+    "restricted_msg": "Bu şifreli kayda erişmek için üst düzey yetki gereklidir."
   },
   "lore_loader": {
     "accessing_archives": "Arşivler Taranıyor...",
@@ -346,7 +355,7 @@
     "header_code": "// YASAL_BELGE_02",
     "close_file": "Dosyayı Kapat",
     "main_title": "Operasyon Şartları",
-    "effective_date": "Yürürlük Tarihi: Kasım 2025",
+    "last_updated": "Son Güncelleme: Kasım 2025",
     "intro": "\"The Sins of the Fathers\" (\"Hizmet\" veya \"The Fortress\") platformuna erişerek, bu Şartlara bağlı kalmayı kabul edersiniz. Şartların herhangi bir kısmını kabul etmiyorsanız, Hizmete erişemezsiniz.",
     "sec1_title": "1. Erişim & Hesaplar (Yetki)",
     "sec1_desc1": "Bizde bir hesap oluşturduğunuzda, doğru, eksiksiz ve güncel bilgiler sağlamalısınız. Bunu yapmamanız, Şartların ihlali anlamına gelir ve hesabınızın derhal feshedilmesine neden olabilir.",
@@ -360,10 +369,10 @@
     "sec4_desc": "Hizmetimiz, The Sins of the Fathers tarafından sahip olunmayan veya kontrol edilmeyen üçüncü taraf web sitelerine veya hizmetlerine (örn. Shopier, Gumroad, Amazon) bağlantılar içerebilir. Üçüncü taraf web sitelerinin içeriği, gizlilik politikaları veya uygulamaları konusunda hiçbir sorumluluk kabul etmiyoruz.",
     "sec5_title": "5. Fesih",
     "sec5_desc": "Şartları ihlal etmeniz dahil ancak bununla sınırlı olmamak üzere, herhangi bir nedenle, önceden bildirimde bulunmaksızın veya sorumluluk üstlenmeksizin Hizmetimize erişimi derhal feshedebilir veya askıya alabiliriz.",
-    "sec6_title": "6. Tabi Olunan Hukuk",
-    "sec6_desc": "Bu Şartlar, kanunlar ihtilafı hükümleri dikkate alınmaksızın [Ülkeniz/Bölgeniz] yasalarına göre yönetilecek ve yorumlanacaktır.",
-    "sec7_title": "7. Değişiklikler",
-    "sec7_desc": "Kendi takdirimize bağlı olarak, bu Şartları herhangi bir zamanda değiştirme veya yenileme hakkımızı saklı tutarız. Bu revizyonlar yürürlüğe girdikten sonra Hizmetimize erişmeye veya kullanmaya devam ederek, revize edilen şartlara bağlı kalmayı kabul edersiniz."
+    "sec6_title": "6. Değişiklikler",
+    "sec6_desc": "Kendi takdirimize bağlı olarak, bu Şartları herhangi bir zamanda değiştirme veya yenileme hakkımızı saklı tutarız. Bu revizyonlar yürürlüğe girdikten sonra Hizmetimize erişmeye veya kullanmaya devam ederek, revize edilen şartlara bağlı kalmayı kabul edersiniz.",
+    "sec7_title": "7. Tabi Olunan Hukuk",
+    "sec7_desc": "Bu Şartlar, kanunlar ihtilafı hükümleri dikkate alınmaksızın [Ülkeniz/Bölgeniz] yasalarına göre yönetilecek ve yorumlanacaktır."
   },
   "404_page": {
     "page_title": "404 - Sinyal Kayıp | The Sins of the Fathers",
@@ -405,7 +414,12 @@
     "error_uplink": "BAĞLANTI HATASI: UYDU ÇEVRİMDIŞI"
   },
   "archive_page": {
-    "meta_title": "Gizli Arşivler | The Sins of the Fathers"
+    "meta_title": "Gizli Arşivler | Babaların Günahları",
+    "title": "Arşivler",
+    "subtitle": "\"Gerçek nadiren saf ve asla basit değildir.\"",
+    "uplink_status": "BAĞLANTI STABİL",
+    "section_title": "Aktif Vaka Dosyaları",
+    "section_sub": "Şifreli kayıtlar taranıyor..."
   },
   "cookie_consent": {
     "title": "GÖZETİM PROTOKOLÜ",
@@ -413,5 +427,19 @@
     "accept": "YETKİ VER",
     "decline": "REDDET",
     "policy_link": "Protokolü İncele"
+  },
+  "bloodline_relations": {
+    "BLOOD_RELATION": "Kan Bağı",
+    "RELATION": "Kan Bağı",
+    "RELATIONSHIP": "Kan Bağı",
+    "BLOOD_OATH": "Kan Yemini",
+    "BLOOD_OAT": "Kan Yemini",
+    "RIVAL": "Rakip",
+    "COMMANDER": "Komutanı",
+    "ALLIANCE": "Müttefiki",
+    "FINANCE_RING": "Finans Ağı",
+    "LEGAL_SHIELD": "Yasal Kalkan",
+    "LOGISTICS": "Lojistik",
+    "BLINDSPOT": "Kör Nokta"
   }
 }

@@ -88,7 +88,7 @@
                 
                 <!-- Auth Controls -->
                 <div class="border-l border-white/20 pl-6 ml-4 flex items-center gap-4" id="auth-controls">
-                    <a href="/pages/lore.html" aria-label="Access classified lore archive" id="nav-link-classified" class="text-gold hover:text-white transition-colors flex items-center gap-2">
+                    <a href="/pages/lore.html" aria-label="Access classified lore archive" id="nav-link-classified" class="nav-link-classified text-gold hover:text-white transition-colors flex items-center gap-2">
                         <i class="fas fa-lock text-xs guest-lock"></i> <span data-i18n="nav.classified">Classified</span>
                     </a>
                     <a href="/pages/login.html" aria-label="Sign in to your account" class="hover:text-gold transition-colors guest-only" id="auth-signin-link" data-i18n="auth.login"><span data-i18n="auth.login">Sign in</span></a>
@@ -122,7 +122,7 @@
         <a href="/pages/locations.html" aria-label="Navigate to Territories: Locations" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.territories">Territories</a>
         <a href="https://shop.thesinsofthefathers.com" aria-label="Visit the merchandise store" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest transition-colors" target="_blank" data-i18n="nav.merch">Merch</a>
         <a href="https://blog.thesinsofthefathers.com" aria-label="Visit the blog" class="text-2xl text-white font-serif hover:text-gold uppercase tracking-widest" data-i18n="nav.blog">Blog</a>
-        <a href="/pages/lore.html" aria-label="Access classified lore archive" id="nav-link-classified-mobile" class="text-xl text-gold font-serif hover:text-white uppercase tracking-widest" data-i18n="nav.classified">Classified</a>
+        <a href="/pages/lore.html" aria-label="Access classified lore archive" id="nav-link-classified-mobile" class="nav-link-classified text-xl text-gold font-serif hover:text-white uppercase tracking-widest" data-i18n="nav.classified"><span>Classified</span></a>
         <a href="/pages/login.html" aria-label="Sign in to your account" class="text-sm text-gray-400 hover:text-white mt-8 font-mono uppercase" data-i18n="auth.login">Sign in</a>
 
         <!-- Mobile Language -->
@@ -206,12 +206,12 @@
             <div class="flex flex-col md:flex-row justify-between items-end border-b border-white/10 pb-4 mb-10">
                 <div>
                     <h2 class="font-mono text-gray-200 text-sm tracking-widest uppercase mb-1" data-i18n="archive_page.section_title">Active Case Files</h2>
-                    <p class="text-[10px] font-mono text-gray-500 uppercase" data-i18n="archive_page.section_sub">Scanning encrypted records...</p>
+                    <p id="archive-status-sub" class="text-[10px] font-mono text-gray-500 uppercase" data-i18n="archive_page.section_sub">Scanning encrypted records...</p>
                 </div>
             </div>
 
             <!-- LOADING STATE -->
-            <div id="archive-loader-inner" class="flex flex-col items-center justify-center py-24">
+            <div id="archive-loader" class="flex flex-col items-center justify-center py-24">
                 <div class="relative w-24 h-24 mb-6">
                     <div class="absolute inset-0 border border-gold/20 rounded-full animate-[spin_4s_linear_infinite]"></div>
                     <div class="absolute inset-2 border border-dashed border-gold/40 rounded-full animate-[spin_8s_linear_infinite_reverse]"></div>

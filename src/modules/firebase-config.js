@@ -21,9 +21,7 @@ const isLocal =
 
 const firebaseConfig = {
   apiKey: "AIzaSyB7Xa5tZYVenPEkkjB0KVJDkoV7pQ7_QcQ",
-  authDomain: isLocal
-    ? "sins-of-the-fathers.firebaseapp.com"
-    : "thesinsofthefathers.com",
+  authDomain: "sins-of-the-fathers.firebaseapp.com",
   databaseURL:
     "https://sins-of-the-fathers-default-rtdb.europe-west1.firebasedatabase.app",
   projectId: "sins-of-the-fathers",

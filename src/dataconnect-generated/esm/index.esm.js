@@ -1,10 +1,22 @@
-import { queryRef, executeQuery, mutationRef, executeMutation, validateArgs } from 'firebase/data-connect';
+import { queryRef, executeQuery, validateArgsWithOptions, mutationRef, executeMutation, validateArgs } from 'firebase/data-connect';
 
 export const connectorConfig = {
   connector: 'example',
   service: 'sins-of-the-fathers',
   location: 'europe-west1'
 };
+export const listBloodlineRef = (dc) => {
+  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
+  dcInstance._useGeneratedSdk();
+  return queryRef(dcInstance, 'ListBloodline');
+}
+listBloodlineRef.operationName = 'ListBloodline';
+
+export function listBloodline(dcOrOptions, options) {
+  
+  const { dc: dcInstance, vars: inputVars, options: inputOpts } = validateArgsWithOptions(connectorConfig, dcOrOptions, options, undefined,false, false);
+  return executeQuery(listBloodlineRef(dcInstance, inputVars), inputOpts && inputOpts.fetchPolicy);
+}
 
 export const createEntityRef = (dcOrVars, vars) => {
   const { dc: dcInstance, vars: inputVars} = validateArgs(connectorConfig, dcOrVars, vars, true);
@@ -14,7 +26,8 @@ export const createEntityRef = (dcOrVars, vars) => {
 createEntityRef.operationName = 'CreateEntity';
 
 export function createEntity(dcOrVars, vars) {
-  return executeMutation(createEntityRef(dcOrVars, vars));
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(createEntityRef(dcInstance, inputVars));
 }
 
 export const createLinkRef = (dcOrVars, vars) => {
@@ -25,17 +38,7 @@ export const createLinkRef = (dcOrVars, vars) => {
 createLinkRef.operationName = 'CreateLink';
 
 export function createLink(dcOrVars, vars) {
-  return executeMutation(createLinkRef(dcOrVars, vars));
-}
-
-export const listBloodlineRef = (dc) => {
-  const { dc: dcInstance} = validateArgs(connectorConfig, dc, undefined);
-  dcInstance._useGeneratedSdk();
-  return queryRef(dcInstance, 'ListBloodline');
-}
-listBloodlineRef.operationName = 'ListBloodline';
-
-export function listBloodline(dc) {
-  return executeQuery(listBloodlineRef(dc));
+  const { dc: dcInstance, vars: inputVars } = validateArgs(connectorConfig, dcOrVars, vars, true);
+  return executeMutation(createLinkRef(dcInstance, inputVars));
 }
 

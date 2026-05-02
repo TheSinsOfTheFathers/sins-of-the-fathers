@@ -1,0 +1,167 @@
+---
+// Poll.astro — Interactive poll component with Firebase Firestore + Auth sync
+// Props:
+//   pollId: string   — Firestore document ID (e.g. "book-2-villain-decision")
+//   question: string  — The poll question
+//   options: string[] — List of answer options
+
+interface Props {
+  pollId: string;
+  question: string;
+  options: string[];
+  title?: string;
+  context?: string;
+}
+
+const { pollId, question, options, title, context } = Astro.props;
+---
+
+<div class="poll-card p-6 md:p-8" data-poll-id={pollId}>
+  
+  <div class="flex items-center gap-3 mb-5">
+    <span class="hud-badge">READER POLL</span>
+    <span id={`poll-status-${pollId}`} class="text-[10px] font-mono text-gray-600">Loading...</span>
+  </div>
+
+  {title && <h3 class="font-serif text-2xl text-[#c5a059] mb-2 leading-tight uppercase tracking-wide">{title}</h3>}
+  {context && <p class="text-gray-400 text-sm mb-6 font-light leading-relaxed italic">{context}</p>}
+  <p class="font-serif text-xl text-white mb-6 leading-snug">{question}</p>
+
+  <div id={`poll-options-${pollId}`} class="space-y-3">
+    {options.map((opt, i) => (
+      <button 
+        class="poll-option" 
+        data-poll-id={pollId} 
+        data-option-index={i}
+        data-option-label={opt}
+      >
+        <div class="poll-bar-fill" style="width: 0%"></div>
+        <span class="relative z-10 flex justify-between items-center pointer-events-none">
+          <span class="option-label">{opt}</span>
+          <span class="option-pct text-[10px] font-mono text-gray-600 opacity-0 transition-opacity"></span>
+        </span>
+      </button>
+    ))}
+  </div>
+
+  <p id={`poll-total-${pollId}`} class="text-[10px] font-mono text-gray-700 mt-4 text-right"></p>
+</div>
+
+<script>
+import { db, auth } from '../lib/firebase';
+import { doc, getDoc, setDoc, updateDoc, increment, onSnapshot } from 'firebase/firestore';
+import { onAuthStateChanged } from 'firebase/auth';
+
+// Initialize all polls on the page
+document.querySelectorAll('[data-poll-id]').forEach(async (pollEl) => {
+  const pollId = (pollEl as HTMLElement).dataset.pollId;
+  if (!pollId) return;
+
+  const buttons = document.querySelectorAll<HTMLButtonElement>(`button[data-poll-id="${pollId}"]`);
+  const statusEl = document.getElementById(`poll-status-${pollId}`);
+  const totalEl = document.getElementById(`poll-total-${pollId}`);
+  
+  const pollRef = doc(db, 'polls', pollId);
+
+  // Ensure the poll doc exists with default structure
+  const snap = await getDoc(pollRef);
+  if (!snap.exists()) {
+    const options = Array.from(buttons).map(b => ({
+      label: b.dataset.optionLabel || '',
+      votes: 0
+    }));
+    await setDoc(pollRef, { options, totalVotes: 0 });
+  }
+
+  // Get user vote state
+  const getVoteKey = () => `poll_voted_${pollId}`;
+
+  const getUserId = (): string | null => {
+    // Prefer Firebase UID (synced via localStorage in BaseLayout), fallback to anonymous localStorage ID
+    return localStorage.getItem('blog_uid') || localStorage.getItem('anon_uid');
+  };
+
+  // Create anonymous ID if needed
+  if (!localStorage.getItem('anon_uid')) {
+    localStorage.setItem('anon_uid', 'anon_' + Math.random().toString(36).slice(2));
+  }
+
+  const hasVoted = (): boolean => {
+    return localStorage.getItem(getVoteKey()) !== null;
+  };
+
+  const getMyVote = (): number | null => {
+    const v = localStorage.getItem(getVoteKey());
+    return v !== null ? parseInt(v, 10) : null;
+  };
+
+  // Render poll results
+  const renderResults = (data: any) => {
+    const options: any[] = data.options || [];
+    const total: number = data.totalVotes || 0;
+    const myVote = getMyVote();
+    const voted = hasVoted();
+
+    buttons.forEach((btn, i) => {
+      const optData = options[i];
+      const votes = optData?.votes || 0;
+      const pct = total > 0 ? Math.round((votes / total) * 100) : 0;
+
+      const barEl = btn.querySelector<HTMLElement>('.poll-bar-fill');
+      const pctEl = btn.querySelector<HTMLElement>('.option-pct');
+
+      if (barEl) barEl.style.width = voted ? `${pct}%` : '0%';
+      if (pctEl) {
+        pctEl.textContent = voted ? `${pct}%` : '';
+        pctEl.style.opacity = voted ? '1' : '0';
+      }
+
+      btn.classList.toggle('voted', voted);
+      btn.classList.toggle('my-vote', voted && myVote === i);
+      btn.disabled = voted;
+    });
+
+    if (statusEl) {
+      const uid = getUserId();
+      statusEl.textContent = voted
+        ? '✓ Voted'
+        : (uid?.startsWith('anon_') ? 'Anonymous' : 'Linked');
+    }
+    if (totalEl) {
+      totalEl.textContent = total > 0 ? `${total} total votes` : '';
+    }
+  };
+
+  // Real-time listener
+  onSnapshot(pollRef, (snapshot) => {
+    if (snapshot.exists()) {
+      renderResults(snapshot.data());
+    }
+  });
+
+  // Vote handler
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      if (hasVoted()) return;
+
+      const optIdx = parseInt(btn.dataset.optionIndex || '0', 10);
+      
+      // Lock UI immediately
+      localStorage.setItem(getVoteKey(), String(optIdx));
+      buttons.forEach(b => { b.disabled = true; });
+
+      try {
+        await updateDoc(pollRef, {
+          [`options.${optIdx}.votes`]: increment(1),
+          totalVotes: increment(1),
+        });
+      } catch (err) {
+        console.error('Poll vote error:', err);
+        // Rollback
+        localStorage.removeItem(getVoteKey());
+        buttons.forEach(b => { b.disabled = false; });
+      }
+    });
+  });
+});
+</script>

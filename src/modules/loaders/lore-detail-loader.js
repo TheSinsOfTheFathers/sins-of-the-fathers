@@ -3,6 +3,7 @@ import { toHTML } from 'https://esm.sh/@portabletext/to-html@2.0.13';
 import { applyBlurToStaticImage } from '../../lib/imageUtils.js';
 import i18next from '../../lib/i18n.js';
 import { NoirEffects } from '../ui/noir-effects.js';
+import { auth } from '../firebase-config.js';
 
 /* --------------------------------------------------------------------------
    RENDER LOGIC (GÖRÜNTÜLEME MOTORU)
@@ -23,8 +24,9 @@ const updateLoreText = (doc, container) => {
 
     const dateEl = container.querySelector('#lore-date');
     if (dateEl) {
+        const locale = i18next.language === 'tr' ? 'tr-TR' : 'en-US';
         const dateStr = doc.date
-            ? new Date(doc.date).toLocaleDateString(i18next.language, { year: 'numeric', month: 'short', day: 'numeric' })
+            ? new Date(doc.date).toLocaleDateString(locale, { year: 'numeric', month: 'short', day: 'numeric' })
             : i18next.t('lore_detail.undated');
         dateEl.textContent = dateStr;
     }
@@ -111,9 +113,8 @@ const handleAudioMedia = (doc, wrappers, container) => {
         };
     }
 
-    if (paperWrapper) {
-        paperWrapper.style.display = 'none';
-    }
+    // REMOVED: paperWrapper.style.display = 'none'; 
+    // We want the text to be visible even if audio is present.
 };
 
 const handleImageAndBody = (doc, wrappers, container) => {
@@ -174,16 +175,21 @@ const renderLoreIntel = (doc, container) => {
 
     if (doc.audioURL) {
         handleAudioMedia(doc, wrappers, container);
-    } else {
-        handleImageAndBody(doc, wrappers, container);
     }
+    
+    // Always call handleImageAndBody to ensure text/images are rendered 
+    // regardless of audio presence.
+    handleImageAndBody(doc, wrappers, container);
 
     // Loader Kapat & Tags Animasyonu
     setTimeout(() => {
         const loader = container.querySelector('#doc-loader');
         const content = container.querySelector('#doc-content');
+        const sidebar = container.querySelector('#sidebar-content');
+
         if (loader) loader.classList.add('hidden');
         if (content) content.classList.remove('opacity-0');
+        if (sidebar) sidebar.classList.remove('opacity-0');
 
         // Noir Motion: Tags
         const tags = container.querySelectorAll('.gsap-tag');
@@ -213,6 +219,7 @@ export default async function (container, props) {
             source,
             author,
             "audioURL": audioFile.asset->url, 
+            restricted,
             mainImage { asset->{ url, "blurHash": metadata.blurHash } },
             "relatedEntities": coalesce(relatedCharacters[]->{name, "title": name, "slug": slug.current, _type}, []) 
                              + coalesce(relatedFactions[]->{"title": title, "slug": slug.current, _type}, [])
@@ -221,6 +228,28 @@ export default async function (container, props) {
         const loreDoc = await client.fetch(query, { slug: loreSlug });
 
         if (loreDoc) {
+            if (loreDoc.restricted && !auth.currentUser) {
+                const loader = container.querySelector('#doc-loader');
+                if (loader) {
+                    loader.innerHTML = `
+                        <div class="text-center space-y-4">
+                            <i class="fas fa-lock text-4xl text-red-900 mb-4 animate-pulse"></i>
+                            <h2 class="text-gold font-serif text-2xl uppercase tracking-widest">${i18next.t('lore_detail.restricted_title') || 'ACCESS DENIED'}</h2>
+                            <p class="text-gray-400 font-mono text-xs max-w-xs mx-auto">${i18next.t('lore_detail.restricted_msg') || 'In-depth clearance is required to access this encrypted record.'}</p>
+                            <a href="/pages/login.html" class="inline-block mt-4 border border-gold/50 px-6 py-2 text-gold hover:bg-gold hover:text-black transition-all font-mono text-[10px] uppercase tracking-widest">
+                                ${i18next.t('auth.login') || 'Sign In'}
+                            </a>
+                        </div>
+                    `;
+                    const sidebar = container.querySelector('#sidebar-content');
+                    if (sidebar) sidebar.style.display = 'none';
+                }
+                return;
+            }
+            // Update Page Title
+            const baseTitle = i18next.t('lore_detail.page_title') || "Evidence Record";
+            document.title = `${loreDoc.title} | ${baseTitle}`;
+
             renderLoreIntel(loreDoc, container);
         } else {
             console.error("Doküman bulunamadı.");

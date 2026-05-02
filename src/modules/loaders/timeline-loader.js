@@ -1,193 +1,274 @@
 import { client, urlFor } from "../../lib/sanityClient.js";
 import i18next from "../../lib/i18n.js";
-import { injectSchema } from "../../lib/seo.js";
+import * as d3 from 'd3';
 
-/* --------------------------------------------------------------------------
-   RENDER LOGIC (Vertical Timeline)
-   -------------------------------------------------------------------------- */
+/**
+ * INTERACTIVE CRIME BOARD (TIMELINE v2)
+ * Using D3.js to create a zoomable, draggable board of evidence.
+ */
 
-const renderEventCard = (evt, index, groupName) => {
-    // Advanced staggered grid approach for the new design
-    const isEven = index % 2 === 0;
-    const animClass = "fade-up-stagger";
+// Configuration for the board
+const BOARD_WIDTH = 5000;
+const BOARD_HEIGHT = 4000;
+const CARD_WIDTH = 340;
+const CARD_HEIGHT = 420;
 
-    // Date formatting
-    let dateDisplay = evt.date || "Unknown Date";
-    if (evt.date) {
-        const parts = evt.date.split("-");
-        if (parts.length === 3) {
-            dateDisplay = `${parts[2]}-${parts[1]}-${parts[0]}`;
-        }
-    }
-
-    // Image handling
-    let imageUrl = evt.external_image_url;
-    if (!imageUrl && evt.image?.asset?.url) {
-        imageUrl = evt.image.asset.url;
-    }
-    if (!imageUrl && evt.image) {
-         try {
-            imageUrl = urlFor(evt.image)?.url();
-         } catch(e) { console.warn("Image builder failed", e); }
-    }
-
-    const imageHtml = imageUrl 
-        ? `<div class="timeline-media relative overflow-hidden h-48 md:h-64 mb-6">
-             <div class="absolute inset-0 bg-obsidian/40 z-10 hover:bg-transparent transition-all duration-500"></div>
-             <img src="${imageUrl}" alt="${evt.title_en || 'Event Image'}" class="w-full h-full object-cover transform transition-transform duration-1000 hover:scale-110 grayscale hover:grayscale-0" loading="lazy">
-             <div class="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-obsidian to-transparent z-10"></div>
-           </div>` 
-        : "";
-
-    const linkUrl = evt.slug ? `event.html?slug=${evt.slug}` : "#";
-    const cursorClass = evt.slug ? "cursor-pointer" : "cursor-default";
-
-    return `
-        <div class="timeline-event-card relative group ${animClass} col-span-1 border border-white/5 bg-obsidian/30 p-1 hover:border-gold/30 transition-all duration-500 hover:-translate-y-2">
-            <a href="${linkUrl}" class="block h-full bg-white/5 p-6 md:p-8 backdrop-blur-sm relative z-20 ${cursorClass} text-decoration-none border-t-2 border-transparent hover:border-gold/80 transition-all duration-300">
-                
-                <!-- Accents -->
-                <div class="absolute top-0 right-0 w-8 h-8 border-t border-r border-gold/40 m-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div class="absolute bottom-0 left-0 w-8 h-8 border-b border-l border-gold/40 m-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-
-                <!-- Date Badge -->
-                <div class="flex items-center gap-4 mb-6">
-                    <span class="text-gold font-mono text-xs xl:text-sm tracking-[0.2em] uppercase bg-black/50 px-3 py-1 border-l border-gold">
-                        ${dateDisplay}
-                    </span>
-                    <div class="h-px bg-white/10 flex-grow"></div>
-                </div>
-
-                ${imageHtml}
-
-                <h3 class="text-xl md:text-2xl font-serif text-gray-200 mb-4 uppercase tracking-wider group-hover:text-white transition-colors leading-tight">
-                    ${evt.title_en || i18next.t("timeline_loader.untitled_event")}
-                </h3>
-                
-                <div class="text-gray-400 font-lato text-sm leading-relaxed wysiwyg-content line-clamp-4">
-                    ${evt.text_en || ""}
-                </div>
-
-                <div class="mt-8 flex justify-end">
-                    <span class="text-gold uppercase tracking-widest text-[10px] font-mono group-hover:tracking-[0.3em] transition-all duration-300">Details <i class="fas fa-arrow-right ml-1"></i></span>
-                </div>
-            </a>
-        </div>
-    `;
+const getEventCardType = (evt) => {
+    if (evt.external_image_url || evt.image?.asset?.url) return 'polaroid';
+    if (evt.text_en?.length > 300) return 'clipping';
+    return 'note';
 };
 
-const renderEraHeader = (eraTitle) => {
-    return `
-        <div class="timeline-era-header col-span-1 md:col-span-2 lg:col-span-3 mt-16 md:mt-32 mb-12 relative z-10 flex items-center justify-center">
-            <div class="h-px bg-white/10 flex-grow max-w-xs md:max-w-md hidden md:block"></div>
-            <span class="mx-6 px-8 py-4 bg-obsidian/80 backdrop-blur-sm border border-gold text-2xl md:text-4xl font-serif text-white uppercase tracking-[0.3em] shadow-[0_0_30px_rgba(197,160,89,0.15)] flex flex-col items-center">
-                <span class="text-gold/50 text-xs font-mono tracking-widest mb-2 block">— ERA RECONSTRUCTED —</span>
-                ${eraTitle}
-            </span>
-            <div class="h-px bg-white/10 flex-grow max-w-xs md:max-w-md hidden md:block"></div>
-        </div>
-    `;
-};
-
-const buildVerticalTimeline = (eras, container) => {
-    // Using a CSS grid approach instead of the vertical snake line for a premium editorial layout
-    let html = `<div class="modern-timeline-grid max-w-7xl mx-auto py-12 px-4 md:px-8 relative z-20">`;
-    html += `<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 relative">`;
-
-    let globalIndex = 0;
-
-    eras.forEach((era) => {
-        const eraTitle = era.title_en || i18next.t("timeline_loader.unknown_era");
-        html += renderEraHeader(eraTitle);
-
-        if (era.events && Array.isArray(era.events)) {
-            era.events.forEach((evt) => {
-                html += renderEventCard(evt, globalIndex, eraTitle);
-                globalIndex++;
-            });
-        }
-    });
-
-    html += `</div></div>`;
+const renderCardContent = (selection, evt, type) => {
+    // Base shadows and backgrounds are handled via CSS classes
     
-    // Premium ambient background instead of heavy text watermark
-    html += `
-        <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-            <div class="absolute top-[10%] right-[5%] w-[600px] h-[600px] bg-gold/5 rounded-full blur-[120px] mix-blend-screen opacity-40"></div>
-            <div class="absolute bottom-[20%] left-[5%] w-[800px] h-[800px] bg-gold/5 rounded-full blur-[150px] mix-blend-screen opacity-20"></div>
-            <!-- Vintage film lines effect -->
-            <div class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0IiBoZWlnaHQ9IjQiPgo8cmVjdCB3aWR0aD0iNCIgaGVpZ2h0PSI0IiBmaWxsPSJ0cmFuc3BhcmVudCI+PC9yZWN0Pgo8cGF0aCBkPSJNMCA0TDRgMCIgc3Ryb2tlPSJyZ2JhKDE5NywgMTYwLCA4OSwgMC4wNSkiIHN0cm9rZS13aWR0aD0iMSI+PC9wYXRoPgo8L3N2Zz4=')] opacity-30 mix-blend-overlay"></div>
-        </div>
-    `;
+    // Header/Pin
+    selection.append("circle")
+        .attr("cx", CARD_WIDTH / 2)
+        .attr("cy", 15)
+        .attr("r", 6)
+        .attr("class", "board-pin shadow-lg");
 
-    container.innerHTML = html;
+    // Background rect based on type
+    selection.append("rect")
+        .attr("x", 0)
+        .attr("y", 30)
+        .attr("width", CARD_WIDTH)
+        .attr("height", CARD_HEIGHT - 30)
+        .attr("class", `${type}-bg timeline-card`);
 
-    // Initialize Animations
-    initScrollAnimations();
-};
-
-/* --------------------------------------------------------------------------
-   ANIMATION LOGIC (GSAP)
-   -------------------------------------------------------------------------- */
-const initScrollAnimations = () => {
-    if (!window.gsap || !window.ScrollTrigger) {
-        console.warn("GSAP/ScrollTrigger not loaded. Animations disabled.");
-        return;
+    // Date
+    let dateDisplay = evt.date || "UNKNOWN";
+    if (evt.date && evt.date.includes("-")) {
+        const parts = evt.date.split("-");
+        if (parts.length === 3) dateDisplay = `${parts[2]}.${parts[1]}.${parts[0]}`;
     }
 
-    gsap.registerPlugin(ScrollTrigger);
+    selection.append("text")
+        .attr("x", 20)
+        .attr("y", 60)
+        .attr("class", "card-date")
+        .text(`[ RECORD_${dateDisplay} ]`);
 
-    // Animate Era Headers (Fade up)
-    gsap.utils.toArray('.timeline-era-header').forEach(header => {
-        gsap.fromTo(header, 
-            { y: 50, opacity: 0, scale: 0.95 },
-            {
-                scrollTrigger: {
-                    trigger: header,
-                    start: "top 90%",
-                    toggleActions: "play none none reverse"
-                },
-                y: 0,
-                opacity: 1,
-                scale: 1,
-                duration: 1.2,
-                ease: "power3.out"
-            }
-        );
-    });
+    // Image for Polaroids
+    if (type === 'polaroid') {
+        let imageUrl = evt.external_image_url || evt.image?.asset?.url;
+        if (!imageUrl && evt.image) {
+            try { imageUrl = urlFor(evt.image)?.url(); } catch(e) {}
+        }
 
-    // Animate Event Cards (Staggered Grid Entry)
-    gsap.utils.toArray('.timeline-event-card').forEach((card, i) => {
-        gsap.fromTo(card,
-            { y: 80, opacity: 0 },
-            {
-                scrollTrigger: {
-                    trigger: card,
-                    start: "top 90%",
-                    toggleActions: "play none none reverse"
-                },
-                y: 0,
-                opacity: 1,
-                duration: 1,
-                delay: i % 3 * 0.15, // Stagger based on column position
-                ease: "power2.out"
-            }
-        );
-    });
+        if (imageUrl) {
+            // Clip path for image
+            const clipId = `clip-${Math.random().toString(36).substr(2, 9)}`;
+            selection.append("clipPath")
+                .attr("id", clipId)
+                .append("rect")
+                .attr("x", 20)
+                .attr("y", 75)
+                .attr("width", CARD_WIDTH - 40)
+                .attr("height", 240);
+
+            selection.append("image")
+                .attr("xlink:href", imageUrl)
+                .attr("x", 20)
+                .attr("y", 75)
+                .attr("width", CARD_WIDTH - 40)
+                .attr("height", 240)
+                .attr("preserveAspectRatio", "xMidYMid slice")
+                .attr("clip-path", `url(#${clipId})`)
+                .attr("filter", "grayscale(100%) contrast(1.2)");
+            
+            // Image border/overlay
+            selection.append("rect")
+                .attr("x", 20)
+                .attr("y", 75)
+                .attr("width", CARD_WIDTH - 40)
+                .attr("height", 240)
+                .attr("fill", "none")
+                .attr("stroke", "rgba(0,0,0,0.1)")
+                .attr("stroke-width", 1);
+        }
+    }
+
+    // Title
+    const title = evt.title_en || "UNTITLED_RECORD";
+    const textY = type === 'polaroid' ? 345 : 90;
+    
+    selection.append("text")
+        .attr("x", 20)
+        .attr("y", textY)
+        .attr("class", "card-title")
+        .style("font-size", "18px")
+        .text(title.length > 25 ? title.substring(0, 22) + "..." : title);
+
+    // Text Content (Wrapped)
+    const rawText = evt.text_en || "";
+    const cleanText = rawText.replace(/<[^>]*>/g, '').substring(0, 200) + "...";
+    
+    const textElement = selection.append("text")
+        .attr("x", 20)
+        .attr("y", textY + 25)
+        .attr("class", "card-text")
+        .attr("width", CARD_WIDTH - 40);
+
+    // Simple manual wrapping
+    const words = cleanText.split(/\s+/);
+    let line = [];
+    let lineNumber = 0;
+    const lineHeight = 1.4; // ems
+    const y = textElement.attr("y");
+    const x = textElement.attr("x");
+    let tspan = textElement.append("tspan").attr("x", x).attr("y", y).attr("dy", "1em");
+    
+    for (let n = 0; n < words.length; n++) {
+        line.push(words[n]);
+        tspan.text(line.join(" "));
+        if (tspan.node().getComputedTextLength() > CARD_WIDTH - 50) {
+            line.pop();
+            tspan.text(line.join(" "));
+            line = [words[n]];
+            tspan = textElement.append("tspan").attr("x", x).attr("y", y).attr("dy", ++lineNumber * lineHeight + 1 + "em").text(words[n]);
+            if (lineNumber > 5) break; // Limit lines
+        }
+    }
+
+    // Focus ring
+    selection.append("rect")
+        .attr("x", -5)
+        .attr("y", 25)
+        .attr("width", CARD_WIDTH + 10)
+        .attr("height", CARD_HEIGHT - 20)
+        .attr("class", "card-focus-ring")
+        .attr("rx", 5);
 };
 
+const buildCrimeBoard = (eras, svg) => {
+    const mainGroup = svg.select("#main-group");
+    const linksLayer = svg.select("#links-layer");
+    const cardsLayer = svg.select("#cards-layer");
+    
+    const allEvents = eras.flatMap(e => e.events || []);
+    const eventNodes = [];
 
-/* --------------------------------------------------------------------------
-   MAIN EXPORT
-   -------------------------------------------------------------------------- */
+    // Layout Logic: Spiral path or Zig-zag path for events
+    // Let's use a semi-random zig-zag path from top-left to bottom-right
+    allEvents.forEach((evt, i) => {
+        const stepX = 500;
+        const col = i % 8;
+        const row = Math.floor(i / 8);
+        
+        const baseX = 400 + (col * stepX);
+        const baseY = 400 + (row * 600);
+        
+        // Add random jitter
+        const x = baseX + (Math.random() * 200 - 100);
+        const y = baseY + (Math.random() * 150 - 75);
+        const rotation = (Math.random() * 10 - 5);
+
+        eventNodes.push({ ...evt, x, y, rotation, id: i });
+    });
+
+    // Draw Red Strings (Links)
+    const lineGenerator = d3.line()
+        .x(d => d.x + CARD_WIDTH / 2)
+        .y(d => d.y + 15) // Pin position
+        .curve(d3.curveBasis); // Smooth paths for organic feeling strings
+
+    // Draw lines between sequential events
+    for (let i = 0; i < eventNodes.length - 1; i++) {
+        const start = eventNodes[i];
+        const end = eventNodes[i+1];
+        
+        // Midpoint for curve jitter
+        const midX = (start.x + end.x) / 2 + (Math.random() * 100 - 50);
+        const midY = (start.y + end.y) / 2 + (Math.random() * 100 - 50);
+
+        linksLayer.append("path")
+            .datum([start, {x: midX - CARD_WIDTH/2, y: midY - 15}, end])
+            .attr("class", "red-string-path")
+            .attr("d", lineGenerator);
+    }
+
+    // Render Cards
+    const cardGroups = cardsLayer.selectAll(".timeline-card-group")
+        .data(eventNodes)
+        .enter()
+        .append("g")
+        .attr("class", "timeline-card-group")
+        .attr("transform", d => `translate(${d.x},${d.y}) rotate(${d.rotation})`)
+        .on("click", function(event, d) {
+            // Focus on clip
+            event.stopPropagation();
+            focusOnCard(d, svg);
+        });
+
+    cardGroups.each(function(d) {
+        const type = getEventCardType(d);
+        renderCardContent(d3.select(this), d, type);
+    });
+
+    // Zoom Functions
+    function focusOnCard(d, svg) {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        
+        const scale = 1.2;
+        const tx = width / 2 - (d.x + CARD_WIDTH / 2) * scale;
+        const ty = height / 2 - (d.y + CARD_HEIGHT / 2) * scale;
+
+        svg.transition()
+            .duration(1000)
+            .call(zoom.transform, d3.zoomIdentity.translate(tx, ty).scale(scale));
+            
+        cardsLayer.selectAll(".timeline-card-group").classed("is-focused", false);
+        d3.select(`.timeline-card-group:nth-child(${d.id + 1})`).classed("is-focused", true);
+    }
+
+    const zoom = d3.zoom()
+        .scaleExtent([0.1, 2.5])
+        .on("zoom", (event) => {
+            mainGroup.attr("transform", event.transform);
+        });
+
+    svg.call(zoom);
+
+    // Initial positioning: focus on first event
+    if (eventNodes.length > 0) {
+        const d = eventNodes[0];
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        const scale = 0.6;
+        const tx = width / 2 - (d.x + CARD_WIDTH / 2) * scale;
+        const ty = height / 2 - (d.y + CARD_HEIGHT / 2) * scale;
+        svg.call(zoom.transform, d3.zoomIdentity.translate(tx, ty).scale(scale));
+    }
+
+    // HUD Controls binding
+    document.getElementById("zoom-in").addEventListener("click", () => {
+        svg.transition().call(zoom.scaleBy, 1.3);
+    });
+    document.getElementById("zoom-out").addEventListener("click", () => {
+        svg.transition().call(zoom.scaleBy, 0.7);
+    });
+    document.getElementById("zoom-reset").addEventListener("click", () => {
+        if (eventNodes.length > 0) {
+            const d = eventNodes[0];
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+            const scale = 0.5;
+            const tx = width / 2 - (d.x + CARD_WIDTH / 2) * scale;
+            const ty = height / 2 - (d.y + CARD_HEIGHT / 2) * scale;
+            svg.transition().duration(1000).call(zoom.transform, d3.zoomIdentity.translate(tx, ty).scale(scale));
+        }
+    });
+};
 
 export default async function (container, props) {
-  const embedEl = container.querySelector("#timeline-embed") || container;
-  let loaderEl = document.getElementById("timeline-loading");
-  if (!loaderEl) loaderEl = container.querySelector("#timeline-loading");
+  const svg = d3.select("#timeline-board");
+  const loaderEl = document.getElementById("timeline-loading");
 
   try {
-    console.log("> Fetching Historical Data for GSAP Timeline...");
+    console.log("> Accessing Classified Archives for Crime Board...");
 
     const query = `*[_type == "timelineEra"] | order(order asc) {
             title_en,
@@ -195,14 +276,11 @@ export default async function (container, props) {
                 title_en,
                 text_en,
                 date,
-                caption,
-                credit,
                 external_image_url,
                 "slug": slug.current,
                 image {
                     asset->{
-                        url,
-                        "blurHash": metadata.blurHash
+                        url
                     }
                 }
             }
@@ -211,28 +289,21 @@ export default async function (container, props) {
     const eras = await client.fetch(query);
 
     if (eras && eras.length > 0) {
-      buildVerticalTimeline(eras, embedEl);
-      if (loaderEl) loaderEl.style.display = "none";
+      buildCrimeBoard(eras, svg);
       
-      // SEO Injection
-      const allEvents = eras.flatMap(e => e.events || []);
-      const seoData = {
-          title: { text: { headline: "The Ravenwood Chronicles", text: "A history of power." } },
-          events: allEvents.map(e => ({
-              start_date: { year: e.date },
-              text: { headline: e.title_en, text: e.text_en },
-              _raw_date: e.date
-          }))
-      };
-      // Reuse old SEO logic or simple mock for now as we changed data structure
-      // injectSchema(...) - skipped for brevity in this refactor step, but keeping function structure is good.
+      // Dramatic exit for loader
+      if (loaderEl) {
+          loaderEl.style.opacity = "0";
+          setTimeout(() => loaderEl.style.display = "none", 1000);
+      }
       
     } else {
       if (loaderEl) loaderEl.style.display = "none";
-      embedEl.innerHTML = `<div class="text-center text-red-500 py-10">${i18next.t("timeline_loader.archives_empty")}</div>`;
+      const wrapper = document.getElementById("timeline-wrapper");
+      wrapper.innerHTML = `<div class="flex items-center justify-center h-full text-red-800 font-mono uppercase tracking-widest">[ ERROR: ARCHIVES PURGED ]</div>`;
     }
   } catch (error) {
-    console.error("Timeline Load Error:", error);
-    if (loaderEl) loaderEl.innerHTML = `<span class='text-red-500'>Error loading archives.</span>`;
+    console.error("Crime Board Reconstruction Failed:", error);
+    if (loaderEl) loaderEl.innerHTML = `<span class='text-red-800 font-mono'>SYSTEM FAILURE: ${error.message}</span>`;
   }
 }

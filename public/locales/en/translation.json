@@ -93,7 +93,9 @@
     "affiliation": "Affiliation",
     "place_of_origin": "Place of Origin",
     "role_rank": "Role / Rank",
+    "illustrator": "Artist",
     "narrative_record": "Narrative Record",
+
     "accessing_archives": "Accessing secure archives...",
     "waiting_transcript": "Waiting for transcript...",
     "network_analysis": "Network Analysis",
@@ -244,6 +246,11 @@
     "dynamic_title_login": "System Access"
   },
   "lore_detail": {
+    "page_title": "Evidence Record | The Sins of the Fathers",
+    "breadcrumb_archives": "Archives",
+    "breadcrumb_record": "Evidence Record",
+    "header_badge": "Case File",
+    "uplink_status": "FILE RETRIEVED",
     "header_reader": "// READER",
     "back_to_archives": "Back to Archives",
     "metadata_title": "File Metadata",
@@ -268,7 +275,9 @@
     "audio_ended": "TRANSMISSION ENDED",
     "classified_tooltip": "Classified Info",
     "error_not_found": "ERROR 404: FILE NOT FOUND IN ARCHIVE",
-    "error_system": "SYSTEM ERROR: CANNOT READ DATA STREAM"
+    "error_system": "SYSTEM ERROR: CANNOT READ DATA STREAM",
+    "restricted_title": "ACCESS DENIED",
+    "restricted_msg": "In-depth clearance is required to access this encrypted record."
   },
   "lore_loader": {
     "accessing_archives": "Searching Archives...",
@@ -346,7 +355,7 @@
     "header_code": "// LEGAL_DOCS_02",
     "close_file": "Close File",
     "main_title": "Terms of Operation",
-    "effective_date": "Effective Date: November 2025",
+    "last_updated": "Last Updated: November 2025",
     "intro": "By accessing \"The Sins of the Fathers\" (the \"Service\" or \"The Fortress\"), you agree to be bound by these Terms. If you disagree with any part of the terms, then you may not access the Service.",
     "sec1_title": "1. Access & Accounts (Clearance)",
     "sec1_desc1": "When you create an account with us, you must provide information that is accurate, complete, and current. Failure to do so constitutes a breach of the Terms, which may result in immediate termination of your account.",
@@ -360,10 +369,10 @@
     "sec4_desc": "Our Service may contain links to third-party web sites or services (e.g., Shopier, Gumroad, Amazon) that are not owned or controlled by The Sins of the Fathers. We assume no responsibility for the content, privacy policies, or practices of any third-party web sites.",
     "sec5_title": "5. Termination",
     "sec5_desc": "We may terminate or suspend access to our Service immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms.",
-    "sec6_title": "6. Governing Law",
-    "sec6_desc": "These Terms shall be governed and construed in accordance with the laws of [Your Country/Region], without regard to its conflict of law provisions.",
-    "sec7_title": "7. Changes",
-    "sec7_desc": "We reserve the right, at our sole discretion, to modify or replace these Terms at any time. By continuing to access or use our Service after those revisions become effective, you agree to be bound by the revised terms."
+    "sec6_title": "6. Changes",
+    "sec6_desc": "We reserve the right, at our sole discretion, to modify or replace these Terms at any time. By continuing to access or use our Service after those revisions become effective, you agree to be bound by the revised terms.",
+    "sec7_title": "7. Governing Law",
+    "sec7_desc": "These Terms shall be governed and construed in accordance with the laws of [Your Country/Region], without regard to its conflict of law provisions."
   },
   "404_page": {
     "page_title": "404 - Signal Lost | The Sins of the Fathers",
@@ -405,7 +414,12 @@
     "error_uplink": "UPLINK FAILED: SATELLITE OFFLINE"
   },
   "archive_page": {
-    "meta_title": "Classified Archives | The Sins of the Fathers"
+    "meta_title": "Classified Archives | The Sins of the Fathers",
+    "title": "The Archives",
+    "subtitle": "\"The truth is rarely pure and never simple.\"",
+    "uplink_status": "UPLINK STABLE",
+    "section_title": "Active Case Files",
+    "section_sub": "Scanning encrypted records..."
   },
   "cookie_consent": {
     "title": "SURVEILLANCE PROTOCOL",
@@ -413,5 +427,19 @@
     "accept": "AUTHORIZE",
     "decline": "DECLINE",
     "policy_link": "View Protocol"
+  },
+  "bloodline_relations": {
+    "BLOOD_RELATION": "Blood Relation",
+    "RELATION": "Blood Relation",
+    "RELATIONSHIP": "Blood Relation",
+    "BLOOD_OATH": "Blood Oath",
+    "BLOOD_OAT": "Blood Oath",
+    "RIVAL": "Rival",
+    "COMMANDER": "Commander",
+    "ALLIANCE": "Alliance",
+    "FINANCE_RING": "Finance Ring",
+    "LEGAL_SHIELD": "Legal Shield",
+    "LOGISTICS": "Logistics",
+    "BLINDSPOT": "Blindspot"
   }
 }

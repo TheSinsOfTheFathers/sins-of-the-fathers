@@ -206,52 +206,7 @@ export function initAuth() {
       console.error(" ! Auth: Failed to set persistence:", error);
     });
 
-  // --- NEW: Handle Redirect Result (Only checks on Production or if forced) ---
-  const isLocal =
-    window.location.hostname === "localhost" ||
-    window.location.hostname === "127.0.0.1";
-  if (!isLocal) {
-    console.log(" > Auth: Checking for redirect result (Prod)...");
-    getRedirectResult(auth)
-      .then(async (result) => {
-        console.log(" > Auth: Redirect Result Payload:", result);
-        if (result) {
-          // User returned from Google
-          showMessage(
-            authMessage,
-            "Biometrics confirmed. Processing...",
-            "info"
-          );
-          const u = result.user;
-
-          try {
-            await setDoc(
-              doc(db, "users", u.uid),
-              {
-                email: u.email,
-                displayName: u.displayName || null,
-                photoURL: u.photoURL || null,
-                provider: "google",
-                lastLogin: serverTimestamp(),
-              },
-              { merge: true }
-            );
-
-            showMessage(authMessage, "Access Granted.", "success");
-            setTimeout(() => (globalThis.location.href = "/"), 800);
-          } catch (err) {
-            showPopup("error", firebaseErrorToMessage(err));
-            showMessage(authMessage, "Database Sync Failed.", "error");
-          }
-        }
-      })
-      .catch((error) => {
-        // Handle Errors here.
-        console.error(" > Auth: Redirect Error Details:", error);
-        showPopup("error", firebaseErrorToMessage(error));
-        showMessage(authMessage, "Authentication Interrupted.", "error");
-      });
-  }
+  // --- REMOVED: getRedirectResult is no longer needed as we use Popups for all environments ---
 
   if (loginForm && registerForm && switchLogin && switchRegister) {
     // ... (Existing switch logic) ...
@@ -393,54 +348,42 @@ export function initAuth() {
     e.preventDefault();
     showMessage(authMessage, "Initiating secure channel...", "info");
 
+    // POPUP FLOW: Consistently used for Local and Production to avoid cross-domain redirect issues
     const isLocal =
       window.location.hostname === "localhost" ||
       window.location.hostname === "127.0.0.1";
 
     try {
-      if (isLocal) {
-        console.warn(
-          "Localhost: Using Popup Flow to avoid Redirect storage issues."
+      // SECURITY NOTE: Turnstile is bypassed for Google Auth to prevent popup blocking.
+      // Google's own OAuth flow provides sufficient bot protection.
+      showMessage(
+        authMessage,
+        "Biometrics required. Check for popup...",
+        "info"
+      );
+      const result = await signInWithPopup(auth, googleProvider);
+
+      if (result) {
+        showMessage(authMessage, "Biometrics confirmed. Processing...", "info");
+        const u = result.user;
+        await setDoc(
+          doc(db, "users", u.uid),
+          {
+            email: u.email,
+            displayName: u.displayName || null,
+            photoURL: u.photoURL || null,
+            provider: "google",
+            lastLogin: serverTimestamp(),
+          },
+          { merge: true }
         );
-        // POPUP FLOW (Localhost)
-        const result = await signInWithPopup(auth, googleProvider);
 
-        if (result) {
-          showMessage(
-            authMessage,
-            "Biometrics confirmed. Processing...",
-            "info"
-          );
-          const u = result.user;
-          await setDoc(
-            doc(db, "users", u.uid),
-            {
-              email: u.email,
-              displayName: u.displayName || null,
-              photoURL: u.photoURL || null,
-              provider: "google",
-              lastLogin: serverTimestamp(),
-            },
-            { merge: true }
-          );
-
-          showMessage(authMessage, "Access Granted.", "success");
-          setTimeout(() => (globalThis.location.href = "/"), 800);
-        }
-      } else {
-        // REDIRECT FLOW (Production - Better for Mobile)
-        const googleToken = await getTurnstileToken("google_signin");
-        const verifyTurnstileToken = httpsCallable(
-          functions,
-          "verifyTurnstileToken"
+        showMessage(
+          authMessage,
+          i18next.t("auth.success_msg") || "Access Granted.",
+          "success"
         );
-        await verifyTurnstileToken({
-          token: googleToken,
-          action: "google_signin",
-        });
-
-        showMessage(authMessage, "Redirecting to secure channel...", "info");
-        await signInWithRedirect(auth, googleProvider);
+        setTimeout(() => (globalThis.location.href = "/"), 800);
       }
     } catch (err) {
       console.error(err);
@@ -459,28 +402,43 @@ export function initAuth() {
   onAuthStateChanged(auth, (user) => {
     console.log(" > Auth State Changed:", user ? user.email : "Logged Out"); // DEBUG
 
+    // --- CROSS-SUBDOMAIN SYNC ---
+    try {
+      if (user) {
+        document.cookie = `tsof_session_active=true; domain=.thesinsofthefathers.com; path=/; max-age=31536000; SameSite=Lax; Secure`;
+      } else {
+        document.cookie = `tsof_session_active=; domain=.thesinsofthefathers.com; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT`;
+      }
+    } catch (e) {
+      console.warn("Cookie sync failed (likely local environment):", e);
+    }
+    // ----------------------------
+
     const signinLink = document.getElementById("auth-signin-link");
     const guestLocks = document.querySelectorAll(".guest-only, .guest-lock");
 
     // Target the Lore/Classified link
     // We try multiple selectors to be robust
     const loreLinkFn = () => {
-      const link =
-        document.getElementById("nav-link-classified") ||
-        document.querySelector('a[href="./pages/lore.html"]');
-      if (!link) {
-        console.warn(" ! UI Warning: 'nav-link-classified' not found.");
-        return;
-      }
-      const span = link.querySelector("span");
-      if (!span) return;
+      const links = document.querySelectorAll(".nav-link-classified");
+      
+      const updateLink = (link) => {
+        const span = link.querySelector("span") || link;
+        if (user) {
+          span.textContent = "LORE";
+          span.removeAttribute("data-i18n");
+        } else {
+          span.textContent = "CLASSIFIED";
+          span.setAttribute("data-i18n", "nav.classified");
+        }
+      };
 
-      if (user) {
-        span.textContent = "LORE";
-        span.removeAttribute("data-i18n"); // Detach from translation system to force override
+      if (links.length > 0) {
+        links.forEach(updateLink);
       } else {
-        span.textContent = "CLASSIFIED";
-        span.setAttribute("data-i18n", "nav.classified");
+        // Fallback for legacy ID
+        const link = document.getElementById("nav-link-classified");
+        if (link) updateLink(link);
       }
     };
     loreLinkFn();

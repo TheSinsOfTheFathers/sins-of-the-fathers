@@ -56,32 +56,86 @@ const initMiniMap = (
   // Mapbox Access Token
   mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN; 
 
-  // Helper for static fallback
-  const applyStaticFallback = (msg = "Static_Fallback_Active") => {
-    console.warn(`> [MiniMap] Triggering Static Fallback: ${msg}`);
-    const staticUrl = `https://api.mapbox.com/styles/v1/mapbox/dark-v11/static/${lng},${lat},14,0/600x600?access_token=${mapboxgl.accessToken}&attribution=false&logo=false`;
-    
-    container.innerHTML = `
-        <div class="relative w-full h-full overflow-hidden flex items-center justify-center bg-black">
-            <img src="${staticUrl}" 
-                 class="w-full h-full object-cover grayscale opacity-60" 
-                 alt="Satellite View Fallback"
-                 onerror="this.parentElement.innerHTML = '<div class=\'w-full h-full flex flex-col items-center justify-center text-[8px] text-red-500 font-mono tracking-tighter p-4 text-center\'>LINK_BLOCKED_BY_ADS_PROTO</div>'">
-            <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-                <div class="radar-ping w-8 h-8 relative">
-                    <div class="absolute inset-0 rounded-full animate-ping opacity-75" style="background-color: ${color}"></div>
-                    <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full shadow-[0_0_20px_${color}]" style="background-color: ${color}"></div>
-                </div>
-            </div>
-            <div class="absolute bottom-2 left-2 bg-black/80 px-2 py-0.5 text-[8px] font-mono text-gold uppercase border border-gold/20 z-20">${msg}</div>
-        </div>
-    `;
+  /**
+   * Leaflet Asset Loader (Dynamic)
+   */
+  const loadLeafletAssets = () => {
+    return new Promise((resolve, reject) => {
+      if (globalThis.L) return resolve();
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
+      document.head.appendChild(link);
+      const script = document.createElement('script');
+      script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+      script.onload = resolve;
+      script.onerror = reject;
+      document.head.appendChild(script);
+    });
+  };
+
+  /**
+   * Interactive Leaflet Mini-Map Fallback
+   */
+  const applyLeafletMiniMapFallback = async (msg = "Leaflet_Mini_Fallback") => {
+    console.warn(`> [MiniMap] Triggering Leaflet Fallback: ${msg}`);
+    try {
+      await loadLeafletAssets();
+      const L = globalThis.L;
+      container.innerHTML = '';
+      
+      const leafletMap = L.map(container, {
+        center: [lat, lng],
+        zoom: 13,
+        zoomControl: false,
+        attributionControl: false,
+        interactive: false
+      });
+
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        subdomains: 'abcd',
+        maxZoom: 19
+      }).addTo(leafletMap);
+
+      // Final visual adjustment to avoid pitch-black backgrounds
+      container.style.filter = "brightness(1.25) contrast(1.05)";
+      container.style.background = "#050505";
+
+      const icon = L.divIcon({
+        className: 'custom-radar-icon',
+        html: `
+            <div class="radar-ping" style="width:20px; height:20px; position:relative;">
+                <div class="absolute inset-0 rounded-full animate-ping opacity-75" style="background-color: ${color}"></div>
+                <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full shadow-[0_0_20px_${color}]" style="background-color: ${color}"></div>
+            </div>`,
+        iconSize: [20, 20],
+        iconAnchor: [10, 10]
+      });
+
+      L.marker([lat, lng], { icon }).addTo(leafletMap);
+
+      // Force layout recalculation to fix tile gaps
+      setTimeout(() => leafletMap.invalidateSize(), 500);
+
+      console.log("> [MiniMap] Leaflet Mini-Map ready.");
+
+    } catch (err) {
+      console.error("> [MiniMap] Leaflet Fallback failed:", err);
+      // Final static fallback
+      const staticUrl = `https://api.mapbox.com/styles/v1/mapbox/dark-v11/static/${lng},${lat},14,0/600x600?access_token=${mapboxgl.accessToken}&attribution=false&logo=false`;
+      container.innerHTML = `
+          <div class="relative w-full h-full overflow-hidden flex items-center justify-center bg-black">
+              <img src="${staticUrl}" class="w-full h-full object-cover grayscale opacity-60" alt="Fallback">
+              <div class="absolute bottom-2 left-2 bg-black/80 px-2 py-0.5 text-[8px] font-mono text-gold uppercase border border-gold/20 z-20">LINK_OFFLINE</div>
+          </div>
+      `;
+    }
   };
 
   // 2. Check for WebGL support
   if (!mapboxgl.supported()) {
-    console.warn("> [MiniMap] WebGL is not supported by this browser/device.");
-    applyStaticFallback("WebGL_Unsupported");
+    console.warn("> [MiniMap] WebGL is not supported. Switching to Leaflet.");
+    applyLeafletMiniMapFallback("WebGL_Unsupported");
     return;
   }
   console.log("> [MiniMap] WebGL support confirmed.");
@@ -166,7 +220,7 @@ const initMiniMap = (
 
   } catch (err) {
     console.error("> [MiniMap] Critical Initialization Failure:", err);
-    applyStaticFallback("Initialization_Failed");
+    applyLeafletMiniMapFallback("Initialization_Failed");
   }
 
   // Ensure container is visible regardless of animation start state

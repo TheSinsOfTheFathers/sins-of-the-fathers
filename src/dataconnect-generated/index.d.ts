@@ -1,4 +1,4 @@
-import { ConnectorConfig, DataConnect, QueryRef, QueryPromise, MutationRef, MutationPromise } from 'firebase/data-connect';
+import { ConnectorConfig, DataConnect, QueryRef, QueryPromise, ExecuteQueryOptions, MutationRef, MutationPromise } from 'firebase/data-connect';
 
 export const connectorConfig: ConnectorConfig;
 
@@ -72,6 +72,18 @@ export interface ListBloodlineData {
     } & BloodlineLink_Key)[];
 }
 
+interface ListBloodlineRef {
+  /* Allow users to create refs without passing in DataConnect */
+  (): QueryRef<ListBloodlineData, undefined>;
+  /* Allow users to pass in custom DataConnect instances */
+  (dc: DataConnect): QueryRef<ListBloodlineData, undefined>;
+  operationName: string;
+}
+export const listBloodlineRef: ListBloodlineRef;
+
+export function listBloodline(options?: ExecuteQueryOptions): QueryPromise<ListBloodlineData, undefined>;
+export function listBloodline(dc: DataConnect, options?: ExecuteQueryOptions): QueryPromise<ListBloodlineData, undefined>;
+
 interface CreateEntityRef {
   /* Allow users to create refs without passing in DataConnect */
   (vars: CreateEntityVariables): MutationRef<CreateEntityData, CreateEntityVariables>;
@@ -95,16 +107,4 @@ export const createLinkRef: CreateLinkRef;
 
 export function createLink(vars: CreateLinkVariables): MutationPromise<CreateLinkData, CreateLinkVariables>;
 export function createLink(dc: DataConnect, vars: CreateLinkVariables): MutationPromise<CreateLinkData, CreateLinkVariables>;
-
-interface ListBloodlineRef {
-  /* Allow users to create refs without passing in DataConnect */
-  (): QueryRef<ListBloodlineData, undefined>;
-  /* Allow users to pass in custom DataConnect instances */
-  (dc: DataConnect): QueryRef<ListBloodlineData, undefined>;
-  operationName: string;
-}
-export const listBloodlineRef: ListBloodlineRef;
-
-export function listBloodline(): QueryPromise<ListBloodlineData, undefined>;
-export function listBloodline(dc: DataConnect): QueryPromise<ListBloodlineData, undefined>;
 

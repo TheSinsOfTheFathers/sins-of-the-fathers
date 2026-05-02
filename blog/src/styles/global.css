@@ -1,1 +1,370 @@
 @import "tailwindcss";
+
+/* =============================================
+   TSOF BLOG — GLOBAL STYLES
+   Premium Literary Dark Aesthetic
+   ============================================= */
+
+/* CSS Variables */
+:root {
+  --gold: #c5a059;
+  --gold-dim: #8a6f3b;
+  --obsidian: #050505;
+  --panel: rgba(10, 10, 10, 0.85);
+  --border: rgba(255, 255, 255, 0.08);
+  --text-main: #d1d5db;
+  --text-muted: #6b7280;
+  --font-serif: 'Cinzel', serif;
+  --font-mono: 'Courier Prime', monospace;
+  --font-sans: 'Lato', sans-serif;
+}
+
+/* Base */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background-color: var(--obsidian);
+  color: var(--text-main);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--gold);
+  color: #000;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: #0a0a0a; }
+::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: var(--gold-dim); }
+
+/* =============================================
+   TYPOGRAPHY
+   ============================================= */
+
+h1, h2, h3, h4 {
+  font-family: var(--font-serif);
+  letter-spacing: 0.04em;
+  color: #fff;
+}
+
+/* Prose (blog article typography) */
+.prose-dark {
+  color: #b0b7c3;
+  font-size: 1.0625rem;
+  line-height: 1.9;
+  font-weight: 300;
+}
+
+.prose-dark p { margin-bottom: 1.6em; }
+
+.prose-dark h2 {
+  font-family: var(--font-serif);
+  font-size: 1.5rem;
+  color: var(--gold);
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(197, 160, 89, 0.2);
+  padding-bottom: 0.5rem;
+}
+
+.prose-dark h3 {
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  color: #e5e7eb;
+  margin-top: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+.prose-dark strong {
+  color: #fff;
+  font-weight: 700;
+}
+
+.prose-dark em {
+  color: var(--gold);
+  font-style: italic;
+}
+
+.prose-dark a {
+  color: var(--gold);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(197, 160, 89, 0.4);
+  transition: color 0.2s;
+}
+
+.prose-dark a:hover { color: #fff; }
+
+.prose-dark blockquote {
+  border-left: 3px solid var(--gold);
+  padding: 1rem 1.5rem;
+  margin: 2rem 0;
+  background: rgba(197, 160, 89, 0.04);
+  font-style: italic;
+  color: #9ca3af;
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+}
+
+.prose-dark code {
+  font-family: var(--font-mono);
+  background: rgba(255,255,255,0.06);
+  padding: 0.15em 0.4em;
+  border-radius: 2px;
+  font-size: 0.875em;
+  color: var(--gold);
+}
+
+/* =============================================
+   COMPONENTS
+   ============================================= */
+
+/* Gold Accent Line */
+.gold-line {
+  display: inline-block;
+  width: 2.5rem;
+  height: 2px;
+  background: var(--gold);
+  box-shadow: 0 0 8px rgba(197, 160, 89, 0.4);
+}
+
+/* HUD Badge */
+.hud-badge {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--gold);
+  border: 1px solid rgba(197, 160, 89, 0.3);
+  padding: 3px 10px;
+  backdrop-filter: blur(4px);
+}
+
+/* Status Dot */
+.status-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #22c55e;
+  box-shadow: 0 0 6px #22c55e;
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* Noise texture overlay for headers */
+.noise-bg::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  opacity: 0.5;
+  mix-blend-mode: overlay;
+}
+
+/* Scan Line animation */
+.scan-line::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(197, 160, 89, 0.15), transparent);
+  animation: scan 8s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes scan {
+  0% { top: 0; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 0.5; }
+  100% { top: 100%; opacity: 0; }
+}
+
+/* Fade-up entrance */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.8s ease forwards;
+}
+
+.animate-fade-up-delay-1 { animation: fade-up 0.8s ease 0.15s both; }
+.animate-fade-up-delay-2 { animation: fade-up 0.8s ease 0.3s both; }
+.animate-fade-up-delay-3 { animation: fade-up 0.8s ease 0.45s both; }
+
+/* Typewriter blink cursor */
+.cursor-blink::after {
+  content: '|';
+  color: var(--gold);
+  animation: blink-cursor 1s step-end infinite;
+}
+
+@keyframes blink-cursor {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* =============================================
+   POLL COMPONENT
+   ============================================= */
+
+.poll-card {
+  background: rgba(10, 10, 10, 0.9);
+  border: 1px solid rgba(197, 160, 89, 0.2);
+  backdrop-filter: blur(12px);
+  position: relative;
+  overflow: hidden;
+}
+
+.poll-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+.poll-option {
+  position: relative;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.08);
+  cursor: pointer;
+  transition: border-color 0.3s, background 0.3s;
+  padding: 0.875rem 1.25rem;
+  text-align: left;
+  width: 100%;
+  color: #d1d5db;
+  font-family: var(--font-sans);
+  font-size: 0.9rem;
+  overflow: hidden;
+}
+
+.poll-option:hover:not(:disabled) {
+  border-color: rgba(197, 160, 89, 0.5);
+  background: rgba(197, 160, 89, 0.05);
+  color: #fff;
+}
+
+.poll-option.voted {
+  border-color: rgba(197, 160, 89, 0.4);
+  cursor: default;
+}
+
+.poll-option.voted.my-vote {
+  border-color: var(--gold);
+  background: rgba(197, 160, 89, 0.1);
+  color: #fff;
+}
+
+.poll-bar-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(197, 160, 89, 0.15), rgba(197, 160, 89, 0.05));
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+/* =============================================
+   POST CARD
+   ============================================= */
+
+.post-card {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border);
+  transition: border-color 0.4s ease, transform 0.3s ease, box-shadow 0.4s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.post-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(197, 160, 89, 0), transparent);
+  transition: background 0.4s;
+}
+
+.post-card:hover {
+  border-color: rgba(197, 160, 89, 0.35);
+  transform: translateY(-3px);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.6), 0 0 0 1px rgba(197, 160, 89, 0.05);
+}
+
+.post-card:hover::before {
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+/* =============================================
+   TAG / CATEGORY BADGES
+   ============================================= */
+
+.tag {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.tag:hover {
+  border-color: var(--gold-dim);
+  color: var(--gold);
+}
+
+/* =============================================
+   FEATURED POST HERO CARD
+   ============================================= */
+
+.featured-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(197, 160, 89, 0.15);
+  background: #000;
+}
+
+.featured-card img {
+  transition: transform 1.2s cubic-bezier(0.2, 0, 0, 1), filter 0.8s ease;
+  filter: brightness(0.5) grayscale(0.3);
+}
+
+.featured-card:hover img {
+  transform: scale(1.04);
+  filter: brightness(0.65) grayscale(0);
+}
+
+/* =============================================
+   BOOK STATUS BADGES
+   ============================================= */
+
+.status-writing { color: #60a5fa; border-color: rgba(96, 165, 250, 0.3); }
+.status-editing { color: #f59e0b; border-color: rgba(245, 158, 11, 0.3); }
+.status-upcoming { color: #6b7280; border-color: rgba(107, 114, 128, 0.3); }
+.status-published { color: #22c55e; border-color: rgba(34, 197, 94, 0.3); }

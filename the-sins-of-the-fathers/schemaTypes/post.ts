@@ -58,6 +58,13 @@ export default defineType({
       type: 'array',
       of: [{ type: 'string' }],
     }),
+    defineField({
+      name: 'poll',
+      title: 'Poll (Optional)',
+      type: 'reference',
+      to: [{ type: 'poll' }],
+      description: 'Select a poll to embed in this post.'
+    }),
   ],
   preview: {
     select: {
