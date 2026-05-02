@@ -25,17 +25,17 @@ This project is not merely a promotional website for "The Sins of the Fathers"; 
 
 The platform is engineered upon a sophisticated, high-performance hybrid architecture, meticulously designed to serve two distinct purposes:
 
-### ⚡️ **1. The Landing & Core Experience (Static)**
+### ⚡️ 1. The Landing & Core Experience (Static)
 
 This is the main gateway, optimized for breathtaking speed and immediate engagement. It's built as a static site, leveraging a direct build process for maximum performance and reliability.
 
-- **Technology Stack:** `HTML5`, `Vanilla JavaScript (ES6+)`, `Tailwind CSS (compiled via PostCSS)`.
+- **Technology Stack:** HTML5, Vanilla JavaScript (ES6+), Tailwind CSS (compiled via PostCSS).
 
-### 📚 **2. The Blog & Lore Engine (Server-Side Rendered)**
+### 📚 2. The Blog & Lore Engine (Server-Side Rendered)
 
 This is the dynamic heart of the universe, where the ever-expanding lore, character archives, and narrative content reside. It operates in SSR mode to ensure content is always fresh, deeply indexable by search engines, and delivered with optimal performance.
 
-- **Technology Stack:** `Astro v5 (SSR)`, `Firebase Functions`, `Sanity.io (Headless CMS)`.
+- **Technology Stack:** Astro v5 (SSR), Firebase Functions, Sanity.io (Headless CMS).
 
 ---
 
