@@ -16,7 +16,7 @@
     "wrangler": "^4.76.0"
   },
   "dependencies": {
-    "hono": "^4.12.9"
+    "hono": "^4.12.14"
   },
   "overrides": {
     "uuid": "^14.0.0",
@@ -36,7 +36,6 @@
     "@tootallnate/once": "^3.0.1",
     "ajv": "^8.18.0",
     "brace-expansion": "^2.0.3",
-    "hono": "^4.12.14",
     "axios": "^1.15.0",
     "follow-redirects": "^1.16.0",
     "mailparser": "^3.9.3",
