@@ -31,7 +31,7 @@
     "@types/node": "^25.2.2",
     "@typescript-eslint/eslint-plugin": "^8.55.0",
     "@typescript-eslint/parser": "^8.55.0",
-    "eslint": "^8.9.0",
+    "eslint": "^10.3.0",
     "eslint-config-google": "^0.14.0",
     "eslint-plugin-import": "^2.25.4",
     "firebase-functions-test": "^3.3.0",
