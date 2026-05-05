@@ -17,7 +17,7 @@
   "dependencies": {
     "@genkit-ai/google-genai": "^1.27.0",
     "@google-cloud/secret-manager": "^6.1.1",
-    "@sanity/client": "^6.24.1",
+    "@sanity/client": "^7.22.0",
     "axios": "^1.15.0",
     "cors": "^2.8.5",
     "firebase-admin": "^13.0.0",
