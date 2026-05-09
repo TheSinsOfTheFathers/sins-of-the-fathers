@@ -16,7 +16,7 @@
     "wrangler": "^4.76.0"
   },
   "dependencies": {
-    "hono": "^4.12.14"
+    "hono": "^4.12.18"
   },
   "overrides": {
     "uuid": "^14.0.0",
