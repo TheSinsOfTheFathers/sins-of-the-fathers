@@ -46,7 +46,7 @@ async function initMonitoringSystem() {
 
     console.log(" > System: Security Protocols (Sentry) Activated.");
     Sentry.init({
-      dsn: "https://9a12c94e774235b975e6820692f11ba4@o4510453482520576.ingest.de.sentry.io/4510453491105872",
+      dsn: "https://3154ff115c1d8b63d3f35b72f952ec47@o4511526866190336.ingest.de.sentry.io/4511535645130832",
       integrations: [
         Sentry.browserTracingIntegration(),
         Sentry.replayIntegration(),
