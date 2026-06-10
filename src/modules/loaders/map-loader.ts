@@ -1,12 +1,44 @@
-import { client } from '../../lib/sanityClient.js';
-import i18next from '../../lib/i18n.js';
-import { injectSchema } from '../../lib/seo.js';
+import { client } from '../../lib/sanityClient';
+import i18next from '../../lib/i18n';
+import { injectSchema } from '../../lib/seo';
 import gsap from 'gsap';
-import { NoirEffects } from '../ui/noir-effects.js';
+import { NoirEffects } from '../ui/noir-effects';
 
-let mapInstance = null;
+interface FactionTheme {
+    border: string;
+    fill: string;
+}
 
-const FACTION_THEMES = {
+interface SanityFactionSlug {
+    current: string;
+}
+
+interface SanityFaction {
+    slug?: SanityFactionSlug;
+}
+
+interface SanityLocationCoordinates {
+    lat: number;
+    lng: number;
+}
+
+interface SanityLocation {
+    name: string;
+    slug: string;
+    location: SanityLocationCoordinates;
+    faction?: SanityFaction;
+    summary?: string;
+}
+
+interface MapSchemaData {
+    '@context': string;
+    '@type': string;
+    name: string;
+    description: string;
+    url: string;
+}
+
+const FACTION_THEMES: Record<string, FactionTheme> = {
     'ravenwood-empire': { border: '#c5a059', fill: '#c5a059' },
     'macpherson-clan': { border: '#7f1d1d', fill: '#991b1b' },
     'cagliari': { border: '#155e75', fill: '#0e7490' },
@@ -17,23 +49,18 @@ const FACTION_THEMES = {
     'default': { border: '#c5a059', fill: '#c5a059' }
 };
 
-/**
- * Harita Temizleyici (Anti-Initialized Error)
- */
-const destroyMap = () => {
+let mapInstance: unknown = null;
+
+const destroyMap = (): void => {
     if (mapInstance) {
         console.log("> [MapLoader] Destroying existing map instance.");
-        mapInstance.remove();
+        (mapInstance as { remove: () => void }).remove();
         mapInstance = null;
     }
 };
 
-/**
- * Taktiksel Marker Element Oluşturucu
- */
-const createTacticalMarkerElement = (slug) => {
-    // Handle potential casing mismatch
-    const theme = FACTION_THEMES[slug] || FACTION_THEMES[slug.toLowerCase()] || FACTION_THEMES.default;
+const createTacticalMarkerElement = (slug: string): HTMLDivElement => {
+    const theme = FACTION_THEMES[slug] ?? FACTION_THEMES[slug.toLowerCase()] ?? FACTION_THEMES['default'];
     const color = theme.border;
 
     const el = document.createElement('div');
@@ -48,18 +75,22 @@ const createTacticalMarkerElement = (slug) => {
     return el;
 };
 
-async function loadLayer(map, path, id, theme) {
+async function loadLayer(
+    map: { addSource: (id: string, source: unknown) => void; addLayer: (layer: unknown) => void },
+    path: string,
+    id: string,
+    theme: FactionTheme
+): Promise<void> {
     try {
         const res = await fetch(path);
         if (!res.ok) throw new Error(`404 Not Found: ${path}`);
-        const data = await res.json();
+        const data: unknown = await res.json();
 
         map.addSource(id, {
             type: 'geojson',
             data: data
         });
 
-        // Fill Layer
         map.addLayer({
             id: `${id}-fill`,
             type: 'fill',
@@ -71,7 +102,6 @@ async function loadLayer(map, path, id, theme) {
             }
         });
 
-        // Outline Layer
         map.addLayer({
             id: `${id}-outline`,
             type: 'line',
@@ -86,7 +116,8 @@ async function loadLayer(map, path, id, theme) {
         });
 
     } catch (e) {
-        if (e.message.includes('404')) {
+        const err = e as Error;
+        if (err.message.includes('404')) {
             console.warn(`[Map Layer Missing] ${path}`);
         } else {
             console.error("[Map Layer Error]", path, e);
@@ -94,22 +125,21 @@ async function loadLayer(map, path, id, theme) {
     }
 }
 
-export default async function (container, props) {
+export default async function (container: HTMLElement, props: unknown): Promise<void> {
     const mapContainer = container;
     const loader = document.getElementById('map-loader');
 
     if (mapContainer) {
-        gsap.set(mapContainer, { 
-            opacity: 0, 
+        gsap.set(mapContainer, {
+            opacity: 0,
             scale: 0.98,
-            // Force GPU rendering to prevent black squares
             transform: 'translate3d(0, 0, 0)',
             backfaceVisibility: 'hidden'
         });
     }
 
     try {
-        const schemaData = {
+        const schemaData: MapSchemaData = {
             "@context": "https://schema.org",
             "@type": "Map",
             "name": "Global Surveillance Map | The Sins of the Fathers",
@@ -121,48 +151,71 @@ export default async function (container, props) {
         console.warn("Schema Injection Failed:", e);
     }
 
-    if (!globalThis.mapboxgl) {
+    const mapboxgl = (globalThis as Record<string, unknown>)['mapboxgl'] as {
+        supported: () => boolean;
+        Map: new (options: unknown) => {
+            addControl: (control: unknown, position?: string) => void;
+            on: (event: string, handler: (...args: unknown[]) => void) => void;
+            flyTo: (options: unknown) => void;
+            resize: () => void;
+            remove: () => void;
+        };
+        NavigationControl: new (options: unknown) => unknown;
+        Marker: new (el: HTMLElement) => {
+            setLngLat: (coords: [number, number]) => { setPopup: (popup: unknown) => { addTo: (map: unknown) => unknown } };
+        };
+        Popup: new (options: unknown) => { setHTML: (html: string) => unknown };
+    } | undefined;
+
+    if (!mapboxgl) {
         console.error("Mapbox Library Missing!");
         if (loader) loader.innerHTML = "<span class='text-red-500'>OFFLINE</span>";
         return;
     }
 
-    /**
-     * Leaflet Asset Loader (Dynamic)
-     */
-    const loadLeafletAssets = () => {
+    const loadLeafletAssets = (): Promise<void> => {
         return new Promise((resolve, reject) => {
-            if (globalThis.L) return resolve();
-            
-            // CSS
+            if ((globalThis as Record<string, unknown>)['L']) {
+                resolve();
+                return;
+            }
+
             const link = document.createElement('link');
             link.rel = 'stylesheet';
             link.href = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';
             document.head.appendChild(link);
-            
-            // JS
+
             const script = document.createElement('script');
             script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
-            script.onload = resolve;
-            script.onerror = reject;
+            script.onload = () => resolve();
+            script.onerror = () => reject(new Error('Failed to load Leaflet'));
             document.head.appendChild(script);
         });
     };
 
-    /**
-     * Interactive Leaflet Fallback
-     */
-    const applyLeafletFallback = async (msg = "Leaflet_Fallback_Active") => {
+    const applyLeafletFallback = async (msg: string = "Leaflet_Fallback_Active"): Promise<void> => {
         console.warn(`> [MapLoader] Triggering Leaflet Fallback: ${msg}`);
-        
+
         try {
             await loadLeafletAssets();
-            const L = globalThis.L;
-            
-            // Clean container
+            const L = (globalThis as Record<string, unknown>)['L'] as {
+                map: (container: HTMLElement, options: unknown) => {
+                    flyTo: (latlng: [number, number], zoom: number, options?: unknown) => void;
+                    invalidateSize: () => void;
+                };
+                control: { zoom: (options: unknown) => { addTo: (map: unknown) => void } };
+                tileLayer: (url: string, options: unknown) => { addTo: (map: unknown) => void };
+                geoJSON: (data: unknown, options: unknown) => { addTo: (map: unknown) => void };
+                marker: (latlng: [number, number], options: unknown) => {
+                    addTo: (map: unknown) => {
+                        bindPopup: (html: string, options?: unknown) => unknown;
+                    };
+                };
+                divIcon: (options: unknown) => unknown;
+            };
+
             mapContainer.innerHTML = '';
-            
-            // Init Leaflet Map
+
             const leafletMap = L.map(mapContainer, {
                 center: [40, -30],
                 zoom: 3,
@@ -172,30 +225,25 @@ export default async function (container, props) {
 
             L.control.zoom({ position: 'bottomright' }).addTo(leafletMap);
 
-            // Dark Matter Tiles (CartoDB)
             L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
                 subdomains: 'abcd',
                 maxZoom: 19
             }).addTo(leafletMap);
 
-            // Interface for Global Flight
-            globalThis.zoomToLocation = (lat, lng, z) => {
+            (globalThis as Record<string, unknown>)['zoomToLocation'] = (lat: number, lng: number, z: number): void => {
                 leafletMap.flyTo([lat, lng], z, { duration: 2 });
                 const display = document.getElementById('location-name-display');
                 if (display) display.textContent = i18next.t('location_loader.sector_info', { lat: lat.toFixed(4), lng: lng.toFixed(4) });
-                
-                // Force layout recalculation to fix tile gaps
                 setTimeout(() => leafletMap.invalidateSize(), 500);
             };
 
-            globalThis.resetMap = () => {
+            (globalThis as Record<string, unknown>)['resetMap'] = (): void => {
                 leafletMap.flyTo([40, -30], 3, { duration: 1.5 });
                 const display = document.getElementById('location-name-display');
                 if (display) display.textContent = i18next.t('location_loader.global_orbit');
             };
 
-            // Add Faction Territories (Leaflet GeoJSON - Local Asset Parity)
-            const factionsData = {
+            const factionsData: Record<string, string[]> = {
                 'ravenwood-empire': [
                     'united-kingdom-main.geojson',
                     'california-border.geojson',
@@ -214,13 +262,13 @@ export default async function (container, props) {
             };
 
             for (const [slug, files] of Object.entries(factionsData)) {
-                const theme = FACTION_THEMES[slug] || FACTION_THEMES[slug.toLowerCase()] || FACTION_THEMES.default;
+                const theme = FACTION_THEMES[slug] ?? FACTION_THEMES[slug.toLowerCase()] ?? FACTION_THEMES['default'];
                 for (const file of files) {
                     try {
                         const response = await fetch(`/assets/maps/${file}`);
                         if (!response.ok) throw new Error(`HTTP ${response.status}`);
-                        const geojsonData = await response.json();
-                        
+                        const geojsonData: unknown = await response.json();
+
                         L.geoJSON(geojsonData, {
                             style: {
                                 color: theme.border,
@@ -236,18 +284,16 @@ export default async function (container, props) {
                 }
             }
 
-            // Fetch and Add Markers (Similar Logic to Mapbox)
-            const query = `*[_type == "location" && defined(location)] { 
-                name, "slug": slug.current, location, faction->{slug}, summary 
+            const query = `*[_type == "location" && defined(location)] {
+                name, "slug": slug.current, location, faction->{slug}, summary
             }`;
-            const locations = await client.fetch(query);
+            const locations: SanityLocation[] = await client.fetch(query);
 
             locations.forEach(loc => {
                 const { lat, lng } = loc.location;
-                const fSlug = loc.faction?.slug?.current || 'default';
-                const theme = FACTION_THEMES[fSlug] || FACTION_THEMES.default;
+                const fSlug = loc.faction?.slug?.current ?? 'default';
+                const theme = FACTION_THEMES[fSlug] ?? FACTION_THEMES['default'];
 
-                // Simple Div Icon for consistency
                 const icon = L.divIcon({
                     className: 'custom-leaflet-marker',
                     html: `
@@ -264,46 +310,43 @@ export default async function (container, props) {
                     .bindPopup(`
                         <div class="p-4 bg-obsidian text-gray-300 min-w-[180px] border border-gold/20 shadow-2xl">
                             <h4 class="text-gold text-sm font-bold mb-2 border-b border-gold/20 pb-1 uppercase tracking-widest font-display">${loc.name.toUpperCase()}</h4>
-                            <p class="text-[11px] text-gray-400 mb-4 leading-relaxed font-mono opacity-80">${loc.summary || i18next.t('location_loader.no_intel')}</p>
-                            <a href="/pages/location-detail.html?slug=${loc.slug}" 
+                            <p class="text-[11px] text-gray-400 mb-4 leading-relaxed font-mono opacity-80">${loc.summary ?? i18next.t('location_loader.no_intel')}</p>
+                            <a href="/pages/location-detail.html?slug=${loc.slug}"
                                class="block text-center border border-gold/30 bg-gold/5 py-2 text-[10px] hover:bg-gold hover:text-black uppercase transition-all duration-300 tracking-widest font-bold">
                                 ${i18next.t('location_loader.inspect_button')}
                             </a>
                         </div>
-                    `, { 
+                    `, {
                         className: 'custom-leaflet-popup',
                         maxWidth: 300
                     });
             });
 
-            // Finish Loading & Force Visibility
             if (loader) {
-                gsap.to(loader, { autoAlpha: 0, duration: 1, onComplete: () => loader.style.display = 'none' });
+                gsap.to(loader, { autoAlpha: 0, duration: 1, onComplete: () => { loader.style.display = 'none'; } });
             }
 
-            // Remove transition classes that might block GSAP
             mapContainer.classList.remove('opacity-0', 'scale-95');
 
-            gsap.fromTo(mapContainer, 
+            gsap.fromTo(mapContainer,
                 { opacity: 0, scale: 0.98 },
-                { 
-                    opacity: 1, 
-                    scale: 1, 
+                {
+                    opacity: 1,
+                    scale: 1,
                     filter: "contrast(1.05) brightness(1.25)",
                     duration: 1.5,
                     ease: "power2.out"
                 }
             );
 
-            // Final fix for tile alignment
             setTimeout(() => leafletMap.invalidateSize(), 800);
 
         } catch (err) {
             console.error("> [MapLoader] Leaflet Fallback failed:", err);
-            // Final static fallback if even Leaflet fails
             console.warn(`> [MapLoader] Triggering Static Fallback: Final_Resort`);
-            const staticUrl = `https://api.mapbox.com/styles/v1/mapbox/dark-v11/static/-30,40,2,0/1200x800?access_token=${mapboxgl.accessToken}&attribution=false&logo=false`;
-            
+            const accessToken = (mapboxgl as unknown as { accessToken: string }).accessToken;
+            const staticUrl = `https://api.mapbox.com/styles/v1/mapbox/dark-v11/static/-30,40,2,0/1200x800?access_token=${accessToken}&attribution=false&logo=false`;
+
             mapContainer.innerHTML = `
                 <div class="relative w-full h-full overflow-hidden flex items-center justify-center bg-black">
                     <img src="${staticUrl}" class="w-full h-full object-cover grayscale opacity-40" alt="Static Fallback">
@@ -333,26 +376,25 @@ export default async function (container, props) {
 
         map.addControl(new mapboxgl.NavigationControl({ showCompass: false }), 'bottom-right');
 
-        globalThis.zoomToLocation = (lat, lng, z) => {
+        (globalThis as Record<string, unknown>)['zoomToLocation'] = (lat: number, lng: number, z: number): void => {
             map.flyTo({ center: [lng, lat], zoom: z, duration: 2000, essential: true });
             const display = document.getElementById('location-name-display');
             if (display) display.textContent = i18next.t('location_loader.sector_info', { lat: lat.toFixed(4), lng: lng.toFixed(4) });
         };
 
-        globalThis.resetMap = () => {
+        (globalThis as Record<string, unknown>)['resetMap'] = (): void => {
             map.flyTo({ center: [-30, 40], zoom: 2, duration: 1500, essential: true });
             const display = document.getElementById('location-name-display');
             if (display) display.textContent = i18next.t('location_loader.global_orbit');
         };
 
-        map.on('load', async () => {
+        map.on('load', async (..._args: unknown[]): Promise<void> => {
             console.log("> [MapLoader] Map load complete. Initiating staggered resize.");
-            
+
             const resizeInt = setInterval(() => map.resize(), 1000);
             setTimeout(() => clearInterval(resizeInt), 5000);
 
-            // Territories Data
-            const factionsData = {
+            const factionsData: Record<string, string[]> = {
                 'ravenwood-empire': [
                     'united-kingdom-main.geojson',
                     'california-border.geojson',
@@ -371,25 +413,24 @@ export default async function (container, props) {
             };
 
             for (const [slug, files] of Object.entries(factionsData)) {
-                const theme = FACTION_THEMES[slug] || FACTION_THEMES[slug.toLowerCase()] || FACTION_THEMES.default;
+                const theme = FACTION_THEMES[slug] ?? FACTION_THEMES[slug.toLowerCase()] ?? FACTION_THEMES['default'];
                 for (const file of files) {
                     const id = file.replace('.geojson', '');
-                    await loadLayer(map, `/assets/maps/${file}`, id, theme);
+                    await loadLayer(map as unknown as Parameters<typeof loadLayer>[0], `/assets/maps/${file}`, id, theme);
                 }
             }
 
-            // Load Markers from Sanity
-            const query = `*[_type == "location" && defined(location)] { 
-                name, "slug": slug.current, location, faction->{slug}, summary 
+            const query = `*[_type == "location" && defined(location)] {
+                name, "slug": slug.current, location, faction->{slug}, summary
             }`;
 
-            const locations = await client.fetch(query);
-            const markerElements = [];
+            const locations: SanityLocation[] = await client.fetch(query);
+            const markerElements: HTMLDivElement[] = [];
 
             if (locations.length > 0) {
                 locations.forEach(loc => {
                     const { lat, lng } = loc.location;
-                    const fSlug = loc.faction?.slug?.current || 'default';
+                    const fSlug = loc.faction?.slug?.current ?? 'default';
 
                     const el = createTacticalMarkerElement(fSlug);
                     markerElements.push(el);
@@ -398,7 +439,7 @@ export default async function (container, props) {
                         .setHTML(`
                             <div class="p-3 bg-obsidian text-gray-300">
                                 <h4 class="text-gold text-xs font-bold mb-1 border-b border-gold/20 pb-1 uppercase tracking-widest">${loc.name.toUpperCase()}</h4>
-                                <p class="text-[9px] text-gray-400 mb-2 line-clamp-2 leading-relaxed">${loc.summary || i18next.t('location_loader.no_intel')}</p>
+                                <p class="text-[9px] text-gray-400 mb-2 line-clamp-2 leading-relaxed">${loc.summary ?? i18next.t('location_loader.no_intel')}</p>
                                 <a href="/pages/location-detail.html?slug=${loc.slug}" class="block text-center border border-white/10 py-1 text-[8px] hover:bg-gold hover:text-black uppercase transition-colors tracking-tighter">
                                     ${i18next.t('location_loader.inspect_button')}
                                 </a>
@@ -414,9 +455,10 @@ export default async function (container, props) {
                 });
             }
 
-            map.on('mousemove', (e) => {
+            map.on('mousemove', (e: unknown): void => {
+                const event = e as { lngLat: { lat: number; lng: number } };
                 const coordEl = document.getElementById('coordinates-display');
-                if (coordEl) coordEl.textContent = `${e.lngLat.lat.toFixed(4)} | ${e.lngLat.lng.toFixed(4)}`;
+                if (coordEl) coordEl.textContent = `${event.lngLat.lat.toFixed(4)} | ${event.lngLat.lng.toFixed(4)}`;
             });
 
             const tl = gsap.timeline();
@@ -424,7 +466,7 @@ export default async function (container, props) {
                 tl.to(loader, {
                     autoAlpha: 0,
                     duration: 0.5,
-                    onComplete: () => loader.style.display = 'none'
+                    onComplete: () => { loader.style.display = 'none'; }
                 });
             }
 
@@ -441,8 +483,9 @@ export default async function (container, props) {
             }
         });
 
-        map.on('error', (e) => {
-            console.error("> [MapLoader] Mapbox Error:", e.error);
+        map.on('error', (e: unknown): void => {
+            const event = e as { error: unknown };
+            console.error("> [MapLoader] Mapbox Error:", event.error);
         });
 
     } catch (err) {

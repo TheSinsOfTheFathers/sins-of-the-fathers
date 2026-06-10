@@ -1,22 +1,16 @@
-import i18next from 'https://esm.sh/i18next@23.7.6';
-import i18nextHttpBackend from 'https://esm.sh/i18next-http-backend@2.4.1';
-import i18nextBrowserLanguageDetector from 'https://esm.sh/i18next-browser-languagedetector@7.2.0';
+import i18next from 'i18next';
+import i18nextHttpBackend from 'i18next-http-backend';
+import i18nextBrowserLanguageDetector from 'i18next-browser-languagedetector';
 
-/**
- * Sayfadaki tüm [data-i18n] elementlerini günceller.
- * Örn: <span data-i18n="nav.home"></span>
- */
-export const updateContent = () => {
+export const updateContent = (): void => {
     document.querySelectorAll('[data-i18n]').forEach(el => {
-        let key = el.dataset.i18n;
-        const options = {};
+        let key = (el as HTMLElement).dataset.i18n as string;
+        const options: Record<string, unknown> = {};
 
-        // Handle specific keys with dynamic options
         if (key === 'footer.copyright') {
             options.year = new Date().getFullYear();
         }
 
-        // Check for attribute targeting syntax: [placeholder]key
         let targetAttr = 'innerHTML';
         if (key.startsWith('[')) {
             const match = key.match(/^\[([^\]]+)\](.+)$/);
@@ -29,15 +23,14 @@ export const updateContent = () => {
         const translation = i18next.t(key, options);
 
         if (targetAttr === 'innerHTML') {
-            if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
-                // For inputs without specific targeting, generic fallback might be placeholder or value
+            if ((el as HTMLElement).tagName === 'INPUT' || (el as HTMLElement).tagName === 'TEXTAREA') {
                 if (el.hasAttribute('placeholder')) {
                     el.setAttribute('placeholder', translation);
                 } else {
-                    el.value = translation;
+                    (el as HTMLInputElement | HTMLTextAreaElement).value = translation;
                 }
             } else {
-                el.innerHTML = translation;
+                (el as HTMLElement).innerHTML = translation;
             }
         } else {
             el.setAttribute(targetAttr, translation);
@@ -45,11 +38,7 @@ export const updateContent = () => {
     });
 };
 
-/**
- * Dil Değiştirme Fonksiyonu
- * @param {string} lng - 'tr' veya 'en'
- */
-export const changeLanguage = async (lng) => {
+export const changeLanguage = async (lng: string): Promise<void> => {
     await i18next.changeLanguage(lng);
     updateContent();
     localStorage.setItem('i18nextLng', lng);
@@ -57,7 +46,7 @@ export const changeLanguage = async (lng) => {
     document.documentElement.setAttribute('lang', lng);
 
     document.querySelectorAll('.lang-btn').forEach(btn => {
-        if (btn.dataset.lang === lng) {
+        if ((btn as HTMLElement).dataset.lang === lng) {
             btn.classList.add('text-white', 'font-bold', 'underline');
             btn.classList.remove('text-gray-200');
         } else {
@@ -67,10 +56,7 @@ export const changeLanguage = async (lng) => {
     });
 };
 
-/**
- * Başlatıcı Fonksiyon
- */
-export const initI18n = async () => {
+export const initI18n = async (): Promise<string | undefined> => {
     try {
         await i18next
             .use(i18nextHttpBackend)
@@ -101,4 +87,4 @@ export const initI18n = async () => {
     }
 };
 
-export { default } from 'https://esm.sh/i18next@23.7.6';
+export { default } from 'i18next';

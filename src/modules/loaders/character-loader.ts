@@ -1,48 +1,85 @@
 import DOMPurify from 'dompurify';
 
-import { client } from '../../lib/sanityClient.js';
-import { renderBlurHash, handleImageLoad } from '../../lib/imageUtils.js';
-import i18next from '../../lib/i18n.js';
-import { injectSchema } from '../../lib/seo.js';
+import { client } from '../../lib/sanityClient';
+import { renderBlurHash, handleImageLoad } from '../../lib/imageUtils';
+import i18next from '../../lib/i18n';
+import { injectSchema } from '../../lib/seo';
 
-// 👇 1. GSAP IMPORT
 import gsap from 'gsap';
 import { NoirEffects } from '../ui/noir-effects.js';
 
-/* --------------------------------------------------------------------------
-   CARD TEMPLATES (NOIR STYLE)
-   -------------------------------------------------------------------------- */
+interface CharacterImage {
+    url: string;
+    blurHash?: string;
+}
 
-const createProtagonistCard = (character) => {
+interface Character {
+    name: string;
+    title?: string;
+    alias?: string;
+    slug: { current: string };
+    illustrator?: string;
+    image?: CharacterImage;
+    is_main?: boolean;
+    is_architect?: boolean;
+}
+
+interface CharacterContainers {
+    protagonists: Element | null;
+    main: Element | null;
+    side: Element | null;
+}
+
+interface SchemaListItem {
+    "@type": "ListItem";
+    position: number;
+    item: {
+        "@type": "Person";
+        name: string;
+        jobTitle?: string;
+        image?: string;
+        url: string;
+    };
+}
+
+interface CollectionPageSchema {
+    "@context": string;
+    "@type": "CollectionPage";
+    name: string;
+    description: string;
+    mainEntity: {
+        "@type": "ItemList";
+        itemListElement: SchemaListItem[];
+    };
+}
+
+const createProtagonistCard = (character: Character): HTMLAnchorElement => {
     const cardLink = document.createElement('a');
     cardLink.href = `character-detail.html?slug=${character.slug.current}`;
 
     cardLink.className = 'group relative w-full h-[450px] overflow-hidden border border-white/10 bg-black hover:border-gold/50 transition-all duration-1000 block shadow-2xl opacity-0 scale-95';
 
-
-    const imageUrl = character.image?.url || 'https://placehold.co/800x1200/0a0a0a/333333?text=CLASSIFIED';
+    const imageUrl = character.image?.url ?? 'https://placehold.co/800x1200/0a0a0a/333333?text=CLASSIFIED';
     const blurHash = character.image?.blurHash;
-    const alias = character.alias || 'The Architect';
+    const alias = character.alias ?? 'The Architect';
 
     cardLink.innerHTML = DOMPurify.sanitize(`
         <canvas class="blur-canvas absolute inset-0 w-full h-full object-cover z-0"></canvas>
-        <img src="${imageUrl}" alt="${character.name}" 
+        <img src="${imageUrl}" alt="${character.name}"
              class="main-image absolute inset-0 w-full h-full object-cover opacity-0 grayscale brightness-50 group-hover:grayscale-0 group-hover:brightness-100 group-hover:scale-110 transition-all duration-1000 cubic-bezier(0.2, 0, 0, 1) z-10"
              loading="lazy">
-        
-        <!-- Tactical HUD Overlay -->
+
         <div class="absolute inset-0 z-20 pointer-events-none border-[20px] border-transparent group-hover:border-black/20 transition-all duration-1000">
              <div class="absolute top-4 left-4 w-4 h-4 border-t-2 border-l-2 border-gold/40"></div>
              <div class="absolute top-4 right-4 w-4 h-4 border-t-2 border-r-2 border-gold/40"></div>
              <div class="absolute bottom-4 left-4 w-4 h-4 border-b-2 border-l-2 border-gold/40"></div>
              <div class="absolute bottom-4 right-4 w-4 h-4 border-b-2 border-r-2 border-gold/40"></div>
-             
-             <!-- Scanning Effect -->
+
              <div class="absolute inset-0 bg-linear-to-b from-transparent via-gold/5 to-transparent h-1/2 w-full -translate-y-full group-hover:animate-[scan_4s_linear_infinite] opacity-0 group-hover:opacity-100"></div>
         </div>
 
         <div class="absolute inset-0 bg-linear-to-t from-black via-black/40 to-transparent z-25 pointer-events-none group-hover:opacity-60 transition-opacity duration-1000"></div>
-        
+
         <div class="absolute bottom-0 left-0 w-full p-6 z-30 pointer-events-none transform translate-y-4 group-hover:translate-y-0 transition-transform duration-700">
 
             <div class="flex items-center gap-3 mb-4">
@@ -60,44 +97,41 @@ const createProtagonistCard = (character) => {
 
         <div class="absolute top-1/2 -right-4 -translate-y-1/2 rotate-90 z-30 pointer-events-none">
             <span class="font-mono text-[8px] text-gold/30 uppercase tracking-[0.5em] whitespace-nowrap">
-                Art By: ${character.illustrator || 'Classified'}
+                Art By: ${character.illustrator ?? 'Classified'}
             </span>
         </div>
     `);
 
-
-
-    const canvas = cardLink.querySelector('.blur-canvas');
-    const img = cardLink.querySelector('.main-image');
+    const canvas = cardLink.querySelector<HTMLCanvasElement>('.blur-canvas');
+    const img = cardLink.querySelector<HTMLImageElement>('.main-image');
 
     if (blurHash && canvas) renderBlurHash(canvas, blurHash);
     if (img) {
-        if (img.complete) handleImageLoad(img, canvas);
-        else img.onload = () => handleImageLoad(img, canvas);
+        if (img.complete) handleImageLoad(img, canvas ?? null);
+        else img.onload = () => handleImageLoad(img, canvas ?? null);
     }
 
     return cardLink;
 };
 
-const createOperativeCard = (character) => {
+const createOperativeCard = (character: Character): HTMLAnchorElement => {
     const cardLink = document.createElement('a');
     cardLink.href = `character-detail.html?slug=${character.slug.current}`;
 
     cardLink.className = 'group block bg-white/[0.03] border border-white/5 hover:border-gold/30 hover:bg-white/[0.08] transition-all duration-500 shadow-xl opacity-0 translate-y-8';
 
-    const imageUrl = character.image?.url || 'https://placehold.co/400x500/0a0a0a/333?text=IMG_MISSING';
+    const imageUrl = character.image?.url ?? 'https://placehold.co/400x500/0a0a0a/333?text=IMG_MISSING';
     const blurHash = character.image?.blurHash;
-    const title = character.title || 'Field Operative';
+    const title = character.title ?? 'Field Operative';
 
     cardLink.innerHTML = DOMPurify.sanitize(`
         <div class="relative aspect-[4/5] overflow-hidden border-b border-white/10 bg-obsidian">
             <canvas class="blur-canvas absolute inset-0 w-full h-full object-cover z-0 opacity-40"></canvas>
-            <img src="${imageUrl}" alt="${character.name}" 
+            <img src="${imageUrl}" alt="${character.name}"
                  class="main-image relative w-full h-full object-cover grayscale brightness-75 group-hover:grayscale-0 group-hover:brightness-100 group-hover:scale-105 transition-all duration-700 z-10"
                  loading="lazy">
             <div class="absolute inset-0 bg-linear-to-t from-black/80 via-transparent to-transparent z-15"></div>
-            
-            <!-- Mini HUD Overlay -->
+
             <div class="absolute inset-0 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none">
                  <div class="absolute top-2 left-2 w-2 h-2 border-t border-l border-gold/40"></div>
                  <div class="absolute bottom-2 right-2 w-2 h-2 border-b border-r border-gold/40"></div>
@@ -107,7 +141,7 @@ const createOperativeCard = (character) => {
             <div class="absolute bottom-2 left-2 z-30 pointer-events-none flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                 <div class="w-2 h-px bg-gold/50"></div>
                 <span class="font-mono text-[7px] text-gold/60 uppercase tracking-widest whitespace-nowrap">
-                    Art: ${character.illustrator || 'Classified'}
+                    Art: ${character.illustrator ?? 'Classified'}
                 </span>
             </div>
         </div>
@@ -122,40 +156,38 @@ const createOperativeCard = (character) => {
                     <p class="font-mono text-[10px] text-white/50 uppercase tracking-widest">${title}</p>
                 </div>
             </div>
-            
-            <!-- Graphic Decor -->
+
             <div class="absolute -right-4 -bottom-4 w-12 h-12 border-b border-r border-white/5 group-hover:border-gold/20 transition-colors"></div>
         </div>
     `);
 
-    const canvas = cardLink.querySelector('.blur-canvas');
-    const img = cardLink.querySelector('.main-image');
+    const canvas = cardLink.querySelector<HTMLCanvasElement>('.blur-canvas');
+    const img = cardLink.querySelector<HTMLImageElement>('.main-image');
 
     if (blurHash && canvas) renderBlurHash(canvas, blurHash);
     if (img) {
-        if (img.complete) handleImageLoad(img, canvas);
-        else img.onload = () => handleImageLoad(img, canvas);
+        if (img.complete) handleImageLoad(img, canvas ?? null);
+        else img.onload = () => handleImageLoad(img, canvas ?? null);
     }
 
     return cardLink;
 };
 
-const createAssetCard = (character) => {
+const createAssetCard = (character: Character): HTMLAnchorElement => {
     const cardLink = document.createElement('a');
     cardLink.href = `character-detail.html?slug=${character.slug.current}`;
 
-    // GSAP için 'opacity-0' ekledik
     cardLink.className = 'group flex items-center space-x-4 p-3 border border-white/5 bg-black/40 hover:bg-white/5 hover:border-red-900/50 transition-all duration-300 opacity-0';
 
-    const imageUrl = character.image?.url || 'https://ui-avatars.com/api/?background=333&color=fff&name=' + character.name;
+    const imageUrl = character.image?.url ?? 'https://ui-avatars.com/api/?background=333&color=fff&name=' + character.name;
     const blurHash = character.image?.blurHash;
-    const title = character.title || 'Known Asset';
+    const title = character.title ?? 'Known Asset';
 
     cardLink.innerHTML = DOMPurify.sanitize(`
         <div class="relative w-12 h-12 overflow-hidden rounded-sm border border-gray-700 group-hover:border-red-800 shrink-0 bg-gray-800">
             <canvas class="blur-canvas absolute inset-0 w-full h-full object-cover z-0"></canvas>
-            <img src="${imageUrl}" 
-                 class="main-image w-full h-full object-cover grayscale opacity-0 transition-opacity duration-300 z-10" 
+            <img src="${imageUrl}"
+                 class="main-image w-full h-full object-cover grayscale opacity-0 transition-opacity duration-300 z-10"
                  alt="${character.name}"
                  loading="lazy">
         </div>
@@ -165,48 +197,40 @@ const createAssetCard = (character) => {
         </div>
     `);
 
-    const canvas = cardLink.querySelector('.blur-canvas');
-    const img = cardLink.querySelector('.main-image');
+    const canvas = cardLink.querySelector<HTMLCanvasElement>('.blur-canvas');
+    const img = cardLink.querySelector<HTMLImageElement>('.main-image');
 
     if (blurHash && canvas) renderBlurHash(canvas, blurHash);
     if (img) {
-        if (img.complete) handleImageLoad(img, canvas);
-        else img.onload = () => handleImageLoad(img, canvas);
+        if (img.complete) handleImageLoad(img, canvas ?? null);
+        else img.onload = () => handleImageLoad(img, canvas ?? null);
     }
 
     return cardLink;
 };
 
-
-/* --------------------------------------------------------------------------
-   MAIN LOGIC
-   -------------------------------------------------------------------------- */
-/* --------------------------------------------------------------------------
-   HELPER FUNCTIONS (Cognitive Complexity Reduction)
-   -------------------------------------------------------------------------- */
-
-const injectCharacterListSchema = (characters) => {
+const injectCharacterListSchema = (characters: Character[]): void => {
     try {
-        const itemList = characters.map((char, index) => ({
+        const itemList: SchemaListItem[] = characters.map((char, index) => ({
             "@type": "ListItem",
-            "position": index + 1,
-            "item": {
+            position: index + 1,
+            item: {
                 "@type": "Person",
-                "name": char.name,
-                "jobTitle": char.title,
-                "image": char.image?.url,
-                "url": new URL(`character-detail.html?slug=${char.slug.current}`, globalThis.location.origin).href
+                name: char.name,
+                jobTitle: char.title,
+                image: char.image?.url,
+                url: new URL(`character-detail.html?slug=${char.slug.current}`, globalThis.location.origin).href
             }
         }));
 
-        const schemaData = {
+        const schemaData: CollectionPageSchema = {
             "@context": "https://schema.org",
             "@type": "CollectionPage",
-            "name": "Personnel Database | The Sins of the Fathers",
-            "description": "Classified directory of all known operatives, assets, and targets.",
-            "mainEntity": {
+            name: "Personnel Database | The Sins of the Fathers",
+            description: "Classified directory of all known operatives, assets, and targets.",
+            mainEntity: {
                 "@type": "ItemList",
-                "itemListElement": itemList
+                itemListElement: itemList
             }
         };
         injectSchema(schemaData);
@@ -216,54 +240,41 @@ const injectCharacterListSchema = (characters) => {
     }
 };
 
-const renderCharacterCards = (characters, containers) => {
+const renderCharacterCards = (characters: Character[], containers: CharacterContainers): void => {
     if (containers.protagonists) containers.protagonists.innerHTML = '';
     if (containers.main) containers.main.innerHTML = '';
     if (containers.side) containers.side.innerHTML = '';
 
     characters.forEach((character) => {
-        // Hardcoded Roland/Havi checks removed. Now using Schema field 'is_architect'.
         if (character.is_architect) {
             if (containers.protagonists) {
                 containers.protagonists.appendChild(createProtagonistCard(character));
             }
-        }
-        else if (character.is_main) {
+        } else if (character.is_main) {
             if (containers.main) {
                 containers.main.appendChild(createOperativeCard(character));
             }
-        }
-        else if (containers.side) {
+        } else if (containers.side) {
             containers.side.appendChild(createAssetCard(character));
         }
     });
 
-    Object.keys(containers).forEach(key => {
+    (Object.keys(containers) as Array<keyof CharacterContainers>).forEach((key) => {
         const container = containers[key];
         if (container && container.children.length === 0) {
             container.innerHTML = `<p class="text-xs font-mono text-gray-600 col-span-full text-center">${i18next.t('characters_page.no_records_found')}</p>`;
         }
     });
 
-    // Noir Motion Protocol: Reveal Cards
     gsap.to('.gsap-page-title', { opacity: 1, y: 0, duration: 1.5, ease: "expo.out" });
     gsap.to('.gsap-title-underline', { width: "100%", duration: 2, delay: 0.5, ease: "power4.inOut" });
     gsap.to('.gsap-page-subtitle', { opacity: 1, y: 0, duration: 1, delay: 1, stagger: 0.2 });
 
-    NoirEffects.revealCard('.opacity-0', 0.1, {
-        y: 0,
-        opacity: 1,
-        scale: 1,
-        duration: 1.2,
-        ease: "power4.out"
-    });
+    NoirEffects.revealCard('.opacity-0', 0.1);
 };
 
-/* --------------------------------------------------------------------------
-   MAIN LOGIC
-   -------------------------------------------------------------------------- */
-export default async function (container, props) {
-    const containers = {
+export default async function (container: Element, props: unknown): Promise<void> {
+    const containers: CharacterContainers = {
         protagonists: container.querySelector('#protagonists-gallery'),
         main: container.querySelector('#main-characters-gallery'),
         side: container.querySelector('#side-characters-gallery')
@@ -275,15 +286,14 @@ export default async function (container, props) {
         console.log("> Accessing Personnel Database...");
 
         const query = `*[_type == "character"] | order(name asc) {
-            name, title, alias, slug, 
+            name, title, alias, slug,
             illustrator,
-            "image": image.asset->{ url, "blurHash": metadata.blurHash }, 
+            "image": image.asset->{ url, "blurHash": metadata.blurHash },
             is_main,
             is_architect
         }`;
 
-
-        const characters = await client.fetch(query);
+        const characters: Character[] = await client.fetch(query);
 
         if (characters && characters.length > 0) {
             injectCharacterListSchema(characters);
@@ -291,8 +301,7 @@ export default async function (container, props) {
         } else if (containers.main) {
             containers.main.innerHTML = '<p class="text-red-500 font-mono">DATABASE CONNECTION FAILED.</p>';
         }
-    }
-    catch (error) {
+    } catch (error) {
         console.error("Data Malfunction: ", error);
         if (containers.main) containers.main.innerHTML = '<p class="text-red-500 animate-pulse">CRITICAL ERROR: CANNOT RETRIEVE DOSSIERS.</p>';
     }

@@ -1,19 +1,56 @@
 import DOMPurify from "dompurify";
-
-import { client } from "../../lib/sanityClient.js";
-import { renderBlurHash, handleImageLoad } from "../../lib/imageUtils.js";
-import i18next from "../../lib/i18n.js";
+import { client } from "../../lib/sanityClient";
+import { renderBlurHash, handleImageLoad } from "../../lib/imageUtils";
+import i18next from "../../lib/i18n";
 import { injectSchema } from "../../lib/seo.js";
 import gsap from "gsap";
 import { NoirEffects } from "../ui/noir-effects.js";
+import { auth } from "../firebase-config.js";
 
-let allLoreData = [];
+interface LoreImage {
+  url: string;
+  blurHash?: string;
+}
 
-/* --------------------------------------------------------------------------
-   CARD TEMPLATES (GÖRSEL AYRIŞTIRMA)
-   -------------------------------------------------------------------------- */
+interface LoreItem {
+  _id: string;
+  _createdAt: string;
+  title: string;
+  summary?: string;
+  slug: string;
+  loreType?: string;
+  restricted?: boolean;
+  image?: LoreImage;
+  date?: string;
+  source?: string;
+}
 
-const createDocumentCard = (lore) =>
+interface SchemaListItem {
+  "@type": "ListItem";
+  position: number;
+  item: {
+    "@type": "DigitalDocument";
+    name: string;
+    description?: string;
+    datePublished?: string;
+    url: string;
+  };
+}
+
+interface CollectionPageSchema {
+  "@context": string;
+  "@type": "CollectionPage";
+  name: string;
+  description: string;
+  mainEntity: {
+    "@type": "ItemList";
+    itemListElement: SchemaListItem[];
+  };
+}
+
+let allLoreData: LoreItem[] = [];
+
+const createDocumentCard = (lore: LoreItem): string =>
   DOMPurify.sanitize(`
     <div class="gsap-archive-card opacity-0 archive-card bg-[#e6e2d3] text-black p-6 rounded-sm shadow-lg relative overflow-hidden group h-fit break-inside-avoid">
         <div class="absolute top-2 right-2 border border-red-900 text-red-900 text-[10px] font-bold px-2 py-0.5 transform rotate-12 opacity-70">DOC_${lore._createdAt.slice(0, 4)}</div>
@@ -32,7 +69,7 @@ const createDocumentCard = (lore) =>
     </div>
 `);
 
-const createAudioCard = (lore) =>
+const createAudioCard = (lore: LoreItem): string =>
   DOMPurify.sanitize(`
     <div class="gsap-archive-card opacity-0 archive-card bg-gray-900 border-l-4 border-gold p-5 shadow-lg h-fit break-inside-avoid group">
         <div class="flex items-center justify-between mb-4">
@@ -53,7 +90,7 @@ const createAudioCard = (lore) =>
     </div>
 `);
 
-const createRestrictedCard = (lore) =>
+const createRestrictedCard = (lore: LoreItem): string =>
   DOMPurify.sanitize(`
     <div class="gsap-archive-card opacity-0 archive-card bg-black border border-red-900/40 relative overflow-hidden group h-fit break-inside-avoid cursor-not-allowed">
         <div class="p-6 filter blur-sm opacity-30 select-none pointer-events-none">
@@ -74,8 +111,8 @@ const createRestrictedCard = (lore) =>
     </div>
 `);
 
-const createImageCard = (lore) => {
-  const imgUrl = lore.image?.url || "https://via.placeholder.com/400";
+const createImageCard = (lore: LoreItem): HTMLElement => {
+  const imgUrl = lore.image?.url ?? "https://via.placeholder.com/400";
   const blurHash = lore.image?.blurHash;
   const dateStr = lore.date
     ? new Date(lore.date).toLocaleDateString("en-US", {
@@ -100,13 +137,13 @@ const createImageCard = (lore) => {
             </div>
             <div class="pt-3 pb-1 px-1">
                 <h3 class="font-mono text-xs text-black uppercase truncate font-bold group-hover:text-red-800 transition-colors">${lore.title}</h3>
-                <p class="text-[9px] text-gray-600 mt-1 line-clamp-2 font-sans leading-tight">${lore.summary || ""}</p>
+                <p class="text-[9px] text-gray-600 mt-1 line-clamp-2 font-sans leading-tight">${lore.summary ?? ""}</p>
             </div>
         </a>
     `);
 
-  const canvas = cardDiv.querySelector(".blur-canvas");
-  const img = cardDiv.querySelector(".main-image");
+  const canvas = cardDiv.querySelector(".blur-canvas") as HTMLCanvasElement | null;
+  const img = cardDiv.querySelector(".main-image") as HTMLImageElement | null;
 
   if (blurHash && canvas) renderBlurHash(canvas, blurHash);
   if (img) {
@@ -117,13 +154,11 @@ const createImageCard = (lore) => {
   return cardDiv;
 };
 
-import { auth } from "../firebase-config.js";
-
-const generateCard = (lore) => {
+const generateCard = (lore: LoreItem): string | HTMLElement => {
   const user = auth.currentUser;
   if (lore.restricted && !user) return createRestrictedCard(lore);
 
-  const type = lore.loreType || "document";
+  const type = lore.loreType ?? "document";
 
   switch (type) {
     case "audio":
@@ -135,8 +170,7 @@ const generateCard = (lore) => {
   }
 };
 
-const renderGrid = (data, container) => {
-  // container is the main module container
+const renderGrid = (data: LoreItem[], container: Element): void => {
   const gridContainer = container.querySelector("#archive-grid");
   if (!gridContainer) return;
 
@@ -156,19 +190,22 @@ const renderGrid = (data, container) => {
     }
   });
 
-  // Noir Motion Protocol (Only if cards exist)
   if (data.length > 0) {
     NoirEffects.revealCard(".gsap-archive-card", 0.1);
   }
 };
 
-const applyFilters = (searchTerm = "", filterType = "all", container) => {
+const applyFilters = (
+  searchTerm: string = "",
+  filterType: string = "all",
+  container: Element
+): void => {
   const lowerTerm = searchTerm.toLowerCase();
 
   const filtered = allLoreData.filter((item) => {
     const matchesSearch =
-      (item.title || "").toLowerCase().includes(lowerTerm) ||
-      (item.summary || "").toLowerCase().includes(lowerTerm);
+      (item.title ?? "").toLowerCase().includes(lowerTerm) ||
+      (item.summary ?? "").toLowerCase().includes(lowerTerm);
 
     let matchesType = true;
     if (filterType === "documents")
@@ -182,32 +219,28 @@ const applyFilters = (searchTerm = "", filterType = "all", container) => {
   renderGrid(filtered, container);
 };
 
-/* --------------------------------------------------------------------------
-   MAIN EXECUTION
-   -------------------------------------------------------------------------- */
-export default async function (container, props) {
+export default async function (container: Element, props: unknown): Promise<void> {
   const gridContainer = container.querySelector("#archive-grid");
   const loader = document.getElementById("archive-loader");
 
   if (!gridContainer) return;
 
-  const searchInput = container.querySelector("#archive-search");
+  const searchInput = container.querySelector("#archive-search") as HTMLInputElement | null;
   if (searchInput) searchInput.placeholder = i18next.t("search.placeholder");
 
-  // Başlangıçta Grid'i gizle (Loader görünürken)
   gsap.set(gridContainer, { autoAlpha: 0 });
 
   try {
     console.log("> Accessing Archives...");
 
-    const lang = i18next.language || "en";
+    const lang = i18next.language ?? "en";
     const titleField = lang === "tr" ? "title_tr" : "title_en";
     const summaryField = lang === "tr" ? "summary_tr" : "summary_en";
 
     const query = `*[_type == "lore"] | order(date desc) {
             _id,
             _createdAt,
-            "title": coalesce(${titleField}, title_en), 
+            "title": coalesce(${titleField}, title_en),
             "summary": coalesce(${summaryField}, summary_en),
             "slug": slug.current,
             "loreType": loreType,
@@ -220,15 +253,14 @@ export default async function (container, props) {
             source
         }`;
 
-    allLoreData = await client.fetch(query);
+    allLoreData = await client.fetch<LoreItem[]>(query);
 
-    // SEO Schema
     try {
-      const itemList = allLoreData.map((lore, index) => ({
-        "@type": "ListItem",
+      const itemList: SchemaListItem[] = allLoreData.map((lore, index) => ({
+        "@type": "ListItem" as const,
         position: index + 1,
         item: {
-          "@type": "DigitalDocument",
+          "@type": "DigitalDocument" as const,
           name: lore.title,
           description: lore.summary,
           datePublished: lore.date,
@@ -239,7 +271,7 @@ export default async function (container, props) {
         },
       }));
 
-      const schemaData = {
+      const schemaData: CollectionPageSchema = {
         "@context": "https://schema.org",
         "@type": "CollectionPage",
         name: i18next.t("archive_page.meta_title") || "Classified Archives",
@@ -254,12 +286,10 @@ export default async function (container, props) {
       console.warn("Schema Error:", e);
     }
 
-    // Loader'ı kapat ve Grid'i göster
     if (loader) loader.style.display = "none";
     const statusSub = document.getElementById("archive-status-sub");
     if (statusSub) statusSub.style.display = "none";
 
-    // Grid'i görünür yap (İçindeki kartlar henüz opacity-0)
     gsap.to(gridContainer, { autoAlpha: 1, duration: 0.3 });
 
     renderGrid(allLoreData, container);
@@ -274,16 +304,16 @@ export default async function (container, props) {
   }
 }
 
-function setupSearchInterface(container) {
-  const searchInput = container.querySelector('input[placeholder*="Search"]');
-  const filterButtons = container.querySelectorAll("button.uppercase");
+function setupSearchInterface(container: Element): void {
+  const searchInput = container.querySelector('input[placeholder*="Search"]') as HTMLInputElement | null;
+  const filterButtons = container.querySelectorAll<HTMLButtonElement>("button.uppercase");
 
   if (searchInput) {
     searchInput.addEventListener("input", (e) => {
-      const activeBtn = container.querySelector(String.raw`button.bg-gold\/10`);
-      const rawType = activeBtn ? activeBtn.dataset.filter : "all";
+      const activeBtn = container.querySelector<HTMLButtonElement>(String.raw`button.bg-gold\/10`);
+      const rawType = activeBtn?.dataset.filter ?? "all";
       const type = rawType === "text" ? "documents" : rawType;
-      applyFilters(e.target.value, type, container);
+      applyFilters((e.target as HTMLInputElement).value, type, container);
     });
   }
 
@@ -299,7 +329,8 @@ function setupSearchInterface(container) {
           );
           b.classList.add("text-gray-200", "border-gray-700");
         });
-        const clickedBtn = e.target.closest("button");
+        const clickedBtn = (e.target as HTMLElement).closest("button") as HTMLButtonElement | null;
+        if (!clickedBtn) return;
         clickedBtn.classList.remove("text-gray-200", "border-gray-700");
         clickedBtn.classList.add(
           "bg-gold/10",
@@ -308,7 +339,7 @@ function setupSearchInterface(container) {
           "border-gold"
         );
 
-        const rawType = clickedBtn.dataset.filter;
+        const rawType = clickedBtn.dataset.filter ?? "all";
         const type = rawType === "text" ? "documents" : rawType;
         applyFilters(searchInput ? searchInput.value : "", type, container);
       });

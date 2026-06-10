@@ -1,23 +1,59 @@
 import DOMPurify from 'dompurify';
-
-import { client } from '../../lib/sanityClient.js';
-import { applyBlurToStaticImage } from '../../lib/imageUtils.js';
-import i18next from '../../lib/i18n.js';
-// 👇 SEO / SCHEMA İMPORTU
-import { injectSchema, generateCharacterSchema } from '../../lib/seo.js';
-
-
-
 import gsap from 'gsap';
 
-/* --------------------------------------------------------------------------
-   HELPER FUNCTIONS (Cognitive Complexity Reduction)
-   -------------------------------------------------------------------------- */
+import { client } from '../../lib/sanityClient';
+import { applyBlurToStaticImage } from '../../lib/imageUtils';
+import i18next from '../../lib/i18n';
+import { injectSchema, generateCharacterSchema } from '../../lib/seo';
 
-/**
- * Simple Typewriter effect for text
- */
-const typeWriter = (element, text, speed = 20) => {
+interface CharacterImage {
+    url: string;
+    blurHash?: string;
+    lqip?: string;
+}
+
+interface CharacterFaction {
+    title: string;
+    color?: string;
+}
+
+interface Character {
+    name: string;
+    alias?: string;
+    status?: string;
+    description?: string;
+    quote?: string;
+    role?: string;
+    title?: string;
+    origin?: string;
+    illustrator?: string;
+    illustrator_nick?: string;
+    instagram_nick?: string;
+    image?: CharacterImage;
+    faction?: CharacterFaction;
+}
+
+interface DossierElements {
+    loader: Element | null;
+    dossier: Element | null;
+    image: HTMLImageElement | null;
+    statusBadge: Element | null;
+    name: Element | null;
+    alias: Element | null;
+    faction: Element | null;
+    location: Element | null;
+    role: Element | null;
+    bio: Element | null;
+    quote: Element | null;
+    artistTag: Element | null;
+    artistName: Element | null;
+    artistField: Element | null;
+    artistLink: HTMLAnchorElement | null;
+    artistLinkTag: HTMLAnchorElement | null;
+    title: string;
+}
+
+const typeWriter = (element: Element, text: string, speed: number = 20): void => {
     element.innerHTML = '';
     let i = 0;
     const inner = () => {
@@ -30,30 +66,24 @@ const typeWriter = (element, text, speed = 20) => {
     inner();
 };
 
-/**
- * Updates character image with blur hash effect
- */
-const updateCharacterImage = (els, character) => {
-    const imgUrl = character.image?.url || 'https://placehold.co/600x800/000000/333333?text=NO+IMAGE';
+const updateCharacterImage = (els: DossierElements, character: Character): string => {
+    const imgUrl = character.image?.url ?? 'https://placehold.co/600x800/000000/333333?text=NO+IMAGE';
     const blurHash = character.image?.blurHash;
 
     if (!els.image) return imgUrl;
 
     if (character.image?.url) {
-        applyBlurToStaticImage('char-image', imgUrl, blurHash);
+        applyBlurToStaticImage('char-image', imgUrl, blurHash ?? '');
     } else {
         els.image.src = imgUrl;
     }
     return imgUrl;
 };
 
-/**
- * Updates character status badge
- */
-const updateStatusBadge = (statusBadge, character) => {
+const updateStatusBadge = (statusBadge: Element | null, character: Character): void => {
     if (!statusBadge) return;
 
-    const rawStatus = character.status || 'Active';
+    const rawStatus = character.status ?? 'Active';
     const statusKey = `character_detail_page.status_${rawStatus.toLowerCase()}`;
     statusBadge.textContent = i18next.exists(statusKey) ? i18next.t(statusKey) : rawStatus;
 
@@ -62,25 +92,21 @@ const updateStatusBadge = (statusBadge, character) => {
         (isDeceased ? 'text-red-600' : 'text-green-500');
 };
 
-/**
- * Updates text fields for character details
- */
-const updateTextFields = (els, character) => {
-    els.name.textContent = character.name;
-    if (character.alias) els.alias.textContent = `"${character.alias}"`;
+const updateTextFields = (els: DossierElements, character: Character): void => {
+    els.name?.textContent !== undefined && (els.name!.textContent = character.name);
+
+    if (character.alias && els.alias) els.alias.textContent = `"${character.alias}"`;
 
     document.title = `${character.name} // ${i18next.t('character_detail_page.doc_title_suffix')}`;
 
-    if (els.faction) els.faction.textContent = character.faction?.title || i18next.t('character_detail_page.unknown');
-    if (els.location) els.location.textContent = character.origin || (character.faction ? i18next.t('character_detail_page.affiliated_territory') : i18next.t('character_detail_page.unknown'));
-    const roleText = character.role || character.title || 'Operative';
+    if (els.faction) els.faction.textContent = character.faction?.title ?? i18next.t('character_detail_page.unknown');
+    if (els.location) els.location.textContent = character.origin ?? (character.faction ? i18next.t('character_detail_page.affiliated_territory') : i18next.t('character_detail_page.unknown'));
+    const roleText = character.role ?? character.title ?? 'Operative';
     if (els.role) els.role.textContent = roleText;
 
     if (els.bio) {
-        const bioText = character.description || i18next.t('character_detail_page.bio_error');
-        // Sanitizing and then typewriting
-        const sanitizedBio = DOMPurify.sanitize(bioText);
-        // We use a simplified version for typewriter: no HTML tags inner
+        const bioText = character.description ?? i18next.t('character_detail_page.bio_error');
+        DOMPurify.sanitize(bioText);
         els.bio.innerHTML = '<span class="loading-cursor"></span>';
         typeWriter(els.bio, bioText.replace(/<\/?[^>]+(>|$)/g, ""), 5);
     }
@@ -91,13 +117,13 @@ const updateTextFields = (els, character) => {
     }
 
     if (els.artistName) {
-        els.artistName.textContent = character.illustrator || "Classified";
+        els.artistName.textContent = character.illustrator ?? "Classified";
     }
     if (els.artistField) {
-        els.artistField.textContent = character.illustrator || "Classified";
+        els.artistField.textContent = character.illustrator ?? "Classified";
     }
 
-    const artistNick = character.instagram_nick || character.illustrator_nick;
+    const artistNick = character.instagram_nick ?? character.illustrator_nick;
     if (artistNick) {
         const url = `https://instagram.com/${artistNick}`;
         if (els.artistLink) els.artistLink.href = url;
@@ -118,21 +144,14 @@ const updateTextFields = (els, character) => {
     }
 };
 
-
-
-
-
-/**
- * Injects SEO schema for character
- */
-const injectCharacterSeo = (character, imgUrl) => {
+const injectCharacterSeo = (character: Character, imgUrl: string): void => {
     try {
         const schemaData = generateCharacterSchema({
             name: character.name,
             image: { url: imgUrl },
-            description: character.description || "",
+            description: character.description ?? "",
             faction: character.faction,
-            role: character.role || character.title
+            role: character.role ?? character.title
         });
         injectSchema(schemaData);
         console.log("> SEO Protocol: Character Schema Injected.");
@@ -141,17 +160,11 @@ const injectCharacterSeo = (character, imgUrl) => {
     }
 };
 
-
-
-/**
- * KARAKTER DETAYLARINI GÖRSELLEŞTİRİR
- * HTML Sayfasındaki ID'lere Sanity verilerini enjekte eder.
- */
-const renderCharacterDetails = async (character, container) => {
-    const els = {
+const renderCharacterDetails = async (character: Character, container: Element): Promise<void> => {
+    const els: DossierElements = {
         loader: container.querySelector('#file-loader'),
         dossier: container.querySelector('#character-dossier'),
-        image: container.querySelector('#char-image'),
+        image: container.querySelector<HTMLImageElement>('#char-image'),
         statusBadge: container.querySelector('#char-status'),
         name: container.querySelector('#char-name'),
         alias: container.querySelector('#char-alias'),
@@ -163,37 +176,29 @@ const renderCharacterDetails = async (character, container) => {
         artistTag: container.querySelector('#char-artist-tag'),
         artistName: container.querySelector('#char-artist-name'),
         artistField: container.querySelector('#char-artist'),
-        artistLink: container.querySelector('#char-artist-link'),
-        artistLinkTag: container.querySelector('#char-artist-link-tag'),
-
-        title: document.title
-
-
+        artistLink: container.querySelector<HTMLAnchorElement>('#char-artist-link'),
+        artistLinkTag: container.querySelector<HTMLAnchorElement>('#char-artist-link-tag'),
+        title: document.title,
     };
 
     if (!els.name) { console.error("ERROR: Dossier layout corrupted. Missing DOM elements."); return; }
 
-    // 1. Update visual elements using helper functions
     const imgUrl = updateCharacterImage(els, character);
     injectCharacterSeo(character, imgUrl);
     updateStatusBadge(els.statusBadge, character);
     updateTextFields(els, character);
 
-    /* ------------------------------------------------------
-       2. YÜKLEME EKRANINI KALDIR VE ANİMASYONLARI BAŞLAT
-    ------------------------------------------------------ */
     setTimeout(() => {
         if (els.loader) {
             gsap.to(els.loader, { opacity: 0, pointerEvents: 'none', duration: 1 });
         }
         if (els.dossier) {
-            gsap.to(els.dossier, { 
-                opacity: 1, 
-                y: 0, 
-                duration: 1.5, 
+            gsap.to(els.dossier, {
+                opacity: 1,
+                y: 0,
+                duration: 1.5,
                 ease: "power4.out",
                 onStart: () => {
-                    // Start sub-animations
                     gsap.from('#char-image', { scale: 1.2, filter: 'blur(20px) grayscale(1)', duration: 2 });
                     gsap.from('#char-name', { x: -50, opacity: 0, duration: 1, delay: 0.5 });
                     gsap.from('#char-alias', { x: -30, opacity: 0, duration: 1, delay: 0.8 });
@@ -201,14 +206,9 @@ const renderCharacterDetails = async (character, container) => {
             });
         }
     }, 1200);
-
-
 };
 
-/**
- * SAYFA YÜKLENDİĞİNDE ÇALIŞAN ANA FONKSİYON
- */
-export default async function (container, props) {
+export default async function (container: Element, props: unknown): Promise<void> {
     const params = new URLSearchParams(globalThis.location.search);
     const characterSlug = params.get('slug');
 
@@ -236,7 +236,7 @@ export default async function (container, props) {
         }`;
 
         const sanityParams = { slug: characterSlug };
-        const character = await client.fetch(query, sanityParams);
+        const character: Character | null = await client.fetch(query, sanityParams);
 
         if (character) {
             console.log("> Access Granted. Rendering file.");
@@ -247,8 +247,7 @@ export default async function (container, props) {
                    ERROR 404: Subject not found in archives.
                 </div>`;
         }
-    }
-    catch (error) {
+    } catch (error) {
         console.error("System Failure:", error);
         const loaderText = document.querySelector('#file-loader p');
         if (loaderText) {
@@ -256,4 +255,4 @@ export default async function (container, props) {
             loaderText.classList.add('text-red-500');
         }
     }
-};
+}

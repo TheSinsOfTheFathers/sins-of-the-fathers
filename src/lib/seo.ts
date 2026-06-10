@@ -1,11 +1,35 @@
-// lib/seo.js
+interface CharImage {
+    url?: string;
+}
 
-/**
- * Sayfaya JSON-LD Schema verisini enjekte eder.
- * @param {Object} data - Schema verisi
- */
-export const injectSchema = (data) => {
-    // Varsa eski schemayı temizle (Tek sayfa uygulaması gibi davrandığımız için)
+interface CharFaction {
+    title?: string;
+}
+
+interface Char {
+    name: string;
+    image?: CharImage;
+    description?: string;
+    faction?: CharFaction;
+    role?: string;
+}
+
+interface LoreMainImageAsset {
+    url?: string;
+}
+
+interface LoreMainImage {
+    asset?: LoreMainImageAsset;
+}
+
+interface Lore {
+    title: string;
+    mainImage?: LoreMainImage;
+    date?: string;
+    author?: string;
+}
+
+export const injectSchema = (data: object): void => {
     const existingSchema = document.getElementById('dynamic-schema');
     if (existingSchema) existingSchema.remove();
 
@@ -17,13 +41,10 @@ export const injectSchema = (data) => {
     document.head.appendChild(script);
 };
 
-/**
- * Karakterler için Schema Şablonu
- */
-export const generateCharacterSchema = (char) => {
+export const generateCharacterSchema = (char: Char): object => {
     return {
         "@context": "https://schema.org",
-        "@type": "Person", // veya "FictionalCharacter"
+        "@type": "Person",
         "name": char.name,
         "image": char.image?.url,
         "description": char.description ? char.description.substring(0, 150) + "..." : "",
@@ -36,13 +57,10 @@ export const generateCharacterSchema = (char) => {
     };
 };
 
-/**
- * Lore/Belgeler için Schema Şablonu
- */
-export const generateLoreSchema = (lore) => {
+export const generateLoreSchema = (lore: Lore): object => {
     return {
         "@context": "https://schema.org",
-        "@type": "Article", // Ses dosyasıysa "AudioObject" de eklenebilir
+        "@type": "Article",
         "headline": lore.title,
         "image": lore.mainImage?.asset?.url ? [lore.mainImage.asset.url] : [],
         "datePublished": lore.date,
@@ -55,7 +73,7 @@ export const generateLoreSchema = (lore) => {
             "name": "The Sins of the Fathers Archive",
             "logo": {
                 "@type": "ImageObject",
-                "url": globalThis.location.origin + "/assets/images/logo/logo.svg" // Logonun tam yolu
+                "url": globalThis.location.origin + "/assets/images/logo/logo.svg"
             }
         },
         "description": "Classified document retrieved from the archives.",

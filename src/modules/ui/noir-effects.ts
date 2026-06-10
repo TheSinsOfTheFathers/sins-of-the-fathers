@@ -4,22 +4,16 @@ import { TextPlugin } from 'gsap/TextPlugin';
 
 gsap.registerPlugin(ScrollTrigger, TextPlugin);
 
-// Noir Estetiği için Özel Easing (Keskin giriş, yavaş bitiş)
 const NOIR_EASE = "power2.out";
 
 export const NoirEffects = {
 
-    /**
-     * Kartlar veya bloklar için standart "Karanlıktan Çıkış" efekti
-     * @param {string|Element} target - Animasyonlanacak hedef
-     * @param {number} stagger - Çoklu elementler arası gecikme
-     */
-    revealCard: (target, stagger = 0.1) => {
+    revealCard: (target: string | Element | Element[], stagger: number = 0.1): gsap.core.Tween => {
         return gsap.fromTo(target,
             {
                 autoAlpha: 0,
                 y: 30,
-                filter: "blur(5px)" // Noir bulanıklığı
+                filter: "blur(5px)"
             },
             {
                 autoAlpha: 1,
@@ -29,7 +23,7 @@ export const NoirEffects = {
                 stagger: stagger,
                 ease: NOIR_EASE,
                 scrollTrigger: {
-                    trigger: target,
+                    trigger: target as gsap.DOMTarget,
                     start: "top 85%",
                     toggleActions: "play none none reverse"
                 }
@@ -37,57 +31,45 @@ export const NoirEffects = {
         );
     },
 
-    /**
-     * 'Courier Prime' fontlu metinler için Daktilo/Deşifre efekti
-     * @param {string|Element} target 
-     * @param {string} textContent - Yazılacak metin (Opsiyonel)
-     */
-    typewriterEffect: (target, textContent = "") => {
-        // Eğer textContent varsa, önce içeriği ayarla
+    typewriterEffect: (target: string | Element, textContent: string = ""): gsap.core.Tween => {
         if (textContent) {
             if (target instanceof Element) target.textContent = "";
         }
 
         return gsap.to(target, {
             duration: 2,
-            text: { value: textContent || target.textContent, delimiter: "" },
+            text: { value: textContent || (target as Element).textContent, delimiter: "" },
             ease: "none",
             scrollTrigger: {
-                trigger: target,
+                trigger: target as gsap.DOMTarget,
                 start: "top 90%",
             }
         });
     },
 
-    /**
-     * Başlıkların 'Gold' rengine parlayarak gelmesi
-     */
-    goldShimmer: (target) => {
+    goldShimmer: (target: string | Element | Element[]): gsap.core.Tween => {
         return gsap.fromTo(target,
-            { color: "#4a0404" }, // Blood renginden başla
+            { color: "#4a0404" },
             {
-                color: "#c5a059", // Gold rengine dön
+                color: "#c5a059",
                 duration: 2,
                 ease: "power2.inOut",
                 scrollTrigger: {
-                    trigger: target,
+                    trigger: target as gsap.DOMTarget,
                     start: "top 80%"
                 }
             }
         );
     },
 
-    /**
-     * Matrix/Decoder tarzı karışık harflerden metne dönüş
-     */
-    scrambleText: (target, finalText, duration = 1) => {
+    scrambleText: (target: string | Element, finalText: string, duration: number = 1): gsap.core.Tween | undefined => {
         const element = (typeof target === 'string') ? document.querySelector(target) : target;
         if (!element) return;
 
         const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%&";
         const originalText = finalText || element.textContent;
-        const length = originalText.length;
-        let obj = { value: 0 };
+        const length = (originalText as string).length;
+        const obj: { value: number } = { value: 0 };
 
         return gsap.to(obj, {
             value: 1,
@@ -97,7 +79,7 @@ export const NoirEffects = {
                 const progress = Math.floor(obj.value * length);
                 let result = "";
                 for (let i = 0; i < length; i++) {
-                    if (i < progress) result += originalText[i];
+                    if (i < progress) result += (originalText as string)[i];
                     else result += chars[Math.floor(Math.random() * chars.length)];
                 }
                 element.textContent = result;
@@ -106,10 +88,7 @@ export const NoirEffects = {
         });
     },
 
-    /**
-     * Uydu görüntüsü netleştirme efekti (Bulanık/Grayscale -> Net)
-     */
-    revealImage: (target) => {
+    revealImage: (target: string | Element | Element[]): gsap.core.Tween => {
         return gsap.from(target, {
             scale: 1.1,
             filter: "grayscale(100%) blur(10px)",
@@ -118,10 +97,7 @@ export const NoirEffects = {
         });
     },
 
-    /**
-     * Liste elemanlarını sırayla açma
-     */
-    staggerList: (targets, stagger = 0.05) => {
+    staggerList: (targets: string | Element | Element[], stagger: number = 0.05): gsap.core.Tween => {
         return gsap.to(targets, {
             opacity: 1,
             x: 0,
@@ -132,10 +108,7 @@ export const NoirEffects = {
         });
     },
 
-    /**
-     * Harita markerları gibi öğeleri scale ile açma
-     */
-    staggerScaleReveal: (targets, stagger = 0.1) => {
+    staggerScaleReveal: (targets: string | Element | Element[], stagger: number = 0.1): gsap.core.Tween => {
         return gsap.to(targets, {
             scale: 1,
             opacity: 1,
