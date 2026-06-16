@@ -12,7 +12,7 @@
   "dependencies": {
     "@dataconnect/admin-generated": "file:src/dataconnect-admin-generated",
     "@dataconnect/generated": "file:src/dataconnect-generated",
-    "@genkit-ai/firebase": "^1.28.0",
+    "@genkit-ai/firebase": "^1.37.0",
     "@genkit-ai/google-genai": "^1.28.0",
     "@portabletext/to-html": "^5.0.2",
     "@qwik.dev/partytown": "^0.13.2",
