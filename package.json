@@ -26,7 +26,7 @@
     "cytoscape": "^3.33.1",
     "cytoscape-dagre": "^2.5.0",
     "d3": "^7.9.0",
-    "dompurify": "^3.3.3",
+    "dompurify": "^3.4.11",
     "firebase": "^12.6.0",
     "firebase-admin": "^13.6.0",
     "firebase-functions": "^7.0.5",
@@ -38,9 +38,9 @@
     "react": "^19.2.3",
     "react-dom": "^19.2.4",
     "resend": "^6.9.4",
-    "sanity": "^5.8.1",
+    "sanity": "^6.1.0",
     "styled-components": "^6.3.8",
-    "tar": "^7.5.11",
+    "tar": "^7.5.16",
     "vanilla-tilt": "^1.8.1"
   },
   "devDependencies": {
@@ -51,7 +51,7 @@
     "eslint": "^10.0.0",
     "postcss": "^8.5.14",
     "tailwindcss": "^4.1.18",
-    "vite": "^7.2.4",
+    "vite": "^8.0.16",
     "xmlbuilder": "^15.1.1"
   },
   "overrides": {
