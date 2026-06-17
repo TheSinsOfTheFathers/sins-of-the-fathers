@@ -1,6 +1,11 @@
 import { test, expect } from '@playwright/test';
+import { mockSanity } from './mocks';
 
 test.describe('TSOF - SEO ve Performans', () => {
+
+  test.beforeEach(async ({ page }) => {
+    await mockSanity(page);
+  });
 
   test('Partytown yapılandırması aktif olmalı', async ({ page }) => {
     await page.goto('/');

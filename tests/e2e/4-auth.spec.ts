@@ -1,8 +1,10 @@
 import { test, expect } from '@playwright/test';
+import { mockSanity } from './mocks';
 
 test.describe('TSOF - Kimlik Doğrulama (UI)', () => {
 
   test.beforeEach(async ({ page }) => {
+    await mockSanity(page);
     await page.goto('/pages/login.html', { waitUntil: 'domcontentloaded' });
   });
 

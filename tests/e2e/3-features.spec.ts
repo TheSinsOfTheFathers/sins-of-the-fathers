@@ -1,6 +1,11 @@
 import { test, expect } from '@playwright/test';
+import { mockSanity } from './mocks';
 
 test.describe('TSOF - Kritik Özellikler', () => {
+
+  test.beforeEach(async ({ page }) => {
+    await mockSanity(page);
+  });
 
   test('Timeline.js (Tarihçe) yüklenmeli', async ({ page }) => {
     await page.goto('/pages/timeline.html');

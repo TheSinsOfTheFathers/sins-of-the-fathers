@@ -1,6 +1,11 @@
 import { test, expect } from '@playwright/test';
+import { mockSanity } from './mocks';
 
 test.describe('TSOF - Navigasyon ve i18n', () => {
+
+  test.beforeEach(async ({ page }) => {
+    await mockSanity(page);
+  });
 
   test('Menü linkleri doğru sayfalara yönlendirmeli', async ({ page }) => {
     await page.goto('/');
