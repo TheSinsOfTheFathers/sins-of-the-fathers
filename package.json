@@ -51,7 +51,7 @@
     "eslint": "^10.0.0",
     "postcss": "^8.5.14",
     "tailwindcss": "^4.1.18",
-    "vite": "^7.2.4",
+    "vite": "^8.0.16",
     "xmlbuilder": "^15.1.1"
   },
   "overrides": {
