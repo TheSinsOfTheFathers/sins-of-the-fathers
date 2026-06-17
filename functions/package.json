@@ -15,14 +15,14 @@
   },
   "main": "lib/index.js",
   "dependencies": {
-    "@genkit-ai/google-genai": "^1.27.0",
+    "@genkit-ai/google-genai": "^1.37.0",
     "@google-cloud/secret-manager": "^6.1.1",
     "@sanity/client": "^7.22.0",
-    "axios": "^1.15.0",
+    "axios": "^1.18.0",
     "cors": "^2.8.6",
     "firebase-admin": "^13.0.0",
     "firebase-functions": "^6.0.0",
-    "genkit": "^1.27.0",
+    "genkit": "^1.37.0",
     "resend": "^6.12.4"
   },
   "devDependencies": {
@@ -30,11 +30,11 @@
     "@types/handlebars": "^4.1.0",
     "@types/node": "^25.9.3",
     "@typescript-eslint/eslint-plugin": "^8.61.1",
-    "@typescript-eslint/parser": "^8.55.0",
+    "@typescript-eslint/parser": "^8.61.1",
     "eslint": "^10.5.0",
     "eslint-config-google": "^0.14.0",
     "eslint-plugin-import": "^2.25.4",
-    "firebase-functions-test": "^3.3.0",
+    "firebase-functions-test": "^3.5.0",
     "typescript": "^5.9.3"
   },
   "private": true,
