@@ -34,7 +34,7 @@
     "eslint": "^9.28",
     "prettier": "^3.5",
     "sanity": "^5.8.1",
-    "typescript": "^5.8"
+    "typescript": "^6.0"
   },
   "prettier": {
     "semi": false,
