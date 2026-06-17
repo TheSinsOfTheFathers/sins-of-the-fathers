@@ -21,7 +21,7 @@
     "astro": "^6.1.6",
     "astro-portabletext": "^0.10.1",
     "firebase": "^12.11.0",
-    "firebase-functions": "^6.0.0",
+    "firebase-functions": "^7.2.5",
     "prismjs": "^1.30.0",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
