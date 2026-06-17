@@ -20,3 +20,22 @@ updates:
     schedule:
       interval: "weekly"
     target-branch: "dev"
+
+  - package-ecosystem: "npm"
+    directory: "/blog"
+    schedule:
+      interval: "weekly"
+    target-branch: "dev"
+
+  - package-ecosystem: "npm"
+    directory: "/cf-ai-brain"
+    schedule:
+      interval: "weekly"
+    target-branch: "dev"
+
+  - package-ecosystem: "npm"
+    directory: "/the-sins-of-the-fathers"
+    schedule:
+      interval: "weekly"
+    target-branch: "dev"
+
