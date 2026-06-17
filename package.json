@@ -40,7 +40,7 @@
     "resend": "^6.9.4",
     "sanity": "^5.8.1",
     "styled-components": "^6.3.8",
-    "tar": "^7.5.11",
+    "tar": "^7.5.16",
     "vanilla-tilt": "^1.8.1"
   },
   "devDependencies": {
