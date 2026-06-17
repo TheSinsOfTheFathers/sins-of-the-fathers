@@ -26,7 +26,7 @@
     "cytoscape": "^3.33.1",
     "cytoscape-dagre": "^2.5.0",
     "d3": "^7.9.0",
-    "dompurify": "^3.3.3",
+    "dompurify": "^3.4.11",
     "firebase": "^12.15.0",
     "firebase-admin": "^13.6.0",
     "firebase-functions": "^7.0.5",
@@ -40,7 +40,7 @@
     "resend": "^6.9.4",
     "sanity": "^5.8.1",
     "styled-components": "^6.3.8",
-    "tar": "^7.5.11",
+    "tar": "^7.5.16",
     "vanilla-tilt": "^1.8.1"
   },
   "devDependencies": {
