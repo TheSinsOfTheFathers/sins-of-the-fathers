@@ -35,6 +35,7 @@
     "firebase-functions-test": "^3.3.0"
   },
   "overrides": {
+    "vite": "^7.3.2",
     "refractor": {
       "prismjs": "1.30.0"
     },
