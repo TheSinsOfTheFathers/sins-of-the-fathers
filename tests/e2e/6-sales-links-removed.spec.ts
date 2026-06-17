@@ -7,12 +7,12 @@ test.describe('TSOF - Satış Linkleri Kaldırılmalı', () => {
     await mockSanity(page);
   });
 
-  test('Anasayfada satın alma veya dükkan linki olmamalı', async ({ page }) => {
+  test('Anasayfada satın alma veya dükkan linki olmamalı, ancak MERCH linki olmalı', async ({ page }) => {
     await page.goto('/');
 
-    // Hero veya menüde MERCH / acquisition linkleri olmamalı
+    // MERCH linki mevcut olmalı
     const merchLinks = page.locator('a[href*="shop.thesinsofthefathers.com"]');
-    await expect(merchLinks).toHaveCount(0);
+    await expect(merchLinks.first()).toBeVisible();
 
     const shopierLinks = page.locator('a[href*="shopier.com"]');
     await expect(shopierLinks).toHaveCount(0);
@@ -24,7 +24,7 @@ test.describe('TSOF - Satış Linkleri Kaldırılmalı', () => {
     await expect(acquisitionSection).toHaveCount(0);
   });
 
-  test('Diğer sayfalarda da navigasyon menüsünde MERCH linki olmamalı', async ({ page }) => {
+  test('Diğer sayfalarda da navigasyon menüsünde MERCH linki olmalı', async ({ page }) => {
     const pagesToCheck = [
       '/pages/bloodline.html',
       '/pages/characters.html',
@@ -36,7 +36,7 @@ test.describe('TSOF - Satış Linkleri Kaldırılmalı', () => {
     for (const path of pagesToCheck) {
       await page.goto(path);
       const merchLinks = page.locator('a[href*="shop.thesinsofthefathers.com"]');
-      await expect(merchLinks).toHaveCount(0);
+      await expect(merchLinks.first()).toBeVisible();
     }
   });
 });
