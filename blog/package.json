@@ -10,7 +10,7 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/node": "^10.0.5",
+    "@astrojs/node": "^11.0.0",
     "@astrojs/rss": "^4.0.14",
     "@portabletext/react": "^6.0.2",
     "@sanity/astro": "^3.2.0",
