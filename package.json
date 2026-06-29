@@ -20,7 +20,7 @@
     "@sanity/color-input": "^6.0.8",
     "@sanity/image-url": "^2.0.2",
     "@sanity/vision": "^6.1.0",
-    "@sentry/browser": "^10.58.0",
+    "@sentry/browser": "^10.59.0",
     "@studio-freight/lenis": "^1.0.42",
     "blurhash": "^2.0.5",
     "cytoscape": "^3.34.0",
