@@ -15,7 +15,7 @@
     "@genkit-ai/firebase": "^1.37.0",
     "@genkit-ai/google-genai": "^1.37.0",
     "@portabletext/to-html": "^5.0.2",
-    "@qwik.dev/partytown": "^0.13.2",
+    "@qwik.dev/partytown": "^0.14.0",
     "@sanity/client": "^7.23.0",
     "@sanity/color-input": "^6.0.8",
     "@sanity/image-url": "^2.0.2",
