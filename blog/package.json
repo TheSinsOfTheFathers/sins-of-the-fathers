@@ -3,14 +3,13 @@
   "type": "module",
   "version": "0.0.1",
   "main": "server.mjs",
-  "scripts": {
-    "dev": "astro dev",
+  "scripts": x    "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/node": "^11.0.0",
+    "@astrojs/node": "^10.1.4",
     "@astrojs/rss": "^4.0.14",
     "@portabletext/react": "^6.0.2",
     "@sanity/astro": "^3.2.0",
@@ -18,7 +17,7 @@
     "@sanity/image-url": "^2.0.3",
     "@tailwindcss/typography": "^0.5.16",
     "@tailwindcss/vite": "^4.0.0",
-    "astro": "^7.0.3",
+    "astro": "^6.4.8",
     "astro-portabletext": "^0.13.0",
     "firebase": "^12.11.0",
     "firebase-functions": "^7.2.5",
@@ -35,7 +34,7 @@
     "firebase-functions-test": "^3.3.0"
   },
   "overrides": {
-    "vite": "^7.3.2",
+    "vite": "^6.0.0",
     "refractor": {
       "prismjs": "1.30.0"
     },
