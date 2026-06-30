@@ -15,7 +15,7 @@
   },
   "main": "lib/index.js",
   "dependencies": {
-    "@genkit-ai/google-genai": "^1.37.0",
+    "@genkit-ai/google-genai": "^1.39.0",
     "@google-cloud/secret-manager": "^6.1.1",
     "@sanity/client": "^7.22.0",
     "axios": "^1.18.0",
