@@ -39,7 +39,7 @@
     "react-dom": "^19.2.7",
     "resend": "^6.14.0",
     "sanity": "^6.1.0",
-    "styled-components": "^6.4.2",
+    "styled-components": "^6.4.3",
     "tar": "^7.5.16",
     "vanilla-tilt": "^1.8.1"
   },
