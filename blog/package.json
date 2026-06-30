@@ -29,7 +29,7 @@
     "sanity": "^6.1.0",
     "sharp": "^0.35.2",
     "styled-components": "^6.1.13",
-    "tailwindcss": "^4.0.0"
+    "tailwindcss": "^4.3.2"
   },
   "devDependencies": {
     "firebase-functions-test": "^3.3.0"
